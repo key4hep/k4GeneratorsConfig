@@ -1,0 +1,35 @@
+Generators:
+  - Sherpa
+  - Whizard
+
+OutDir: gen-out
+Events: 100
+
+
+SqrtS: 91.2
+Model: SM
+ISRMode: 0
+
+Processess:
+  Difermion:
+     Initial: [11, -11]
+     Final: [14, -14]
+     Order: [2,0]
+
+
+
+
+ParticleData:
+  25:
+    mass: 125
+    width: 0
+  11:
+    mass: 0.0005111
+    width: 0
+  23:
+    mass: 91.1876
+    width: 2.4952
+  24:
+    mass: 80.379
+    width: 2.085
+
