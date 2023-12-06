@@ -6,6 +6,7 @@ mkdir -p test/ref-results
 mkdir -p test/ci-setups
 
 tar xf main-res.tar.gz --directory="${PWD}/test/ref-results"
+CWD=${PWD}
 REFDIR="${PWD}/test/ref-results"
 
 
@@ -49,5 +50,5 @@ for yamlFile in *.yaml; do
     checkOutputs
 done
 
-rm -r test
+rm -r ${CWD}/test
 exit 0
