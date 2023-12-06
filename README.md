@@ -24,8 +24,9 @@ pip3 install pyyaml --user
 ## Usage
 Before begining, you should setup the environment by: 
 ```
-source /path/to/k4generators/setenv.(z)sh
+source /path/to/k4generators/setup.(tc)(z)sh
 ```
+The setup script will check that python3 is available on your machine.
 
 Once you have written your own inputfile(`input.yaml`), as seen in the [examples](https://gitlab.com/aprice/k4generators/-/tree/main/Examples?ref_type=heads), execute the following:\
 
