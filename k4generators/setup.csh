@@ -4,7 +4,7 @@
 # Automatically get the directory where this script is located
 #K4GenDir=$(cd -- "$(dirname -- "${(%):-%x}")" && pwd)
 # check that we are sourcing
-if ("$0" != "-tcsh") then
+if ("$0" != "-tcsh" && "$0" != "tcsh") then
     echo Please use source setup.csh to set up the project
     exit
 endif
