@@ -7,16 +7,16 @@
 ## Description
 A python based module for the automatic generation of inputfiles for  Monte-Carlo(MC) generators.
 
-
-## Prerequisits
+## Requirements
+`Python >= 3.7`\
+`PyYaml`  
 
 Check your python version
 ```
 python --version
 ```
-The package needs at least python v3.7. 
 
-yaml should be available, if not, you can install as user with:
+you can install pyYaml as user with:
 ```
 pip3 install pyyaml --user
 ```
