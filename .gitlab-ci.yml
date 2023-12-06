@@ -27,4 +27,5 @@ before_script:
 run:
   script:
     - pip install pyyaml
-    - cd $CI_PROJECT_DIR/k4generators/ci/check.sh
+    - cd $CI_PROJECT_DIR/k4generators/ci
+    - ./check.sh
