@@ -8,8 +8,8 @@
 A python based module for the automatic generation of inputfiles for  Monte-Carlo(MC) generators.
 
 ## Requirements
-Pyhton >= 3.7
-PyYaml (can be installed with pip install pyyaml) 
+`Python >= 3.7`\
+`PyYaml` (can be installed with pip install pyyaml) 
 
 ## Usage
 Once you have written your own inputfile(`input.yaml`), as seen in the [examples](https://gitlab.com/aprice/k4generators/-/tree/main/Examples?ref_type=heads), execute the following:\
