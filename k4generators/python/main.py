@@ -1,76 +1,65 @@
 import os
 import sys
 import shutil
+import argparse
+
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'Tools')))
 sys.path.insert(1, os.path.abspath(os.path.join(os.path.dirname(__file__), 'Generators')))
 
-import argparse
-import Input
+import Input as Settings
 import Particles as particles
-import Process
-import Generators as Gen
+import Process as process_module
+import Generators as generators_module
 
 
-parser = argparse.ArgumentParser(description='')
-
-parser.add_argument(
-  "-f",
-  nargs="*",
-  type=str,  # any type/callable can be used here
-  default=[],
-  help="Input yaml file"
-)
-args = parser.parse_args()
-FILES = (args.f)
-
-def MakeOutDir(gens, OUTDIR):
-  # Overright directory if exisit
-  if not os.path.exists(OUTDIR):
-    # shutil.rmtree(OUTDIR)
-    os.mkdir(OUTDIR)
-  for g in gens:
-    if not os.path.exists(OUTDIR+"/{}".format(g)):
-      os.mkdir(OUTDIR+"/{}".format(g))
+def make_output_directory(generators, output_directory):
+    # Overwrite directory if it exists
+    if not os.path.exists(output_directory):
+        os.makedirs(output_directory)
+    for generator in generators:
+        generator_directory = os.path.join(output_directory, generator)
+        if not os.path.exists(generator_directory):
+            os.makedirs(generator_directory)
 
 
 def main():
-  for files in FILES:
-    settings=Input.Input(files)
-    settings.Generators()
-    procs = settings.GetProcesses()
-    sqrts = settings.GetSqrtS()
-    model = settings.GetModel()
-    events = settings.GetEventNumber()
-    pdata = settings.GetParticleData()
-    outputFormat = settings.GetOutputFormat()
-    gens = Gen.generators(settings.Generators())
-    
-    try:
-      outdir = settings.get("OutDir")
-    except:
-    # If not dir set in input use default
-      outdir= "Run-Cards"
+    parser = argparse.ArgumentParser(description='Process input YAML files.')
+    parser.add_argument('-f', nargs='*', type=str, default=[], help='Input YAML file')
+    args = parser.parse_args()
+    files = args.f
 
-    MakeOutDir(settings.Generators(),outdir)
+    for yaml_file in files:
+        settings = Settings.Input(yaml_file)
+        settings.generators()
+        processes = settings.get_processes()
+        sqrt_s = settings.get_sqrt_s()
+        model = settings.get_model()
+        events = settings.get_event_number()
+        particle_data = settings.get_particle_data()
+        generators = generators_module.Generators(settings.generators())
+        try:
+          output_dir = getattr(settings, 'OutDir', 'Run-Cards')
+        except KeyError:
+            # If no directory set in input, use default
+            output_dir = 'Run-Cards'
 
-    proc = {}
-    for key, value in procs.items():
-      initial = value["Initial"]
-      final   = value["Final"]
-      order   = value["Order"]
-      param = Process.ProcessParameters(settings)
-      proc[key] = Process.Process(initial, final, sqrts, 
-                                  order, key, param, OutDir=outdir 
-                                  )
-    for p in proc.values():
-      p.ProcessInfo()
-      p.SetParticleData(pdata)
-      gens.SetProcessInfo(p)
-      gens.InitalizeGenerators()
+        make_output_directory(settings.generators(), output_dir)
 
+        process_instances = {}
+        for key, value in processes.items():
+            initial = value['Initial']
+            final = value['Final']
+            order = value['Order']
+            param = process_module.ProcessParameters(settings)
+            process_instances[key] = process_module.Process(initial, final, sqrt_s,
+                                                            order, key, param, OutDir=output_dir)
+
+        for process_instance in process_instances.values():
+            process_instance.process_info()
+            process_instance.set_particle_data(particle_data)
+            generators.set_process_info(process_instance)
+            generators.initialize_generators()
 
 
 if __name__ == '__main__':
-	main()
-
-    
+    main()

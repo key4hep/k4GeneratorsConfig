@@ -11,7 +11,7 @@ SqrtS: 91.2
 Model: SM
 ISRMode: 0
 
-Processess:
+Processes:
   Difermion:
      Initial: [11, -11]
      Final: [14, -14]
