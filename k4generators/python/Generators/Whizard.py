@@ -33,8 +33,8 @@ class whizard():
 		else:
 			self.process += "?isr_handler =  {0}\n".format("false")
 		self.process += "n_events = {0}\n".format(self.procinfo.get("Events"))
-		self.process += " sqrts = {0} GeV\n".format(self.procinfo.get("sqrts"))
 		self.process += "process proc = {0}, {1} => {2}\n".format(self.whizBeam1,self.whizBeam2,self.finalstate)
+		self.process += "sqrts = {0} GeV\n".format(self.procinfo.get("sqrts"))
 		for p in self.procinfo.GetDataParticles():
 			for attr in dir(p):
 				if not callable(getattr(p, attr)) and not attr.startswith("__"):
@@ -49,7 +49,9 @@ class whizard():
 								pname = pname.replace(r, "")
 							data = "m{0} = {1}\n".format(pname,value)
 							self.process += data
-						# print(p.get("pdg_code"), name ,value)
+                                                # print(p.get("pdg_code"), name ,value)
+		if self.procinfo.GetOutputFormat() != "evx":
+			self.process += "sample_format = {0}\n".format(self.procinfo.GetOutputFormat())
 
 	def WriteIntegrate(self):
 		self.intgrate = "simulate (proc) { iterations = 5:5000}"

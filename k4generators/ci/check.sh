@@ -8,10 +8,10 @@ mkdir -p test/ci-setups
 tar xf main-res.tar.gz --directory="${PWD}/test/ref-results"
 CWD=${PWD}
 REFDIR="${PWD}/test/ref-results"
-
+EXAMPLEDIR="${PWD}/../examples"
 
 cd test
-cp ref-results/*yaml ci-setups
+cp $EXAMPLEDIR/*yaml ci-setups
 cd ci-setups
 
 function checkOutputs() {
@@ -28,6 +28,7 @@ function checkOutputs() {
                                 echo "Files are identical."
                             else
                                 echo "Files are different."
+				diff "$REFDIR/$generator/$outFile" "$PWD/$generator/$outFile"
                                 exit 1
                             fi
                         else

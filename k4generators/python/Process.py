@@ -90,6 +90,9 @@ class Process():
 	def GetQEDOrder(self):
 		return self.get("order")[0]
 
+	def GetOutputFormat(self):
+		return self.OutputFormat
+
 	def PrintInfo(self):
 		out = "Creating Runcards for {} at {} GeV".format(self.proclabel, self.sqrts)
 		print(out)
@@ -105,3 +108,4 @@ class ProcessParameters:
 		self.Model = settings.GetModel()
 		self.Events = settings.GetEventNumber()
 		self.ISRMode = settings.GetISRMode()
+		self.OutputFormat = settings.GetOutputFormat()
