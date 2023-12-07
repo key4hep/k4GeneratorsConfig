@@ -42,6 +42,7 @@ def main():
     model = settings.GetModel()
     events = settings.GetEventNumber()
     pdata = settings.GetParticleData()
+    outputFormat = settings.GetOutputFormat()
     gens = Gen.generators(settings.Generators())
     
     try:
@@ -51,6 +52,7 @@ def main():
       outdir= "Run-Cards"
 
     MakeOutDir(settings.Generators(),outdir)
+
     proc = {}
     for key, value in procs.items():
       initial = value["Initial"]

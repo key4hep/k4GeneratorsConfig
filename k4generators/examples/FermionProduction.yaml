@@ -2,6 +2,7 @@ Generators:
   - Sherpa
   - Whizard
 
+OutputFormat: evx
 OutDir: gen-out
 Events: 100
 

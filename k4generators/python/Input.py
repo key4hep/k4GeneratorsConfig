@@ -41,6 +41,12 @@ class Input:
 		except:
 			raise ValueError("SqrtS not defined")
 
+	def GetOutputFormat(self):
+		try:
+			return self.settings["OutputFormat"]
+		except:
+			return "hepmc"
+
 	def GetParticleData(self):
 		if not self.IsEmpty("ParticleData"):
 			return self.settings["ParticleData"]

@@ -33,6 +33,9 @@ class sherpa():
 						value = getattr(p, attr)
 						data=" {0}[{1}] {2};\n".format(name, p.get("pdg_code"), value)
 						self.run += data
+		if  self.procinfo.GetOutputFormat() == "hepmc":
+			self.run +=" EVENT_OUTPUT=HepMC_GenEvent[{0}];\n".format(self.procinfo.get("procname"))
+
 
 
 	def WriteProcess(self):
