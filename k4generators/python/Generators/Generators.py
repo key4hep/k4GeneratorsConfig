@@ -1,19 +1,27 @@
-import Sherpa, Whizard
+import Sherpa
+import Whizard
 
+class Generators:
+    """Generator class"""
+    def __init__(self, generator_list):
+        self.generator_list = generator_list
+        self.sherpa = None
+        self.whizard = None
+        self.proc_info = None
 
+    def set_process_info(self, proc_info):
+        self.proc_info = proc_info
 
-class generators():
-	"""Generator class"""
-	def __init__(self, genlist):
-		self.gens = genlist
-
-	def SetProcessInfo(self, procinfo):
-		self.procinfo = procinfo
-
-	def InitalizeGenerators(self):
-		if "Sherpa" in self.gens:
-			self.sherpa = Sherpa.sherpa(self.procinfo)
-			self.sherpa.WriteFile()
-		if "Whizard" in self.gens:
-			self.whizard = Whizard.whizard(self.procinfo)
-			self.whizard.WriteFile()
+    def initialize_generators(self):
+        if "Sherpa" in self.generator_list:
+            if Sherpa is not None:
+                self.sherpa = Sherpa.Sherpa(self.proc_info)
+                self.sherpa.write_file()
+            else:
+                print("Sherpa module not found. Unable to initialize Sherpa.")
+        if "Whizard" in self.generator_list:
+            if Whizard is not None:
+                self.whizard = Whizard.Whizard(self.proc_info)
+                self.whizard.write_file()
+            else:
+                print("Whizard module not found. Unable to initialize Whizard.")

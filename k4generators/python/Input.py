@@ -1,76 +1,53 @@
 import yaml
 import os
 
-
-
 class Input:
-	"""Class for loading yaml files"""
-	def __init__(self, file):
-		self.file = file
-		self.settings = None
-		if not os.path.isfile(file):
-			raise FileNotFoundError(file)
-		else:
-			self.LoadFile()
+    """Class for loading YAML files"""
+    def __init__(self, file):
+        self.file = file
+        self.settings = None
+        if not os.path.isfile(file):
+            raise FileNotFoundError(file)
+        else:
+            self.load_file()
 
-	def LoadFile(self):
-		with open(self.file, 'r') as file:
-			self.settings = yaml.safe_load(file)
+        for key,value in self.settings.items():
+        	setattr(self, key, value)
 
-	def IsEmpty(self, key):
-		if key in self.settings:
-			return False
-		return True
+    def load_file(self):
+        with open(self.file, 'r') as file:
+            self.settings = yaml.safe_load(file)
 
-	def Generators(self):
-		if self.IsEmpty("Generators"):
-			raise ValueError("No Generators set!")
-		self.gens = self.settings["Generators"]
-		return self.gens
+    def is_empty(self, key):
+        return key not in self.settings
 
-	def GetProcesses(self):
-		# print(self.settings["Processess"])
-		if len(self.settings["Processess"])==0:
-			raise ValueError("No processes defined!")
-		else:
-			return 	self.settings["Processess"]
+    def generators(self):
+        if self.is_empty("Generators"):
+            raise ValueError("No Generators set!")
+        return self.settings["Generators"]
 
-	def GetSqrtS(self):
-		try:
-			return self.settings["SqrtS"]
-		except:
-			raise ValueError("SqrtS not defined")
+    def get_processes(self):
+        processes = self.settings.get("Processes", [])
+        if not processes:
+            raise ValueError("No processes defined!")
+        return processes
 
-	def GetOutputFormat(self):
-		try:
-			return self.settings["OutputFormat"]
-		except:
-			return "hepmc"
+    def get_output_format(self):
+        try:
+            return self.settings["OutputFormat"]
+        except:
+            return "hepmc"
+    def get_sqrt_s(self):
+        return self.settings.get("SqrtS", None)
 
-	def GetParticleData(self):
-		if not self.IsEmpty("ParticleData"):
-			return self.settings["ParticleData"]
+    def get_particle_data(self):
+        return self.settings.get("ParticleData", None)
 
-	def GetModel(self):
-		if self.IsEmpty("Model"):
-			return "SM"
-		else:
-			return self.get("Model")
+    def get_model(self):
+        return self.settings.get("Model", "SM")
 
-	def GetEventNumber(self):
-		if self.IsEmpty("Events"):
-			return 0
-		else:
-			return self.get("Events")
+    def get_event_number(self):
+        return self.settings.get("Events", 0)
 
-	def GetISRMode(self):
-		if self.IsEmpty("ISRMode"):
-			return 0
-		else:
-			return self.get("ISRMode")
-
-	def get(self, key):
-		try:
-			return self.settings[key]
-		except:
-			return ValueError
+    def get_isr_mode(self):
+        return self.settings.get("ISRMode", 0)

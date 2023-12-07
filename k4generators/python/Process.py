@@ -1,111 +1,99 @@
-from Particles import Particles
+from Particles import Particle
 
-class Process():
- # """A standard Process"""
-	require_args=['initial', 'final', 'sqrts', 'order', 'procname']
+class Process:
+	"""A standard Process"""
+
+	_required_args = ['initial', 'final', 'sqrts', 'order', 'procname']
 
 	def __init__(self, initial, final, sqrts, order, procname, params, **options):
+		self._init = False
+		self._parts = []
+		self._dataparts = []
 
-		args= (initial, final, sqrts, order,procname)
+		args = (initial, final, sqrts, order, procname)
 		if len(initial) != 2:
-			raise ValueError("Initial state should have 2 particles not {}".format_map(len(initial)))
+			raise ValueError("Initial state should have 2 particles not {}".format(len(initial)))
 
-		for i, name in enumerate(self.require_args):
+		for i, name in enumerate(self._required_args):
 			setattr(self, name, args[i])
 
 		for setting in dir(params):
-			if "__" not in setting:
+			if not setting.startswith("__"):
 				setattr(self, setting, getattr(params, setting))
 
-		for (option, value) in options.items():
+		for option, value in options.items():
 			setattr(self, option, value)
-		self.parts = []
-		self.dataparts = []
-		self.init = False
-			 
 
-	def ProcessInfo(self):
-		self.beam1 = Particles.GetInfo(self.initial[0])
-		self.beam2 = Particles.GetInfo(self.initial[1])
-		self.finfo = {}
-		self.parts.append(self.beam1)
-		self.parts.append(self.beam2)
-		self.proclabel = "{} {} -> ".format(self.beam1.name, self.beam2.name)
+	def process_info(self):
+		self._beam1 = Particle.get_info(self.initial[0])
+		self._beam2 = Particle.get_info(self.initial[1])
+		self._finfo = {}
+		self._fpdg = []
+		self._parts.extend([self._beam1, self._beam2])
+		self._proclabel = "{} {} -> ".format(self._beam1.name, self._beam2.name)
 		for p in self.final:
-			self.finfo[p] = Particles.GetInfo(p)
-			self.proclabel+= self.finfo[p].name
-			self.proclabel+= " "
-			self.parts.append(self.finfo[p])
+			self._finfo[p] = Particle.get_info(p)
+			self._fpdg.append(str(p))
+			self._proclabel += f"{self._finfo[p].name} "
+			self._parts.append(self._finfo[p])
 
-	def SetParticleData(self,pdata):
-		if pdata is None:
+	def set_particle_data(self, pdata):
+		if pdata is None or self._init:
 			return
-		if self.init:
-			return  
 		for key, value in pdata.items():
-			# print(key,value)
-			Particles.SetInfo(key,value)
-			self.dataparts.append(Particles.GetInfo(key))
-		self.init = True
+			Particle.set_info(key, value)
+			self._dataparts.append(Particle.get_info(key))
+		self._init = True
 
-	def GetBeamFlavour(self, beam):
-		if beam > 2 or beam < 0:
+	def get_beam_flavour(self, beam):
+		if beam not in {1, 2}:
 			raise ValueError("Beam should be 1 or 2 not {}".format(beam))
-		if beam==1:
-			return self.beam1.get("pdg_code")
-		else:
-			return self.beam2.get("pdg_code")
+		return getattr(self, f"_beam{beam}").get("pdg_code")
 
-	def GetInitialPDG(self):
-		return "{0} {1}".format(self.GetBeamFlavour(0),self.GetBeamFlavour(1))
+	def get_initial_pdg(self):
+		return "{} {}".format(self.get_beam_flavour(1), self.get_beam_flavour(2))
 
-	def GetFinalPDG(self):
-		final=""
-		for p in self.finfo:
-			final+=" {}".format(p)
-		return final
-	 
-	def GetFinalPDGList(self):
-		final=[]
-		for p in self.finfo:
-			final.append(p)
-		return final
-	 
+	def get_final_pdg(self):
+		return " ".join(self._fpdg)
+
+	def get_final_pdg_list(self):
+		return list(self._finfo)
 
 	def get(self, name):
 		return getattr(self, name)
 
-	def GetArgs(self):
-		return self.require_args
+	def get_args(self):
+		return self._required_args
 
-	def GetParticles(self):
-		return self.parts
+	def get_particles(self):
+		return self._parts
 
-	def GetDataParticles(self):
-		return self.dataparts
+	def get_data_particles(self):
+		return self._dataparts
 
-	def GetQCDOrder(self):
+	def get_qcd_order(self):
 		return self.get("order")[1]
 
-	def GetQEDOrder(self):
+	def get_qed_order(self):
 		return self.get("order")[0]
 
-	def GetOutputFormat(self):
-		return self.OutputFormat
+	def get_output_format(self):
+		return self.output_format
 
-	def PrintInfo(self):
-		out = "Creating Runcards for {} at {} GeV".format(self.proclabel, self.sqrts)
+	def print_info(self):
+		out = f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV"
 		print(out)
-		print("Particles are defined with the follow parametes")
-		for p in self.parts:
-			p.PrintInfo()
+		print("Particles are defined with the following parameters")
+		for p in self._parts:
+			p.print_info()
 
 
 class ProcessParameters:
-	
-	def __init__(self,settings):
-		self.sqrts = settings.GetSqrtS()
-		self.Model = settings.GetModel()
-		self.Events = settings.GetEventNumber()
-		self.ISRMode = settings.GetISRMode()
-		self.OutputFormat = settings.GetOutputFormat()
+
+
+	def __init__(self, settings):
+		self.sqrts = settings.get_sqrt_s()
+		self.model = settings.get_model()
+		self.events = settings.get_event_number()
+		self.isr_mode = settings.get_isr_mode()
+		self.output_format = settings.get_output_format()

@@ -1,74 +1,59 @@
 import Parameters as Param
 
-class Particles():
-    """A standard Particles"""
-    require_args=['pdg_code', 'name', 'antiname','mass', 'width', 'texname', 'antitexname']
 
+class Particle:
+    """A standard Particle"""
+    _required_args = ['pdg_code', 'name', 'antiname', 'mass', 'width', 'texname', 'antitexname']
 
-    def __init__(self, pdg_code, name, antiname, mass, width, texname,
-                 antitexname, **options):
+    def __init__(self, pdg_code, name, antiname, mass, width, texname, antitexname, **options):
+        args = (pdg_code, name, antiname, mass, width, texname, antitexname)
+        assert len(self._required_args) == len(args)
 
-        args= (pdg_code, name, antiname, mass, width, texname,
-                antitexname)
-        assert(len(self.require_args) == len (args))
-    
-        for i, name in enumerate(self.require_args):
+        for i, name in enumerate(self._required_args):
             setattr(self, name, args[i])
-    
-        for (option, value) in options.items():
+
+        for option, value in options.items():
             setattr(self, option, value)
-             
+
     def get(self, name):
         return getattr(self, name)
-    
+
     def set(self, name, value):
         setattr(self, name, value)
-    
+
     def anti(self):
-        # if self.selfconjugate:
-        #     raise Exception('%s has no anti Particles.' % self.name) 
-        outdic = {}
-        for k,v in self.__dict__.items():
-            if k not in self.require_args:                
-                outdic[k] = -v
-                
-        return Particles(-self.pdg_code, self.antiname, self.name, self.mass, self.width,
-                        self.antitexname, self.texname)
+        out_dic = {}
+        for k, v in self.__dict__.items():
+            if k not in self._required_args:
+                out_dic[k] = -v
 
-    def SetInfo(pdg, info):
+        return Particle(-self.pdg_code, self.antiname, self.name, self.mass, self.width,
+                         self.antitexname, self.texname)
+
+    @staticmethod
+    def set_info(pdg, info):
         for name, value in info.items():
-            # print(name,value)
-            for k, v in list(globals().items()):
-                if isinstance(v,Particles):
-                    if v.pdg_code == pdg:
-                        v.set(name,value)
-                    if v.HasAnti():
-                        if v.pdg_code == -pdg:
-                            v.set(name,value)   
+            for _, v in globals().items():
+                if isinstance(v, Particle) and v.pdg_code == pdg:
+                    v.set(name, value)
+                if isinstance(v, Particle) and v.has_anti() and v.pdg_code == -pdg:
+                    v.set(name, value)
 
-    def GetInfo(pdg):
-        for k, v in list(globals().items()):
-            if isinstance(v,Particles):
-                if v.pdg_code == pdg:
-                 return v;
+    @staticmethod
+    def get_info(pdg):
+        for _, v in globals().items():
+            if isinstance(v, Particle) and v.pdg_code == pdg:
+                return v
         raise ValueError("Could not find Particle with ID {}".format(pdg))
 
-    def PrintInfo(self):
-        for name in self.require_args:
+    def print_info(self):
+        for name in self._required_args:
             print(name, self.get(name))
 
-    def HasAnti(self):
-        if self.name==self.antiname:
-            return False
-        return True
+    def has_anti(self):
+        return self.name != self.antiname
 
-def GetParticle(pdg):
-     for k, v in list(globals().items()):
-            if isinstance(v,Particles):
-                if v.pdg_code == pdg:
-                    return v
-
-a = Particles(pdg_code = 22,
+a = Particle(pdg_code = 22,
              name = 'a',
              antiname = 'a',
              mass = 0,
@@ -76,7 +61,7 @@ a = Particles(pdg_code = 22,
              texname = 'a',
              antitexname = 'a')
 
-Z = Particles(pdg_code = 23,
+Z = Particle(pdg_code = 23,
              name = 'Z',
              antiname = 'Z',
              mass = Param.MZ,
@@ -85,7 +70,7 @@ Z = Particles(pdg_code = 23,
              antitexname = 'Z',
              )
 
-W__plus__ = Particles(pdg_code = 24,
+W__plus__ = Particle(pdg_code = 24,
                      name = 'W+',
                      antiname = 'W-',
                      spin = 3,
@@ -98,7 +83,7 @@ W__plus__ = Particles(pdg_code = 24,
 W__minus__ = W__plus__.anti()
 
 
-g = Particles(pdg_code = 21,
+g = Particle(pdg_code = 21,
              name = 'g',
              antiname = 'g',
              mass = 0,
@@ -107,7 +92,7 @@ g = Particles(pdg_code = 21,
              antitexname = 'g',
              )
 
-ve = Particles(pdg_code = 12,
+ve = Particle(pdg_code = 12,
               name = 've',
               antiname = 've~',
               spin = 2,
@@ -120,7 +105,7 @@ ve = Particles(pdg_code = 12,
 
 ve__tilde__ = ve.anti()
 
-vm = Particles(pdg_code = 14,
+vm = Particle(pdg_code = 14,
               name = 'vm',
               antiname = 'vm~',
               mass = 0,
@@ -131,7 +116,7 @@ vm = Particles(pdg_code = 14,
 
 vm__tilde__ = vm.anti()
 
-vt = Particles(pdg_code = 16,
+vt = Particle(pdg_code = 16,
               name = 'vt',
               antiname = 'vt~',
               mass = 0,
@@ -142,7 +127,7 @@ vt = Particles(pdg_code = 16,
 
 vt__tilde__ = vt.anti()
 
-e__minus__ = Particles(pdg_code = 11,
+e__minus__ = Particle(pdg_code = 11,
                       name = 'e-',
                       antiname = 'e+',
                       mass = 0,
@@ -153,7 +138,7 @@ e__minus__ = Particles(pdg_code = 11,
 
 e__plus__ = e__minus__.anti()
 
-mu__minus__ = Particles(pdg_code = 13,
+mu__minus__ = Particle(pdg_code = 13,
                        name = 'mu-',
                        antiname = 'mu+',
                        mass = 0,
@@ -164,7 +149,7 @@ mu__minus__ = Particles(pdg_code = 13,
 
 mu__plus__ = mu__minus__.anti()
 
-ta__minus__ = Particles(pdg_code = 15,
+ta__minus__ = Particle(pdg_code = 15,
                        name = 'ta-',
                        antiname = 'ta+',
                        mass = 0,
@@ -175,7 +160,7 @@ ta__minus__ = Particles(pdg_code = 15,
 
 ta__plus__ = ta__minus__.anti()
 
-u = Particles(pdg_code = 2,
+u = Particle(pdg_code = 2,
              name = 'u',
              antiname = 'u~',
              mass = 0,
@@ -186,7 +171,7 @@ u = Particles(pdg_code = 2,
 
 u__tilde__ = u.anti()
 
-c = Particles(pdg_code = 4,
+c = Particle(pdg_code = 4,
              name = 'c',
              antiname = 'c~',
              mass = 0,
@@ -197,7 +182,7 @@ c = Particles(pdg_code = 4,
 
 c__tilde__ = c.anti()
 
-t = Particles(pdg_code = 6,
+t = Particle(pdg_code = 6,
              name = 't',
              antiname = 't~',
              mass = Param.MT,
@@ -208,7 +193,7 @@ t = Particles(pdg_code = 6,
 
 t__tilde__ = t.anti()
 
-d = Particles(pdg_code = 1,
+d = Particle(pdg_code = 1,
              name = 'd',
              antiname = 'd~',
              mass = 0,
@@ -219,7 +204,7 @@ d = Particles(pdg_code = 1,
 
 d__tilde__ = d.anti()
 
-s = Particles(pdg_code = 3,
+s = Particle(pdg_code = 3,
              name = 's',
              antiname = 's~',
              spin = 2,
@@ -232,7 +217,7 @@ s = Particles(pdg_code = 3,
 
 s__tilde__ = s.anti()
 
-b = Particles(pdg_code = 5,
+b = Particle(pdg_code = 5,
              name = 'b',
              antiname = 'b~',
              spin = 2,
@@ -245,7 +230,7 @@ b = Particles(pdg_code = 5,
 
 b__tilde__ = b.anti()
 
-H = Particles(pdg_code = 25,
+H = Particle(pdg_code = 25,
              name = 'H',
              antiname = 'H',
              mass = Param.MH,
