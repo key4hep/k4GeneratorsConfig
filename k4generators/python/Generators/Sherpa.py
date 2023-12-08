@@ -38,6 +38,7 @@ class Sherpa:
 						value = getattr(p, attr)
 						op_name = f"{name}[{p.get('pdg_code')}]"
 						self.add_run_option(op_name, value)
+						
 		if  self.procinfo.get("output_format") == "hepmc":
 			eoutname="HepMC_GenEvent[{0}]".format(self.procinfo.get("procname"))
 			self.add_run_option("EVENT_OUTPUT", eoutname)
