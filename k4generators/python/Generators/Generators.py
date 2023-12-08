@@ -1,5 +1,6 @@
 import Sherpa
 import Whizard
+import Madgraph
 
 class Generators:
     """Generator class"""
@@ -7,6 +8,7 @@ class Generators:
         self.generator_list = generator_list
         self.sherpa = None
         self.whizard = None
+        self.madgraph = None
         self.proc_info = None
 
     def set_process_info(self, proc_info):
@@ -25,3 +27,10 @@ class Generators:
                 self.whizard.write_file()
             else:
                 print("Whizard module not found. Unable to initialize Whizard.")
+
+        if "Madgraph" in self.generator_list:
+            if Madgraph is not None:
+                self.madgraph = Madgraph.Madgraph(self.proc_info)
+                self.madgraph.write_file()
+            else:
+                print("Madgraph module not found. Unable to initialize Madgraph.")
