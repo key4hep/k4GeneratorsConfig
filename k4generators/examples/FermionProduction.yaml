@@ -1,9 +1,10 @@
 Generators:
   - Sherpa
   - Whizard
+  - Madgraph
 
 OutputFormat: evx
-OutDir: gen-out
+OutDir: Run-Cards
 Events: 100
 
 
