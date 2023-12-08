@@ -23,6 +23,7 @@ class Madgraph:
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
+		self.add_run_option("set output", self.outdir+f"/{self.procinfo.get('procname')}")
 
 
 	def set_particle_data(self):
