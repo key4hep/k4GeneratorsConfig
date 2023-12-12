@@ -68,7 +68,6 @@ class Sherpa:
 		self.file = self.run + self.ptext
 		with open(self.outfile, "w+") as file:
 			file.write(self.file)
-		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
 
 	def write_key4hepfile(self,shell,config):
 		key4hepRun = shell+"\n"
@@ -76,6 +75,7 @@ class Sherpa:
 		key4hepRun += self.executable+" "+self.outfileName+"\n"
 		with open(self.key4hepfile, "w+") as file:
 			file.write(key4hepRun)
+		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
 
 	def add_run_option(self, key, value):
 		self.run += f" {key} {value};\n"
