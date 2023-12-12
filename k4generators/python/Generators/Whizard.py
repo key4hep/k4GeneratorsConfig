@@ -1,4 +1,5 @@
 import Particles
+import os, stat
 
 class Whizard:
 	"""Whizard class"""
@@ -9,7 +10,11 @@ class Whizard:
 		self.ext = "sin"
 		self.file = ""
 		self.outdir = f"{procinfo.get('OutDir')}/Whizard"
-		self.outfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfile = f"{self.outdir}/{self.outfileName}"
+
+		self.executable  = "whizard"
+		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 
 	def write_process(self):
 		self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
@@ -58,6 +63,14 @@ class Whizard:
 		self.file = f"{self.process}{self.integrate}"
 		with open(self.outfile, "w+") as file:
 			file.write(self.file)
+		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+
+	def write_key4hepfile(self,shell,config):
+		key4hepRun = shell+"\n"
+		key4hepRun += config+"\n"
+		key4hepRun += self.executable+" "+self.outfileName+"\n"
+		with open(self.key4hepfile, "w+") as file:
+			file.write(key4hepRun)
 
 	def is_whizard_particle_data(self, d):
 		name = None

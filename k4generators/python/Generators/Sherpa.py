@@ -1,3 +1,5 @@
+import os, stat
+
 class Sherpa:
 	"""Sherpa class"""
 	def __init__(self, procinfo):
@@ -7,7 +9,11 @@ class Sherpa:
 		self.ext = "dat"
 		self.file = ""
 		self.outdir = f"{procinfo.get('OutDir')}/Sherpa"
-		self.outfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfile = f"{self.outdir}/{self.outfileName}"
+
+		self.executable  = "Sherpa -f"
+		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 
 	def write_run(self):
 		self.run = "(run){\n"
@@ -62,6 +68,14 @@ class Sherpa:
 		self.file = self.run + self.ptext
 		with open(self.outfile, "w+") as file:
 			file.write(self.file)
+		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+
+	def write_key4hepfile(self,shell,config):
+		key4hepRun = shell+"\n"
+		key4hepRun += config+"\n"
+		key4hepRun += self.executable+" "+self.outfileName+"\n"
+		with open(self.key4hepfile, "w+") as file:
+			file.write(key4hepRun)
 
 	def add_run_option(self, key, value):
 		self.run += f" {key} {value};\n"
