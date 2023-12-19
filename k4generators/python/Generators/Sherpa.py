@@ -17,6 +17,9 @@ class Sherpa:
 
 	def write_run(self):
 		self.run = "(run){\n"
+
+		self.add_run_option("RANDOM_SEED", self.procinfo.get_rndmSeed())
+
 		ENG = self.procinfo.get("sqrts") / 2.
 		beam1_pdg = self.procinfo.get_beam_flavour(1)
 		beam2_pdg = self.procinfo.get_beam_flavour(2)

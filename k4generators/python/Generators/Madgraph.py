@@ -26,6 +26,7 @@ class Madgraph:
 				self.proc += "> "
 		self.add_run_option("generate", self.proc)
 		self.add_run_option("launch", None)
+		self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
@@ -93,4 +94,4 @@ class Madgraph:
 #*                                                          *
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
-#************************************************************"\n '''
+#************************************************************"\n'''

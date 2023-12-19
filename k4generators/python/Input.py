@@ -37,6 +37,13 @@ class Input:
             return self.settings["OutputFormat"]
         except:
             return "hepmc"
+
+    def get_rndmSeed(self):
+        try:
+            return self.settings["RandomSeed"]
+        except:
+            return 4711
+
     def get_sqrt_s(self):
         return self.settings.get("SqrtS", None)
 

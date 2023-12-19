@@ -80,6 +80,9 @@ class Process:
 	def get_output_format(self):
 		return self.output_format
 
+	def get_rndmSeed(self):
+		return self.rndmSeed
+
 	def print_info(self):
 		out = f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV"
 		print(out)
@@ -97,3 +100,4 @@ class ProcessParameters:
 		self.events = settings.get_event_number()
 		self.isr_mode = settings.get_isr_mode()
 		self.output_format = settings.get_output_format()
+		self.rndmSeed = settings.get_rndmSeed()

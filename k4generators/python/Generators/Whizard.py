@@ -26,6 +26,8 @@ class Whizard:
 
 		self.process = f"model = {self.procinfo.get('model')}\n"
 
+		self.process += f"seed = {self.procinfo.get_rndmSeed()}\n"
+
 		if self.procinfo.get("isr_mode"):
 			self.add_process_option("?isr_handler", "true")
 			self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2} => isr,isr\n"
