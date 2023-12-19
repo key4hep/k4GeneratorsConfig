@@ -31,11 +31,11 @@ class Madgraph:
 		self.add_run_option("generate", self.proc)
 		self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
 		self.add_run_option("launch", None)
-		self.run += self.procDB.write_DBInfo()
 		self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
+		self.run += self.procDB.write_DBInfo()
 
 
 	def set_particle_data(self):

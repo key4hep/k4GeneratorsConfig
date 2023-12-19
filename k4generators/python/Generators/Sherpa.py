@@ -41,7 +41,6 @@ class Sherpa:
 			self.add_run_option("PDF_LIBRARY", "None")
 		self.add_run_option("EVENTS", self.procinfo.get("events"))
 		self.run += "\n\n"
-		self.run += self.procDB.get_run_out()
 		for p in self.procinfo.get_data_particles():
 			for attr in dir(p):
 				if not callable(getattr(p, attr)) and not attr.startswith("__"):
@@ -58,6 +57,7 @@ class Sherpa:
 		elif self.procinfo.get("output_format") == "hepmc3":
 			eoutname="HepMC3_GenEvent[{0}]".format(self.procinfo.get("procname"))
 			self.add_run_option("EVENT_OUTPUT", eoutname)
+		self.run += self.procDB.get_run_out()
 
 
 	def write_process(self):
