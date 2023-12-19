@@ -61,6 +61,9 @@ class Whizard:
 		self.integrate = "simulate (proc) { iterations = 5:5000}"
 
 	def add_process_option(self, key, value):
+		if key in self.process:
+			print(f"{key} has already been defined in {self.name}.")
+			return
 		self.process += f" {key} = {value}\n"
 
 	def write_file(self):
