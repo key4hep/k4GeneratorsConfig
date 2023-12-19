@@ -1,4 +1,5 @@
 import Particles
+import WhizardProcDB
 import os, stat
 
 class Whizard:
@@ -12,6 +13,8 @@ class Whizard:
 		self.outdir = f"{procinfo.get('OutDir')}/Whizard"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
+
+		self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
 
 		self.executable  = "whizard"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
@@ -49,6 +52,8 @@ class Whizard:
 							self.add_process_option(dname, value)
 		if self.procinfo.get("output_format") != "evx":
 			self.add_process_option("sample_format", self.procinfo.get("output_format"))
+			self.add_process_option("?write_raw","false")
+		self.process += self.procDB.write_DBInfo()
 
 	def write_integrate(self):
 		self.integrate = "simulate (proc) { iterations = 5:5000}"
