@@ -25,19 +25,19 @@ class Madgraph:
 			if i==1:
 				self.proc += "> "
 		self.add_run_option("generate", self.proc)
+		self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
 		self.add_run_option("launch", None)
 		self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
-		self.add_run_option("set output", self.outdir+f"/{self.procinfo.get('procname')}")
 
 
 	def set_particle_data(self):
 		for p in self.procinfo.get_data_particles():
 			for attr in dir(p):
 				if not callable(getattr(p, attr)) and not attr.startswith("__"):
-					name = p.get("name")
+					name = p.get("name").replace('+', '').replace('-', '')
 					_prop = self.is_mg_particle_data(attr)
 					if _prop is not None:
 						value = getattr(p, attr)
