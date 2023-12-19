@@ -1,3 +1,6 @@
+import stat,os
+import MadgraphProcDB
+
 class Madgraph:
 	"""Madgraph class"""
 	def __init__(self, procinfo):
@@ -7,7 +10,14 @@ class Madgraph:
 		self.ext = "dat"
 		self.file = ""
 		self.outdir = f"{procinfo.get('OutDir')}/Madgraph"
-		self.outfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfile = f"{self.outdir}/{self.outfileName}"
+
+		self.executable  = "mg5_aMC"
+		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
+		self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
+		self.procDB.write_DBInfo()
+
 
 	def write_run(self):
 		self.add_header()
@@ -19,18 +29,20 @@ class Madgraph:
 			if i==1:
 				self.proc += "> "
 		self.add_run_option("generate", self.proc)
+		self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
 		self.add_run_option("launch", None)
+		self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
-		self.add_run_option("set output", self.outdir+f"/{self.procinfo.get('procname')}")
+		self.run += self.procDB.write_DBInfo()
 
 
 	def set_particle_data(self):
 		for p in self.procinfo.get_data_particles():
 			for attr in dir(p):
 				if not callable(getattr(p, attr)) and not attr.startswith("__"):
-					name = p.get("name")
+					name = p.get("name").replace('+', '').replace('-', '')
 					_prop = self.is_mg_particle_data(attr)
 					if _prop is not None:
 						value = getattr(p, attr)
@@ -43,7 +55,18 @@ class Madgraph:
 		with open(self.outfile, "w+") as file:
 			file.write(self.file)
 
+	def write_key4hepfile(self,shell,config):
+		key4hepRun = shell+"\n"
+		key4hepRun += config+"\n"
+		key4hepRun += self.executable+" "+self.outfileName+"\n"
+		with open(self.key4hepfile, "w+") as file:
+			file.write(key4hepRun)
+		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+
 	def add_run_option(self, key, value):
+		if key in self.run:
+			print(f"{key} has already been defined in {self.name}.")
+			return
 		if value is not None:
 			self.run += f"{key} {value}\n"
 		else:
@@ -79,4 +102,4 @@ class Madgraph:
 #*                                                          *
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
-#************************************************************"\n '''
+#************************************************************"\n'''

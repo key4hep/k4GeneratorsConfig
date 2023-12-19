@@ -1,4 +1,6 @@
 import Particles
+import WhizardProcDB
+import os, stat
 
 class Whizard:
 	"""Whizard class"""
@@ -9,7 +11,13 @@ class Whizard:
 		self.ext = "sin"
 		self.file = ""
 		self.outdir = f"{procinfo.get('OutDir')}/Whizard"
-		self.outfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+		self.outfile = f"{self.outdir}/{self.outfileName}"
+
+		self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
+
+		self.executable  = "whizard"
+		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 
 	def write_process(self):
 		self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
@@ -17,6 +25,8 @@ class Whizard:
 		self.finalstate = ", ".join(map(self.pdg_to_whizard, self.procinfo.get_final_pdg_list()))
 
 		self.process = f"model = {self.procinfo.get('model')}\n"
+
+		self.process += f"seed = {self.procinfo.get_rndmSeed()}\n"
 
 		if self.procinfo.get("isr_mode"):
 			self.add_process_option("?isr_handler", "true")
@@ -44,11 +54,16 @@ class Whizard:
 							self.add_process_option(dname, value)
 		if self.procinfo.get("output_format") != "evx":
 			self.add_process_option("sample_format", self.procinfo.get("output_format"))
+			self.add_process_option("?write_raw","false")
+		self.process += self.procDB.write_DBInfo()
 
 	def write_integrate(self):
 		self.integrate = "simulate (proc) { iterations = 5:5000}"
 
 	def add_process_option(self, key, value):
+		if key in self.process:
+			print(f"{key} has already been defined in {self.name}.")
+			return
 		self.process += f" {key} = {value}\n"
 
 	def write_file(self):
@@ -58,6 +73,14 @@ class Whizard:
 		self.file = f"{self.process}{self.integrate}"
 		with open(self.outfile, "w+") as file:
 			file.write(self.file)
+
+	def write_key4hepfile(self,shell,config):
+		key4hepRun = shell+"\n"
+		key4hepRun += config+"\n"
+		key4hepRun += self.executable+" "+self.outfileName+"\n"
+		with open(self.key4hepfile, "w+") as file:
+			file.write(key4hepRun)
+		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
 
 	def is_whizard_particle_data(self, d):
 		name = None
