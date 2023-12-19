@@ -1,4 +1,5 @@
 import os, stat
+import SherpaProcDB
 
 class Sherpa:
 	"""Sherpa class"""
@@ -11,6 +12,8 @@ class Sherpa:
 		self.outdir = f"{procinfo.get('OutDir')}/Sherpa"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
+		self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
+		self.procDB.write_DBInfo()
 
 		self.executable  = "Sherpa -f"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
@@ -38,7 +41,7 @@ class Sherpa:
 			self.add_run_option("PDF_LIBRARY", "None")
 		self.add_run_option("EVENTS", self.procinfo.get("events"))
 		self.run += "\n\n"
-		self.run += " # Add Particle data\n"
+		self.run += self.procDB.get_run_out()
 		for p in self.procinfo.get_data_particles():
 			for attr in dir(p):
 				if not callable(getattr(p, attr)) and not attr.startswith("__"):
@@ -81,9 +84,15 @@ class Sherpa:
 		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
 
 	def add_run_option(self, key, value):
+		if key in self.run:
+			print(f"{key} has already been defined in {self.name}.")
+			return
 		self.run += f" {key} {value};\n"
 
 	def add_process_option(self, key, value):
+		if key in self.ptext:
+			print(f"{key} has already been defined in {self.name}.")
+			return
 		self.ptext += f" {key} {value};\n"
 
 	def is_sherpa_particle_data(self, d):

@@ -1,4 +1,5 @@
 import stat,os
+import MadgraphProcDB
 
 class Madgraph:
 	"""Madgraph class"""
@@ -14,6 +15,9 @@ class Madgraph:
 
 		self.executable  = "mg5_aMC"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
+		self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
+		self.procDB.write_DBInfo()
+
 
 	def write_run(self):
 		self.add_header()
@@ -27,6 +31,7 @@ class Madgraph:
 		self.add_run_option("generate", self.proc)
 		self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
 		self.add_run_option("launch", None)
+		self.run += self.procDB.write_DBInfo()
 		self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
@@ -59,6 +64,9 @@ class Madgraph:
 		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
 
 	def add_run_option(self, key, value):
+		if key in self.run:
+			print(f"{key} has already been defined in {self.name}.")
+			return
 		if value is not None:
 			self.run += f"{key} {value}\n"
 		else:
