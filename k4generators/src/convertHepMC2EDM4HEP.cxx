@@ -50,7 +50,7 @@
 
 #include "cmdline.h"
 using namespace HepMC3;
-enum formats {autodetect, hepmc2, hepmc3, edm4hep, hpe,root, treeroot, treerootopal, lhef, dump, dot,  plugin, none, proto};
+enum formats {autodetect, hepmc2, hepmc3, EDM4HEP, hpe,root, treeroot, treerootopal, lhef, dump, dot,  plugin, none, proto};
 
 template <class T>
 std::shared_ptr<Reader> get_input_file(const char* name, const bool input_is_stdin, const bool use_compression) {
@@ -89,7 +89,7 @@ int main(int argc, char** argv)
     format_map.insert(std::pair<std::string,formats> ( "auto", autodetect ));
     format_map.insert(std::pair<std::string,formats> ( "hepmc2", hepmc2 ));
     format_map.insert(std::pair<std::string,formats> ( "hepmc3", hepmc3 ));
-    format_map.insert(std::pair<std::string,formats> ( "edm4hep", edm4hep ));
+    format_map.insert(std::pair<std::string,formats> ( "edm4hep", EDM4HEP ));
     format_map.insert(std::pair<std::string,formats> ( "hpe", hpe  ));
     format_map.insert(std::pair<std::string,formats> ( "root", root ));
     format_map.insert(std::pair<std::string,formats> ( "treeroot", treeroot ));
@@ -140,7 +140,7 @@ int main(int argc, char** argv)
     case hepmc3:
         input_file = get_input_file<ReaderAscii>(ai.inputs[0], input_is_stdin, ai.compressed_input_flag);
         break;
-    case edm4hep:
+    case EDM4HEP:
         printf("Input format %s  is not supported\n", ai.input_format_arg);
         exit(2);
         break;
@@ -205,7 +205,7 @@ int main(int argc, char** argv)
     case hepmc3:
         output_file = get_output_file<WriterAscii>(ai.inputs[1], ai.compressed_output_arg);
         break;
-    case edm4hep:
+    case EDM4HEP:
         output_file = get_output_file<WriterEDM4HEP>(ai.inputs[1], ai.compressed_output_arg);
         break;
     case hpe:
