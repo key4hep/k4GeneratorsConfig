@@ -26,7 +26,7 @@ if(podio_FOUND)
   target_link_libraries(convertHepMC2EDM4HEP PUBLIC podio::podioRootIO)
 endif()
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(HepPDT REQUIRED)
 if(HepPDT_FOUND )
   target_include_directories(convertHepMC2EDM4HEP PUBLIC ${HEPPDT_INCLUDE_DIR} )
