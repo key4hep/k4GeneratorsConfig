@@ -78,6 +78,7 @@ class Whizard:
 		key4hepRun = shell+"\n"
 		key4hepRun += config+"\n"
 		key4hepRun += self.executable+" "+self.outfileName+"\n"
+		key4hepRun += f"../../convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.procinfo.get('procname')}.edm4hep\n"
 		with open(self.key4hepfile, "w+") as file:
 			file.write(key4hepRun)
 		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
