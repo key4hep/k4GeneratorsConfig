@@ -47,7 +47,7 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    python3 ../../../python/main.py -f "../$yamlFile"
+    python3 ../../../k4generators/python/main.py -f "../$yamlFile"
     checkOutputs
     cd ..
 }
