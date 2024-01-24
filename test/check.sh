@@ -16,7 +16,6 @@ function checkFile() {
     local refgenerator="$(basename "$generator")"
     local outFile="$2"
     if [[ -e "$REFDIR/$refgenerator/$outFile" ]]; then
-        echo "Found $outFile in reference results."
         if diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$outFile" &> /dev/null; then
             echo "Files are identical."
         else
