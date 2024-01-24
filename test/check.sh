@@ -2,7 +2,6 @@
 
 set -e
 
-cd test
 mkdir -p ci-setups
 
 CWD=${PWD}
