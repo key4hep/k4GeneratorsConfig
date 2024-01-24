@@ -57,5 +57,5 @@ for yamlFile in *.yaml; do
 done
 
 # Optionally clean up the test directory
-rm -r "${CWD}/test"
+rm -r "${CWD}/ci-setups"
 exit 0
