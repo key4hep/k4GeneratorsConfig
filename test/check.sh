@@ -15,8 +15,8 @@ function checkFile() {
     local generator="$1"
     local outFile="$2"
     echo Looking for file $REFDIR/$generator/$outFile
-   ls -l $REFDIR/$generator/
-   ls -l $REFDIR/
+    echo generator is $generator
+    echo outfile is $outfile
     if [[ -e "$REFDIR/$generator/$outFile" ]]; then
         echo "Found $outFile in reference results."
         if diff "$REFDIR/$generator/$outFile" "$PWD/$generator/$outFile" &> /dev/null; then
