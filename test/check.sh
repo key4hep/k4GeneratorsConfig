@@ -13,17 +13,15 @@ cd ci-setups
 
 function checkFile() {
     local generator="$1"
+    local refgenerator="$(basename "$generator")"
     local outFile="$2"
-    echo Looking for file $REFDIR/$generator/$outFile
-    echo generator is $generator
-    echo outfile is $outfile
-    if [[ -e "$REFDIR/$generator/$outFile" ]]; then
+    if [[ -e "$REFDIR/$refgenerator/$outFile" ]]; then
         echo "Found $outFile in reference results."
-        if diff "$REFDIR/$generator/$outFile" "$PWD/$generator/$outFile" &> /dev/null; then
+        if diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$outFile" &> /dev/null; then
             echo "Files are identical."
         else
             echo "Files are different."
-            diff "$REFDIR/$generator/$outFile" "$PWD/$generator/$outFile"
+            diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$outFile"
             exit 1
         fi
     else
