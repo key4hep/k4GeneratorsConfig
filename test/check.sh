@@ -2,15 +2,13 @@
 
 set -e
 
-mkdir -p test/ref-results
-mkdir -p test/ci-setups
-
-tar xf main-res.tar.gz --directory="${PWD}/test/ref-results"
-CWD=${PWD}
-REFDIR="${PWD}/test/ref-results"
-EXAMPLEDIR="${PWD}/../examples"
-
 cd test
+mkdir -p ci-setups
+
+CWD=${PWD}
+REFDIR="${PWD}/ref-results"
+EXAMPLEDIR="${PWD}/../k4generators/examples"
+
 cp "$EXAMPLEDIR"/*yaml ci-setups
 cd ci-setups
 
