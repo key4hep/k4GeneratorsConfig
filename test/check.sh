@@ -2,8 +2,8 @@
 
 set -e
 
+shopt -s expand_aliases
 source ../setup.sh
-alias
 
 mkdir -p ci-setups
 
@@ -49,9 +49,6 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    alias
-    pwd
-    ls -l /builds/aprice/k4generators/python/main.py
     k4gen -f "../$yamlFile"
     checkOutputs
     cd ..
