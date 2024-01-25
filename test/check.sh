@@ -6,7 +6,7 @@ mkdir -p ci-setups
 
 CWD=${PWD}
 REFDIR="${PWD}/ref-results"
-EXAMPLEDIR="${PWD}/../k4generators/examples"
+EXAMPLEDIR="${PWD}/../examples"
 
 cp "$EXAMPLEDIR"/*yaml ci-setups
 cd ci-setups
