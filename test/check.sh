@@ -2,6 +2,8 @@
 
 set -e
 
+source ../setup.sh
+
 mkdir -p ci-setups
 
 CWD=${PWD}
@@ -46,7 +48,7 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    python3 ../../../k4generators/python/main.py -f "../$yamlFile"
+    k4gen "../$yamlFile"
     checkOutputs
     cd ..
 }
