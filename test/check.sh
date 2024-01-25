@@ -2,29 +2,25 @@
 
 set -e
 
-mkdir -p test/ref-results
-mkdir -p test/ci-setups
+mkdir -p ci-setups
 
-tar xf main-res.tar.gz --directory="${PWD}/test/ref-results"
 CWD=${PWD}
-REFDIR="${PWD}/test/ref-results"
-EXAMPLEDIR="${PWD}/../examples"
+REFDIR="${PWD}/ref-results"
+EXAMPLEDIR="${PWD}/../k4generators/examples"
 
-cd test
 cp "$EXAMPLEDIR"/*yaml ci-setups
 cd ci-setups
 
 function checkFile() {
     local generator="$1"
+    local refgenerator="$(basename "$generator")"
     local outFile="$2"
-
-    if [[ -e "$REFDIR/$generator/$outFile" ]]; then
-        echo "Found $outFile in reference results."
-        if diff "$REFDIR/$generator/$outFile" "$PWD/$generator/$outFile" &> /dev/null; then
+    if [[ -e "$REFDIR/$refgenerator/$outFile" ]]; then
+        if diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$outFile" &> /dev/null; then
             echo "Files are identical."
         else
             echo "Files are different."
-            diff "$REFDIR/$generator/$outFile" "$PWD/$generator/$outFile"
+            diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$outFile"
             exit 1
         fi
     else
@@ -50,7 +46,7 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    python3 ../../../../python/main.py -f "../$yamlFile"
+    python3 ../../../k4generators/python/main.py -f "../$yamlFile"
     checkOutputs
     cd ..
 }
@@ -60,5 +56,5 @@ for yamlFile in *.yaml; do
 done
 
 # Optionally clean up the test directory
-rm -r "${CWD}/test"
+rm -r "${CWD}/ci-setups"
 exit 0
