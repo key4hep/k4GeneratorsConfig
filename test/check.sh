@@ -50,6 +50,8 @@ function processYAML() {
     cd "test-$filename"
     echo "Processing file: $yamlFile"
     alias
+    pwd
+    ls -l /builds/aprice/k4generators/python/main.py
     k4gen -f "../$yamlFile"
     checkOutputs
     cd ..
