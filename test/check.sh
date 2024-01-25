@@ -3,6 +3,7 @@
 set -e
 
 source ../setup.sh
+alias
 
 mkdir -p ci-setups
 
@@ -48,7 +49,8 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    k4gen "../$yamlFile"
+    alias
+    k4gen -f "../$yamlFile"
     checkOutputs
     cd ..
 }
