@@ -15,8 +15,10 @@
  WIDTH[11] 0;
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- MASS[24] 80.379;
- WIDTH[24] 2.085;
+ EVENT_OUTPUT HepMC_GenEvent[Difermion];
+ EW_SCHEME 3
+ MASS[24] 80.419;
+ WIDTH[24] 2.0476;
 }(run)
 
 (processes){
