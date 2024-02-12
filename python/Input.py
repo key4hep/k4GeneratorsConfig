@@ -44,6 +44,30 @@ class Input:
         except:
             return 4711
 
+    def get_Beamstrahlung(self):
+        try:
+            return self.settings["Beamstrahlung"]
+        except:
+            return "ILC"
+
+    def get_PythiaTune(self):
+        try:
+            return self.settings["PythiaTune"]
+        except:
+            return "None"
+
+    def get_ElectronPolarisation(self):
+        try:
+            return self.settings["ElectronPolarisation"]
+        except:
+            return 0
+
+    def get_PositronPolarisation(self):
+        try:
+            return self.settings["PositronPolarisation"]
+        except:
+            return 0
+
     def get_sqrt_s(self):
         return self.settings.get("SqrtS", None)
 
