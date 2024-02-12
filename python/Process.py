@@ -83,6 +83,12 @@ class Process:
 	def get_Beamstrahlung(self):
 		return self.Beamstrahlung
 
+	def get_BeamstrahlungFile(self):
+		if  self.Beamstrahlung is not None:
+                        return f"{self.Beamstrahlung}_{self.sqrts}.circe"
+		else:
+                        return None
+
 	def get_PythiaTune(self):
 		return self.PythiaTune
 
@@ -112,7 +118,7 @@ class ProcessParameters:
 		self.events = settings.get_event_number()
 		self.isr_mode = settings.get_isr_mode()
 		self.output_format        = settings.get_output_format()
-		self.output_Beamstrahlung = settings.get_Beamstrahlung()
+		self.Beamstrahlung        = settings.get_Beamstrahlung()
 		self.PythiaTune           = settings.get_PythiaTune()
 		self.ElectronPolarisation = settings.get_ElectronPolarisation()
 		self.PositronPolarisation = settings.get_PositronPolarisation()

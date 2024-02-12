@@ -31,8 +31,10 @@ class Whizard:
 		if self.procinfo.get("isr_mode"):
 			self.add_process_option("?isr_handler", "true")
 			self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2} => isr,isr\n"
-			isrmass = Particles.GetParticle(self.procinfo.get_beam_flavour(1)).mass
+			isrmass = Particles.Particle.get_info(self.procinfo.get_beam_flavour(1)).mass
 			self.add_process_option("isr_mass", isrmass)
+			if self.procinfo.Beamstrahlung is not None:
+				self.process += self.procinfo.get_BeamstrahlungFile()+"\n"
 		else:
 			self.add_process_option("?isr_handler", "false")
 		self.add_process_option("n_events", self.procinfo.get("events"))
@@ -87,7 +89,7 @@ class Whizard:
 		if key in self.process:
 			print(f"{key} has already been defined in {self.name}.")
 			return
-		self.process += f" {key} = {value}\n"
+		self.process += f"{key} = {value}\n"
 
 	def write_file(self):
 		self.write_process()
