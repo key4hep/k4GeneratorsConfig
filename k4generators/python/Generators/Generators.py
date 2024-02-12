@@ -4,8 +4,9 @@ import Madgraph
 
 class Generators:
     """Generator class"""
-    def __init__(self, generator_list):
-        self.generator_list = generator_list
+    def __init__(self, settings):
+        self.settings = settings
+        self.generator_list = settings.gens()
         self.sherpa = None
         self.whizard = None
         self.madgraph = None
@@ -20,7 +21,7 @@ class Generators:
     def initialize_generators(self):
         if "Sherpa" in self.generator_list:
             if Sherpa is not None:
-                self.sherpa = Sherpa.Sherpa(self.proc_info)
+                self.sherpa = Sherpa.Sherpa(self.proc_info, self.settings)
                 self.sherpa.write_file()
                 self.sherpa.write_key4hepfile(self.key4hep_runShell,self.key4hep_config)
             else:
@@ -35,7 +36,7 @@ class Generators:
 
         if "Madgraph" in self.generator_list:
             if Madgraph is not None:
-                self.madgraph = Madgraph.Madgraph(self.proc_info)
+                self.madgraph = Madgraph.Madgraph(self.proc_info, self.settings)
                 self.madgraph.write_file()
                 self.madgraph.write_key4hepfile(self.key4hep_runShell,self.key4hep_config)
             else:

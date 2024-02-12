@@ -3,14 +3,14 @@ from Particles import Particle
 class Process:
 	"""A standard Process"""
 
-	_required_args = ['initial', 'final', 'sqrts', 'order', 'procname']
+	_required_args = ['initial', 'final', 'sqrts', 'order', 'procname', 'decay']
 
-	def __init__(self, initial, final, sqrts, order, procname, params, **options):
+	def __init__(self, initial, final, sqrts, order, procname, decay, params, **options):
 		self._init = False
 		self._parts = []
 		self._dataparts = []
 
-		args = (initial, final, sqrts, order, procname)
+		args = (initial, final, sqrts, order, procname, decay)
 		if len(initial) != 2:
 			raise ValueError("Initial state should have 2 particles not {}".format(len(initial)))
 

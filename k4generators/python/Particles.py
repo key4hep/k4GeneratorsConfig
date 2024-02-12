@@ -53,6 +53,13 @@ class Particle:
     def has_anti(self):
         return self.name != self.antiname
 
+    def name_from_pdg(pdg):
+        for _, v in globals().items():
+            if isinstance(v, Particle) and v.pdg_code == pdg:
+                return v.name
+        print(f"{pdg} code not found")
+
+
 a = Particle(pdg_code = 22,
              name = 'a',
              antiname = 'a',
@@ -64,8 +71,8 @@ a = Particle(pdg_code = 22,
 Z = Particle(pdg_code = 23,
              name = 'Z',
              antiname = 'Z',
-             mass = Param.MZ,
-             width = Param.WZ,
+             mass = Param.MZ.value,
+             width = Param.WZ.value,
              texname = 'Z',
              antitexname = 'Z',
              )
@@ -75,8 +82,8 @@ W__plus__ = Particle(pdg_code = 24,
                      antiname = 'W-',
                      spin = 3,
                      color = 1,
-                     mass = Param.MW,
-                     width = Param.WW,
+                     mass = Param.MW.value,
+                     width = Param.WW.value,
                      texname = 'W+',
                      antitexname = 'W-',
                      )
@@ -222,7 +229,7 @@ b = Particle(pdg_code = 5,
              antiname = 'b~',
              spin = 2,
              color = 3,
-             mass = Param.MB,
+             mass = Param.MB.value,
              width = 0,
              texname = 'b',
              antitexname = 'b~',
@@ -233,8 +240,8 @@ b__tilde__ = b.anti()
 H = Particle(pdg_code = 25,
              name = 'H',
              antiname = 'H',
-             mass = Param.MH,
-             width = Param.WH,
+             mass = Param.MH.value,
+             width = Param.WH.value,
              texname = 'H',
              antitexname = 'H',
              )

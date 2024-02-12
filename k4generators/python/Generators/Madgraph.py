@@ -1,9 +1,10 @@
 import stat,os
 import MadgraphProcDB
+from Particles import Particle as part
 
 class Madgraph:
 	"""Madgraph class"""
-	def __init__(self, procinfo):
+	def __init__(self, procinfo, settings):
 		self.name = "Madgraph"
 		self.version = "x.y.z"
 		self.procinfo = procinfo
@@ -17,17 +18,27 @@ class Madgraph:
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 		self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
 		self.procDB.write_DBInfo()
-
+		self.gen_settings = settings.get_block("madgraph")
+		if self.gen_settings is not None:
+			self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
 	def write_run(self):
 		self.add_header()
-		self.add_run_option("import model", self.procinfo.get("model").lower())
+		if self.gen_settings is not None:
+			if "model" in self.gen_settings:
+				self.add_run_option("import model", self.gen_settings["model"])
+			else: 
+				self.add_run_option("import model", self.procinfo.get("model").lower())
+		else:
+			self.add_run_option("import model", self.procinfo.get("model").lower())
 		self.mg_particles = list(map(self.pdg_to_madgraph, self.procinfo.get_particles()))
 		self.proc=""
 		for i in range(len(self.mg_particles)):
 			self.proc += f"{self.mg_particles[i]} "
 			if i==1:
 				self.proc += "> "
+		if self.procinfo.get("decay"):
+			self.add_decay()
 		self.add_run_option("generate", self.proc)
 		self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
 		self.add_run_option("launch", None)
@@ -48,6 +59,20 @@ class Madgraph:
 						value = getattr(p, attr)
 						op_name = f"set {_prop}{name}"
 						self.add_run_option(op_name, value)
+
+	def add_decay(self):
+		# Simple check first that parents are 
+		# in the main process
+		decay_opt = self.procinfo.get("decay")
+		decays=" "
+		for key in decay_opt:
+			if str(key) not in self.procinfo.get_final_pdg():
+				print("Particle {0} not found in main process. Decay not allowed".format(key))
+			parent = part.name_from_pdg(key)
+			decays += f", {parent} > "
+			for child in decay_opt[key]:
+				decays += f"{part.name_from_pdg(child)} "
+		self.proc += decays
 
 	def write_file(self):
 		self.write_run()
