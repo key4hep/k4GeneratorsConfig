@@ -75,22 +75,13 @@ class Input:
         return self.settings.get("beamstrahlung",None)
 
     def get_PythiaTune(self):
-        try:
-            return self.settings["PythiaTune"]
-        except:
-            return "None"
+        return self.settings.get("pythiatune",None)
 
     def get_ElectronPolarisation(self):
-        try:
-            return self.settings["ElectronPolarisation"]
-        except:
-            return 0
+        return self.settings.get("electronpolarisation",0)
 
     def get_PositronPolarisation(self):
-        try:
-            return self.settings["PositronPolarisation"]
-        except:
-            return 0
+        return self.settings.get("positronpolarisation",0)
 
     def get_sqrt_s(self):
         return self.get("sqrts", None)
