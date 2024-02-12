@@ -38,6 +38,8 @@ class Whizard:
 		self.add_process_option("n_events", self.procinfo.get("events"))
 		self.add_process_option("sqrts", self.procinfo.get("sqrts"))
 		self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
+		if self.procinfo.get("decay"):
+			self.add_decay()
 
 		for p in self.procinfo.get_data_particles():
 			for attr in dir(p):
@@ -45,17 +47,38 @@ class Whizard:
 					name = self.is_whizard_particle_data(attr)
 					if name is not None:
 						value = getattr(p, attr)
+						pname = self.pdg_to_whizard(p.get("pdg_code"))
+						replac = ["+", "-", "1", "2", "3"]
+						for r in replac:
+							pname = pname.replace(r, "")
 						if name == "MASS":
-							pname = self.pdg_to_whizard(p.get("pdg_code"))
-							replac = ["+", "-", "1", "2", "3"]
-							for r in replac:
-								pname = pname.replace(r, "")
 							dname = f"m{pname}"
-							self.add_process_option(dname, value)
+						elif name == "WIDTH":
+							dname = f"w{pname}"
+
+						self.add_process_option(dname, value)
 		if self.procinfo.get("output_format") != "evx":
 			self.add_process_option("sample_format", self.procinfo.get("output_format"))
 			self.add_process_option("?write_raw","false")
 		self.process += self.procDB.write_DBInfo()
+
+	def add_decay(self):
+		decay_opt = self.procinfo.get("decay")
+		decays=""
+		for key in decay_opt:
+			if str(key) not in self.procinfo.get_final_pdg():
+				print("Particle {0} not found in main process. Decay not allowed".format(key))
+			parent = self.pdg_to_whizard(key)
+			decays += f" process decay{parent} = {parent} => "
+			for child in decay_opt[key]:
+				if child is decay_opt[key][-1]:
+					decays += self.pdg_to_whizard(child) + ""
+				else:
+					decays += self.pdg_to_whizard(child) + ", "
+
+			decays +="\n"
+		self.process += decays
+
 
 	def write_integrate(self):
 		self.integrate = "simulate (proc) { iterations = 5:5000}"

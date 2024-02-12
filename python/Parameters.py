@@ -9,6 +9,8 @@ class Parameter():
     def __init__(self, name, value, texname):
 
         args = (name,value,texname)
+        for i, name in enumerate(self.require_args):
+            setattr(self, name, args[i])
 
 
 

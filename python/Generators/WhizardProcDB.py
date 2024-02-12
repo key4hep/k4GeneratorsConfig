@@ -14,6 +14,8 @@ class WhizardProcDB:
 
 	def write_Difermion(self):
 		out = ""
+		out += " mW = 80.419 GeV\n"
+		out += " wW = 2.0476 GeV\n"
 		return out
 
 	def write_ZH(self):
