@@ -115,7 +115,7 @@ class Sherpa:
 		key4hepRun = shell+"\n"
 		key4hepRun += config+"\n"
 		key4hepRun += self.executable+" "+self.outfileName+"\n"
-		key4hepRun += f"../../convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.procinfo.get('procname')}.hepmc2g {self.procinfo.get('procname')}.edm4hep\n"
+		key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.procinfo.get('procname')}.hepmc2g {self.procinfo.get('procname')}.edm4hep\n"
 		with open(self.key4hepfile, "w+") as file:
 			file.write(key4hepRun)
 		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)

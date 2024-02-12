@@ -2,11 +2,14 @@
 
 set -e
 
+shopt -s expand_aliases
+source ../setup.sh
+
 mkdir -p ci-setups
 
 CWD=${PWD}
 REFDIR="${PWD}/ref-results"
-EXAMPLEDIR="${PWD}/../k4generators/examples"
+EXAMPLEDIR="${PWD}/../examples"
 
 cp "$EXAMPLEDIR"/*yaml ci-setups
 cd ci-setups
@@ -46,7 +49,7 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    python3 ../../../k4generators/python/main.py -f "../$yamlFile"
+    k4gen -f "../$yamlFile"
     checkOutputs
     cd ..
 }

@@ -80,6 +80,18 @@ class Process:
 	def get_output_format(self):
 		return self.output_format
 
+	def get_Beamstrahlung(self):
+		return self.Beamstrahlung
+
+	def get_PythiaTune(self):
+		return self.PythiaTune
+
+	def get_ElectronPolarisation(self):
+		return self.ElectronPolarisation
+
+	def get_PositronPolarisation(self):
+		return self.PositronPolarisation
+
 	def get_rndmSeed(self):
 		return self.rndmSeed
 
@@ -99,5 +111,9 @@ class ProcessParameters:
 		self.model = settings.get_model()
 		self.events = settings.get_event_number()
 		self.isr_mode = settings.get_isr_mode()
-		self.output_format = settings.get_output_format()
+		self.output_format        = settings.get_output_format()
+		self.output_Beamstrahlung = settings.get_Beamstrahlung()
+		self.PythiaTune           = settings.get_PythiaTune()
+		self.ElectronPolarisation = settings.get_ElectronPolarisation()
+		self.PositronPolarisation = settings.get_PositronPolarisation()
 		self.rndmSeed = settings.get_rndmSeed()

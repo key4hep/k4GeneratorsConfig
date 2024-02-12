@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.27)
 project(ConvertHepMC2EDM4HEP)
-set(basic_sources   ${CMAKE_CURRENT_SOURCE_DIR}/src/convertHepMC2EDM4HEP.cxx
-                    ${CMAKE_CURRENT_SOURCE_DIR}/src/cmdline.c 
-		    ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterEDM4HEP.cxx )
-set(basic_includes ${CMAKE_CURRENT_SOURCE_DIR}/include ${CMAKE_CURRENT_SOURCE_DIR})
+set(basic_sources   ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/src/convertHepMC2EDM4HEP.cxx
+                    ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/src/cmdline.c 
+		    ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/src/WriterEDM4HEP.cxx )
+set(basic_includes ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/include ${CMAKE_CURRENT_SOURCE_DIR})
 set(basic_defines HEPMCCONVERT_EXTENSION_HEPEVTZEUS=1 HEPMCCONVERT_EXTENSION_DOT=1)
 set(basic_dependencies )
 set(basic_libdir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" )
@@ -92,7 +92,7 @@ set(libdir ${basic_libdir})
 set_target_properties(convertHepMC2EDM4HEP PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/$<0:>)
 
 configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/convertHepMC2EDM4HEP_env.sh.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/convertHepMC2EDM4HEP_env.sh.in
         ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/convertHepMC2EDM4HEP_env.sh @ONLY)
 
 # installs
