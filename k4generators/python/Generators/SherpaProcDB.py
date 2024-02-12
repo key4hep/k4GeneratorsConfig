@@ -14,7 +14,11 @@ class SherpaProcDB:
 		return self.runout
 
 	def write_Difermion(self):
-		self.runout = ""
+		self.runout  = ""
+		# Use Gmu scheme as default
+		self.runout += " EW_SCHEME 3\n"
+		self.runout += " MASS[24] 80.419\n"
+		self.runout += " WIDTH[24] 2.0476;\n"
 
 	def get_run_out(self):
 		return self.runout
@@ -23,7 +27,7 @@ class SherpaProcDB:
 		return self.procout
 
 	def write_run_ZH(self):
-		self.runout  = "WIDTH[25] 0\n" 
-		self.runout += "WIDTH[23] 0\n"
+		self.runout  = " WIDTH[25] 0\n" 
+		self.runout += " WIDTH[23] 0\n"
 
 

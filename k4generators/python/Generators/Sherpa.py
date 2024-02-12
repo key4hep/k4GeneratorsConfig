@@ -3,7 +3,7 @@ import SherpaProcDB
 
 class Sherpa:
 	"""Sherpa class"""
-	def __init__(self, procinfo):
+	def __init__(self, procinfo, settings):
 		self.name = "Sherpa"
 		self.version = "x.y.z"
 		self.procinfo = procinfo
@@ -17,6 +17,9 @@ class Sherpa:
 
 		self.executable  = "Sherpa -f"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
+		self.gen_settings = settings.get_block("sherpa")
+		if self.gen_settings is not None:
+			self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
 	def write_run(self):
 		self.run = "(run){\n"
@@ -32,7 +35,6 @@ class Sherpa:
 
 		self.add_run_option("BEAM_ENERGY_1", ENG)
 		self.add_run_option("BEAM_ENERGY_2", ENG)
-
 		self.add_run_option("MODEL", self.procinfo.get("model"))
 
 		if self.procinfo.get("isr_mode"):
@@ -58,13 +60,47 @@ class Sherpa:
 			eoutname="HepMC3_GenEvent[{0}]".format(self.procinfo.get("procname"))
 			self.add_run_option("EVENT_OUTPUT", eoutname)
 		self.run += self.procDB.get_run_out()
+		if self.gen_settings is not None:
+			if "run" in self.gen_settings.keys():
+				for key,value in self.gen_settings["run"].items():
+					self.add_run_option(key, value)
+
 
 
 	def write_process(self):
 		self.ptext = "(processes){\n"
-		self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n"
+		if self.procinfo.get("decay"):
+			self.add_decay()
+		else:
+			self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n"
 		self.ptext += f"  Order ({self.procinfo.get_qcd_order()},{self.procinfo.get_qed_order()});\n"
 		self.ptext += "  End process;\n"
+
+	def add_decay(self):
+		# Simple check first that parents are 
+		# in the main process
+		decay_opt = self.procinfo.get("decay")
+		for key in decay_opt:
+			if str(key) not in self.procinfo.get_final_pdg():
+				print("Particle {0} not found in main process. Decay not allowed".format(key))
+		# Sherpa requires the decaying particles get an additional label 25-> 25[a]
+		# so parse letters to the process definition
+		i = 97
+		fs=""
+		decays=""
+		for p in self.procinfo.get_final_pdg_list():
+			parent = str(p) + f"[{chr(i)}] "
+			child = decay_opt[p]
+			fs += parent
+			decays += f"  Decay {parent} -> "
+			for c in child: 
+				decays += f"{c} "
+			decays+="\n"  
+			i+=1
+		self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n"
+		self.ptext += decays
+
+		
 
 	def write_file(self):
 		self.write_run()
@@ -85,8 +121,14 @@ class Sherpa:
 		os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
 
 	def add_run_option(self, key, value):
+		if self.gen_settings is not None:
+			if "run" in self.gen_settings.keys():
+				if key in self.gen_settings["run"]:
+					value = self.gen_settings["run"][key]
 		if key in self.run:
-			print(f"{key} has already been defined in {self.name}.")
+			if value in self.run:
+				return
+			print(f"{key} has already been defined in {self.name} with value.")
 			return
 		self.run += f" {key} {value};\n"
 
