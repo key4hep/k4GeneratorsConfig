@@ -50,19 +50,53 @@ class Madgraph:
 		self.add_run_option("set nevents", self.procinfo.get("events"))
 		if self.procinfo.get("isr_mode"):
 			if self.procinfo.get_Beamstrahlung() is not None:
-				if self.gen_settings is None:
-					print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
-						Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
-						See arxiv 2108.10261 for more details.")
-					raise(ValueError)
-				else:
-					self.add_run_option("set pdlabel", self.gen_settings["beamstrahlung"])
+				#if self.gen_settings is None:
+				#	print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
+				#		Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
+				#		See arxiv 2108.10261 for more details.")
+				#	raise(ValueError)
+				#else:
+				self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
 			else:
 				self.add_run_option("set pdlabel", "isronlyll")
 			self.add_run_option("set lpp1", "3")
 			self.add_run_option("set lpp2", "-3")
 		self.run += self.procDB.get_run_out()
 
+
+	def get_BeamstrahlungPDLABEL(self):
+		ecm   = self.procinfo.get("sqrts")
+		accel = self.procinfo.get_Beamstrahlung()
+		if abs(ecm-240) < 10:
+			if accel.lower() == "cepc":
+				return f"{accel.lower()}240ll";
+			elif accel.lower() == "fcc":
+				return f"{accel.lower()}e240ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using FCCE")
+				return "fcce240ll"
+		elif abs(ecm-365) < 10:
+			if accel.lower() == "fcc":
+				return f"{accel.lower()}365ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using FCCE")
+				return "fcc365ll";
+		elif abs(ecm-500) < 10:
+			if accel.lower() == "ilc":
+				return f"{accel.lower()}500ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using ILC")
+				return "ilc500ll";
+		elif abs(ecm-3000) < 10:
+			if accel.lower() == "clic":
+				return f"{accel.lower()}3000ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using CLIC")
+				return "clic3000ll";
+		else:
+			print(f"No Beamstrahlung setting available for MADGRAPH at this energy {ecm}")
+			print("Using ILC at 500GeV")
+			return "ilc500ll"
 
 	def set_particle_data(self):
 		for p in self.procinfo.get_data_particles():
