@@ -20,10 +20,6 @@ Processes:
      Final: [14, -14]
      Order: [2,0]
 
-Madgraph:
-  Beamstrahlung: fcce240ll
-
-
 ParticleData:
   25:
     mass: 125
