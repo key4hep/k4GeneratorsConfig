@@ -129,7 +129,7 @@ class Sherpa:
 				if key in self.gen_settings["run"]:
 					value = self.gen_settings["run"][key]
 		if key in self.run:
-			if value in self.run:
+			if str(value) in self.run:
 				return
 			print(f"{key} has already been defined in {self.name} with value.")
 			return
