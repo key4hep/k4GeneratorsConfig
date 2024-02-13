@@ -11,26 +11,21 @@ class Madgraph:
 		self.settings = settings
 		self.ext = "dat"
 		self.file = ""
-		self.cuts = ""
 		self.outdir = f"{procinfo.get('OutDir')}/Madgraph"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
-
+		self.add_header()
 		self.executable  = "mg5_aMC"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 		self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
 		if settings.get("usedefaults",True):
 			self.procDB.write_DBInfo()
-		if settings.get_block("selectors"):
-			self.cuts="(selector){\n"
-			self.write_selectors()
 
 		self.gen_settings = settings.get_block("madgraph")
 		if self.gen_settings is not None:
 			self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
 	def write_run(self):
-		self.add_header()
 		if self.gen_settings is not None:
 			if "model" in self.gen_settings:
 				self.add_run_option("import model", self.gen_settings["model"].lower())
@@ -67,6 +62,8 @@ class Madgraph:
 			self.add_run_option("set lpp1", "3")
 			self.add_run_option("set lpp2", "-3")
 		self.run += self.procDB.get_run_out()
+		if self.settings.get_block("selectors"):
+			self.write_selectors()
 
 
 	def get_BeamstrahlungPDLABEL(self):
@@ -154,8 +151,7 @@ class Madgraph:
 			elif key == "dr":
 				self.add_two_ParticleSelector(value, "DeltaR")
 			else:
-				print(f"{key} not a Sherpa Selector")
-		self.cuts+="}(selector)\n"
+				print(f"{key} not a MadGraph Selector")
 
 	def add_two_ParticleSelector(self,sel,name):
 		Min,Max = sel.get_MinMax()
@@ -167,10 +163,10 @@ class Madgraph:
 				return
 			sname = f"{name}_min_pdg"
 			mincut = f"{f}: {Min}"
-			self.add_run_option(sname, value)
+			self.run+=f"set {sname} {mincut}\n"
 			sname = f"{name}_max_pdg"
 			maxcut = f"{f}: {Max}"
-			self.add_run_option(sname, value)
+			self.run+=f"set {sname} {maxcut}\n"
 		else:
 			for fl in flavs:
 				f1 = fl[0]
@@ -181,21 +177,27 @@ class Madgraph:
 					print("Cannot set cuts in MadGraph this way.")
 				sname = f"{name}_min_pdg"
 				mincut = f"{f1}: {Min}"
-				self.add_run_option(sname, mincut)
+				self.run+=f"set {sname} {mincut}\n"
+
 				sname = f"{name}_max_pdg"
 				maxcut = f"{f1}: {Max}"
-				self.add_run_option(sname, maxcut)
+				self.run+=f"set {sname} {maxcut}\n"
+
+				# self.add_run_option(sname, maxcut)
 
 	def add_one_ParticleSelector(self,sel,name):
 		Min,Max = sel.get_MinMax()
 		f1 = sel.get_Flavours()
 		for f in f1:
+			if f < 0:
+				continue
 			sname = f"{name}_min_pdg"
 			mincut = f"{f}: {Min}"
-			self.add_run_option(sname, mincut)
+			self.run+=f"set {sname} {mincut}\n"
+
 			sname = f"{name}_max_pdg"
 			maxcut = f"{f}: {Max}"
-			self.add_run_option(sname, maxcut)
+			self.run+=f"set {sname} {maxcut}\n"
 
 	def write_file(self):
 		self.write_run()
