@@ -18,8 +18,6 @@
  MASS[24] 80.379;
  WIDTH[24] 2.085;
  EVENT_OUTPUT HepMC_GenEvent[ZH];
-WIDTH[25] 0
-WIDTH[23] 0
 }(run)
 
 (processes){
