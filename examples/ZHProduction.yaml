@@ -1,0 +1,38 @@
+Generators:
+  - Sherpa
+  - Whizard
+  - Madgraph
+
+OutputFormat: hepmc
+OutDir: Run-Cards
+Events: 100
+
+RandomSeed: 42
+
+SqrtS: 250.
+Model: SM
+ISRMode: 0
+
+Processes:
+  ZH:
+     Initial: [11, -11]
+     Final: [23, 25]
+     Order: [2,0]
+
+
+
+
+ParticleData:
+  25:
+    mass: 125
+    width: 0
+  11:
+    mass: 0.0005111
+    width: 0
+  23:
+    mass: 91.1876
+    width: 2.4952
+  24:
+    mass: 80.379
+    width: 2.085
+

@@ -1,0 +1,49 @@
+Generators:
+  - Sherpa
+  - Whizard
+  - Madgraph
+
+OutputFormat: hepmc
+OutDir: Run-Cards
+Events: 100
+
+RandomSeed: 42
+
+SqrtS: 250.
+Model: SM
+ISRMode: 0
+
+Processes:
+  ZHDecay:
+     Initial: [11, -11]
+     Final: [23, 25]
+     Order: [4,0]
+     Decay: 
+      23:
+        - 15
+        - -15
+      25:
+        - 13
+        - -13
+
+
+Madgraph:
+  Model: sm-lepton_masses
+
+Sherpa:
+  # THESE settings key must match Sherpa!!
+  Run:
+    MODEL: HEFT
+    MASSIVE[13]: 1
+    ME_SIGNAL_GENERATOR: Amegic
+
+ParticleData:
+  25:
+    mass: 125
+  23:
+    mass: 91.1876
+    width: 2.4952
+  24:
+    mass: 80.379
+    width: 2.085
+

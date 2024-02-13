@@ -1,0 +1,33 @@
+#************************************************************
+#*                        MadGraph 5                        *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*    The MadGraph Development Team - Please visit us at    *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph 5                *
+#*                                                          *
+#*     run as ./bin/mg5  filename                           *
+#*                                                          *
+#************************************************************"
+import model sm-lepton_masses
+generate e- e+ > Z H  , Z > ta- ta+ , H > mu- mu+ 
+output Run-Cards/Madgraph/ZHDecay
+launch
+set iseed 42
+set EBEAM 125.0
+set MH 125
+set WH 0.00407
+set MZ 91.1876
+set WZ 2.4952
+set MW 80.379
+set WW 2.085
+set nevents 100
