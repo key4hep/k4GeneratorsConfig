@@ -8,8 +8,10 @@ class Whizard:
 		self.name = "Whizard"
 		self.version = "x.y.z"
 		self.procinfo = procinfo
+		self.settings = settings
 		self.ext = "sin"
 		self.file = ""
+		self.cuts = ""
 		self.outdir = f"{procinfo.get('OutDir')}/Whizard"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
@@ -72,6 +74,9 @@ class Whizard:
 			self.add_process_option("sample_format", self.procinfo.get("output_format"))
 			self.add_process_option("?write_raw","false")
 		self.process += self.procDB.get_out()
+		if self.settings.get_block("selectors"):
+			self.cutsadded = 0
+			self.write_selectors()
 
 	def add_decay(self):
 		decay_opt = self.procinfo.get("decay")
@@ -90,6 +95,61 @@ class Whizard:
 			decays +="\n"
 		self.process += decays
 
+	def write_selectors(self):
+		selectors = getattr(self.settings,"selectors")
+		self.cuts = "cuts = "
+		for key,value in selectors.items():
+			if key == "pt":
+				self.add_one_ParticleSelector(value, "Pt")
+			elif key == "energy":
+				self.add_one_ParticleSelector(value, "E")
+			elif key == "rap":
+				self.add_one_ParticleSelector(value, "rap")
+			elif key == "eta":
+				self.add_one_ParticleSelector(value, "eta")
+				# Two particle selectors
+			elif key == "mass":
+				self.add_two_ParticleSelector(value,"m")
+			else:
+				print(f"{key} not a Standard Whizard Selector")
+
+
+	def add_two_ParticleSelector(self,sel,name):
+		Min,Max = sel.get_MinMax()
+		flavs = sel.get_Flavours()
+		if len(flavs) == 2:
+			f1 = self.pdg_to_whizard(flavs[0])
+			f2 = self.pdg_to_whizard(flavs[1])
+			if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
+				return
+			if self.cutsadded == 0:
+				self.cuts+=f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+			else:
+				self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+
+		else:
+			for fl in flavs:
+				f1 = self.pdg_to_whizard(fl[0])
+				f2 = self.pdg_to_whizard(fl[1])
+				if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
+					continue
+				if self.cutsadded == 0:
+					self.cuts+=f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+				else:
+					self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+		self.cutsadded +=1
+
+	def add_one_ParticleSelector(self,sel,name):
+		Min,Max = sel.get_MinMax()
+		f1 = sel.get_Flavours()
+		for f in f1:
+			f=self.pdg_to_whizard(f)
+			if self.cutsadded == 0:
+				self.cuts+=f" all {Min} < {name} <= {Max} [{f}] \n"
+			else:
+				self.cuts+=f" and all {Min} < {name} <= {Max} [{f}] \n"
+		self.cutsadded +=1
+
 
 	def write_integrate(self):
 		self.integrate = "simulate (proc) { iterations = 5:5000}"
@@ -104,6 +164,7 @@ class Whizard:
 
 	def write_file(self):
 		self.write_process()
+		self.process += self.cuts
 		self.process += "compile\n"
 		self.write_integrate()
 		self.file = f"{self.process}{self.integrate}"
