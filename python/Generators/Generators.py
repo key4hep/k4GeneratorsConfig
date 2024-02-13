@@ -28,7 +28,7 @@ class Generators:
                 print("Sherpa module not found. Unable to initialize Sherpa.")
         if "Whizard" in self.generator_list:
             if Whizard is not None:
-                self.whizard = Whizard.Whizard(self.proc_info)
+                self.whizard = Whizard.Whizard(self.proc_info, self.settings)
                 self.whizard.write_file()
                 self.whizard.write_key4hepfile(self.key4hep_runShell,self.key4hep_config)
             else:

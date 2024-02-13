@@ -98,6 +98,9 @@ class Process:
 	def get_PositronPolarisation(self):
 		return self.PositronPolarisation
 
+	def get_PolDensity(self):
+		return self.PolDensity
+
 	def get_rndmSeed(self):
 		return self.rndmSeed
 
@@ -122,4 +125,5 @@ class ProcessParameters:
 		self.PythiaTune           = settings.get_PythiaTune()
 		self.ElectronPolarisation = settings.get_ElectronPolarisation()
 		self.PositronPolarisation = settings.get_PositronPolarisation()
+		self.PolDensity = settings.get_PolDensity()
 		self.rndmSeed = settings.get_rndmSeed()

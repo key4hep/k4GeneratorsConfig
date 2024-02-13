@@ -17,7 +17,9 @@ class Madgraph:
 		self.executable  = "mg5_aMC"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 		self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
-		self.procDB.write_DBInfo()
+		if settings.get("usedefaults",True):
+			self.procDB.write_DBInfo()
+
 		self.gen_settings = settings.get_block("madgraph")
 		if self.gen_settings is not None:
 			self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
@@ -46,7 +48,20 @@ class Madgraph:
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
-		self.run += self.procDB.write_DBInfo()
+		if self.procinfo.get("isr_mode"):
+			if self.procinfo.get_Beamstrahlung() is not None:
+				if self.gen_settings is None:
+					print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
+						Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
+						See arxiv 2108.10261 for more details.")
+					raise(ValueError)
+				else:
+					self.add_run_option("set pdlabel", self.gen_settings["beamstrahlung"])
+			else:
+				self.add_run_option("set pdlabel", "isronlyll")
+			self.add_run_option("set lpp1", "3")
+			self.add_run_option("set lpp2", "-3")
+		self.run += self.procDB.get_run_out()
 
 
 	def set_particle_data(self):

@@ -4,7 +4,7 @@ import os, stat
 
 class Whizard:
 	"""Whizard class"""
-	def __init__(self, procinfo):
+	def __init__(self, procinfo, settings):
 		self.name = "Whizard"
 		self.version = "x.y.z"
 		self.procinfo = procinfo
@@ -15,6 +15,8 @@ class Whizard:
 		self.outfile = f"{self.outdir}/{self.outfileName}"
 
 		self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
+		if settings.get("usedefaults",True):
+			self.procDB.write_DBInfo()
 
 		self.executable  = "whizard"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
@@ -42,9 +44,11 @@ class Whizard:
 				self.process += f"$circe_file= {self.procinfo.get_BeamstrahlungFile()}\n"
 		else:
 			self.add_process_option("?isr_handler", "false")
+			self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
+		self.process += f"beams_pol_density = @({self.procinfo.get_PolDensity()[0]}), @({self.procinfo.get_PolDensity()[1]})\n"
+		self.process += f"beams_pol_fraction = {self.procinfo.get_ElectronPolarisation()}, {self.procinfo.get_PositronPolarisation()}\n"
 		self.add_process_option("n_events", self.procinfo.get("events"))
 		self.add_process_option("sqrts", self.procinfo.get("sqrts"))
-		self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
 		if self.procinfo.get("decay"):
 			self.add_decay()
 
@@ -67,7 +71,7 @@ class Whizard:
 		if self.procinfo.get("output_format") != "evx":
 			self.add_process_option("sample_format", self.procinfo.get("output_format"))
 			self.add_process_option("?write_raw","false")
-		self.process += self.procDB.write_DBInfo()
+		self.process += self.procDB.get_out()
 
 	def add_decay(self):
 		decay_opt = self.procinfo.get("decay")
@@ -94,6 +98,8 @@ class Whizard:
 		if key in self.process:
 			print(f"{key} has already been defined in {self.name}.")
 			return
+		if f"{key}" in self.procDB.get_out():
+			self.procDB.remove_option(key)
 		self.process += f"{key} = {value}\n"
 
 	def write_file(self):

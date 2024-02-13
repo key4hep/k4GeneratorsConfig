@@ -83,6 +83,9 @@ class Input:
     def get_PositronPolarisation(self):
         return self.settings.get("positronpolarisation",0)
 
+    def get_PolDensity(self):
+        return self.settings.get("poldensity", [1,-1])
+
     def get_sqrt_s(self):
         return self.get("sqrts", None)
 

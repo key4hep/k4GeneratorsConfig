@@ -11,8 +11,6 @@ class MadgraphProcDB:
 		elif ( self.process.get('procname') == "ZH" ):
 			self.runout += self.write_run_ZH()
 
-		return self.runout
-
 	def write_Difermion(self):
 		out = ""
 		return out
@@ -30,3 +28,7 @@ class MadgraphProcDB:
 		return out
 
 
+	def remove_option(self,opt):
+		lines = self.runout.split("\n")
+		filter_lines = [line for line in lines if opt not in line]
+		self.runout = "\n".join(filter_lines)

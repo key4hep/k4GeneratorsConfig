@@ -13,7 +13,8 @@ class Sherpa:
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
 		self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
-		self.procDB.write_DBInfo()
+		if settings.get("usedefaults",True):
+			self.procDB.write_DBInfo()
 
 		self.executable  = "Sherpa -f"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
@@ -50,6 +51,8 @@ class Sherpa:
 					if name is not None:
 						value = getattr(p, attr)
 						op_name = f"{name}[{p.get('pdg_code')}]"
+						if op_name in self.procDB.get_run_out():
+							self.procDB.remove_option(op_name)
 						self.add_run_option(op_name, value)
 						
 		if  self.procinfo.get("output_format") == "hepmc":
