@@ -8,7 +8,7 @@ Events: 100
 
 PositronPolarisation: 0.3
 ElectronPolarisation: 0.8
-Beamstrahlung: True
+Beamstrahlung: ILC
 
 SqrtS: 240
 Model: SM
