@@ -30,11 +30,16 @@ class Whizard:
 
 		if self.procinfo.get("isr_mode"):
 			self.add_process_option("?isr_handler", "true")
-			self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2} => isr,isr\n"
+			self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2}"
+			# insert circe
+			if self.procinfo.Beamstrahlung is not None:
+				self.process += f" => circe2 "
+			self.process += f" => isr,isr\n"
 			isrmass = Particles.Particle.get_info(self.procinfo.get_beam_flavour(1)).mass
 			self.add_process_option("isr_mass", isrmass)
+			# insert the circe file
 			if self.procinfo.Beamstrahlung is not None:
-				self.process += self.procinfo.get_BeamstrahlungFile()+"\n"
+				self.process += f"$circe_file= {self.procinfo.get_BeamstrahlungFile()}\n"
 		else:
 			self.add_process_option("?isr_handler", "false")
 		self.add_process_option("n_events", self.procinfo.get("events"))
