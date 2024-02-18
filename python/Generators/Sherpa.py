@@ -102,7 +102,7 @@ class Sherpa:
 			elif key == "angle":
 				self.add_two_ParticleSelector(value, "Angle")
 			elif key == "deta":
-				self.add_two_ParticleSelector(value, "Angle")
+				self.add_two_ParticleSelector(value, "DeltaEta")
 			elif key == "drap":
 				self.add_two_ParticleSelector(value, "DeltaY")
 			elif key == "dphi":
