@@ -39,7 +39,6 @@ def main():
         generators = generators_module.Generators(settings)
         try:
           output_dir = getattr(settings, 'outdir', 'Run-Cards')
-          print(output_dir)
         except KeyError:
             # If no directory set in input, use default
             output_dir = 'Run-Cards'
