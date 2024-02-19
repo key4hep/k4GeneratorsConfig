@@ -68,7 +68,11 @@ The following are a list of user settings that are common to all event generator
 ```
 - **SqrtS**: $\sqrt{s}$ in GeV.
 
-- **ISRMode**: Enable ISR via electron structure function.
+- **ISRMode**: Enable ISR via electron structure function:
+```
+ISRMode: 1 
+```
+default: 0 (turned off)
 
 - **OutputFormat**: Format in which the monte-carlo events will be written out to. Currently supported options are hepmc and evx
 
@@ -147,4 +151,8 @@ Here we summarise the settings available to a subset of generators.
 		PositronPolarisation: 0.3
 		ElectronPolarisation: 0.8
 ```
-- **Beamstrahlung**: 
+- **Beamstrahlung**: is turned on by specifying the type of accelerator. Allowed values are: ILC, FCC, C3, CEPC, HALFHF.
+```
+Beamstrahlung: ILC
+```
+Note that **Beamstrahlung** is conditional on **ISRmode** being on. The **Beamstrahlung** and **SqrtS** variables are used to configure the settings of the generators. For **SqrtS** a vicinity search (within 10GeV) is performed. In case the requested setting does not exist, a replacement setting is used and printed as a warning.
