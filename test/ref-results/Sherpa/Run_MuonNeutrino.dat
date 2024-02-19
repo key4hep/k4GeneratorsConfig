@@ -1,24 +1,18 @@
 (run){
- RANDOM_SEED 4711;
+ RANDOM_SEED 42;
  BEAM_1 11;
  BEAM_2 -11;
  BEAM_ENERGY_1 45.6;
  BEAM_ENERGY_2 45.6;
  MODEL SM;
  PDF_LIBRARY None;
- EVENTS 100;
+ EVENTS 100000;
 
 
- MASS[25] 125;
- WIDTH[25] 0;
- MASS[11] 0.0005111;
- WIDTH[11] 0;
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- MASS[24] 80.379;
- WIDTH[24] 2.085;
- EVENT_OUTPUT HepMC_GenEvent[Difermion];
- EW_SCHEME 3
+ EVENT_OUTPUT HepMC_GenEvent[MuonNeutrino];
+ EW_SCHEME 3;
 }(run)
 
 (processes){
@@ -27,3 +21,8 @@
   End process;
 }(processes)
 
+(selector){
+ Mass 14 -14 20 91.2
+ PT -13 20 45.6
+ PT 13 20 45.6
+}(selector)
