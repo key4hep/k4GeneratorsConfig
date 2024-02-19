@@ -10,7 +10,7 @@ class Sherpa:
 		self.ext = "dat"
 		self.file = ""
 		self.cuts = ""
-		self.outdir = f"{procinfo.get('OutDir')}/Sherpa"
+		self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
 		self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)

@@ -12,7 +12,7 @@ class Whizard:
 		self.ext = "sin"
 		self.file = ""
 		self.cuts = ""
-		self.outdir = f"{procinfo.get('OutDir')}/Whizard"
+		self.outdir = f"{procinfo.get('OutDir')}/Whizard/{self.procinfo.get('procname')}"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
 

@@ -12,15 +12,14 @@ import Process as process_module
 import Generators as generators_module
 
 
-def make_output_directory(generators, output_directory):
+def make_output_directory(generators, output_directory, procname):
     # Overwrite directory if it exists
     if not os.path.exists(output_directory):
         os.makedirs(output_directory)
     for generator in generators:
-        generator_directory = os.path.join(output_directory, generator)
+        generator_directory = os.path.join(output_directory, generator, procname)
         if not os.path.exists(generator_directory):
             os.makedirs(generator_directory)
-
 
 def main():
     parser = argparse.ArgumentParser(description='Process input YAML files.')
@@ -43,10 +42,10 @@ def main():
             # If no directory set in input, use default
             output_dir = 'Run-Cards'
 
-        make_output_directory(settings.gens(), output_dir)
 
         process_instances = {}
         for key, value in processes.items():
+            make_output_directory(settings.gens(), output_dir, key)
             initial = value['initial']
             final = value['final']
             order = value['order']
