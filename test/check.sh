@@ -37,8 +37,8 @@ function checkOutputs() {
         echo "Checking $generator"
         for outFile in "$PWD/$generator"/*/*; do
             [[ -f "$outFile" ]] || continue
-	    fullpath = $(dirname $outFile)
-	    procname = $(basename $fullpath)
+	    local fullpath ="$(dirname "$outFile")"
+	    local procname ="$(basename "$fullpath")"
             checkFile "$generator" "$procname" "$(basename "$outFile")"
         done
     done
