@@ -58,7 +58,7 @@ cd /path/to/out
 ## General Settings
 The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.
 
-- **Genrators**: A list of generators whose runcards should be generated. One generator must be specified
+- **Generators**: A list of generators whose runcards should be generated. One generator must be specified
 ```
 		Generators:
 		  - Sherpa
@@ -104,7 +104,7 @@ default: 0 (turned off)
 
 ```
 
-- **ParticleData**: Here the user can set various particle propeties such as mass and width. Note it is expected of the user to set a consistent input scheme.
+- **ParticleData**: Here the user can set various particle properties such as mass and width. Note it is expected of the user to set a consistent input scheme.
 					The particles are identified using the corresponding PDG number
 
 ```

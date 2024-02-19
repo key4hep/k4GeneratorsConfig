@@ -2,6 +2,7 @@ import os
 import sys
 import shutil
 import argparse
+import textwrap
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), 'Tools')))
 sys.path.insert(1, os.path.abspath(os.path.join(os.path.dirname(__file__), 'Generators')))
@@ -22,7 +23,36 @@ def make_output_directory(generators, output_directory, procname):
             os.makedirs(generator_directory)
 
 def main():
-    parser = argparse.ArgumentParser(description='Process input YAML files.')
+    #parser = argparse.ArgumentParser(prog='k4gen',description='Process input YAML files.')
+    parser = argparse.ArgumentParser(
+    prog='k4gen',
+    formatter_class=argparse.RawDescriptionHelpFormatter,
+    description=textwrap.dedent('''\
+Process input YAML files.
+The following options are available:
+------------------------------------
+SqrtS        : float (center of mass energy)
+ISRmode      : int (0: off, 1: on)
+OutputFormat : string (format output, available are hepmc and evx)
+OutDir       : string (output directory, default=$PWD/Run-Cards)
+Events       : int (Number of Monte-Carlo events to be generated)
+Processes    : see README A list of processes which runcards should be generated. Each process should have its own unique name
+		Processes:
+		  Muon:
+		     Initial: [11, -11]
+		     Final: [13, -13]
+		     Order: [2,0]
+ParticleData : overwrite basic particle properties
+		ParticleData:
+		  25:
+		    mass: 125
+		    width: 0
+
+For MADGRAPH and Whizard only:
+ElectronPolarisation : float (between [-1.,1.])
+PositronPolarisation : float (between [-1.,1.])
+Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF) 
+    '''))
     parser.add_argument('-f', nargs='*', type=str, default=[], help='Input YAML file')
     args = parser.parse_args()
     files = args.f
