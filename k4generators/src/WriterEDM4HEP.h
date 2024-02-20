@@ -21,7 +21,7 @@
 #include <fstream>
 
 #include "edm4hep/MCParticleCollection.h"
-#include "podio/ROOTFrameWriter.h"
+#include "podio/ROOTWriter.h"
 
 namespace HepMC3
 {
@@ -78,7 +78,7 @@ private:
     unsigned long m_particle_counter; //!< Used to set bar codes
 
     bool m_edm4hepWriterClosed;
-    podio::ROOTFrameWriter m_edm4hepWriter;
+    podio::ROOTWriter m_edm4hepWriter;
   
 };
 
