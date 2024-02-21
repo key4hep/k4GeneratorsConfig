@@ -5,9 +5,21 @@ class WhizardProcDB:
 		self.out = ""
 
 	def write_DBInfo(self):
-		if ( self.process.get('procname') == "Difermion" ):
+		# choose as function of generatorDBLabel
+		label = self.process.get_generatorDBLabel()
+		if ( label == "12_12" ):
 			self.out += self.write_Difermion()
-		elif ( self.process.get('procname') == "ZH" ):
+		if ( label == "13_13" ):
+			self.out += self.write_Difermion()
+		if ( label == "14_14" ):
+			self.out += self.write_Difermion()
+		if ( label == "15_15" ):
+			self.out += self.write_Difermion()
+		if ( label == "16_16" ):
+			self.out += self.write_Difermion()
+		if ( label == "12_12" ):
+			self.out += self.write_Difermion()
+		elif ( label == "23_25" ):
 			self.out += self.write_ZH()
 
 	def write_Difermion(self):
