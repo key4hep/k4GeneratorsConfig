@@ -31,11 +31,17 @@ class Process:
 		self._fpdg = []
 		self._parts.extend([self._beam1, self._beam2])
 		self._proclabel = "{} {} -> ".format(self._beam1.name, self._beam2.name)
+		# calculate a DB label from sqrts (rounded) plus final state particles separated by _
+		label = ""
 		for p in self.final:
 			self._finfo[p] = Particle.get_info(p)
 			self._fpdg.append(str(p))
 			self._proclabel += f"{self._finfo[p].name} "
 			self._parts.append(self._finfo[p])
+			#complete the DBLabel
+			label += f"_{str(abs(p))}"
+		# remove leading _
+		self.generatorDBLabel = label[(label.index("_")+1):] 
 
 	def set_particle_data(self, pdata):
 		if pdata is None or self._init:
@@ -103,6 +109,9 @@ class Process:
 
 	def get_rndmSeed(self):
 		return self.rndmSeed
+
+	def get_generatorDBLabel(self):
+		return self.generatorDBLabel
 
 	def print_info(self):
 		out = f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV"
