@@ -21,9 +21,9 @@ function checkFile() {
     local outFile="$3"
     if [[ -e "$REFDIR/$refgenerator/$outFile" ]]; then
         if diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$procname/$outFile" &> /dev/null; then
-            echo "Process " $procname : "Files are identical."
+            echo "Process " $procname : "Files are identical for file" $outFile 
         else
-            echo "Process " $procname "Files are different."
+            echo "Process " $procname "Files are different for file" $outFile 
             diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$procname/$outFile"
             exit 1
         fi
