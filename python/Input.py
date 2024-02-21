@@ -1,5 +1,6 @@
 import yaml
 import os
+import Selectors
 
 class Input:
     """Class for loading YAML files"""
@@ -24,6 +25,10 @@ class Input:
                     setattr(self, "events", value)
             else:
                 setattr(self, key.lower(), value)
+        if self.get_block("selectors"):
+            self.selectors = {}
+            for name in self.get_block("selectors"):
+                self.selectors[name.lower()] = Selectors.Selectors(name.lower(), self.settings["selectors"][name])
 
     def load_file(self):
         with open(self.file, 'r') as file:
@@ -72,28 +77,19 @@ class Input:
             return 4711
 
     def get_Beamstrahlung(self):
-        try:
-            return self.settings["Beamstrahlung"]
-        except:
-            return "ILC"
+        return self.settings.get("beamstrahlung",None)
 
     def get_PythiaTune(self):
-        try:
-            return self.settings["PythiaTune"]
-        except:
-            return "None"
+        return self.settings.get("pythiatune",None)
 
     def get_ElectronPolarisation(self):
-        try:
-            return self.settings["ElectronPolarisation"]
-        except:
-            return 0
+        return self.settings.get("electronpolarisation",0)
 
     def get_PositronPolarisation(self):
-        try:
-            return self.settings["PositronPolarisation"]
-        except:
-            return 0
+        return self.settings.get("positronpolarisation",0)
+
+    def get_PolDensity(self):
+        return self.settings.get("poldensity", [1,-1])
 
     def get_sqrt_s(self):
         return self.get("sqrts", None)
@@ -106,16 +102,6 @@ class Input:
 
     def get_event_number(self):
         return self.get("events", 0)
-        # nvts = self.get("events", 0)
-        # if "k" in nvts:
-        #     nvts = int(nvts.split("k")[0]) * 1e3
-        #     setattr(self, "events", nvts)
-        # elif "m" in nvts:
-        #     nvts = int(nvts.split("m")[0]) * 1e6
-        #     setattr(self, "events", nvts)
-        # return nvts            
-
-
 
     def get_isr_mode(self):
         return self.get("isrmode", 0)

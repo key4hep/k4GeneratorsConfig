@@ -1,0 +1,33 @@
+Generators:
+  - Whizard
+  - Madgraph
+
+OutputFormat: evx
+OutDir: Run-Cards
+Events: 100
+
+PositronPolarisation: 0.3
+ElectronPolarisation: 0.8
+Beamstrahlung: ILC
+
+SqrtS: 240
+Model: SM
+ISRMode: 1
+
+Processes:
+  Difermion_Polarized:
+     Initial: [11, -11]
+     Final: [14, -14]
+     Order: [2,0]
+
+ParticleData:
+  25:
+    mass: 125
+    # width: 0
+  23:
+    mass: 91.1876
+    # width: 2.4952
+  24:
+    mass: 80.379
+    width: 2.085
+

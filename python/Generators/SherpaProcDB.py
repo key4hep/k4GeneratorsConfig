@@ -30,4 +30,7 @@ class SherpaProcDB:
 		self.runout  = " WIDTH[25] 0\n" 
 		self.runout += " WIDTH[23] 0\n"
 
-
+	def remove_option(self,opt):
+		lines = self.runout.split("\n")
+		filter_lines = [line for line in lines if opt not in line]
+		self.runout = "\n".join(filter_lines)

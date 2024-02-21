@@ -9,17 +9,23 @@ class Sherpa:
 		self.procinfo = procinfo
 		self.ext = "dat"
 		self.file = ""
-		self.outdir = f"{procinfo.get('OutDir')}/Sherpa"
+		self.cuts = ""
+		self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
 		self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
-		self.procDB.write_DBInfo()
+		self.settings = settings
+		if settings.get("usedefaults",True):
+			self.procDB.write_DBInfo()
 
 		self.executable  = "Sherpa -f"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 		self.gen_settings = settings.get_block("sherpa")
 		if self.gen_settings is not None:
 			self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
+		if settings.get_block("selectors"):
+			self.cuts="(selector){\n"
+			self.write_selectors()
 
 	def write_run(self):
 		self.run = "(run){\n"
@@ -50,6 +56,8 @@ class Sherpa:
 					if name is not None:
 						value = getattr(p, attr)
 						op_name = f"{name}[{p.get('pdg_code')}]"
+						if op_name in self.procDB.get_run_out():
+							self.procDB.remove_option(op_name)
 						self.add_run_option(op_name, value)
 						
 		if  self.procinfo.get("output_format") == "hepmc":
@@ -75,6 +83,66 @@ class Sherpa:
 			self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n"
 		self.ptext += f"  Order ({self.procinfo.get_qcd_order()},{self.procinfo.get_qed_order()});\n"
 		self.ptext += "  End process;\n"
+
+	def write_selectors(self):
+		selectors = getattr(self.settings,"selectors")
+		for key,value in selectors.items():
+			if key == "pt":
+				self.add_one_ParticleSelector(value, "PT")
+			elif key == "et":
+				self.add_one_ParticleSelector(value, "ET")
+			elif key == "rap":
+				self.add_one_ParticleSelector(value, "Rapidity")
+			elif key == "eta":
+				self.add_one_ParticleSelector(value, "PseudoRapidity")	
+
+				# Two particle selectors
+			elif key == "mass":
+				self.add_two_ParticleSelector(value,"Mass")
+			elif key == "angle":
+				self.add_two_ParticleSelector(value, "Angle")
+			elif key == "deta":
+				self.add_two_ParticleSelector(value, "DeltaEta")
+			elif key == "drap":
+				self.add_two_ParticleSelector(value, "DeltaY")
+			elif key == "dphi":
+				self.add_two_ParticleSelector(value, "DeltaPhi")
+			elif key == "dr":
+				self.add_two_ParticleSelector(value, "DeltaR")
+			else:
+				print(f"{key} not a Sherpa Selector")
+		self.cuts+="}(selector)\n"
+
+	def add_two_ParticleSelector(self,sel,name):
+		Min,Max = sel.get_MinMax()
+		flavs = sel.get_Flavours()
+		if len(flavs) == 2:
+			f1 = flavs[0]
+			f2 = flavs[0]
+			if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+				return
+			sname = f" {name} {f1} {f2} {Min} {Max}"
+			self.cuts+=sname
+			self.cuts+="\n"
+		else:
+			for fl in flavs:
+				f1 = fl[0]
+				f2 = fl[1]
+				if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+					continue
+				sname = f" {name} {f1} {f2} {Min} {Max}"
+				self.cuts+=sname
+				self.cuts+="\n"
+
+	def add_one_ParticleSelector(self,sel,name):
+		Min,Max = sel.get_MinMax()
+		f1 = sel.get_Flavours()
+		for f in f1:
+			sname = f" {name} {f} {Min} {Max}"
+			self.cuts+=sname
+			self.cuts+="\n"
+
+
 
 	def add_decay(self):
 		# Simple check first that parents are 
@@ -107,7 +175,7 @@ class Sherpa:
 		self.write_process()
 		self.ptext += "}(processes)\n\n"
 		self.run += "}(run)\n\n"
-		self.file = self.run + self.ptext
+		self.file = self.run + self.ptext + self.cuts
 		with open(self.outfile, "w+") as file:
 			file.write(self.file)
 
@@ -126,7 +194,7 @@ class Sherpa:
 				if key in self.gen_settings["run"]:
 					value = self.gen_settings["run"][key]
 		if key in self.run:
-			if value in self.run:
+			if str(value) in self.run:
 				return
 			print(f"{key} has already been defined in {self.name} with value.")
 			return

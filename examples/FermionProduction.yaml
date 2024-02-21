@@ -5,33 +5,51 @@ Generators:
 
 OutputFormat: evx
 OutDir: Run-Cards
-Events: 100
+Events: 100000
 
+RandomSeed: 42
 
 SqrtS: 91.2
 Model: SM
 ISRMode: 0
 
 Processes:
-  Difermion:
+  Muon:
+     Initial: [11, -11]
+     Final: [13, -13]
+     Order: [2,0]
+  MuonNeutrino:
      Initial: [11, -11]
      Final: [14, -14]
      Order: [2,0]
+  Tau:
+     Initial: [11, -11]
+     Final: [15, -15]
+     Order: [2,0]
+  TauNeutrino:
+     Initial: [11, -11]
+     Final: [16, -16]
+     Order: [2,0]
 
 
+Selectors:
+  Mass:
+    Max: 91.2
+    Min: 20
+    # Flavour: [13, -13]
+    Flavour: [[13, -13], [14,-14], [15,-15], [16,-16]]
+  PT:
+    Max: 45.6
+    Min: 20
+    Flavour: [-13,13]
+
+Sherpa:
+  Run:
+    EW_SCHEME: 3
 
 
 ParticleData:
-  25:
-    mass: 125
-    width: 0
-  11:
-    mass: 0.0005111
-    width: 0
   23:
     mass: 91.1876
     width: 2.4952
-  24:
-    mass: 80.379
-    width: 2.085
 

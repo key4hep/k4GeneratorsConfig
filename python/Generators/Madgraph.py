@@ -8,25 +8,27 @@ class Madgraph:
 		self.name = "Madgraph"
 		self.version = "x.y.z"
 		self.procinfo = procinfo
+		self.settings = settings
 		self.ext = "dat"
 		self.file = ""
-		self.outdir = f"{procinfo.get('OutDir')}/Madgraph"
+		self.outdir = f"{procinfo.get('OutDir')}/Madgraph/{self.procinfo.get('procname')}"
 		self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
 		self.outfile = f"{self.outdir}/{self.outfileName}"
-
+		self.add_header()
 		self.executable  = "mg5_aMC"
 		self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
 		self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
-		self.procDB.write_DBInfo()
+		if settings.get("usedefaults",True):
+			self.procDB.write_DBInfo()
+
 		self.gen_settings = settings.get_block("madgraph")
 		if self.gen_settings is not None:
 			self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
 	def write_run(self):
-		self.add_header()
 		if self.gen_settings is not None:
 			if "model" in self.gen_settings:
-				self.add_run_option("import model", self.gen_settings["model"])
+				self.add_run_option("import model", self.gen_settings["model"].lower())
 			else: 
 				self.add_run_option("import model", self.procinfo.get("model").lower())
 		else:
@@ -46,8 +48,57 @@ class Madgraph:
 		self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
 		self.set_particle_data()
 		self.add_run_option("set nevents", self.procinfo.get("events"))
-		self.run += self.procDB.write_DBInfo()
+		if self.procinfo.get("isr_mode"):
+			if self.procinfo.get_Beamstrahlung() is not None:
+				#if self.gen_settings is None:
+				#	print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
+				#		Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
+				#		See arxiv 2108.10261 for more details.")
+				#	raise(ValueError)
+				#else:
+				self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
+			else:
+				self.add_run_option("set pdlabel", "isronlyll")
+			self.add_run_option("set lpp1", "3")
+			self.add_run_option("set lpp2", "-3")
+		self.run += self.procDB.get_run_out()
+		if self.settings.get_block("selectors"):
+			self.write_selectors()
 
+
+	def get_BeamstrahlungPDLABEL(self):
+		ecm   = self.procinfo.get("sqrts")
+		accel = self.procinfo.get_Beamstrahlung()
+		if abs(ecm-240) < 10:
+			if accel.lower() == "cepc":
+				return f"{accel.lower()}240ll";
+			elif accel.lower() == "fcc":
+				return f"{accel.lower()}e240ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using FCCE")
+				return "fcce240ll"
+		elif abs(ecm-365) < 10:
+			if accel.lower() == "fcc":
+				return f"{accel.lower()}365ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using FCCE")
+				return "fcc365ll";
+		elif abs(ecm-500) < 10:
+			if accel.lower() == "ilc":
+				return f"{accel.lower()}500ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using ILC")
+				return "ilc500ll";
+		elif abs(ecm-3000) < 10:
+			if accel.lower() == "clic":
+				return f"{accel.lower()}3000ll";
+			else:
+				print("No setting found for requested accelerator "+accel+"using CLIC")
+				return "clic3000ll";
+		else:
+			print(f"No Beamstrahlung setting available for MADGRAPH at this energy {ecm}")
+			print("Using ILC at 500GeV")
+			return "ilc500ll"
 
 	def set_particle_data(self):
 		for p in self.procinfo.get_data_particles():
@@ -73,6 +124,80 @@ class Madgraph:
 			for child in decay_opt[key]:
 				decays += f"{part.name_from_pdg(child)} "
 		self.proc += decays
+
+	def write_selectors(self):
+		selectors = getattr(self.settings,"selectors")
+		for key,value in selectors.items():
+			if key == "pt":
+				self.add_one_ParticleSelector(value, "pt")
+			elif key == "energy":
+				self.add_one_ParticleSelector(value, "e")
+			elif key == "rap":
+				self.add_one_ParticleSelector(value, "eta")
+			elif key == "eta":
+				self.add_one_ParticleSelector(value, "eta")	
+
+				# Two particle selectors
+			elif key == "mass":
+				self.add_two_ParticleSelector(value,"mxx")
+			elif key == "angle":
+				self.add_two_ParticleSelector(value, "Angle")
+			elif key == "deta":
+				self.add_two_ParticleSelector(value, "Angle")
+			elif key == "drap":
+				self.add_two_ParticleSelector(value, "DeltaY")
+			elif key == "dphi":
+				self.add_two_ParticleSelector(value, "DeltaPhi")
+			elif key == "dr":
+				self.add_two_ParticleSelector(value, "DeltaR")
+			else:
+				print(f"{key} not a MadGraph Selector")
+
+	def add_two_ParticleSelector(self,sel,name):
+		Min,Max = sel.get_MinMax()
+		flavs = sel.get_Flavours()
+		if len(flavs) == 2:
+			f1 = flavs[0]
+			f2 = flavs[0]
+			if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+				return
+			sname = f"{name}_min_pdg"
+			mincut = f"{f}: {Min}"
+			self.run+=f"set {sname} {mincut}\n"
+			sname = f"{name}_max_pdg"
+			maxcut = f"{f}: {Max}"
+			self.run+=f"set {sname} {maxcut}\n"
+		else:
+			for fl in flavs:
+				f1 = fl[0]
+				f2 = fl[1]
+				if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+					continue
+				if f1 != -f2:
+					print("Cannot set cuts in MadGraph this way.")
+				sname = f"{name}_min_pdg"
+				mincut = f"{f1}: {Min}"
+				self.run+=f"set {sname} {mincut}\n"
+
+				sname = f"{name}_max_pdg"
+				maxcut = f"{f1}: {Max}"
+				self.run+=f"set {sname} {maxcut}\n"
+
+				# self.add_run_option(sname, maxcut)
+
+	def add_one_ParticleSelector(self,sel,name):
+		Min,Max = sel.get_MinMax()
+		f1 = sel.get_Flavours()
+		for f in f1:
+			if f < 0:
+				continue
+			sname = f"{name}_min_pdg"
+			mincut = f"{f}: {Min}"
+			self.run+=f"set {sname} {mincut}\n"
+
+			sname = f"{name}_max_pdg"
+			maxcut = f"{f}: {Max}"
+			self.run+=f"set {sname} {maxcut}\n"
 
 	def write_file(self):
 		self.write_run()
