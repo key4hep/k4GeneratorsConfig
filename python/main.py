@@ -35,13 +35,14 @@ SqrtS        : float (center of mass energy)
 ISRmode      : int (0: off, 1: on)
 OutputFormat : string (format output, available are hepmc and evx)
 OutDir       : string (output directory, default=$PWD/Run-Cards)
-Events       : int (Number of Monte-Carlo events to be generated)
+Events       : unsigned int (Number of Monte-Carlo events to be generated)
 Processes    : see README A list of processes which runcards should be generated. Each process should have its own unique name
 		Processes:
 		  Muon:
 		     Initial: [11, -11]
 		     Final: [13, -13]
 		     Order: [2,0]
+RandomSeed   : unsigned int (specify a random seed, important when generating multiple files for the same process)
 ParticleData : overwrite basic particle properties
 		ParticleData:
 		  25:
