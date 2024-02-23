@@ -5,6 +5,7 @@ Generators:
 OutputFormat: evx
 OutDir: Run-Cards
 Events: 100
+EventMode: unweighted
 
 PositronPolarisation: 0.3
 ElectronPolarisation: 0.8

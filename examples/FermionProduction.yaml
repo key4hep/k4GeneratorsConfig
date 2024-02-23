@@ -6,6 +6,7 @@ Generators:
 OutputFormat: evx
 OutDir: Run-Cards
 Events: 100000
+EventMode: unweighted
 
 RandomSeed: 42
 
