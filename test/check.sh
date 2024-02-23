@@ -36,7 +36,7 @@ function checkOutputs() {
     for generator in */*; do
         [[ -d "$generator" ]] || continue
         echo "Checking $generator"
-        for outFile in "$PWD/$generator"/*/*; do
+        for outFile in "$PWD/$generator"/*; do
             [[ -f "$outFile" ]] || continue
 	    local fullpath="$(dirname "$outFile")"
 	    local procname="$(basename "$fullpath")"

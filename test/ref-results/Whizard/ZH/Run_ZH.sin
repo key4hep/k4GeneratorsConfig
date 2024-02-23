@@ -20,5 +20,6 @@ sample_format = hepmc
 resonance_on_shell_limit = 16
 resonance_on_shell_turnoff = 2
 resonance_on_shell_turnoff = 2
+?unweighted = true
 compile
 simulate (proc) { iterations = 5:5000}

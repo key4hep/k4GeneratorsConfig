@@ -11,18 +11,19 @@
 
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- EVENT_OUTPUT HepMC_GenEvent[Muon];
+ EVENT_OUTPUT HepMC_GenEvent[MuonNeutrino];
+ EVENT_GENERATION_MODE unweighted;
  EW_SCHEME 3;
 }(run)
 
 (processes){
-  Process 11 -11 -> 13 -13;
+  Process 11 -11 -> 14 -14;
   Order (0,2);
   End process;
 }(processes)
 
 (selector){
- Mass 13 -13 20 91.2
+ Mass 14 -14 20 91.2
  PT -13 20 45.6
  PT 13 20 45.6
 }(selector)

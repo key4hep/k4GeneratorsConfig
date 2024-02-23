@@ -74,6 +74,10 @@ class Whizard:
 			self.add_process_option("sample_format", self.procinfo.get("output_format"))
 			self.add_process_option("?write_raw","false")
 		self.process += self.procDB.get_out()
+		if self.procinfo.eventmode == "unweighted":
+			self.add_process_option("?unweighted", "true")
+		else:
+			self.add_process_option("?unweighted", "false")
 		if self.settings.get_block("selectors"):
 			self.cutsadded = 0
 			self.write_selectors()
