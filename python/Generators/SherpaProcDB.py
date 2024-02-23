@@ -6,12 +6,22 @@ class SherpaProcDB:
         self.procout = ""
 
     def write_DBInfo(self):
-        if ( self.process.get('procname') == "Difermion" ):
-            self.write_Difermion()
-        elif ( self.process.get('procname') == "ZH" ):
-            self.write_run_ZH()
-
-        return self.runout
+        # choose as function of generatorDBLabel
+        label = self.process.get_generatorDBLabel()
+        if ( label == "12_12" ):
+            self.out += self.write_Difermion()
+        if ( label == "13_13" ):
+            self.out += self.write_Difermion()
+        if ( label == "14_14" ):
+            self.out += self.write_Difermion()
+        if ( label == "15_15" ):
+            self.out += self.write_Difermion()
+        if ( label == "16_16" ):
+            self.out += self.write_Difermion()
+        if ( label == "12_12" ):
+            self.out += self.write_Difermion()
+        elif ( label == "23_25" ):
+            self.out += self.write_ZH()
 
     def write_Difermion(self):
         self.runout  = ""
