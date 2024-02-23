@@ -108,10 +108,10 @@ class Process:
         return self.PositronPolarisation
 
     def get_PolDensity(self):
-	return self.PolDensity
+        return self.PolDensity
 
     def get_rndmSeed(self):
-	return self.rndmSeed
+        return self.rndmSeed
 
     def get_generatorDBLabel(self):
         return self.generatorDBLabel
