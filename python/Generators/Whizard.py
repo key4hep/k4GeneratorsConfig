@@ -22,6 +22,7 @@ class Whizard:
 
         self.executable  = "whizard"
         self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
+        self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
 
     def write_process(self):
         self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
@@ -73,7 +74,7 @@ class Whizard:
         if self.procinfo.get("output_format") != "evx":
             self.add_process_option("sample_format", self.procinfo.get("output_format"))
             self.add_process_option("?write_raw","false")
-        self.process += self.procDB.get_out()
+        self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":
             self.add_process_option("?unweighted", "true")
         else:
@@ -162,7 +163,7 @@ class Whizard:
         if key in self.process:
             print(f"{key} has already been defined in {self.name}.")
             return
-        if f"{key}" in self.procDB.get_out():
+        if f"{key}" in self.procDB.get_run_out():
             self.procDB.remove_option(key)
         self.process += f"{key} = {value}\n"
 
