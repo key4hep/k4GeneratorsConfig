@@ -21,7 +21,7 @@ class MadgraphProcDB:
         if ( label == "12_12" ):
             self.runout += self.write_Difermion()
         elif ( label == "23_25" ):
-            self.runout += self.write_ZH()
+            self.runout += self.write_run_ZH()
 
     def write_Difermion(self):
         out = ""
