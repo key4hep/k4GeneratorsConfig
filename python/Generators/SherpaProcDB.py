@@ -9,19 +9,19 @@ class SherpaProcDB:
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
         if ( label == "12_12" ):
-            self.write_Difermion()
+            self.runout += self.write_Difermion()
         if ( label == "13_13" ):
             self.write_Difermion()
         if ( label == "14_14" ):
-            self.write_Difermion()
+            self.runout += self.write_Difermion()
         if ( label == "15_15" ):
-            self.write_Difermion()
+            self.runout += self.write_Difermion()
         if ( label == "16_16" ):
-            self.write_Difermion()
+            self.runout += self.write_Difermion()
         if ( label == "12_12" ):
-            self.write_Difermion()
+            self.runout += self.write_Difermion()
         elif ( label == "23_25" ):
-            self.write_ZH()
+            self.runout += self.write_run_ZH()
 
     def write_Difermion(self):
         self.runout  = ""
