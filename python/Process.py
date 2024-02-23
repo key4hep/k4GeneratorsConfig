@@ -139,3 +139,4 @@ class ProcessParameters:
 		self.PositronPolarisation = settings.get_PositronPolarisation()
 		self.PolDensity = settings.get_PolDensity()
 		self.rndmSeed = settings.get_rndmSeed()
+		self.eventmode = settings.get_weighted_mode()

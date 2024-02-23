@@ -68,6 +68,7 @@ class Sherpa:
 			eoutname="HepMC3_GenEvent[{0}]".format(self.procinfo.get("procname"))
 			self.add_run_option("EVENT_OUTPUT", eoutname)
 		self.run += self.procDB.get_run_out()
+		self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
 		if self.gen_settings is not None:
 			if "run" in self.gen_settings.keys():
 				for key,value in self.gen_settings["run"].items():
