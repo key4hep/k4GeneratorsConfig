@@ -31,6 +31,9 @@ Processes:
 Madgraph:
   Model: sm-lepton_masses
 
+Whizard:
+  Model: SM_Higgs
+
 Sherpa:
   # THESE settings key must match Sherpa!!
   Run:
