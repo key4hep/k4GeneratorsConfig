@@ -28,11 +28,11 @@ class Madgraph:
     def write_run(self):
         if self.gen_settings is not None:
             if "model" in self.gen_settings:
-                self.add_run_option("import model", self.gen_settings["model"].lower())
+                self.add_run_option("import model", self.gen_settings["model"])
             else: 
-                self.add_run_option("import model", self.procinfo.get("model").lower())
+                self.add_run_option("import model", self.procinfo.get("model"))
         else:
-            self.add_run_option("import model", self.procinfo.get("model").lower())
+            self.add_run_option("import model", self.procinfo.get("model"))
         self.mg_particles = list(map(self.pdg_to_madgraph, self.procinfo.get_particles()))
         self.proc=""
         for i in range(len(self.mg_particles)):
@@ -45,16 +45,16 @@ class Madgraph:
         self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
         self.add_run_option("launch", None)
         self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
-        self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)		
+        self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)     
         self.set_particle_data()
         self.add_run_option("set nevents", self.procinfo.get("events"))
         if self.procinfo.get("isr_mode"):
             if self.procinfo.get_Beamstrahlung() is not None:
                 #if self.gen_settings is None:
-                #	print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
-                #		Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
-                #		See arxiv 2108.10261 for more details.")
-                #	raise(ValueError)
+                #   print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
+                #       Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
+                #       See arxiv 2108.10261 for more details.")
+                #   raise(ValueError)
                 #else:
                 self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
             else:
@@ -135,7 +135,7 @@ class Madgraph:
             elif key == "rap":
                 self.add_one_ParticleSelector(value, "eta")
             elif key == "eta":
-                self.add_one_ParticleSelector(value, "eta")	
+                self.add_one_ParticleSelector(value, "eta") 
 
                 # Two particle selectors
             elif key == "mass":
@@ -231,7 +231,7 @@ class Madgraph:
         if d == "width":
             return "W"
         return None
-	
+    
     def add_header(self):
         self.run = '''#************************************************************
 #*                        MadGraph 5                        *
