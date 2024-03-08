@@ -24,7 +24,7 @@ function checkFile() {
             echo "Process " $procname : "Files are identical for file" $outFile 
         else
             echo "Process " $procname "Files are different for file" $outFile 
-            diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$procname/$outFile"
+            diff "$REFDIR/$refgenerator/$procname/$outFile" "$PWD/$generator/$procname/$outFile"
             exit 1
         fi
     else
