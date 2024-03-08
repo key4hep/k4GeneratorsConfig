@@ -19,10 +19,9 @@ function checkFile() {
     local refgenerator="$(basename "$generator")"
     local procname="$2"
     local outFile="$3"
-    echo the outfile is $outFile
-    echo full path is $REFDIR/$refgenerator/$outFile
+    echo full path is $REFDIR/$refgenerator/$procname/$outFile
     if [[ -e "$REFDIR/$refgenerator/$outFile" ]]; then
-        if diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$procname/$outFile" &> /dev/null; then
+        if diff "$REFDIR/$refgenerator/$procname/$outFile" "$PWD/$generator/$procname/$outFile" &> /dev/null; then
             echo "Process " $procname : "Files are identical for file" $outFile 
         else
             echo "Process " $procname "Files are different for file" $outFile 
