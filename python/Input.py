@@ -70,12 +70,6 @@ class Input:
         except:
             return "hepmc"
 
-    def get_rndmSeed(self):
-        try:
-            return getattr(self,"randomseed")
-        except:
-            return 4711
-
     def get_Beamstrahlung(self):
         return self.settings.get("beamstrahlung",None)
 

@@ -3,15 +3,15 @@ from Particles import Particle
 class Process:
     """A standard Process"""
 
-    _required_args = ['initial', 'final', 'sqrts', 'order', 'procname', 'decay']
+    _required_args = ['initial', 'final', 'sqrts', 'order', 'procname', 'randomseed', 'decay']
 
-    def __init__(self, initial, final, sqrts, order, procname, decay, params, **options):
+    def __init__(self, initial, final, sqrts, order, procname, rndmseed, decay, params, **options):
         self._init = False
         self._parts = []
         self._dataparts = []
         self.generatorDBLabel = ""
 
-        args = (initial, final, sqrts, order, procname, decay)
+        args = (initial, final, sqrts, order, procname, rndmseed, decay)
         if len(initial) != 2:
             raise ValueError("Initial state should have 2 particles not {}".format(len(initial)))
 
@@ -111,7 +111,7 @@ class Process:
         return self.PolDensity
 
     def get_rndmSeed(self):
-        return self.rndmSeed
+        return self.get("randomseed")
 
     def get_generatorDBLabel(self):
         return self.generatorDBLabel
@@ -138,5 +138,4 @@ class ProcessParameters:
         self.ElectronPolarisation = settings.get_ElectronPolarisation()
         self.PositronPolarisation = settings.get_PositronPolarisation()
         self.PolDensity = settings.get_PolDensity()
-        self.rndmSeed = settings.get_rndmSeed()
         self.eventmode = settings.get_weighted_mode()
