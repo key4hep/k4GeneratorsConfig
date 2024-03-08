@@ -37,6 +37,7 @@ function checkOutputs() {
         [[ -d "$generator" ]] || continue
         echo "Checking $generator"
 	echo LOOKING IN $PWD/$generator
+	echo LOOKING IN $generator
 	ls $PWD/$generator
         for outFile in "$PWD/$generator"/*; do
             [[ -f "$outFile" ]] || continue
