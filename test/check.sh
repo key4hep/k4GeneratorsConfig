@@ -39,7 +39,7 @@ function checkOutputs() {
 	echo LOOKING IN $PWD/$generator
 	echo LOOKING IN $generator
 	ls $PWD/$generator
-        for outFile in "$PWD/$generator"/*; do
+        for outFile in "$PWD/$generator"/*/*; do
             [[ -f "$outFile" ]] || continue
 	    local fullpath="$(dirname "$outFile")"
 	    local procname="$(basename "$fullpath")"
