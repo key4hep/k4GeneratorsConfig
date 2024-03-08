@@ -18,7 +18,7 @@
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
 #************************************************************"
-import model sm
+import model SM
 generate e- e+ > mu- mu+ 
 output Run-Cards/Madgraph/Muon/Muon
 launch
