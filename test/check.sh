@@ -19,6 +19,8 @@ function checkFile() {
     local refgenerator="$(basename "$generator")"
     local procname="$2"
     local outFile="$3"
+    echo the outfile is $outFile
+    echo full path is $REFDIR/$refgenerator/$outFile
     if [[ -e "$REFDIR/$refgenerator/$outFile" ]]; then
         if diff "$REFDIR/$refgenerator/$outFile" "$PWD/$generator/$procname/$outFile" &> /dev/null; then
             echo "Process " $procname : "Files are identical for file" $outFile 
@@ -36,9 +38,6 @@ function checkOutputs() {
     for generator in */*; do
         [[ -d "$generator" ]] || continue
         echo "Checking $generator"
-	echo LOOKING IN $PWD/$generator
-	echo LOOKING IN $generator
-	ls $PWD/$generator
         for outFile in "$PWD/$generator"/*/*; do
             [[ -f "$outFile" ]] || continue
 	    local fullpath="$(dirname "$outFile")"
