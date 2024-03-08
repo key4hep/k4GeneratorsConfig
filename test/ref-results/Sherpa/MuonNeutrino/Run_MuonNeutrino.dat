@@ -1,5 +1,5 @@
 (run){
- RANDOM_SEED 42;
+ RANDOM_SEED 4712;
  BEAM_1 11;
  BEAM_2 -11;
  BEAM_ENERGY_1 45.6;
@@ -14,6 +14,8 @@
  EVENT_OUTPUT HepMC_GenEvent[MuonNeutrino];
  EVENT_GENERATION_MODE unweighted;
  EW_SCHEME 3;
+ MASS[24] 80.419;
+ WIDTH[24] 2.0476;
 }(run)
 
 (processes){

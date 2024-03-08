@@ -14,6 +14,8 @@
  EVENT_OUTPUT HepMC_GenEvent[Muon];
  EVENT_GENERATION_MODE unweighted;
  EW_SCHEME 3;
+ MASS[24] 80.419;
+ WIDTH[24] 2.0476;
 }(run)
 
 (processes){
