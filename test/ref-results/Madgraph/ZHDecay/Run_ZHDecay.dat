@@ -31,3 +31,5 @@ set WZ 2.4952
 set MW 80.379
 set WW 2.085
 set nevents 100
+set WZ 0
+set WH 0
