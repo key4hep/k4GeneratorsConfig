@@ -33,11 +33,14 @@ class Whizard:
         self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
         self.whiz_beam2 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(2))
         self.finalstate = ", ".join(map(self.pdg_to_whizard, self.procinfo.get_final_pdg_list()))
+
         try:
             if "model" in self.gen_settings:
                 self.process = f'model = {self.gen_settings["model"]}\n'
         except:
             self.process = f"model = {self.procinfo.get('model')}\n"
+
+        self.add_process_option("seed",self.procinfo.get_rndmSeed())
 
         if self.procinfo.get("isr_mode"):
             self.add_process_option("?isr_handler", "true")
