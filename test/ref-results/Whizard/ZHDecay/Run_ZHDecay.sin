@@ -1,13 +1,11 @@
-model = SM
+model = SM_Higgs
 seed = 42
 ?isr_handler = false
 process proc = e1, E1 => Z, H
-beams_pol_density = @(1), @(-1)
-beams_pol_fraction = 0, 0
 n_events = 100
 sqrts = 250.0
- process decayZ = Z => e3, E3
- process decayH = H => e2, E2
+process decayZ = Z => e3, E3
+process decayH = H => e2, E2
 mH = 125
 wH = 0.00407
 mZ = 91.1876
@@ -22,4 +20,6 @@ resonance_on_shell_turnoff = 2
 resonance_on_shell_turnoff = 2
 ?unweighted = true
 compile
+integrate (decayZ)
+integrate (decayH)
 simulate (proc) { iterations = 5:5000}
