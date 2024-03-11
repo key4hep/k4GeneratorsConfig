@@ -5,7 +5,9 @@ process proc = e1, E1 => Z, H
 n_events = 100
 sqrts = 250.0
 process decayZ = Z => e3, E3
+unstable Z (decayZ)
 process decayH = H => e2, E2
+unstable H (decayH)
 mH = 125
 wH = 0.00407
 mZ = 91.1876
