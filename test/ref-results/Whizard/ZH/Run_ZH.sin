@@ -2,8 +2,6 @@ model = SM
 seed = 42
 ?isr_handler = false
 process proc = e1, E1 => Z, H
-beams_pol_density = @(1), @(-1)
-beams_pol_fraction = 0, 0
 n_events = 100
 sqrts = 250.0
 mH = 125
