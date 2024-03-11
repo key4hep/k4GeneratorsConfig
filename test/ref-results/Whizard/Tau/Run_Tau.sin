@@ -1,9 +1,7 @@
 model = SM
-seed = 42
+seed = 4713
 ?isr_handler = false
 process proc = e1, E1 => e3, E3
-beams_pol_density = @(1), @(-1)
-beams_pol_fraction = 0, 0
 n_events = 100000
 sqrts = 91.2
 mZ = 91.1876
