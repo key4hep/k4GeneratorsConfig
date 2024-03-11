@@ -9,8 +9,6 @@ Events: 100
 EventMode: unweighted
 
 
-RandomSeed: 42
-
 SqrtS: 250.
 Model: SM
 ISRMode: 0
@@ -20,6 +18,7 @@ Processes:
      Initial: [11, -11]
      Final: [23, 25]
      Order: [2,0]
+     RandomSeed: 42
 
 
 
