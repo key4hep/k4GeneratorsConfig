@@ -70,12 +70,6 @@ class Input:
         except:
             return "hepmc"
 
-    def get_rndmSeed(self):
-        try:
-            return getattr(self,"randomseed")
-        except:
-            return 4711
-
     def get_Beamstrahlung(self):
         return self.settings.get("beamstrahlung",None)
 
@@ -105,3 +99,7 @@ class Input:
 
     def get_isr_mode(self):
         return self.get("isrmode", 0)
+
+
+    def get_weighted_mode(self):
+        return self.get("eventmode", "unweighted")

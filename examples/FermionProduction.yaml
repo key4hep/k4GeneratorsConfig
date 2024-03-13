@@ -6,8 +6,7 @@ Generators:
 OutputFormat: evx
 OutDir: Run-Cards
 Events: 100000
-
-RandomSeed: 42
+EventMode: unweighted
 
 SqrtS: 91.2
 Model: SM
@@ -18,6 +17,7 @@ Processes:
      Initial: [11, -11]
      Final: [13, -13]
      Order: [2,0]
+     RandomSeed: 42
   MuonNeutrino:
      Initial: [11, -11]
      Final: [14, -14]

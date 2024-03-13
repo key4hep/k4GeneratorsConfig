@@ -35,13 +35,14 @@ SqrtS        : float (center of mass energy)
 ISRmode      : int (0: off, 1: on)
 OutputFormat : string (format output, available are hepmc and evx)
 OutDir       : string (output directory, default=$PWD/Run-Cards)
-Events       : int (Number of Monte-Carlo events to be generated)
+Events       : unsigned int (Number of Monte-Carlo events to be generated)
 Processes    : see README A list of processes which runcards should be generated. Each process should have its own unique name
 		Processes:
 		  Muon:
 		     Initial: [11, -11]
 		     Final: [13, -13]
 		     Order: [2,0]
+                     RandomSeed : unsigned int (specify a random seed, important when generating multiple files for the same process)
 ParticleData : overwrite basic particle properties
 		ParticleData:
 		  25:
@@ -74,18 +75,25 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
 
         process_instances = {}
+        rndmIncrement=0
         for key, value in processes.items():
             make_output_directory(settings.gens(), output_dir, key)
             initial = value['initial']
             final = value['final']
             order = value['order']
             try:
+                randomseed = value['randomseed']
+            except:
+                randomseed = 4711+rndmIncrement
+            try:
                 decay = value['decay']
             except:
                 decay= None
             param = process_module.ProcessParameters(settings)
             process_instances[key] = process_module.Process(initial, final, sqrt_s,
-                                                            order, key, decay, param, OutDir=output_dir)
+                                                            order, key, randomseed, decay, param, OutDir=output_dir)
+            #increment counter for randomseed
+            rndmIncrement += 1
 
         for process_instance in process_instances.values():
             process_instance.process_info()

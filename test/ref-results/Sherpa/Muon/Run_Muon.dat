@@ -11,18 +11,21 @@
 
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- EVENT_OUTPUT HepMC_GenEvent[Tau];
+ EVENT_OUTPUT HepMC_GenEvent[Muon];
  EW_SCHEME 3;
+ MASS[24] 80.419;
+ WIDTH[24] 2.0476;
+ EVENT_GENERATION_MODE unweighted;
 }(run)
 
 (processes){
-  Process 11 -11 -> 15 -15;
+  Process 11 -11 -> 13 -13;
   Order (0,2);
   End process;
 }(processes)
 
 (selector){
- Mass 15 -15 20 91.2
+ Mass 13 -13 20 91.2
  PT -13 20 45.6
  PT 13 20 45.6
 }(selector)

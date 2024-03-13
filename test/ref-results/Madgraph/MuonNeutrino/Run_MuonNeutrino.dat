@@ -18,16 +18,16 @@
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
 #************************************************************"
-import model sm
-generate e- e+ > mu- mu+ 
-output Run-Cards/Madgraph/Muon/Muon
+import model SM
+generate e- e+ > vm vm~ 
+output Run-Cards/Madgraph/MuonNeutrino/MuonNeutrino
 launch
-set iseed 42
+set iseed 4712
 set EBEAM 45.6
 set MZ 91.1876
 set WZ 2.4952
 set nevents 100000
-set mxx_min_pdg 13: 20
-set mxx_max_pdg 13: 91.2
+set mxx_min_pdg 14: 20
+set mxx_max_pdg 14: 91.2
 set pt_min_pdg 13: 20
 set pt_max_pdg 13: 45.6
