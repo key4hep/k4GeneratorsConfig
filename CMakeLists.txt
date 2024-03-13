@@ -66,6 +66,8 @@ add_subdirectory(k4GeneratorsConfig)
 #--- enable testing capabilities ------------------------------------------
 include(CTest)
 
+add_subdirectory(test)
+
 # set(basic_defines)
 set(basic_libdir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" )
 
