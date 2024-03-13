@@ -14,3 +14,4 @@ cmake_install.cmake
 convertHepMC2EDM4HEP
 convertHepMC2EDM4HEP_env.sh
 /build/
+/install/
