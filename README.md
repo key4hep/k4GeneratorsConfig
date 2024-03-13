@@ -1,4 +1,4 @@
-# k4Generators
+# k4GeneratorsConfig
 
 ## Description
 A python based module for the automatic generation of inputfiles for  Monte-Carlo(MC) generators.
@@ -20,11 +20,11 @@ pip3 install pyyaml --user
 ## Usage
 Before begining, you should setup the environment by: 
 ```
-source /path/to/k4generators/setup.(tc)(z)sh
+source /path/to/k4GeneratorsConfig/setup.(tc)(z)sh
 ```
 The setup script will check that python3 is available on your machine.
 
-Once you have written your own inputfile(`input.yaml`), as seen in the [examples](https://gitlab.com/aprice/k4generators/-/tree/main/Examples?ref_type=heads), execute the following:\
+Once you have written your own inputfile(`input.yaml`), as seen in the [examples](https://github.com/key4hep/k4GeneratorsConfig/tree/main/examples), execute the following:\
 
 `k4gen -f input.yaml`
 
@@ -47,7 +47,7 @@ For subsequent uses, if you have not modified the C++ code, it is sufficient to 
 ```
 bash
 source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
-cd k4Generators
+cd k4GeneratorsConfig
 source convertHepMC2EDM4HEP_env.sh
 cd /path/to/out
 ./Run_PROCESSNAME.sh
