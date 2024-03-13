@@ -1,28 +1,28 @@
 cmake_minimum_required(VERSION 3.27)
 project(ConvertHepMC2EDM4HEP)
-set(basic_sources   ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/src/convertHepMC2EDM4HEP.cxx
-                    ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/src/cmdline.c 
-		    ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/src/WriterEDM4HEP.cxx )
-set(basic_includes ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/include ${CMAKE_CURRENT_SOURCE_DIR})
+set(basic_sources   ${CMAKE_CURRENT_SOURCE_DIR}/k4GeneratorsConfig/src/convertHepMC2EDM4HEP.cxx
+                    ${CMAKE_CURRENT_SOURCE_DIR}/k4GeneratorsConfig/src/cmdline.c
+		    ${CMAKE_CURRENT_SOURCE_DIR}/k4GeneratorsConfig/src/WriterEDM4HEP.cxx )
+set(basic_includes ${CMAKE_CURRENT_SOURCE_DIR}/k4GeneratorsConfig/include ${CMAKE_CURRENT_SOURCE_DIR})
 set(basic_defines HEPMCCONVERT_EXTENSION_HEPEVTZEUS=1 HEPMCCONVERT_EXTENSION_DOT=1)
 set(basic_dependencies )
 set(basic_libdir "${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR}" )
 add_executable(convertHepMC2EDM4HEP ${basic_sources})
 find_package(HepMC3)
 if(HepMC3_FOUND)
-  message(STATUS "k4generators: HepMC3 found. HepMC3 support enabled. ${HEPMC3_INCLUDE_DIR} ${HEPMC3_LIBRARIES} ")
+  message(STATUS "k4GeneratorsConfig: HepMC3 found. HepMC3 support enabled. ${HEPMC3_INCLUDE_DIR} ${HEPMC3_LIBRARIES} ")
   target_link_libraries(convertHepMC2EDM4HEP PUBLIC HepMC3::HepMC3)
 elseif()
-  message(STATUS "k4generators: HepMC3 not found. this sucks really.")
+  message(STATUS "k4GeneratorsConfig: HepMC3 not found. this sucks really.")
 endif()
 find_package(EDM4HEP REQUIRED)
 if(EDM4HEP_FOUND)
-  message(STATUS "k4generators: EDM4HEP found. EDM4HEP support enabled.")
+  message(STATUS "k4GeneratorsConfig: EDM4HEP found. EDM4HEP support enabled.")
   target_link_libraries(convertHepMC2EDM4HEP PUBLIC EDM4HEP::edm4hep)
 endif()
 find_package(podio REQUIRED)
 if(podio_FOUND)
-  message(STATUS "k4generators: podio found. podio support enabled.")
+  message(STATUS "k4GeneratorsConfig: podio found. podio support enabled.")
   target_link_libraries(convertHepMC2EDM4HEP PUBLIC podio::podioRootIO)
 endif()
 
@@ -92,7 +92,7 @@ set(libdir ${basic_libdir})
 set_target_properties(convertHepMC2EDM4HEP PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/$<0:>)
 
 configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/k4generators/convertHepMC2EDM4HEP_env.sh.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/k4GeneratorsConfig/convertHepMC2EDM4HEP_env.sh.in
         ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/convertHepMC2EDM4HEP_env.sh @ONLY)
 
 # installs
