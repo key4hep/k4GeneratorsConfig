@@ -5,6 +5,8 @@ set -e
 shopt -s expand_aliases
 source ../setup.sh
 
+# STEP 0 prepare the input
+
 mkdir -p ci-setups
 
 CWD=${PWD}
@@ -57,8 +59,35 @@ function processYAML() {
     cd ..
 }
 
+# STEP 1: check the input
+
 for yamlFile in *.yaml; do
     processYAML "$yamlFile"
 done
+
+# STEP 2: run the generators
+
+function processRun() {
+    topDir=${PWD} 
+    thepath="$(dirname "$1")"
+    runfile="$(basename "$1")"
+    echo Running $runfile in $thepath
+    # move to the directory where the script is located
+    cd $thepath
+    # run the script
+    ./$runfile
+    cd $topDir
+}
+
+
+# now we can go through the .sh and run them
+echo $PWD is the current directory
+for aRunScript in */*/*/*/*.sh; do
+    processRun "$aRunScript"
+done
+
+
+# STEP 3: clean up
+rm -r "${CWD}/ci-setups"
 
 exit 0
