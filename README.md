@@ -41,18 +41,7 @@ make
 cd /path/to/out
 ./Run_PROCESSNAME.sh
 ```
-
-## Generating events: package already installed
-For subsequent uses, if you have not modified the C++ code, it is sufficient to setup the environment variables:
-```
-bash
-source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
-cd k4GeneratorsConfig
-source convertHepMC2EDM4HEP_env.sh
-cd /path/to/out
-./Run_PROCESSNAME.sh
-```
-
+Warning: always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
 
 ## General Settings
 The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.

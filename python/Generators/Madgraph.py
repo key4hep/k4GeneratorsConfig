@@ -28,9 +28,9 @@ class Madgraph:
     def write_run(self):
         try:
             if "model" in self.gen_settings:
-                self.add_run_option("import model", self.gen_settings["model"])
+                self.add_run_option("import model", self.gen_settings["model"].lower())
         except:
-            self.add_run_option("import model", self.procinfo.get("model"))
+            self.add_run_option("import model", self.procinfo.get("model").lower())
         self.mg_particles = list(map(self.pdg_to_madgraph, self.procinfo.get_particles()))
         self.proc=""
         for i in range(len(self.mg_particles)):

@@ -13,7 +13,10 @@ class Generators:
         self.proc_info = None
 
         self.key4hep_runShell = "#!/usr/bin/env bash"
-        self.key4hep_config = "source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh"
+        self.key4hep_config = "if [ -z \"${KEY4HEP_STACK}\" ]; then\n"
+        self.key4hep_config += "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
+        self.key4hep_config += "fi\n"
+
 
     def set_process_info(self, proc_info):
         self.proc_info = proc_info

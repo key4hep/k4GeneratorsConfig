@@ -15,3 +15,9 @@ convertHepMC2EDM4HEP
 convertHepMC2EDM4HEP_env.sh
 /build/
 /install/
+CTestTestfile.cmake
+DartConfiguration.tcl
+Testing/
+test/CTestTestfile.cmake
+test/Testing/
+test/ci-setups/

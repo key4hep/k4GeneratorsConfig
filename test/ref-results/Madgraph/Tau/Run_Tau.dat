@@ -18,7 +18,7 @@
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
 #************************************************************"
-import model SM
+import model sm
 generate e- e+ > ta- ta+ 
 output Run-Cards/Madgraph/Tau/Tau
 launch
