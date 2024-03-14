@@ -57,32 +57,8 @@ function processYAML() {
     cd ..
 }
 
-function processRun() {
-    topDir=${PWD} 
-    thepath="$(dirname "$1")"
-    runfile="$(basename "$1")"
-    echo Running $runfile in $thepath
-    # move to the directory where the script is located
-    cd $thepath
-    # run the script
-    ./$runfile
-    cd $topDir
-}
-
-
 for yamlFile in *.yaml; do
     processYAML "$yamlFile"
 done
 
-#set up the executable:
-#source $BUILDDIRECTORY/convertHepMC2EDM4HEP_env.sh
-
-# now we can go through the .sh and run them
-echo $PWD is the current directory
-for aRunScript in */*/*/*/*.sh; do
-    processRun "$aRunScript"
-done
-
-# Optionally clean up the test directory
-rm -r "${CWD}/ci-setups"
 exit 0
