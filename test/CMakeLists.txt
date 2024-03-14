@@ -1,3 +1,4 @@
+set(ENV{CTEST_PARALLEL_LEVEL} 0)
 add_test(NAME input_check COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/inputCheck.sh)
 set_tests_properties(input_check
   PROPERTIES
@@ -14,6 +15,3 @@ set_tests_properties(clean_check
   PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 )
-set_tests_properties(input_check PROPERTIES COST 100)
-set_tests_properties(run_check   PROPERTIES COST 10)
-set_tests_properties(clean_check PROPERTIES COST 1)
