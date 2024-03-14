@@ -170,7 +170,7 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
     edm_particle.setTime(pos.t());
   }
 
-  std::cout << "Colorflow STATUS missing" << std::endl;
+  //  std::cout << "Colorflow STATUS missing" << std::endl;
 
   return edm_particle;
 }
