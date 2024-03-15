@@ -45,6 +45,16 @@ cd /path/to/out
 ```
 Warning: always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
 
+## Running tests: 
+You can test the creation of the input files and the event generation step:
+```
+bash
+source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
+cd build
+ctest --verbose
+```
+Warning: always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
+
 ## General Settings
 The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.
 
