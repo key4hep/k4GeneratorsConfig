@@ -36,7 +36,7 @@ The commands above create input files for all generators as well as a run script
 ```
 bash
 source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
-make build
+mkdir build
 cd build
 cmake ../CMakeLists.txt
 make

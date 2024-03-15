@@ -5,6 +5,31 @@ set -e
 shopt -s expand_aliases
 source ../setup.sh
 
+# decode command line options
+
+OPTSTRING=":bh"
+
+runEvgen="true"
+while getopts ${OPTSTRING} opt; do
+  case ${opt} in
+#    x)
+#      echo "Option -x was triggered, Argument: ${OPTARG}"
+#      ;;
+    b)
+      echo "Option -b was triggered, event generation step will not be run"
+      runEvgen="false"
+      ;;
+    h)
+      echo "Arguments are -h for help and -b to block the event generation step"
+      exit 0
+      ;;
+    ?)
+      echo "Invalid option: -${OPTARG}."
+      exit 1
+      ;;
+  esac
+done
+
 # STEP 0 prepare the input
 
 mkdir -p ci-setups
@@ -81,11 +106,12 @@ function processRun() {
 
 
 # now we can go through the .sh and run them
-echo $PWD is the current directory
-for aRunScript in */*/*/*/*.sh; do
-    processRun "$aRunScript"
-done
-
+if [[ $runEvgen = "true" ]]; then
+    echo $PWD is the current directory
+    for aRunScript in */*/*/*/*.sh; do
+	processRun "$aRunScript"
+    done
+fi
 
 # STEP 3: clean up
 rm -r "${CWD}/ci-setups"
