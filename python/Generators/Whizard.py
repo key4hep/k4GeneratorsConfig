@@ -53,7 +53,7 @@ class Whizard:
             self.add_process_option("isr_mass", isrmass)
             # insert the circe file
             if self.procinfo.Beamstrahlung is not None:
-                self.process += f"$circe_file= {self.procinfo.get_BeamstrahlungFile()}\n"
+                self.process += f"$circe_file= \"{self.procinfo.get_BeamstrahlungFile()}\"\n"
         else:
             self.add_process_option("?isr_handler", "false")
             self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
