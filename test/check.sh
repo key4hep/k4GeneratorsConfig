@@ -93,6 +93,7 @@ done
 # STEP 2: run the generators
 
 function processRun() {
+    isOK=0
     topDir=${PWD} 
     thepath="$(dirname "$1")"
     runfile="$(basename "$1")"
@@ -100,17 +101,33 @@ function processRun() {
     # move to the directory where the script is located
     cd $thepath
     # run the script
+    k4ConfigRanGen=0
     ./$runfile
+    if [[ $? -eq 0 ]]; then
+	echo k4GeneratorsConfig::Event generation succssful for $runfile in directory $thepath
+	k4ConfigRanGen=1
+    else
+	k4ConfigRanGen=0
+    fi
     cd $topDir
 }
 
 
 # now we can go through the .sh and run them
 if [[ $runEvgen = "true" ]]; then
+    counter=0
+    counterRan=0
     echo $PWD is the current directory
     for aRunScript in */*/*/*/*.sh; do
+	if [[ $k4ConfigRanGen -eq 1 ]]; then
+	    counterRan=$((counterRan+1))
+	fi
+	counter=$((counter+1))
 	processRun "$aRunScript"
     done
+    echo k4GeneratorsConfig::EvGen Summary
+    echo tried $counter generator runs
+    echo with  $counterRan successful executions
 fi
 
 # STEP 3: clean up
