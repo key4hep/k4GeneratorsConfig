@@ -45,6 +45,12 @@ WriterEDM4HEP::WriterEDM4HEP(const std::string &filename, std::shared_ptr<GenRun
     else
     {
       std::cout << "Here we should write the header to EDM4HEP" << std::endl;
+      std::vector<std::string> weights = run_info()->weight_names();
+      std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
+      for ( unsigned int i=0; i< weights.size() ; i++){
+	std::cout << "Weight index " << i << " name " << weights[i] << std::endl;
+      }
+      std::cout << "Remember to add the event counter/event number to EDM4HEP" << std::endl;
     }
 }
 
@@ -89,7 +95,6 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   auto eventFrame = podio::Frame();
   edm4hep::MCParticleCollection particleCollection;
   
-  
   std::unordered_map<unsigned int, edm4hep::MutableMCParticle> _map;
   for (auto _p:evt.particles()) {
     //    std::cout << "Converting hepmc particle with Pdg_ID " << _p->pdg_id() << "and id " <<  _p->id() << std::endl;
@@ -129,13 +134,25 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(eventFrame, "events");
 
-}
+  // a cross section is attached to GenEvent, so we should try to decode it:
+  // print the cross section and error every 10000 events
+  if ( evt.event_number() % 10000 == 0 ){
+    if ( evt.cross_section() ) {
+      if ( evt.cross_section()->is_valid() ){
+	std::cout << "Xsection is valid" << std::endl;
+	double xsection      = evt.cross_section()->xsecs()[0];
+	double xsectionError = evt.cross_section()->xsec_errs()[0];
+	std::cout << "The cross section is " << xsection << " with error " << xsectionError << std::endl;
+      }
+      else{
+	std::cout << "Xsection is NOT valid" << std::endl;
+      }
+    }
+    else {
+	std::cout << "Xsection object not found" << std::endl;
+    }
+  }
 
-
-void WriterEDM4HEP::write_vertex(const ConstGenVertexPtr& v)
-{
-
-  std::cout << "Here we should write a vertex to EDM4HEP" << std::endl;
 }
 
 

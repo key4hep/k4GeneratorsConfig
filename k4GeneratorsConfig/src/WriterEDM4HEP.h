@@ -60,9 +60,6 @@ public:
 
 private:
 
-    /// Helper routine for writing single vertex to file
-    void write_vertex(const ConstGenVertexPtr& v);
-
     /// @brief Write particle
     ///
     /// Helper routine for writing single particle to file
