@@ -52,3 +52,17 @@ install(TARGETS convertHepMC2EDM4HEP
   EXPORT k4GeneratorsConfigTargets
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
+
+set(xsection_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionSummary.cxx
+)
+
+add_executable(xsectionSummary ${xsection_sources})
+target_link_libraries(xsectionSummary PRIVATE
+  EDM4HEP::edm4hep podio::podioRootIO
+)
+
+install(TARGETS xsectionSummary
+  EXPORT k4GeneratorsConfigTargets
+  DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)

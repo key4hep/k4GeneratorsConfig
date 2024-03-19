@@ -113,7 +113,7 @@ function processRun() {
 }
 
 
-# now we can go through the .sh and run them
+# STEP 3 now we can go through the .sh and run them
 if [[ $runEvgen = "true" ]]; then
     counter=0
     counterRan=0
@@ -128,9 +128,14 @@ if [[ $runEvgen = "true" ]]; then
     echo k4GeneratorsConfig::EvGen Summary
     echo tried $counter generator runs
     echo with  $counterRan successful executions
+
+    # STEP 4
+    # since we have run the generators we can also do the summary now:
+    echo Extracting the cross sections by reading EDM4HEP files
+    $CONVERTHEPMC2EDM4HEP/xsectionSummary
 fi
 
-# STEP 3: clean up
+# STEP 4: clean up
 rm -r "${CWD}/ci-setups"
 
 exit 0
