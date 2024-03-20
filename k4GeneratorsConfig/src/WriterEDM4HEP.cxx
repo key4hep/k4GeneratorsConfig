@@ -19,6 +19,8 @@
 #include "WriterEDM4HEP.h"
 
 #include "edm4hep/MCParticleCollection.h"
+#include "edm4hep/EventHeaderCollection.h"
+
 #include "HepPDT/ParticleID.hh"
 #include "HepMC3/Attribute.h"
 
@@ -44,13 +46,7 @@ WriterEDM4HEP::WriterEDM4HEP(const std::string &filename, std::shared_ptr<GenRun
     }
     else
     {
-      std::cout << "Here we should write the header to EDM4HEP" << std::endl;
-      std::vector<std::string> weights = run_info()->weight_names();
-      std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
-      for ( unsigned int i=0; i< weights.size() ; i++){
-	std::cout << "Weight index " << i << " name " << weights[i] << std::endl;
-      }
-      std::cout << "Remember to add the event counter/event number to EDM4HEP" << std::endl;
+      write_run_info();
     }
 }
 
@@ -131,6 +127,30 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // write the collection of MCParticles to the frame 
   eventFrame.put(std::move(particleCollection), "MCParticles");
 
+  // now we need the event header
+  edm4hep::EventHeaderCollection evtHeaderCollection;
+  edm4hep::MutableEventHeader evtHeader;
+
+  // add eventNumber
+  evtHeader.setEventNumber(evt.event_number());
+
+  // add the weights
+  for (auto weight: evt.weights()){
+    evtHeader.addToWeights(weight);
+  }  
+
+  // push to collection
+  evtHeaderCollection.push_back(evtHeader);
+
+  // write the EventHeader collection to the frame 
+  eventFrame.put(std::move(evtHeaderCollection), "EventHeaders");
+
+  // add the cross sections as parameter vector to the Frame
+  eventFrame.putParameter("CrossSections",evt.cross_section()->xsecs());
+
+  // add the cross section errors as parameter vector to the Frame
+  eventFrame.putParameter("CrossSectionErrors",evt.cross_section()->xsec_errs());
+
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(eventFrame, "events");
 
@@ -156,7 +176,30 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 }
 
 
-void WriterEDM4HEP::write_run_info() {}
+void WriterEDM4HEP::write_run_info() {
+
+  std::cout << "Here we should write the header to EDM4HEP" << std::endl;
+  std::vector<std::string> weights = run_info()->weight_names();
+  std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
+  for ( unsigned int i=0; i< weights.size() ; i++){
+    std::cout << "Weight index " << i << " name " << weights[i] << std::endl;
+  }
+
+  if ( weights.size() == 0 ){
+    std::cout << "No weight names found, writing a single name to the frame" << std::endl;
+    weights.push_back("reference");
+  }
+
+  // create the frame
+  auto runFrame = podio::Frame();
+
+  // add the weights as parameters to the frame
+  runFrame.putParameter("WeightNames", weights);
+
+  // write the frame to the Writer:
+  m_edm4hepWriter.writeFrame(runFrame, "RunInfo");
+
+}
 
 edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticlePtr& hepmcParticle)
 {

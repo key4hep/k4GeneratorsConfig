@@ -82,6 +82,7 @@ class Whizard:
                         self.add_process_option(dname, value)
         if self.procinfo.get("output_format") != "evx":
             self.add_process_option("sample_format", self.procinfo.get("output_format"))
+            self.add_process_option("?hepmc_output_cross_section","true")
             self.add_process_option("?write_raw","false")
         self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":

@@ -15,6 +15,7 @@ wZ = 2.4952
 mW = 80.379
 wW = 2.085
 sample_format = hepmc
+?hepmc_output_cross_section = true
 ?write_raw = false
 ?unweighted = true
 compile

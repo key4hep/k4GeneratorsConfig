@@ -55,6 +55,8 @@ install(TARGETS convertHepMC2EDM4HEP
 
 set(xsection_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionSummary.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionCollection.cxx
 )
 
 add_executable(xsectionSummary ${xsection_sources})
