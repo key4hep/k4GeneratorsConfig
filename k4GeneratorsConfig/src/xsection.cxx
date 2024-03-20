@@ -21,10 +21,35 @@ k4GeneratorsConfig::xsection::xsection(double xsec, double xsecError, std::strin
   m_file          = file;
 
   m_reader = new podio::ROOTReader();
+  processFile();
+}
+k4GeneratorsConfig::xsection::xsection(const xsection& theOriginal)
+{
+  if ( this != &theOriginal ){
+    m_xsection      = theOriginal.m_xsection;
+    m_xsectionError = theOriginal.m_xsectionError;
+    m_generator     = theOriginal.m_generator;
+    m_process       = theOriginal.m_process;
+    m_file          = theOriginal.m_file;
+    m_reader = new podio::ROOTReader();
+  }
+}
+k4GeneratorsConfig::xsection& k4GeneratorsConfig::xsection::operator=(const xsection& theOriginal)
+{
+  if ( this != &theOriginal ){
+    m_xsection      = theOriginal.m_xsection;
+    m_xsectionError = theOriginal.m_xsectionError;
+    m_generator     = theOriginal.m_generator;
+    m_process       = theOriginal.m_process;
+    m_file          = theOriginal.m_file;
+    if (m_reader != 0 ) delete m_reader;
+    m_reader = new podio::ROOTReader();
+  }
 
+  return *this;
 }
 k4GeneratorsConfig::xsection::~xsection(){
-  delete m_reader;
+  delete m_reader;m_reader=0;
 }
 void k4GeneratorsConfig::xsection::processFile(){
 
@@ -41,19 +66,32 @@ void k4GeneratorsConfig::xsection::processFile(){
   else {
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
   }
-  
+
+  std::cout << "Calculating last event" << std::endl;
   // retrieve the cross section for the last event
+  if ( m_reader->getEntries("events") == 0 ){
+    m_xsection      = 0.;
+    m_xsectionError = 0.;
+    return;
+  }
   unsigned int lastEvent = m_reader->getEntries("events") - 1;
+  std::cout << "last event " << lastEvent << " " << m_reader->getEntries("events") << std::endl;
   auto event = podio::Frame(m_reader->readEntry("events",lastEvent));
   
   // decode the cross sections
+  std::cout << "get xsecrions" << std::endl;
   std::vector<double> xsections = event.getParameter<std::vector<double>>("CrossSections");
+  std::cout << "fill m_xsection" << std::endl;
   m_xsection =  xsections.size()>0 ? xsections[0] : 0.;
   
   // decode the cross sections
+  std::cout << "get xsecrionErrors" << std::endl;
   std::vector<double> xsectionErrors = event.getParameter<std::vector<double>>("CrossSectionErrors");
+  std::cout << "fill xsection error" << std::endl;
   m_xsectionError =  xsectionErrors.size()>0 ? xsectionErrors[0] : 0.;
-  
+  std::cout << "Done with process event" << std::endl;
+
+  return;
 }
 void k4GeneratorsConfig::xsection::setXsection(double xsec){
   m_xsection = xsec;

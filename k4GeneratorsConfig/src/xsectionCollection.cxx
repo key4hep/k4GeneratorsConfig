@@ -7,6 +7,20 @@ k4GeneratorsConfig::xsectionCollection::xsectionCollection()
 {
 
 }
+k4GeneratorsConfig::xsectionCollection::xsectionCollection(const xsectionCollection& theOriginal)
+{
+  if ( this != &theOriginal ){
+    m_xsectionCollection = theOriginal.m_xsectionCollection;
+  }
+}
+k4GeneratorsConfig::xsectionCollection& k4GeneratorsConfig::xsectionCollection::operator=(const xsectionCollection& theOriginal)
+{
+  if ( this != &theOriginal ){
+    m_xsectionCollection = theOriginal.m_xsectionCollection;
+  }
+
+  return *this;
+}
 k4GeneratorsConfig::xsectionCollection::~xsectionCollection(){
 }
 void k4GeneratorsConfig::xsectionCollection::makeCollection(){
@@ -22,11 +36,14 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 	  std::filesystem::path filenamePath = files.path();
 	  if ( filenamePath.extension() == ".edm4hep" ){
 	    std::cout << "Adding " << filenamePath.string() << " to list" << std::endl;
-	    k4GeneratorsConfig::xsection xsec;
-	    xsec.setProcess(processPath.filename().string());
-	    xsec.setGenerator(generatorsPath.filename().string());
-	    xsec.setFile(filenamePath.string());
-	    m_xsectionCollection.push_back(xsec);
+	    k4GeneratorsConfig::xsection *xsec = new k4GeneratorsConfig::xsection();
+	    xsec->setProcess(processPath.filename().string());
+	    xsec->setGenerator(generatorsPath.filename().string());
+	    xsec->setFile(filenamePath.string());
+	    std::cout << "Before pushback of xsec " << m_xsectionCollection.size() << std::endl;
+	    m_xsectionCollection.push_back(*xsec);
+	    delete xsec;
+	    std::cout << "After pushback of xsec" << std::endl;
 	  }
 	}
       }

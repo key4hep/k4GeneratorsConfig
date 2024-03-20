@@ -9,6 +9,8 @@ namespace k4GeneratorsConfig {
 class xsectionCollection {
  public:
   xsectionCollection();
+  xsectionCollection(const xsectionCollection&);
+  xsectionCollection& operator=(const xsectionCollection&);
   ~xsectionCollection();
 
   void makeCollection();

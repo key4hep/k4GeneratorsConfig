@@ -10,7 +10,10 @@ class xsection {
  public:
   xsection();
   xsection(double,double,std::string,std::string,std::string);
+  xsection(const xsection &);
+  xsection& operator=(const xsection &);
   ~xsection();
+
 
   void processFile();
 
