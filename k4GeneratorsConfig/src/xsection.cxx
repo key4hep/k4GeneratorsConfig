@@ -67,7 +67,6 @@ void k4GeneratorsConfig::xsection::processFile(){
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
   }
 
-  std::cout << "Calculating last event" << std::endl;
   // retrieve the cross section for the last event
   if ( m_reader->getEntries("events") == 0 ){
     m_xsection      = 0.;
@@ -75,21 +74,15 @@ void k4GeneratorsConfig::xsection::processFile(){
     return;
   }
   unsigned int lastEvent = m_reader->getEntries("events") - 1;
-  std::cout << "last event " << lastEvent << " " << m_reader->getEntries("events") << std::endl;
   auto event = podio::Frame(m_reader->readEntry("events",lastEvent));
   
   // decode the cross sections
-  std::cout << "get xsecrions" << std::endl;
   std::vector<double> xsections = event.getParameter<std::vector<double>>("CrossSections");
-  std::cout << "fill m_xsection" << std::endl;
   m_xsection =  xsections.size()>0 ? xsections[0] : 0.;
   
   // decode the cross sections
-  std::cout << "get xsecrionErrors" << std::endl;
   std::vector<double> xsectionErrors = event.getParameter<std::vector<double>>("CrossSectionErrors");
-  std::cout << "fill xsection error" << std::endl;
   m_xsectionError =  xsectionErrors.size()>0 ? xsectionErrors[0] : 0.;
-  std::cout << "Done with process event" << std::endl;
 
   return;
 }

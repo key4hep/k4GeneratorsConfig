@@ -13,8 +13,9 @@ class xsectionCollection {
   xsectionCollection& operator=(const xsectionCollection&);
   ~xsectionCollection();
 
+  void Execute();
   void makeCollection();
-
+  void orderCollection();
   void Print();
 
  private:

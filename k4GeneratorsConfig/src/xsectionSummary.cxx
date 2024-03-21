@@ -8,6 +8,6 @@ int main(int argc, char** argv)
 {
 
   k4GeneratorsConfig::xsectionCollection *xsecColl = new k4GeneratorsConfig::xsectionCollection();
-  xsecColl->makeCollection();
+  xsecColl->Execute();
   delete xsecColl; xsecColl=0;
 }
