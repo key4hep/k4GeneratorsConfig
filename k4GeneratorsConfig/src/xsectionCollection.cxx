@@ -127,7 +127,7 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
       previousProcess = proc;
     }
     // print the generator name and cross section with its error
-    output << xsec.Generator() << " " << xsec.Xsection() << " +- " << xsec.XsectionError() << " pb" << std::endl;
+    output << std::setw(15) << xsec.Generator() << " " << std::setw(10) << xsec.Xsection() << " +- " << std::setw(10) << xsec.XsectionError() << " pb" << std::endl;
   }
 
 }
