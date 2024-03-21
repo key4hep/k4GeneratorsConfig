@@ -4,4 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f Run_ZHDecay.dat
+./makelibs 
+Sherpa -f Run_ZHDecay.dat
 $CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep ZHDecay.hepmc2g ZHDecay.edm4hep
