@@ -71,10 +71,7 @@ bool k4GeneratorsConfig::xsectionCollection::compareAB(xsection A, xsection B){
   std::string processA = A.Process();
   std::string processB = B.Process();
   
-  if ( processA.size() < processB.size() ) return true;
-  if ( processA.size() > processB.size() ) return true;
-  // now only strings of equal size remain
-  return !processA.compare(processB);
+  return processA.compare(processB) == -1;
 }
 void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
   
