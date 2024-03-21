@@ -183,7 +183,10 @@ class Sherpa:
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"\n"
+        if "Amegic" in self.file:
+            key4hepRun += self.executable+" "+self.outfileName+"\n"
+            key4hepRun +="./makelibs \n"
+            key4hepRun += self.executable+" "+self.outfileName+"\n"
         key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.procinfo.get('procname')}.hepmc2g {self.procinfo.get('procname')}.edm4hep\n"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
