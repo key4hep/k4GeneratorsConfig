@@ -132,7 +132,7 @@ if [[ $runEvgen = "true" ]]; then
     # STEP 4
     # since we have run the generators we can also do the summary now:
     echo Extracting the cross sections by reading EDM4HEP files
-    $CONVERTHEPMC2EDM4HEP/xsectionSummary
+    $CONVERTHEPMC2EDM4HEP/xsectionSummary -f $(CWD)/xsectionSummary.dat
 fi
 
 # STEP 4: clean up

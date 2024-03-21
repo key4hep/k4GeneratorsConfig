@@ -74,7 +74,7 @@ bool k4GeneratorsConfig::xsectionCollection::compareAB(xsection A, xsection B){
   if ( processA.size() < processB.size() ) return true;
   if ( processA.size() > processB.size() ) return true;
   // now only strings of equal size remain
-  return processA.compare(processB);
+  return !processA.compare(processB);
 }
 void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
   
@@ -99,6 +99,7 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
     // if it's a new process print a new line
     std::string proc = xsec.Process();
     if ( proc.compare(previousProcess) != 0 ){
+      if ( previousProcess.compare("XXXX")!= 0 ) output << std::endl;
       output << proc << ":" << std::endl;
       previousProcess = proc;
     }
