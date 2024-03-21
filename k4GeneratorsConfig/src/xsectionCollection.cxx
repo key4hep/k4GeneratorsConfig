@@ -62,9 +62,17 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 void k4GeneratorsConfig::xsectionCollection::orderCollection(){
 
 }
-void k4GeneratorsConfig::xsectionCollection::Print(){
+void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
 
   for (auto xsec: m_xsectionCollection){
-    xsec.Print();
+    if ( !onlyOK ){
+      xsec.Print();
+    }
+    else {
+      if ( xsec.isValid() ){
+      xsec.Print();
+      }
+    }
+
   }
 }

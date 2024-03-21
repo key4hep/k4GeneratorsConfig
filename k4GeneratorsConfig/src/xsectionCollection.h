@@ -16,7 +16,7 @@ class xsectionCollection {
   void Execute();
   void makeCollection();
   void orderCollection();
-  void Print();
+  void Print(bool onlyOK=false);
 
  private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;
