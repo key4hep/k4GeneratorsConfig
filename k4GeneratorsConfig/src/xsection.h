@@ -14,8 +14,7 @@ class xsection {
   xsection& operator=(const xsection &);
   ~xsection();
 
-
-  void processFile();
+  bool processFile();
 
   void setXsection(double);
   void setXsection(double,double);
@@ -29,16 +28,17 @@ class xsection {
   std::string Generator();
   std::string Process();
   std::string File();
+  bool isValid();
 
   void Print();
 
  private:
-  double m_xsection;
-  double m_xsectionError;
+  double      m_xsection;
+  double      m_xsectionError;
   std::string m_generator;
   std::string m_process;
   std::string m_file;
-
+  bool        m_isValid;
   podio::ROOTReader *m_reader;
 
 };

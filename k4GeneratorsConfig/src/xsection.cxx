@@ -8,7 +8,8 @@ k4GeneratorsConfig::xsection::xsection():
   m_xsectionError(0.),
   m_generator(""),
   m_process(""),
-  m_file("")
+  m_file(""),
+  m_isValid(false)
 {
   m_reader = new podio::ROOTReader();
 }
@@ -20,8 +21,8 @@ k4GeneratorsConfig::xsection::xsection(double xsec, double xsecError, std::strin
   m_process       = process;
   m_file          = file;
 
-  m_reader = new podio::ROOTReader();
-  processFile();
+  m_reader  = new podio::ROOTReader();
+  m_isValid = processFile();
 }
 k4GeneratorsConfig::xsection::xsection(const xsection& theOriginal)
 {
@@ -31,6 +32,7 @@ k4GeneratorsConfig::xsection::xsection(const xsection& theOriginal)
     m_generator     = theOriginal.m_generator;
     m_process       = theOriginal.m_process;
     m_file          = theOriginal.m_file;
+    m_isValid       = theOriginal.m_isValid;
     m_reader = new podio::ROOTReader();
   }
 }
@@ -42,6 +44,7 @@ k4GeneratorsConfig::xsection& k4GeneratorsConfig::xsection::operator=(const xsec
     m_generator     = theOriginal.m_generator;
     m_process       = theOriginal.m_process;
     m_file          = theOriginal.m_file;
+    m_isValid       = theOriginal.m_isValid;
     if (m_reader != 0 ) delete m_reader;
     m_reader = new podio::ROOTReader();
   }
@@ -51,7 +54,7 @@ k4GeneratorsConfig::xsection& k4GeneratorsConfig::xsection::operator=(const xsec
 k4GeneratorsConfig::xsection::~xsection(){
   delete m_reader;m_reader=0;
 }
-void k4GeneratorsConfig::xsection::processFile(){
+bool k4GeneratorsConfig::xsection::processFile(){
 
   // open the edm4hep file
   m_reader->openFile(m_file);
@@ -67,24 +70,37 @@ void k4GeneratorsConfig::xsection::processFile(){
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
   }
 
-  // retrieve the cross section for the last event
+  // retrieve the cross section for the last event if not possible it's not valid
   if ( m_reader->getEntries("events") == 0 ){
     m_xsection      = 0.;
     m_xsectionError = 0.;
-    return;
+    return false;
   }
   unsigned int lastEvent = m_reader->getEntries("events") - 1;
   auto event = podio::Frame(m_reader->readEntry("events",lastEvent));
   
   // decode the cross sections
+  bool readOK = true;
   std::vector<double> xsections = event.getParameter<std::vector<double>>("CrossSections");
-  m_xsection =  xsections.size()>0 ? xsections[0] : 0.;
+  if ( xsections.size() > 0 ){
+    m_xsection =  xsections[0];
+  }
+  else {
+    m_xsection =  0.;
+    readOK = false;
+  }
   
   // decode the cross sections
   std::vector<double> xsectionErrors = event.getParameter<std::vector<double>>("CrossSectionErrors");
-  m_xsectionError =  xsectionErrors.size()>0 ? xsectionErrors[0] : 0.;
+  if ( xsectionErrors.size() > 0 ){
+    m_xsectionError = xsectionErrors[0];
+  }
+  else {
+    m_xsectionError = 0.;
+    readOK = false;
+  }
 
-  return;
+  return readOK;
 }
 void k4GeneratorsConfig::xsection::setXsection(double xsec){
   m_xsection = xsec;
@@ -104,7 +120,7 @@ void k4GeneratorsConfig::xsection::setProcess(std::string proc){
 }
 void k4GeneratorsConfig::xsection::setFile(std::string file){
   m_file = file;
-  processFile();
+  m_isValid = processFile();
 }
 double k4GeneratorsConfig::xsection::Xsection(){
   return m_xsection;
@@ -121,9 +137,13 @@ std::string k4GeneratorsConfig::xsection::Process(){
 std::string k4GeneratorsConfig::xsection::File(){
   return m_file;
 }
+bool k4GeneratorsConfig::xsection::isValid(){
+  return m_isValid;
+}
 void k4GeneratorsConfig::xsection::Print(){
   std::cout << std::endl;
   std::cout << "xsection object summary:" << std::endl;
+  std::cout << "xsection valid: " << m_isValid       << std::endl;
   std::cout << "xsection      : " << m_xsection      
 	    << " +- "             << m_xsectionError << " pb"<< std::endl;
   std::cout << "Generator     : " << m_generator     << std::endl;
