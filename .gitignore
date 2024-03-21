@@ -21,3 +21,4 @@ Testing/
 test/CTestTestfile.cmake
 test/Testing/
 test/ci-setups/
+test/xsectionSummary.dat

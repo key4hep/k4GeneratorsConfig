@@ -131,5 +131,6 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
 	   << std::setw(8 ) << std::left << xsec.Xsection() << " +- " 
 	   << std::setw(8)  << std::left << xsec.XsectionError() << " pb" << std::endl;
   }
+  output << std::endl;
 
 }
