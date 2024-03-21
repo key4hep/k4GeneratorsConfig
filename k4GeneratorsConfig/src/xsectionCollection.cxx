@@ -39,13 +39,20 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 
   for (const auto& yamls : std::filesystem::directory_iterator(".")) {
     std::filesystem::path yamlsPath = yamls.path();
-    if ( yamlsPath.extension() == ".yaml" ) continue;
+    //    if ( yamlsPath.extension() == ".yaml" ) continue;
+    if ( !std::filesystem::is_directory(yamlsPath) ) continue;
+
     for (const auto& generators : std::filesystem::directory_iterator(yamlsPath.string()+"/Run-Cards")) {
       std::filesystem::path generatorsPath = generators.path();
+      if ( !std::filesystem::is_directory(generatorsPath) ) continue;
+
       for (const auto& procs : std::filesystem::directory_iterator(generatorsPath.string())) {
 	std::filesystem::path processPath = procs.path();
+	if ( !std::filesystem::is_directory(processPath) ) continue;
+
 	for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
 	  std::filesystem::path filenamePath = files.path();
+	  if ( !std::filesystem::is_regular_file(filenamePath) ) continue;
 	  if ( filenamePath.extension() == ".edm4hep" ){
 	    k4GeneratorsConfig::xsection *xsec = new k4GeneratorsConfig::xsection();
 	    xsec->setProcess(processPath.filename().string());
@@ -62,16 +69,35 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 }
 void k4GeneratorsConfig::xsectionCollection::orderCollection(){
 
-  std::sort(m_xsectionCollection.begin(),m_xsectionCollection.end(),[this](xsection A, xsection B){ return this->compareAB(A,B);});
+  // order by length
+  //std::sort(m_xsectionCollection.begin(),m_xsectionCollection.end(),[this](xsection A, xsection B){ return this->compareLength(A,B);});
+
+  // order by content
+  std::sort(m_xsectionCollection.begin(),m_xsectionCollection.end(),[this](xsection A, xsection B){ return this->compareLexical(A,B);});
 
 }
-bool k4GeneratorsConfig::xsectionCollection::compareAB(xsection A, xsection B){
+bool k4GeneratorsConfig::xsectionCollection::compareLength(xsection A, xsection B){
 
   // retrieve the process as ordering variable
   std::string processA = A.Process();
   std::string processB = B.Process();
   
-  return processA.compare(processB) == -1;
+  return processA.size() < processB.size();
+}
+bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection B){
+
+  // retrieve the process as ordering variable
+  std::string processA = A.Process();
+  std::string processB = B.Process();
+  std::vector<std::string> listOf2;
+  listOf2.push_back(processA);
+  listOf2.push_back(processB);
+  sort(listOf2.begin(),listOf2.end());
+
+  // if the order is changed return true otherwise false
+  if ( processA.compare(listOf2[0]) == 0 ) return true;
+  
+  return false;
 }
 void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
   
