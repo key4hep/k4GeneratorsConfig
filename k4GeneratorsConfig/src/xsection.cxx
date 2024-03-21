@@ -63,7 +63,7 @@ bool k4GeneratorsConfig::xsection::processFile(){
   m_reader->getEntries("RunInfo");
   auto runinfo = podio::Frame(m_reader->readNextEntry("RunInfo"));
   std::vector<std::string> weightNames = runinfo.getParameter<std::vector<std::string>>("WeightNames");
-  if ( weightNames.size() > 0 ){
+    if ( weightNames.size() > 0 ){
     std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames[0] << std::endl;
   }
   else {
@@ -143,11 +143,11 @@ bool k4GeneratorsConfig::xsection::isValid(){
 void k4GeneratorsConfig::xsection::Print(){
   std::cout << std::endl;
   std::cout << "xsection object summary:" << std::endl;
+  std::cout << "File          : " << m_file          << std::endl;
+  std::cout << "Process       : " << m_process       << std::endl;
+  std::cout << "Generator     : " << m_generator     << std::endl;
   std::cout << "xsection valid: " << m_isValid       << std::endl;
   std::cout << "xsection      : " << m_xsection      
 	    << " +- "             << m_xsectionError << " pb"<< std::endl;
-  std::cout << "Generator     : " << m_generator     << std::endl;
-  std::cout << "Process       : " << m_process       << std::endl;
-  std::cout << "File          : " << m_file          << std::endl;
   std::cout << std::endl;
 }

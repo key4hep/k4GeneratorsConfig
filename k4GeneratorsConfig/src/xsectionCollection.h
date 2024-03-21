@@ -16,7 +16,9 @@ class xsectionCollection {
   void Execute();
   void makeCollection();
   void orderCollection();
+  bool compareAB(xsection, xsection);
   void Print(bool onlyOK=false);
+  void PrintSummary(std::ostream &output=std::cout) const;
 
  private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;

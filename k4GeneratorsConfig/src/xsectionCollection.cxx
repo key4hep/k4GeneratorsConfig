@@ -1,5 +1,6 @@
 #include "xsectionCollection.h"
 #include <filesystem>
+#include <algorithm>
 #include <iostream>
 #include <sys/stat.h>
 
@@ -61,9 +62,22 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 }
 void k4GeneratorsConfig::xsectionCollection::orderCollection(){
 
+  std::sort(m_xsectionCollection.begin(),m_xsectionCollection.end(),[this](xsection A, xsection B){ return this->compareAB(A,B);});
+
+}
+bool k4GeneratorsConfig::xsectionCollection::compareAB(xsection A, xsection B){
+
+  // retrieve the process as ordering variable
+  std::string processA = A.Process();
+  std::string processB = B.Process();
+  
+  if ( processA.size() < processB.size() ) return true;
+  if ( processA.size() > processB.size() ) return true;
+  // now only strings of equal size remain
+  return processA.compare(processB);
 }
 void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
-
+  
   for (auto xsec: m_xsectionCollection){
     if ( !onlyOK ){
       xsec.Print();
@@ -75,4 +89,17 @@ void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
     }
 
   }
+}
+void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) const {
+
+  std::string previousProcess= "XXXX";
+  for (auto xsec: m_xsectionCollection){
+    std::string proc = xsec.Process();
+    if ( proc.compare(previousProcess) != 0 ){
+      output << proc << ":" << std::endl;
+      previousProcess = proc;
+    }
+    output << xsec.Generator() << " " << xsec.Xsection() << " +- " << xsec.XsectionError() << " pb" << std::endl;
+  }
+
 }
