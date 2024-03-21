@@ -94,11 +94,15 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
 
   std::string previousProcess= "XXXX";
   for (auto xsec: m_xsectionCollection){
+    // only print valid cross sections
+    if ( !xsec.isValid() ) continue;
+    // if it's a new process print a new line
     std::string proc = xsec.Process();
     if ( proc.compare(previousProcess) != 0 ){
       output << proc << ":" << std::endl;
       previousProcess = proc;
     }
+    // print the generator name and cross section with its error
     output << xsec.Generator() << " " << xsec.Xsection() << " +- " << xsec.XsectionError() << " pb" << std::endl;
   }
 
