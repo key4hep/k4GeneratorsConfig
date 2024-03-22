@@ -20,7 +20,7 @@
 #************************************************************"
 import model sm
 generate e- e+ > ta- ta+ 
-output Run-Cards/Madgraph/Tau/Tau
+output Output
 launch
 set iseed 4713
 set EBEAM 45.6
