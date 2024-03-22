@@ -40,7 +40,8 @@ class Madgraph:
         if self.procinfo.get("decay"):
             self.add_decay()
         self.add_run_option("generate", self.proc)
-        self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
+        #self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
+        self.add_run_option("output", "Output")
         self.add_run_option("launch", None)
         self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
         self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)     

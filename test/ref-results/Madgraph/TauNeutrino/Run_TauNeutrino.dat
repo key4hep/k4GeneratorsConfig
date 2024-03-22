@@ -20,7 +20,7 @@
 #************************************************************"
 import model sm
 generate e- e+ > vt vt~ 
-output Run-Cards/Madgraph/TauNeutrino/TauNeutrino
+output Output
 launch
 set iseed 4714
 set EBEAM 45.6

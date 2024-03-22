@@ -20,7 +20,7 @@
 #************************************************************"
 import model sm
 generate e- e+ > Z H 
-output Run-Cards/Madgraph/ZH/ZH
+output Output
 launch
 set iseed 42
 set EBEAM 125.0

@@ -20,7 +20,7 @@
 #************************************************************"
 import model sm-lepton_masses
 generate e- e+ > Z H  , Z > ta- ta+ , H > mu- mu+ 
-output Run-Cards/Madgraph/ZHDecay/ZHDecay
+output Output
 launch
 set iseed 42
 set EBEAM 125.0

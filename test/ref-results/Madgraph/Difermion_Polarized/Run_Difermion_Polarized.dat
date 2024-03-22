@@ -20,7 +20,7 @@
 #************************************************************"
 import model sm
 generate e- e+ > vm vm~ 
-output Run-Cards/Madgraph/Difermion_Polarized/Difermion_Polarized
+output Output
 launch
 set iseed 4711
 set EBEAM 120.0

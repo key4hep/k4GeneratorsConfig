@@ -20,7 +20,7 @@
 #************************************************************"
 import model sm
 generate e- e+ > vm vm~ 
-output Run-Cards/Madgraph/MuonNeutrino/MuonNeutrino
+output Output
 launch
 set iseed 4712
 set EBEAM 45.6
