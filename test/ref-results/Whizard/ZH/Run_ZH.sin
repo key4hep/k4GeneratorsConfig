@@ -2,12 +2,10 @@ model = SM
 seed = 42
 ?isr_handler = false
 process proc = e1, E1 => Z, H
-n_events = 100
+n_events = 1000
 sqrts = 250.0
 mH = 125
 wH = 0
-me = 0.0005111
-we = 0
 mZ = 91.1876
 wZ = 2.4952
 mW = 80.379
