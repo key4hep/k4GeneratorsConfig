@@ -90,7 +90,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   auto eventFrame = podio::Frame();
   edm4hep::MCParticleCollection particleCollection;
-  
+
   std::unordered_map<unsigned int, edm4hep::MutableMCParticle> _map;
   for (auto _p:evt.particles()) {
     //    std::cout << "Converting hepmc particle with Pdg_ID " << _p->pdg_id() << "and id " <<  _p->id() << std::endl;
@@ -230,7 +230,31 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
     edm_particle.setTime(pos.t());
   }
 
-  //  std::cout << "Colorflow STATUS missing" << std::endl;
+  // retrieve the color flow:
+  static bool aWarning = true;
+  if ( aWarning ){
+    std::cout << "k4GeneratorsConfig::WriterEDM4HEP::WARNING the colorflow implementation has not been checked yet" << std::endl;
+    aWarning = false;
+  }
+  //  std::vector<std::string> theNames = hepmcParticle->attribute_names();
+  std::shared_ptr<HepMC3::VectorIntAttribute> colorFlowPtr = hepmcParticle->attribute<HepMC3::VectorIntAttribute>("flows");
+  if ( colorFlowPtr ) {
+    int flow0 = 0;
+    int flow1 = 0;
+    for (unsigned int iflow; iflow < colorFlowPtr->value().size(); iflow++){
+      if (iflow==0)
+	flow0 = colorFlowPtr->value()[0];
+      if (iflow==1)
+	flow1 = colorFlowPtr->value()[1];
+      if (iflow>1){
+	std::cout << "k4GeneratorsConfig::WriterEDM4HEP::ERROR the vector has size " << colorFlowPtr->value().size() 
+		  << " greater then 2 as foreseen by EDM4HEP" << std::endl
+		  << "Stopping Execution" << std::endl;
+	exit(1);
+      }
+    }
+    edm_particle.setColorFlow(edm4hep::Vector2i(flow0, flow1));
+  }
 
   return edm_particle;
 }
