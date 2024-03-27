@@ -253,8 +253,28 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
 	exit(1);
       }
     }
+    //    std::cout << "Writing COLORFLOW " << flow0 << " " << flow1 << std::endl; 
     edm_particle.setColorFlow(edm4hep::Vector2i(flow0, flow1));
   }
+
+  // try something
+  /*  HepMC3::GenEvent *mutableEvent = new GenEvent();  
+  std::shared_ptr<HepMC3::GenParticle> mutableHepMCparticle= std::make_shared<HepMC3::GenParticle>();  
+  HepMC3::FourVector myVec(10.,20.,30.,1000.);
+  mutableHepMCparticle->set_momentum(myVec);
+  mutableEvent->add_particle(mutableHepMCparticle);
+
+  std::vector<int> val;
+  val.push_back(4711);
+  val.push_back(4712);
+  mutableHepMCparticle->add_attribute("flows",std::make_shared<VectorIntAttribute>(val));  
+  std::cout << "Retrieving the attribute " << mutableHepMCparticle->attribute_as_string("flows") << std::endl;
+  std::cout << "Attribute names " << mutableHepMCparticle->attribute_names().size() << std::endl;
+  std::shared_ptr<HepMC3::VectorIntAttribute> colorFlowPtrM = mutableHepMCparticle->attribute<HepMC3::VectorIntAttribute>("flows");
+  std::cout << "Retrieval Pointer " << colorFlowPtrM << std::endl;
+  std::cout << "Retrieval Size " << colorFlowPtrM->value().size() << std::endl;
+  std::cout << "Retrieval val0 " << colorFlowPtrM->value()[0] << std::endl;
+  std::cout << "Retrieval val1 " << colorFlowPtrM->value()[1] << std::endl;*/
 
   return edm_particle;
 }

@@ -208,6 +208,12 @@ class Madgraph:
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
         key4hepRun += self.executable+" "+self.outfileName+"\n"
+        # now the running part temporarily on LHE
+        key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
+        key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
+        # temporarily kick out the header since the 
+        key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.procinfo.get('procname')}.edm4hep\n"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
         os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
