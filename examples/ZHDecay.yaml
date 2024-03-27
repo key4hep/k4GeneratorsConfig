@@ -5,7 +5,7 @@ Generators:
 
 OutputFormat: hepmc
 OutDir: Run-Cards
-Events: 100
+Events: 10000
 EventMode: unweighted
 
 
