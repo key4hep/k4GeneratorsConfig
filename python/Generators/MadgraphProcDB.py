@@ -35,8 +35,7 @@ class MadgraphProcDB:
         return self.procout
 
     def write_run_ZH(self):
-        out  = "set WZ 0\n" 
-        out += "set WH 0\n"
+        out = ""
         return out
 
 
