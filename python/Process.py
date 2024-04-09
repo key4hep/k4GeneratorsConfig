@@ -3,20 +3,17 @@ from Particles import Particle
 class Process:
     """A standard Process"""
 
-    _required_args = ['initial', 'final', 'sqrts', 'order', 'procname', 'randomseed', 'decay']
+    _required_args = ['initial', 'final', 'sqrts', 'order', 'randomseed', 'decay']
 
-    def __init__(self, initial, final, sqrts, order, procname, rndmseed, decay, params, **options):
+    def __init__(self, args, procname, params, **options):
         self._init = False
         self._parts = []
         self._dataparts = []
         self.generatorDBLabel = ""
+        self.procname = procname
 
-        args = (initial, final, sqrts, order, procname, rndmseed, decay)
-        if len(initial) != 2:
-            raise ValueError("Initial state should have 2 particles not {}".format(len(initial)))
-
-        for i, name in enumerate(self._required_args):
-            setattr(self, name, args[i])
+        for name in self._required_args:
+            setattr(self, name, args[name])
 
         for setting in dir(params):
             if not setting.startswith("__"):
@@ -128,7 +125,6 @@ class ProcessParameters:
 
 
     def __init__(self, settings):
-        self.sqrts = settings.get_sqrt_s()
         self.model = settings.get_model()
         self.events = settings.get_event_number()
         self.isr_mode = settings.get_isr_mode()
