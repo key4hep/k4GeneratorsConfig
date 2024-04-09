@@ -42,7 +42,7 @@ class Whizard:
 
         self.add_process_option("seed",self.procinfo.get_rndmSeed())
 
-        if self.procinfo.get("isr_mode"):
+        if self.procinfo.get("isrmode"):
             self.add_process_option("?isr_handler", "true")
             self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2}"
             # insert circe
@@ -113,22 +113,39 @@ class Whizard:
         self.process += decays
 
     def write_selectors(self):
-        selectors = getattr(self.settings,"selectors")
         self.cuts = "cuts = "
+        selectors = getattr(self.settings,"selectors")
+        try:
+            procselectors = getattr(self.settings, "procselectors")
+            for proc, sel in procselectors.items():
+                    for key, value in sel.items():
+                        if key.startswith(self.procinfo.get('procname')):
+                            # print(key,proc)
+                            cut = key.split(proc)
+                            if len(cut)==2:
+                                self.add_Selector(cut[1], value)
+        except Exception as e:
+            print("Failed to pass process specific cuts in Madgraph")
+            print(e)
+            pass
         for key,value in selectors.items():
-            if key == "pt":
-                self.add_one_ParticleSelector(value, "Pt")
-            elif key == "energy":
-                self.add_one_ParticleSelector(value, "E")
-            elif key == "rap":
-                self.add_one_ParticleSelector(value, "rap")
-            elif key == "eta":
-                self.add_one_ParticleSelector(value, "eta")
-                # Two particle selectors
-            elif key == "mass":
-                self.add_two_ParticleSelector(value,"m")
-            else:
-                print(f"{key} not a Standard Whizard Selector")
+            self.add_Selector(key, value)
+
+    def add_Selector(self,key, value):
+        key=key.lower()
+        if key == "pt":
+            self.add_one_ParticleSelector(value, "Pt")
+        elif key == "energy":
+            self.add_one_ParticleSelector(value, "E")
+        elif key == "rap":
+            self.add_one_ParticleSelector(value, "rap")
+        elif key == "eta":
+            self.add_one_ParticleSelector(value, "eta")
+            # Two particle selectors
+        elif key == "mass":
+            self.add_two_ParticleSelector(value,"m")
+        else:
+            print(f"{key} not a Standard Whizard Selector")
 
 
     def add_two_ParticleSelector(self,sel,name):

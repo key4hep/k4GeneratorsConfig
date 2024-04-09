@@ -8,23 +8,26 @@ OutDir: Run-Cards
 Events: 100000
 EventMode: unweighted
 
-SqrtS: 500
 Model: SM
 ISRMode: 0
 
 Processes:
-  Top:
-     Initial: [11, -11]
+  Top350:
      Final: [6, -6]
      Order: [2,0]
      RandomSeed: 42
+     SqrtS: 350
+     ISRMode: 1
+
+  Top1000:
+     Final: [6, -6]
+     Order: [2,0]
+     RandomSeed: 42
+     SqrtS: 1000
+     ISRMode: 1
+     
 
 
-Selectors:
-  PT:
-    Max: 500/2
-    Min: 20
-    Flavour: [-6,6]
 
 Sherpa:
   Run:
@@ -40,3 +43,10 @@ ParticleData:
     mass: 173
     width: 1.4915
 
+Selectors:
+  Process:
+    Top350:
+      PT:
+        Max: 350/2.
+        Min: 60
+        Flavour: [6,-6]

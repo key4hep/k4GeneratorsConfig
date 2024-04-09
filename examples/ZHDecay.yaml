@@ -9,16 +9,28 @@ Events: 10000
 EventMode: unweighted
 
 
-SqrtS: 250.
+# SqrtS: 250.
 Model: SM
 ISRMode: 0
 
 Processes:
-  ZHDecay:
-     Initial: [11, -11]
+  ZHDecay250:
      Final: [23, 25]
      Order: [4,0]
      RandomSeed: 42
+     SqrtS: 250 
+     Decay: 
+      23:
+        - 15
+        - -15
+      25:
+        - 13
+        - -13
+  ZHDecay350:
+     Final: [23, 25]
+     Order: [4,0]
+     RandomSeed: 42
+     SqrtS: 350 
      Decay: 
       23:
         - 15
@@ -50,4 +62,18 @@ ParticleData:
   24:
     mass: 80.379
     width: 2.085
+
+
+Selectors:
+  Process:
+    ZHDecay250:
+      PT:
+        Max: 125
+        Min: 20
+        Flavour: [15,15, 13, -13]
+    ZHDecay350:
+      PT:
+        Max: 175
+        Min: 40
+        Flavour: [15,15, 13, -13]
 

@@ -11,7 +11,7 @@ class Sherpa:
         self.file = ""
         self.cuts = ""
         self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+        self.outfileName = f"Run_{self.procinfo.get('procname')}"
         self.outfile = f"{self.outdir}/{self.outfileName}"
         self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
         self.settings = settings
@@ -19,7 +19,7 @@ class Sherpa:
             self.procDB.write_DBInfo()
 
         self.executable  = "Sherpa -f"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
+        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
         self.gen_settings = settings.get_block("sherpa")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
@@ -43,8 +43,10 @@ class Sherpa:
         self.add_run_option("BEAM_ENERGY_2", ENG)
         self.add_run_option("MODEL", self.procinfo.get("model"))
 
-        if self.procinfo.get("isr_mode"):
+        if self.procinfo.get("isrmode"):
             self.add_run_option("PDF_LIBRARY", "PDFESherpa")
+            self.outfile += "_ISR"
+            self.key4hepfile += "_ISR"
         else:
             self.add_run_option("PDF_LIBRARY", "None")
         self.add_run_option("EVENTS", self.procinfo.get("events"))
@@ -87,32 +89,49 @@ class Sherpa:
 
     def write_selectors(self):
         selectors = getattr(self.settings,"selectors")
+        try:
+            procselectors = getattr(self.settings, "procselectors")
+            for proc, sel in procselectors.items():
+                    for key, value in sel.items():
+                        if key.startswith(self.procinfo.get('procname')):
+                            # print(key,proc)
+                            cut = key.split(proc)
+                            if len(cut)==2:
+                                self.add_Selector(cut[1], value)
+        except Exception as e:
+            print("Failed to pass process specific cuts in Sherpa")
+            print(e)
+            pass
         for key,value in selectors.items():
-            if key == "pt":
-                self.add_one_ParticleSelector(value, "PT")
-            elif key == "et":
-                self.add_one_ParticleSelector(value, "ET")
-            elif key == "rap":
-                self.add_one_ParticleSelector(value, "Rapidity")
-            elif key == "eta":
-                self.add_one_ParticleSelector(value, "PseudoRapidity")	
-
-                # Two particle selectors
-            elif key == "mass":
-                self.add_two_ParticleSelector(value,"Mass")
-            elif key == "angle":
-                self.add_two_ParticleSelector(value, "Angle")
-            elif key == "deta":
-                self.add_two_ParticleSelector(value, "DeltaEta")
-            elif key == "drap":
-                self.add_two_ParticleSelector(value, "DeltaY")
-            elif key == "dphi":
-                self.add_two_ParticleSelector(value, "DeltaPhi")
-            elif key == "dr":
-                self.add_two_ParticleSelector(value, "DeltaR")
-            else:
-                print(f"{key} not a Sherpa Selector")
+            self.add_Selector(key, value)
         self.cuts+="}(selector)\n"
+
+    def add_Selector(self,key, value):
+        key=key.lower()
+        if key == "pt":
+            self.add_one_ParticleSelector(value, "PT")
+        elif key == "et":
+            self.add_one_ParticleSelector(value, "ET")
+        elif key == "rap":
+            self.add_one_ParticleSelector(value, "Rapidity")
+        elif key == "eta":
+            self.add_one_ParticleSelector(value, "PseudoRapidity")  
+
+            # Two particle selectors
+        elif key == "mass":
+            self.add_two_ParticleSelector(value,"Mass")
+        elif key == "angle":
+            self.add_two_ParticleSelector(value, "Angle")
+        elif key == "deta":
+            self.add_two_ParticleSelector(value, "DeltaEta")
+        elif key == "drap":
+            self.add_two_ParticleSelector(value, "DeltaY")
+        elif key == "dphi":
+            self.add_two_ParticleSelector(value, "DeltaPhi")
+        elif key == "dr":
+            self.add_two_ParticleSelector(value, "DeltaR")
+        else:
+            print(f"{key} not a Sherpa Selector")
 
     def add_two_ParticleSelector(self,sel,name):
         Min,Max = sel.get_MinMax()
@@ -123,8 +142,9 @@ class Sherpa:
             if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
                 return
             sname = f" {name} {f1} {f2} {Min} {Max}"
-            self.cuts+=sname
-            self.cuts+="\n"
+            if f" {name} {f1} {f2}" not in self.cuts:
+                self.cuts+=sname
+                self.cuts+="\n"
         else:
             for fl in flavs:
                 f1 = fl[0]
@@ -132,16 +152,18 @@ class Sherpa:
                 if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
                     continue
                 sname = f" {name} {f1} {f2} {Min} {Max}"
-                self.cuts+=sname
-                self.cuts+="\n"
+                if f" {name} {f1} {f2}" not in self.cuts:
+                    self.cuts+=sname
+                    self.cuts+="\n"
 
     def add_one_ParticleSelector(self,sel,name):
         Min,Max = sel.get_MinMax()
         f1 = sel.get_Flavours()
         for f in f1:
             sname = f" {name} {f} {Min} {Max}"
-            self.cuts+=sname
-            self.cuts+="\n"
+            if f" {name} {f}" not in self.cuts:
+                self.cuts+=sname
+                self.cuts+="\n"
 
 
 
@@ -177,6 +199,7 @@ class Sherpa:
         self.ptext += "}(processes)\n\n"
         self.run += "}(run)\n\n"
         self.file = self.run + self.ptext + self.cuts
+        self.outfile += "." + self.ext
         with open(self.outfile, "w+") as file:
             file.write(self.file)
 
@@ -190,6 +213,7 @@ class Sherpa:
         else:
             key4hepRun += self.executable+" "+self.outfileName+"\n" 
         key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.procinfo.get('procname')}.hepmc2g {self.procinfo.get('procname')}.edm4hep\n"
+        self.key4hepfile += ".sh"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
         os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)

@@ -11,16 +11,19 @@ EventMode: unweighted
 
 SqrtS: 250.
 Model: SM
-ISRMode: 0
 
 Processes:
-  ZH:
-     Initial: [11, -11]
+  ZH250:
+     Final: [23, 25]
+     Order: [2,0]
+     ISRMode: 1
+
+  ZH350:
      Final: [23, 25]
      Order: [2,0]
      RandomSeed: 42
-
-
+     SqrtS: 350
+     ISRMode: 1
 
 
 ParticleData:
@@ -34,3 +37,15 @@ ParticleData:
     mass: 80.379
     width: 2.085
 
+Selectors:
+  Process:
+    ZH250:
+      PT:
+        Max: 125
+        Min: 20
+        Flavour: [23,25]
+    ZH350:
+      PT:
+        Max: 175
+        Min: 40
+        Flavour: [23,25]

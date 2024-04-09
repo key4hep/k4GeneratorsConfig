@@ -13,34 +13,58 @@ Model: SM
 ISRMode: 0
 
 Processes:
-  Muon:
-     Initial: [11, -11]
+  Muon91.2:
      Final: [13, -13]
      Order: [2,0]
-     RandomSeed: 42
-  MuonNeutrino:
-     Initial: [11, -11]
+
+  MuonNeutrino91.2:
      Final: [14, -14]
      Order: [2,0]
-  Tau:
-     Initial: [11, -11]
+     ISRMode: 1
+  
+  Tau91.2:
      Final: [15, -15]
      Order: [2,0]
+     ISRMode: 1
+     
+  Muon350:
+     Final: [13, -13]
+     Order: [2,0]
+     SqrtS: 350
+     ISRMode: 1
+     
+  MuonNeutrino350:
+     Final: [14, -14]
+     Order: [2,0]
+     SqrtS: 350
+
+  Tau350:
+     Final: [15, -15]
+     Order: [2,0]
+     SqrtS: 350
+
 
 Selectors:
-  Mass:
-    Max: 91.2
-    Min: 20
-    # Flavour: [13, -13]
-    Flavour: [[13, -13], [14,-14], [15,-15]]
+  Process:
+    Tau350:
+      PT:
+        Max: 175
+        Min: 20
+        Flavour: [-15,15]
+    Muon350:
+      PT:
+        Max: 145
+        Min: 20
+        Flavour: [-13,13]
+    Muon91.2:
+      PT:
+        Max: 45
+        Min: 20
+        Flavour: [-13,13]
   PT:
     Max: 45.6
     Min: 20
-    Flavour: [-13,13]
-  PT:
-    Max: 45.6
-    Min: 20
-    Flavour: [-15,15]
+    Flavour: [-14,14]
 
 
 Sherpa:
