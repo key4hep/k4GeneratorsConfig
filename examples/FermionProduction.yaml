@@ -26,22 +26,22 @@ Processes:
      Initial: [11, -11]
      Final: [15, -15]
      Order: [2,0]
-  TauNeutrino:
-     Initial: [11, -11]
-     Final: [16, -16]
-     Order: [2,0]
-
 
 Selectors:
   Mass:
     Max: 91.2
     Min: 20
     # Flavour: [13, -13]
-    Flavour: [[13, -13], [14,-14], [15,-15], [16,-16]]
+    Flavour: [[13, -13], [14,-14], [15,-15]]
   PT:
     Max: 45.6
     Min: 20
     Flavour: [-13,13]
+  PT:
+    Max: 45.6
+    Min: 20
+    Flavour: [-15,15]
+
 
 Sherpa:
   Run:

@@ -18,7 +18,7 @@ ISRMode: 1
 Processes:
   Difermion_Polarized:
      Initial: [11, -11]
-     Final: [14, -14]
+     Final: [13, -13]
      Order: [2,0]
 
 ParticleData:

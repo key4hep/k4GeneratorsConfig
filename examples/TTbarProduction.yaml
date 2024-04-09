@@ -1,0 +1,42 @@
+Generators:
+  - Sherpa
+  - Whizard
+  - Madgraph
+
+OutputFormat: evx
+OutDir: Run-Cards
+Events: 100000
+EventMode: unweighted
+
+SqrtS: 500
+Model: SM
+ISRMode: 0
+
+Processes:
+  Top:
+     Initial: [11, -11]
+     Final: [6, -6]
+     Order: [2,0]
+     RandomSeed: 42
+
+
+Selectors:
+  PT:
+    Max: 500/2
+    Min: 20
+    Flavour: [-6,6]
+
+Sherpa:
+  Run:
+    EW_SCHEME: 3
+    FRAGMENTATION: None
+
+
+ParticleData:
+  23:
+    mass: 91.1876
+    width: 2.4952
+  6:
+    mass: 173
+    width: 1.4915
+
