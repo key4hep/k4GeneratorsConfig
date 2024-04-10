@@ -1,0 +1,31 @@
+(run){
+ RANDOM_SEED 42;
+ BEAM_1 11;
+ BEAM_2 -11;
+ BEAM_ENERGY_1 175.0;
+ BEAM_ENERGY_2 175.0;
+ MODEL SM;
+ PDF_LIBRARY PDFESherpa;
+ EVENTS 1000;
+
+
+ MASS[25] 125;
+ WIDTH[25] 0;
+ MASS[23] 91.1876;
+ WIDTH[23] 2.4952;
+ MASS[24] 80.379;
+ WIDTH[24] 2.085;
+ EVENT_OUTPUT HepMC_GenEvent[ZH350_ISR];
+ EVENT_GENERATION_MODE unweighted;
+}(run)
+
+(processes){
+  Process 11 -11 -> 23 25;
+  Order (0,2);
+  End process;
+}(processes)
+
+(selector){
+ PT 23 40 175
+ PT 25 40 175
+}(selector)

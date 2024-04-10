@@ -1,0 +1,36 @@
+#************************************************************
+#*                        MadGraph 5                        *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*    The MadGraph Development Team - Please visit us at    *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph 5                *
+#*                                                          *
+#*     run as ./bin/mg5  filename                           *
+#*                                                          *
+#************************************************************"
+import model sm
+generate e- e+ > mu- mu+ 
+output Output
+launch
+set iseed 4711
+set EBEAM 120.0
+set MH 125
+set WH 0.00407
+set MZ 91.1876
+set WZ 2.4952
+set MW 80.379
+set WW 2.085
+set nevents 100
+set pdlabel fcce240ll
+set lpp1 3
+set lpp2 -3

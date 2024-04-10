@@ -25,10 +25,8 @@ class Input:
                     setattr(self, "events", value)
             else:
                 setattr(self, key.lower(), value)
-        if self.get_block("selectors"):
-            self.selectors = {}
-            for name in self.get_block("selectors"):
-                self.selectors[name.lower()] = Selectors.Selectors(name.lower(), self.settings["selectors"][name])
+        self.LoadCuts()
+        self.CheckDefaults()
 
     def load_file(self):
         with open(self.file, 'r') as file:
@@ -49,6 +47,13 @@ class Input:
             return self.settings[key]
         except:
             return None
+
+    def get_subblock(self,k1,k2):
+        try:
+            return self.settings[k1][k2]
+        except:
+            return None
+
 
     def gens(self):
         if not self.is_set("generators"):
@@ -103,3 +108,29 @@ class Input:
 
     def get_weighted_mode(self):
         return self.get("eventmode", "unweighted")
+
+    def CheckDefaults(self):
+        defaultName  = ["initial", "isrmode", "decay"]
+        defaultValue = [[11,-11], None, None]
+        for name, value in zip(defaultName,defaultValue):
+            if not self.is_set(name):
+                setattr(self, name, value)
+    
+    def LoadCuts(self):
+        if self.get_block("selectors"):
+            self.selectors = {}
+            self.procselectors = {}
+            pselectors = {}
+            try:
+                for proc in self.settings["selectors"]["Process"]:
+                    for key, sel in self.settings["selectors"]["Process"][proc].items():
+                        pselectors[proc+key] = Selectors.Selectors(proc, sel) 
+                    self.procselectors[proc] = pselectors 
+            except Exception as e:
+                print("Failed to find process specific cuts. Using global.")
+                print(e)
+                pass
+            for name in self.get_block("selectors"):
+                if name.lower()=="process":
+                    continue
+                self.selectors[name.lower()] = Selectors.Selectors(name.lower(), self.settings["selectors"][name])

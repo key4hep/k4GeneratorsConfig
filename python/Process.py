@@ -3,27 +3,27 @@ from Particles import Particle
 class Process:
     """A standard Process"""
 
-    _required_args = ['initial', 'final', 'sqrts', 'order', 'procname', 'randomseed', 'decay']
+    _required_args = ['initial', 'final', 'sqrts', 'order', 'randomseed', 'decay', 'isrmode']
 
-    def __init__(self, initial, final, sqrts, order, procname, rndmseed, decay, params, **options):
+    def __init__(self, args, procname, params, **options):
         self._init = False
         self._parts = []
         self._dataparts = []
         self.generatorDBLabel = ""
+        self.procname = procname
 
-        args = (initial, final, sqrts, order, procname, rndmseed, decay)
-        if len(initial) != 2:
-            raise ValueError("Initial state should have 2 particles not {}".format(len(initial)))
-
-        for i, name in enumerate(self._required_args):
-            setattr(self, name, args[i])
-
+        for arg in self._required_args:
+            setattr(self, arg, params.settings.get(arg))
+        
         for setting in dir(params):
             if not setting.startswith("__"):
                 setattr(self, setting, getattr(params, setting))
 
         for option, value in options.items():
             setattr(self, option, value)
+
+        for key,value in args.items():
+            setattr(self, key, value)
 
     def process_info(self):
         self._beam1 = Particle.get_info(self.initial[0])
@@ -128,10 +128,9 @@ class ProcessParameters:
 
 
     def __init__(self, settings):
-        self.sqrts = settings.get_sqrt_s()
+        self.settings = settings
         self.model = settings.get_model()
         self.events = settings.get_event_number()
-        self.isr_mode = settings.get_isr_mode()
         self.output_format        = settings.get_output_format()
         self.Beamstrahlung        = settings.get_Beamstrahlung()
         self.PythiaTune           = settings.get_PythiaTune()

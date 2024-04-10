@@ -11,12 +11,25 @@ class Madgraph:
         self.settings = settings
         self.ext = "dat"
         self.file = ""
+
         self.outdir = f"{procinfo.get('OutDir')}/Madgraph/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+        self.outfileName = f"Run_{self.procinfo.get('procname')}"
+        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
+        self.fullprocname = f"{self.procinfo.get('procname')}"
+
+        if self.procinfo.get("isrmode"):
+            self.outfileName  += "_ISR"
+            self.key4hepfile  += "_ISR"
+            self.fullprocname += "_ISR"
+
+            if self.procinfo.get_Beamstrahlung() is not None:
+                self.outfileName += "_BST"
+                self.key4hepfile += "_BST"
+                self.fullprocname += "_BST"
+
         self.outfile = f"{self.outdir}/{self.outfileName}"
         self.add_header()
         self.executable  = "mg5_aMC"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
         self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
         if settings.get("usedefaults",True):
             self.procDB.write_DBInfo()
@@ -47,7 +60,7 @@ class Madgraph:
         self.add_run_option("set EBEAM", self.procinfo.get("sqrts")/2.)     
         self.set_particle_data()
         self.add_run_option("set nevents", self.procinfo.get("events"))
-        if self.procinfo.get("isr_mode"):
+        if self.procinfo.get("isrmode"):
             if self.procinfo.get_Beamstrahlung() is not None:
                 #if self.gen_settings is None:
                 #   print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
@@ -56,6 +69,8 @@ class Madgraph:
                 #   raise(ValueError)
                 #else:
                 self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
+                #self.outfile += f"_{self.get_BeamstrahlungPDLABEL()}"
+                #self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.add_run_option("set pdlabel", "isronlyll")
             self.add_run_option("set lpp1", "3")
@@ -126,31 +141,48 @@ class Madgraph:
 
     def write_selectors(self):
         selectors = getattr(self.settings,"selectors")
+        try:
+            procselectors = getattr(self.settings, "procselectors")
+            for proc, sel in procselectors.items():
+                    for key, value in sel.items():
+                        if key.startswith(self.procinfo.get('procname')):
+                            # print(key,proc)
+                            cut = key.split(proc)
+                            if len(cut)==2:
+                                self.add_Selector(cut[1], value)
+        except Exception as e:
+            print("Failed to pass process specific cuts in Madgraph")
+            print(e)
+            pass
         for key,value in selectors.items():
-            if key == "pt":
-                self.add_one_ParticleSelector(value, "pt")
-            elif key == "energy":
-                self.add_one_ParticleSelector(value, "e")
-            elif key == "rap":
-                self.add_one_ParticleSelector(value, "eta")
-            elif key == "eta":
-                self.add_one_ParticleSelector(value, "eta") 
+            self.add_Selector(key, value)
 
-                # Two particle selectors
-            elif key == "mass":
-                self.add_two_ParticleSelector(value,"mxx")
-            elif key == "angle":
-                self.add_two_ParticleSelector(value, "Angle")
-            elif key == "deta":
-                self.add_two_ParticleSelector(value, "Angle")
-            elif key == "drap":
-                self.add_two_ParticleSelector(value, "DeltaY")
-            elif key == "dphi":
-                self.add_two_ParticleSelector(value, "DeltaPhi")
-            elif key == "dr":
-                self.add_two_ParticleSelector(value, "DeltaR")
-            else:
-                print(f"{key} not a MadGraph Selector")
+    def add_Selector(self,key, value):
+        key=key.lower()
+        if key == "pt":
+            self.add_one_ParticleSelector(value, "pt")
+        elif key == "energy":
+            self.add_one_ParticleSelector(value, "e")
+        elif key == "rap":
+            self.add_one_ParticleSelector(value, "eta")
+        elif key == "eta":
+            self.add_one_ParticleSelector(value, "eta") 
+
+            # Two particle selectors
+        elif key == "mass":
+            self.add_two_ParticleSelector(value,"mxx")
+        elif key == "angle":
+            self.add_two_ParticleSelector(value, "Angle")
+        elif key == "deta":
+            self.add_two_ParticleSelector(value, "Angle")
+        elif key == "drap":
+            self.add_two_ParticleSelector(value, "DeltaY")
+        elif key == "dphi":
+            self.add_two_ParticleSelector(value, "DeltaPhi")
+        elif key == "dr":
+            self.add_two_ParticleSelector(value, "DeltaR")
+        else:
+            print(f"{key} not a MadGraph Selector")
 
     def add_two_ParticleSelector(self,sel,name):
         Min,Max = sel.get_MinMax()
@@ -201,19 +233,21 @@ class Madgraph:
     def write_file(self):
         self.write_run()
         self.file = self.run
+        self.outfile += "." + self.ext
         with open(self.outfile, "w+") as file:
             file.write(self.file)
 
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"\n"
+        key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
         # now the running part temporarily on LHE
         key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
         key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         # temporarily kick out the header since the 
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.procinfo.get('procname')}.edm4hep\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.fullprocname}.edm4hep\n"
+        self.key4hepfile += ".sh"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
         os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)

@@ -7,7 +7,6 @@ class Selectors():
     def LoadSelector(self, selector):
         for key,value in selector.items():
             setattr(self, key.lower(), value)
-	
 
     def get_Flavours(self):
         try:
@@ -19,7 +18,7 @@ class Selectors():
         try:
             return getattr(self, "max")
         except:
-            print(f"No maximum found in selector {self.name}")
+            print(f"No maximum found in selector {self.name}.")
 
     def get_Min(self):
         try:

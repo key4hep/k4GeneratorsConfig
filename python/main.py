@@ -78,20 +78,13 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         rndmIncrement=0
         for key, value in processes.items():
             make_output_directory(settings.gens(), output_dir, key)
-            initial = value['initial']
-            final = value['final']
-            order = value['order']
             try:
                 randomseed = value['randomseed']
             except:
                 randomseed = 4711+rndmIncrement
-            try:
-                decay = value['decay']
-            except:
-                decay= None
+                value['randomseed'] = randomseed
             param = process_module.ProcessParameters(settings)
-            process_instances[key] = process_module.Process(initial, final, sqrt_s,
-                                                            order, key, randomseed, decay, param, OutDir=output_dir)
+            process_instances[key] = process_module.Process(value, key, param, OutDir=output_dir)
             #increment counter for randomseed
             rndmIncrement += 1
 

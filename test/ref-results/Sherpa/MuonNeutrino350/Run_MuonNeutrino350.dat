@@ -1,0 +1,28 @@
+(run){
+ RANDOM_SEED 4715;
+ BEAM_1 11;
+ BEAM_2 -11;
+ BEAM_ENERGY_1 175.0;
+ BEAM_ENERGY_2 175.0;
+ MODEL SM;
+ PDF_LIBRARY None;
+ EVENTS 100000;
+
+
+ MASS[23] 91.1876;
+ WIDTH[23] 2.4952;
+ EVENT_OUTPUT HepMC_GenEvent[MuonNeutrino350];
+ EW_SCHEME 3;
+ MASS[24] 80.419;
+ WIDTH[24] 2.0476;
+ EVENT_GENERATION_MODE unweighted;
+}(run)
+
+(processes){
+  Process 11 -11 -> 14 -14;
+  Order (0,2);
+  End process;
+}(processes)
+
+(selector){
+}(selector)

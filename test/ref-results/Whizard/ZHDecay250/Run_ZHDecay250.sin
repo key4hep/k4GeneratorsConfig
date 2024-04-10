@@ -1,0 +1,32 @@
+model = SM_Higgs
+seed = 42
+?isr_handler = false
+process proc = e1, E1 => Z, H
+n_events = 10000
+sqrts = 250
+process decayZ = Z => e3, E3
+unstable Z (decayZ)
+process decayH = H => e2, E2
+unstable H (decayH)
+mH = 125
+wH = 0.00407
+mZ = 91.1876
+wZ = 2.4952
+mW = 80.379
+wW = 2.085
+sample_format = hepmc
+?hepmc_output_cross_section = true
+?write_raw = false
+?resonance_history = true
+resonance_on_shell_limit = 16
+resonance_on_shell_turnoff = 2
+resonance_on_shell_turnoff = 2
+?unweighted = true
+cuts =  all 20 < Pt <= 125 [e3] 
+ all 20 < Pt <= 125 [e3] 
+ all 20 < Pt <= 125 [e2] 
+ all 20 < Pt <= 125 [E2] 
+compile
+integrate (decayZ)
+integrate (decayH)
+simulate (proc) { iterations = 5:5000}
