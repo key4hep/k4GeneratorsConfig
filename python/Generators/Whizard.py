@@ -226,7 +226,7 @@ class Whizard:
         self.key4hepfile += ".sh"
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"\n"
+        key4hepRun += self.executable+" "+self.outfile+"\n"
         key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.fullprocname}.edm4hep\n"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
