@@ -20,6 +20,6 @@ resonance_on_shell_turnoff = 2
 resonance_on_shell_turnoff = 2
 ?unweighted = true
 cuts =  all 40 < Pt <= 175 [Z] 
- all 40 < Pt <= 175 [H] 
+ and all 40 < Pt <= 175 [H] 
 compile
 simulate (proc) { iterations = 5:5000}

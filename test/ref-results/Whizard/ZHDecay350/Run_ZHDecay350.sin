@@ -23,9 +23,9 @@ resonance_on_shell_turnoff = 2
 resonance_on_shell_turnoff = 2
 ?unweighted = true
 cuts =  all 40 < Pt <= 175 [e3] 
- all 40 < Pt <= 175 [e3] 
- all 40 < Pt <= 175 [e2] 
- all 40 < Pt <= 175 [E2] 
+ and all 40 < Pt <= 175 [e3] 
+ and all 40 < Pt <= 175 [e2] 
+ and all 40 < Pt <= 175 [E2] 
 compile
 integrate (decayZ)
 integrate (decayH)

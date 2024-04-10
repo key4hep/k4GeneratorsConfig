@@ -13,6 +13,6 @@ mW = 80.419 GeV
 wW = 2.0476 GeV
 ?unweighted = true
 cuts =  all 20 < Pt <= 175 [E3] 
- all 20 < Pt <= 175 [e3] 
+ and all 20 < Pt <= 175 [e3] 
 compile
 simulate (proc) { iterations = 5:5000}

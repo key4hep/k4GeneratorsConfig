@@ -14,6 +14,6 @@ sample_format = hepmc
 ?write_raw = false
 ?unweighted = true
 cuts =  all 20 < Pt <= 175.0 [T] 
- all 20 < Pt <= 175.0 [t] 
+ and all 20 < Pt <= 175.0 [t] 
 compile
 simulate (proc) { iterations = 5:5000}
