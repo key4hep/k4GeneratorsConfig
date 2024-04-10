@@ -27,6 +27,7 @@ class Input:
                 setattr(self, key.lower(), value)
         self.LoadCuts()
         self.CheckDefaults()
+        self.LoadRivetAnalysis()
 
     def load_file(self):
         with open(self.file, 'r') as file:
@@ -134,3 +135,22 @@ class Input:
                 if name.lower()=="process":
                     continue
                 self.selectors[name.lower()] = Selectors.Selectors(name.lower(), self.settings["selectors"][name])
+
+    def LoadRivetAnalysis(self):
+        if self.get_block("rivet"):
+            self.analyses= []
+            self.procanalyses= {}
+            panalyses = []
+            try:
+                for proc in self.settings["rivet"]["Process"]:
+                    for ana in self.settings["rivet"]["Process"][proc]:
+                        panalyses.append(ana)
+                    self.procanalyses[proc] = panalyses
+            except Exception as e:
+                print("Failed to find process specific analyses. Using global.")
+                print(e)
+                pass
+            for name in self.get_subblock("rivet", "Analysis"):
+                if name.lower()=="process":
+                    continue
+                self.analyses.append(name)

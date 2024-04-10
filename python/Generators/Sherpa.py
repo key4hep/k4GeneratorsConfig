@@ -10,6 +10,7 @@ class Sherpa:
         self.ext = "dat"
         self.file = ""
         self.cuts = ""
+        self.yodaout = ""
 
         self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
         self.outfileName = f"Run_{self.procinfo.get('procname')}"
@@ -34,6 +35,17 @@ class Sherpa:
         if settings.get_block("selectors"):
             self.cuts="(selector){\n"
             self.write_selectors()
+        try: 
+            if settings.get("analysismode").lower()=="rivet":
+                self.rivet=True
+            if settings.get("yodaoutpath") is not None:
+                self.yodaout = getattr(self.settings, "yodaoutpath") + f"/Sherpa_{self.procinfo.get('procname')}.yoda"
+            else:
+                self.yodaout = f"Sherpa_{self.procinfo.get('procname')}.yoda"
+            self.add_rivet()
+        except:
+            self.rivet=False
+            pass
 
     def write_run(self):
         self.run = "(run){\n"
@@ -67,11 +79,11 @@ class Sherpa:
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
                         self.add_run_option(op_name, value)
-						
+                        
         if  self.procinfo.get("output_format") == "hepmc":
             eoutname="HepMC_GenEvent[{0}]".format(self.fullprocname)
             self.add_run_option("EVENT_OUTPUT", eoutname)
-			
+            
         elif self.procinfo.get("output_format") == "hepmc3":
             eoutname="HepMC3_GenEvent[{0}]".format(self.fullprocname)
             self.add_run_option("EVENT_OUTPUT", eoutname)
@@ -197,7 +209,20 @@ class Sherpa:
         self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n"
         self.ptext += decays
 
-		
+    def add_rivet(self):
+        if  self.procinfo.get("output_format") == "hepmc":
+            self.rivethead = f"mkfifo {self.fullprocname}.hepmc2g\n"
+        elif self.procinfo.get("output_format") == "hepmc3":
+            self.rivethead = f"mkfifo {self.fullprocname}.hepmc3g\n"
+        self.rivet_analysis = "rivet"
+        for ana in getattr(self.settings,"analyses"):
+            self.rivet_analysis += f" -a {ana}"
+        for proc, analyses in getattr(self.settings, "procanalyses").items():
+            if proc==self.procinfo.get('procname'):
+                for ana in analyses:
+                    self.rivet_analysis += f" -a {ana}"
+
+        self.rivet_analysis += f" -o {self.yodaout}\n"
 
     def write_file(self):
         self.write_run()
@@ -212,13 +237,23 @@ class Sherpa:
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
+        if self.rivet:
+            key4hepRun += f'if [ -f "{self.fullprocname}.hepmc"* ]; then\n rm {self.fullprocname}.hepmc*)\n fi\n'
+            key4hepRun += self.rivethead
         if "Amegic" in self.file:
             key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
             key4hepRun +="./makelibs \n"
-            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
+            if self.rivet:
+                key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"&\n"
+            else:
+                key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
         else:
-            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n" 
-
+            if self.rivet:
+                key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"&\n"
+            else:
+                key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n" 
+        if self.rivet:
+            key4hepRun += self.rivet_analysis
         if  self.procinfo.get("output_format") == "hepmc":
             key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.fullprocname}.hepmc2g {self.fullprocname}.edm4hep\n"
         elif self.procinfo.get("output_format") == "hepmc3":
