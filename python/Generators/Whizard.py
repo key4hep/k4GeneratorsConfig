@@ -103,7 +103,7 @@ class Whizard:
         else:
             self.add_process_option("?unweighted", "false")
         if self.settings.get_block("selectors"):
-            self.cutsadded = 0
+            self.cutsadded = False
             self.write_selectors()
 
     def add_decay(self):
@@ -169,8 +169,9 @@ class Whizard:
             f2 = self.pdg_to_whizard(flavs[1])
             if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                 return
-            if self.cutsadded == 0:
+            if self.cutsadded is False:
                 self.cuts+=f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                self.cutsadded = True
             else:
                 self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
 
@@ -180,22 +181,22 @@ class Whizard:
                 f2 = self.pdg_to_whizard(fl[1])
                 if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                     continue
-                if self.cutsadded == 0:
+                if self.cutsadded is False:
                     self.cuts+=f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                    self.cutsadded = True
                 else:
                     self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
-            self.cutsadded +=1
 
     def add_one_ParticleSelector(self,sel,name):
         Min,Max = sel.get_MinMax()
         f1 = sel.get_Flavours()
         for f in f1:
             f=self.pdg_to_whizard(f)
-            if self.cutsadded == 0:
+            if self.cutsadded is False:
                 self.cuts+=f" all {Min} < {name} <= {Max} [{f}] \n"
+                self.cutsadded = True
             else:
                 self.cuts+=f" and all {Min} < {name} <= {Max} [{f}] \n"
-        self.cutsadded +=1
 
 
     def write_integrate(self):
