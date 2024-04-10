@@ -218,6 +218,7 @@ class Whizard:
         self.process += "compile\n"
         self.write_integrate()
         self.file = f"{self.process}{self.integrate}"
+        self.outfile += "."+self.ext
         with open(self.outfile, "w+") as file:
             file.write(self.file)
 
