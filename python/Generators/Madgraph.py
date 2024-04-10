@@ -15,14 +15,17 @@ class Madgraph:
         self.outdir = f"{procinfo.get('OutDir')}/Madgraph/{self.procinfo.get('procname')}"
         self.outfileName = f"Run_{self.procinfo.get('procname')}"
         self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
+        self.fullprocname = f"{self.procinfo.get('procname')}"
 
         if self.procinfo.get("isrmode"):
-            self.outfileName += "_ISR"
-            self.key4hepfile += "_ISR"
+            self.outfileName  += "_ISR"
+            self.key4hepfile  += "_ISR"
+            self.fullprocname += "_ISR"
 
             if self.procinfo.get_Beamstrahlung() is not None:
                 self.outfileName += "_BST"
                 self.key4hepfile += "_BST"
+                self.fullprocname += "_BST"
 
         self.outfile = f"{self.outdir}/{self.outfileName}"
         self.add_header()
@@ -243,7 +246,7 @@ class Madgraph:
         key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         # temporarily kick out the header since the 
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.outfileName}.edm4hep\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.fullprocname}.edm4hep\n"
         self.key4hepfile += ".sh"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)

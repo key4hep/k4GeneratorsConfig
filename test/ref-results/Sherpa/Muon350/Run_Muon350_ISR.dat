@@ -11,7 +11,7 @@
 
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- EVENT_OUTPUT HepMC_GenEvent[Muon350];
+ EVENT_OUTPUT HepMC_GenEvent[Muon350_ISR];
  EW_SCHEME 3;
  MASS[24] 80.419;
  WIDTH[24] 2.0476;
@@ -25,8 +25,6 @@
 }(processes)
 
 (selector){
- PT -13 20 145
- PT 13 20 145
- PT -14 20 45.6
- PT 14 20 45.6
+ PT -13 20 175
+ PT 13 20 175
 }(selector)

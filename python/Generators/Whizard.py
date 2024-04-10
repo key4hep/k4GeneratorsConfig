@@ -13,9 +13,24 @@ class Whizard:
         self.file = ""
         self.cuts = ""
         self.integrate = ""
+
+        self.fullprocname = f"{self.procinfo.get('procname')}"
         self.outdir = f"{procinfo.get('OutDir')}/Whizard/{self.procinfo.get('procname')}"
         self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
         self.outfile = f"{self.outdir}/{self.outfileName}"
+        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
+
+        if self.procinfo.get("isrmode"):
+            self.outfileName  += "_ISR"
+            self.key4hepfile  += "_ISR"
+            self.fullprocname += "_ISR"
+
+            if self.procinfo.get_Beamstrahlung() is not None:
+                self.outfileName += "_BST"
+                self.key4hepfile += "_BST"
+                self.fullprocname += "_BST"
+
+        self.outfile += f"{self.ext}"
 
         self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
         if settings.get("usedefaults",True):
@@ -26,7 +41,6 @@ class Whizard:
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}.sh"
         self.procs = []
 
     def write_process(self):
@@ -125,7 +139,7 @@ class Whizard:
                             if len(cut)==2:
                                 self.add_Selector(cut[1], value)
         except Exception as e:
-            print("Failed to pass process specific cuts in Madgraph")
+            print("Failed to pass process specific cuts in Whizard")
             print(e)
             pass
         for key,value in selectors.items():
@@ -200,7 +214,8 @@ class Whizard:
 
     def write_file(self):
         self.write_process()
-        self.process += self.cuts
+        if self.cuts is not "cuts = ":
+            self.process += self.cuts
         self.process += "compile\n"
         self.write_integrate()
         self.file = f"{self.process}{self.integrate}"
@@ -208,10 +223,11 @@ class Whizard:
             file.write(self.file)
 
     def write_key4hepfile(self,shell,config):
+        self.key4hepfile += ".sh"
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
         key4hepRun += self.executable+" "+self.outfileName+"\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.procinfo.get('procname')}.edm4hep\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.fullprocname}.edm4hep\n"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
         os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)

@@ -13,7 +13,5 @@ sample_format = hepmc
 mW = 80.419 GeV
 wW = 2.0476 GeV
 ?unweighted = true
-cuts =  all 20 < Pt <= 45.6 [N2] 
- all 20 < Pt <= 45.6 [n2] 
 compile
 simulate (proc) { iterations = 5:5000}

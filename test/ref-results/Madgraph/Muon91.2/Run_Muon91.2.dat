@@ -28,6 +28,4 @@ set MZ 91.1876
 set WZ 2.4952
 set nevents 100000
 set pt_min_pdg 13: 20
-set pt_max_pdg 13: 45
-set pt_min_pdg 14: 20
-set pt_max_pdg 14: 45.6
+set pt_max_pdg 13: 45.6

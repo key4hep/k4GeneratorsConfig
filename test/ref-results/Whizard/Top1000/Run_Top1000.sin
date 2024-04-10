@@ -13,5 +13,5 @@ sample_format = hepmc
 ?hepmc_output_cross_section = true
 ?write_raw = false
 ?unweighted = true
-cuts = compile
+compile
 simulate (proc) { iterations = 5:5000}

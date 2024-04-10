@@ -14,10 +14,12 @@ class Sherpa:
         self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
         self.outfileName = f"Run_{self.procinfo.get('procname')}"
         self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
+        self.fullprocname = f"{self.procinfo.get('procname')}"
 
         if self.procinfo.get("isrmode"):
             self.outfileName += "_ISR"
             self.key4hepfile += "_ISR"
+            self.fullprocname += "_ISR"
 
         self.outfile = f"{self.outdir}/{self.outfileName}"
         self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
@@ -67,11 +69,11 @@ class Sherpa:
                         self.add_run_option(op_name, value)
 						
         if  self.procinfo.get("output_format") == "hepmc":
-            eoutname="HepMC_GenEvent[{0}]".format(self.outfileName)
+            eoutname="HepMC_GenEvent[{0}]".format(self.fullprocname)
             self.add_run_option("EVENT_OUTPUT", eoutname)
 			
         elif self.procinfo.get("output_format") == "hepmc3":
-            eoutname="HepMC3_GenEvent[{0}]".format(self.outfileName)
+            eoutname="HepMC3_GenEvent[{0}]".format(self.fullprocname)
             self.add_run_option("EVENT_OUTPUT", eoutname)
         self.run += self.procDB.get_run_out()
         self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
@@ -218,9 +220,9 @@ class Sherpa:
             key4hepRun += self.executable+" "+self.outfileName+".dat\n" 
 
         if  self.procinfo.get("output_format") == "hepmc":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.outfileName}.hepmc2g {self.outfileName}.edm4hep\n"
+            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.fullprocname}.hepmc2g {self.fullprocname}.edm4hep\n"
         elif self.procinfo.get("output_format") == "hepmc3":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.outfileName}.hepmc3g {self.outfileName}.edm4hep\n"
+            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.fullprocname}.hepmc3g {self.fullprocname}.edm4hep\n"
 
         self.key4hepfile += ".sh"
         with open(self.key4hepfile, "w+") as file:

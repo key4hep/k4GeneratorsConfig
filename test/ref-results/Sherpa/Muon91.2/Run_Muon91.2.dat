@@ -25,8 +25,6 @@
 }(processes)
 
 (selector){
- PT -13 20 45
- PT 13 20 45
- PT -14 20 45.6
- PT 14 20 45.6
+ PT -13 20 45.6
+ PT 13 20 45.6
 }(selector)
