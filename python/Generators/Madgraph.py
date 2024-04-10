@@ -69,8 +69,8 @@ class Madgraph:
                 #   raise(ValueError)
                 #else:
                 self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
-                self.outfile += f"_{self.get_BeamstrahlungPDLABEL()}"
-                self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
+                #self.outfile += f"_{self.get_BeamstrahlungPDLABEL()}"
+                #self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.add_run_option("set pdlabel", "isronlyll")
             self.add_run_option("set lpp1", "3")
