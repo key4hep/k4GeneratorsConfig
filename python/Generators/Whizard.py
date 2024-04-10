@@ -17,7 +17,6 @@ class Whizard:
         self.fullprocname = f"{self.procinfo.get('procname')}"
         self.outdir = f"{procinfo.get('OutDir')}/Whizard/{self.procinfo.get('procname')}"
         self.outfileName = f"Run_{self.procinfo.get('procname')}"
-        self.outfile = f"{self.outdir}/{self.outfileName}"
         self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
 
         if self.procinfo.get("isrmode"):
@@ -30,7 +29,7 @@ class Whizard:
                 self.key4hepfile += "_BST"
                 self.fullprocname += "_BST"
 
-        self.outfile += f"{self.ext}"
+        self.outfile = f"{self.outdir}/{self.outfileName}"
 
         self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
         if settings.get("usedefaults",True):
@@ -226,7 +225,7 @@ class Whizard:
         self.key4hepfile += ".sh"
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfile+"\n"
+        key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
         key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.fullprocname}.edm4hep\n"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)

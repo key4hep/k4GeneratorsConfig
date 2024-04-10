@@ -240,7 +240,7 @@ class Madgraph:
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+".dat\n"
+        key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
         # now the running part temporarily on LHE
         key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
         key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"

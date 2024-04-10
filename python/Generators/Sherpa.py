@@ -213,11 +213,11 @@ class Sherpa:
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
         if "Amegic" in self.file:
-            key4hepRun += self.executable+" "+self.outfileName+".dat\n"
+            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
             key4hepRun +="./makelibs \n"
-            key4hepRun += self.executable+" "+self.outfileName+".dat\n"
+            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
         else:
-            key4hepRun += self.executable+" "+self.outfileName+".dat\n" 
+            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n" 
 
         if  self.procinfo.get("output_format") == "hepmc":
             key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.fullprocname}.hepmc2g {self.fullprocname}.edm4hep\n"
