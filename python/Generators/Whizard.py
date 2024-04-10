@@ -16,7 +16,7 @@ class Whizard:
 
         self.fullprocname = f"{self.procinfo.get('procname')}"
         self.outdir = f"{procinfo.get('OutDir')}/Whizard/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}.{self.ext}"
+        self.outfileName = f"Run_{self.procinfo.get('procname')}"
         self.outfile = f"{self.outdir}/{self.outfileName}"
         self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
 
