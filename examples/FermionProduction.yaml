@@ -53,18 +53,14 @@ Selectors:
         Flavour: [-15,15]
     Muon350:
       PT:
-        Max: 145
+        Max: 175
         Min: 20
         Flavour: [-13,13]
     Muon91.2:
       PT:
-        Max: 45
+        Max: 45.6
         Min: 20
         Flavour: [-13,13]
-  PT:
-    Max: 45.6
-    Min: 20
-    Flavour: [-14,14]
 
 
 Sherpa:

@@ -13,10 +13,13 @@ class Madgraph:
         self.file = ""
         self.outdir = f"{procinfo.get('OutDir')}/Madgraph/{self.procinfo.get('procname')}"
         self.outfileName = f"Run_{self.procinfo.get('procname')}"
+        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
+        if self.procinfo.get("isrmode"):
+            self.outfileName += "_ISR"
+            self.key4hepfile += "_ISR"
         self.outfile = f"{self.outdir}/{self.outfileName}"
         self.add_header()
         self.executable  = "mg5_aMC"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
         self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
         if settings.get("usedefaults",True):
             self.procDB.write_DBInfo()
@@ -48,8 +51,6 @@ class Madgraph:
         self.set_particle_data()
         self.add_run_option("set nevents", self.procinfo.get("events"))
         if self.procinfo.get("isrmode"):
-            self.outfile += "_ISR"
-            self.key4hepfile += "_ISR"
             if self.procinfo.get_Beamstrahlung() is not None:
                 #if self.gen_settings is None:
                 #   print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
@@ -229,13 +230,13 @@ class Madgraph:
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"\n"
+        key4hepRun += self.executable+" "+self.outfileName+".dat\n"
         # now the running part temporarily on LHE
         key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
         key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         # temporarily kick out the header since the 
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.procinfo.get('procname')}.edm4hep\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.outfileName}.edm4hep\n"
         self.key4hepfile += ".sh"
         with open(self.key4hepfile, "w+") as file:
             file.write(key4hepRun)
