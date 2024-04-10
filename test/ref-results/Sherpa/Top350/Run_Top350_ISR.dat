@@ -26,6 +26,6 @@
 }(processes)
 
 (selector){
- PT 6 60 350/2.
- PT -6 60 350/2.
+ PT 6 20 175.
+ PT -6 20 175.
 }(selector)

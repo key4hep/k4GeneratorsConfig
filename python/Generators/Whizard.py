@@ -213,7 +213,7 @@ class Whizard:
 
     def write_file(self):
         self.write_process()
-        if self.cuts is not "cuts = ":
+        if self.cuts != "cuts = ":
             self.process += self.cuts
         self.process += "compile\n"
         self.write_integrate()

@@ -13,7 +13,7 @@ sample_format = hepmc
 ?hepmc_output_cross_section = true
 ?write_raw = false
 ?unweighted = true
-cuts =  all 60 < Pt <= 350/2. [T] 
- all 60 < Pt <= 350/2. [t] 
+cuts =  all 20 < Pt <= 175. [T] 
+ all 20 < Pt <= 175. [t] 
 compile
 simulate (proc) { iterations = 5:5000}

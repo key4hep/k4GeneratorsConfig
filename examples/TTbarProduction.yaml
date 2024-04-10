@@ -47,6 +47,6 @@ Selectors:
   Process:
     Top350:
       PT:
-        Max: 350/2.
-        Min: 60
+        Max: 175.
+        Min: 20
         Flavour: [6,-6]
