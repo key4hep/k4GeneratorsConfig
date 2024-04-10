@@ -33,4 +33,4 @@ set pdlabel isronlyll
 set lpp1 3
 set lpp2 -3
 set pt_min_pdg 6: 20
-set pt_max_pdg 6: 175.
+set pt_max_pdg 6: 175.0
