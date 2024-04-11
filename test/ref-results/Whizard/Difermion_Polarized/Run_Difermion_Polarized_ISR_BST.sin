@@ -2,10 +2,11 @@ model = SM
 seed = 4711
 ?isr_handler = true
 beams = e1, E1 => circe2  => isr,isr
-isr_mass = 0
+isr_mass = 0.000511
 $circe_file= "ILC_240.circe"
 beams_pol_density = @(1), @(-1)
 beams_pol_fraction = 0.8, 0.3
+process proc = e1, E1 => e2, E2
 n_events = 100
 sqrts = 240
 mH = 125

@@ -69,10 +69,13 @@ class Whizard:
                 self.process += f"$circe_file= \"{self.procinfo.get_BeamstrahlungFile()}\"\n"
         else:
             self.add_process_option("?isr_handler", "false")
-            self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
+
         if self.procinfo.get_ElectronPolarisation()!=0 or self.procinfo.get_PositronPolarisation()!=0:
             self.process += f"beams_pol_density = @({self.procinfo.get_PolDensity()[0]}), @({self.procinfo.get_PolDensity()[1]})\n"
             self.process += f"beams_pol_fraction = {self.procinfo.get_ElectronPolarisation()}, {self.procinfo.get_PositronPolarisation()}\n"
+
+        self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
+
         self.add_process_option("n_events", self.procinfo.get("events"))
         self.add_process_option("sqrts", self.procinfo.get("sqrts"))
         if self.procinfo.get("decay"):

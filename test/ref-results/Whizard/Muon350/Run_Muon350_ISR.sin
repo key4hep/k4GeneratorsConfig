@@ -2,7 +2,8 @@ model = SM
 seed = 4714
 ?isr_handler = true
 beams = e1, E1 => isr,isr
-isr_mass = 0
+isr_mass = 0.000511
+process proc = e1, E1 => e2, E2
 n_events = 100000
 sqrts = 350
 mZ = 91.1876

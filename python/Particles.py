@@ -137,7 +137,7 @@ vt__tilde__ = vt.anti()
 e__minus__ = Particle(pdg_code = 11,
                       name = 'e-',
                       antiname = 'e+',
-                      mass = 0,
+                      mass = 0.000511,
                       width = 0,
                       texname = 'e-',
                       antitexname = 'e+',
