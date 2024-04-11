@@ -1,15 +1,13 @@
 from GeneratorBase import GeneratorBase
 import Particles
 import WhizardProcDB
-import os, stat
 
 class Whizard(GeneratorBase):
     """Whizard class"""
     def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings,"Whizard")
+        super().__init__(procinfo, settings,"Whizard","sin")
 
         self.version = "x.y.z"
-        self.ext = "sin"
         self.file = ""
         self.cuts = ""
         self.integrate = ""
@@ -209,19 +207,15 @@ class Whizard(GeneratorBase):
         self.process += "compile\n"
         self.write_integrate()
         self.file = f"{self.process}{self.integrate}"
-        self.outfile += "."+self.ext
         with open(self.outfile, "w+") as file:
             file.write(self.file)
 
     def write_key4hepfile(self,shell,config):
-        self.key4hepfile += ".sh"
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
+        key4hepRun += self.executable+" "+self.outfileName+"\n"
         key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.fullprocname}.edm4hep\n"
-        with open(self.key4hepfile, "w+") as file:
-            file.write(key4hepRun)
-        os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+        self.write_Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):
         name = None
