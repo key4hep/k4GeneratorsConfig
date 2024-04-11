@@ -194,9 +194,8 @@ class Sherpa(GeneratorBase):
         self.file = self.run + self.ptext + self.cuts
         self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self,shell,config):
-        key4hepRun = shell+"\n"
-        key4hepRun += config+"\n"
+    def write_key4hepfile(self):
+        key4hepRun = ""
         if "Amegic" in self.file:
             key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
             key4hepRun +="./makelibs \n"

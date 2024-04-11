@@ -28,14 +28,23 @@ class GeneratorBase:
         # composition of file+directory
         self.GeneratorDatacard = f"{self.outdir}/{self.GeneratorDatacardName}"
         
-
-    def write_Key4hepScript(self,content):
-        # write the generator specific content to the KEY4HEP execution script
-        with open(self.key4hepScript, "w+") as file:
-            file.write(content)
-        os.chmod(self.key4hepScript, os.stat(self.key4hepScript).st_mode | stat.S_IEXEC)
+        # set up for key4hep run of event generation
+        self.key4hep_config = "#!/usr/bin/env bash\n"
+        self.key4hep_config += "if [ -z \"${KEY4HEP_STACK}\" ]; then\n"
+        self.key4hep_config += "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
+        self.key4hep_config += "fi\n\n"
 
     def write_GeneratorDatacard(self,content):
         with open(self.GeneratorDatacard, "w+") as file:
             file.write(content)
+
+    def write_Key4hepScript(self,content):
+        # open the file for the evgen generation in EDM4HEP format
+        with open(self.key4hepScript, "w+") as file:
+            # set up KEY4HEP
+            file.write(self.key4hep_config)
+            # the generator specific part
+            file.write(content)
+        # make the script executable
+        os.chmod(self.key4hepScript, os.stat(self.key4hepScript).st_mode | stat.S_IEXEC)
 

@@ -209,9 +209,8 @@ class Whizard(GeneratorBase):
         self.file = f"{self.process}{self.integrate}"
         self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self,shell,config):
-        key4hepRun = shell+"\n"
-        key4hepRun += config+"\n"
+    def write_key4hepfile(self):
+        key4hepRun = ""
         key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
         key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
         self.write_Key4hepScript(key4hepRun)

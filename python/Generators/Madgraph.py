@@ -217,9 +217,8 @@ class Madgraph(GeneratorBase):
         self.file = self.run
         self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self,shell,config):
-        key4hepRun = shell+"\n"
-        key4hepRun += config+"\n"
+    def write_key4hepfile(self):
+        key4hepRun = ""
         key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
         # now the running part temporarily on LHE
         key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
