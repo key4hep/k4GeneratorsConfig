@@ -1,29 +1,18 @@
+from GeneratorBase import GeneratorBase
 import os, stat
 import SherpaProcDB
 
-class Sherpa:
+class Sherpa(GeneratorBase):
     """Sherpa class"""
     def __init__(self, procinfo, settings):
-        self.name = "Sherpa"
+        super().__init__(procinfo, settings,"Sherpa")
+
         self.version = "x.y.z"
-        self.procinfo = procinfo
         self.ext = "dat"
         self.file = ""
         self.cuts = ""
 
-        self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
-        self.fullprocname = f"{self.procinfo.get('procname')}"
-
-        if self.procinfo.get("isrmode"):
-            self.outfileName += "_ISR"
-            self.key4hepfile += "_ISR"
-            self.fullprocname += "_ISR"
-
-        self.outfile = f"{self.outdir}/{self.outfileName}"
         self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
-        self.settings = settings
         if settings.get("usedefaults",True):
             self.procDB.write_DBInfo()
 
