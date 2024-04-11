@@ -262,6 +262,7 @@ class Whizard:
                 return f"Cant find whizard id for pdg {pdg}"
 
     def whizard_quarks(self, pdg):
-        quark_mapping = {1: "d", 2: "u", 3: "s", 4: "c", 5: "b", 6: "t"}
+        quark_mapping = {1: "d", 2: "u", 3: "s", 4: "c", 5: "b", 6: "top"}
         q = quark_mapping.get(abs(pdg), "")
-        return q.capitalize() if pdg > 0 else q
+        #return q.capitalize() if pdg > 0 and pdg != 6 else q
+        return q
