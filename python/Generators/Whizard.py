@@ -88,6 +88,10 @@ class Whizard:
                     if name is not None:
                         value = getattr(p, attr)
                         pname = self.pdg_to_whizard(p.get("pdg_code"))
+                        if p.get("pdg_code") < 20:
+                            pname = pname.lower()
+                            if abs(p.get("pdg_code")) == 6:
+                                pname = "top"
                         replac = ["+", "-", "1", "2", "3"]
                         for r in replac:
                             pname = pname.replace(r, "")
@@ -262,7 +266,6 @@ class Whizard:
                 return f"Cant find whizard id for pdg {pdg}"
 
     def whizard_quarks(self, pdg):
-        quark_mapping = {1: "d", 2: "u", 3: "s", 4: "c", 5: "b", 6: "top"}
+        quark_mapping = {1: "d", 2: "u", 3: "s", 4: "c", 5: "b", 6: "t"}
         q = quark_mapping.get(abs(pdg), "")
-        #return q.capitalize() if pdg > 0 and pdg != 6 else q
-        return q
+        return q.capitalize() if pdg > 0 else q
