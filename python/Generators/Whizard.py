@@ -62,7 +62,7 @@ class Whizard:
             if self.procinfo.Beamstrahlung is not None:
                 self.process += f" => circe2 "
             self.process += f" => isr,isr\n"
-            isrmass = Particles.Particle.get_info(self.procinfo.get_beam_flavour(1)).mass
+            isrmass = 0.000511
             self.add_process_option("isr_mass", isrmass)
             # insert the circe file
             if self.procinfo.Beamstrahlung is not None:
