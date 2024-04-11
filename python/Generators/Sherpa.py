@@ -56,11 +56,11 @@ class Sherpa(GeneratorBase):
                         self.add_run_option(op_name, value)
 						
         if  self.procinfo.get("output_format") == "hepmc":
-            eoutname="HepMC_GenEvent[{0}]".format(self.fullprocname)
+            eoutname="HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
 			
         elif self.procinfo.get("output_format") == "hepmc3":
-            eoutname="HepMC3_GenEvent[{0}]".format(self.fullprocname)
+            eoutname="HepMC3_GenEvent[{0}]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
         self.run += self.procDB.get_run_out()
         self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
@@ -192,23 +192,22 @@ class Sherpa(GeneratorBase):
         self.ptext += "}(processes)\n\n"
         self.run += "}(run)\n\n"
         self.file = self.run + self.ptext + self.cuts
-        with open(self.outfile, "w+") as file:
-            file.write(self.file)
+        self.write_GeneratorDatacard(self.file)
 
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
         if "Amegic" in self.file:
-            key4hepRun += self.executable+" "+self.outfileName+"\n"
+            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
             key4hepRun +="./makelibs \n"
-            key4hepRun += self.executable+" "+self.outfileName+"\n"
+            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
         else:
-            key4hepRun += self.executable+" "+self.outfileName+"\n" 
+            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n" 
 
         if  self.procinfo.get("output_format") == "hepmc":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.fullprocname}.hepmc2g {self.fullprocname}.edm4hep\n"
+            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.GeneratorDatacardBase}.hepmc2g {self.GeneratorDatacardBase}.edm4hep\n"
         elif self.procinfo.get("output_format") == "hepmc3":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.fullprocname}.hepmc3g {self.fullprocname}.edm4hep\n"
+            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3g {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.write_Key4hepScript(key4hepRun)
 

@@ -51,7 +51,7 @@ class Madgraph(GeneratorBase):
                 #   raise(ValueError)
                 #else:
                 self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
-                #self.outfile += f"_{self.get_BeamstrahlungPDLABEL()}"
+                #self.GeneratorDatacard += f"_{self.get_BeamstrahlungPDLABEL()}"
                 #self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.add_run_option("set pdlabel", "isronlyll")
@@ -215,19 +215,18 @@ class Madgraph(GeneratorBase):
     def write_file(self):
         self.write_run()
         self.file = self.run
-        with open(self.outfile, "w+") as file:
-            file.write(self.file)
+        self.write_GeneratorDatacard(self.file)
 
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"\n"
+        key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
         # now the running part temporarily on LHE
         key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
         key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         # temporarily kick out the header since the 
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.fullprocname}.edm4hep\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.GeneratorDatacardBase}.edm4hep\n"
         self.write_Key4hepScript(key4hepRun)        
 
     def add_run_option(self, key, value):

@@ -207,14 +207,13 @@ class Whizard(GeneratorBase):
         self.process += "compile\n"
         self.write_integrate()
         self.file = f"{self.process}{self.integrate}"
-        with open(self.outfile, "w+") as file:
-            file.write(self.file)
+        self.write_GeneratorDatacard(self.file)
 
     def write_key4hepfile(self,shell,config):
         key4hepRun = shell+"\n"
         key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.fullprocname}.edm4hep\n"
+        key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
         self.write_Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):
