@@ -54,8 +54,7 @@ class Sherpa(GeneratorBase):
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
                         self.add_run_option(op_name, value)
-						
-        if  self.procinfo.get("output_format") == "hepmc":
+        if  self.procinfo.get("output_format") == "hepmc2":
             eoutname="HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
 			
@@ -203,10 +202,9 @@ class Sherpa(GeneratorBase):
         else:
             key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n" 
 
-        if  self.procinfo.get("output_format") == "hepmc":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.GeneratorDatacardBase}.hepmc2g {self.GeneratorDatacardBase}.edm4hep\n"
-        elif self.procinfo.get("output_format") == "hepmc3":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3g {self.GeneratorDatacardBase}.edm4hep\n"
+        hepmcformat = self.procinfo.get("output_format")
+        hepmcversion = hepmcformat[-1]
+        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2}g {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase,hepmcversion)
 
         self.write_Key4hepScript(key4hepRun)
 

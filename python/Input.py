@@ -70,10 +70,19 @@ class Input:
         return processes
 
     def get_output_format(self):
+        outformat = ""
+        # check for presence, if not: hepmc3
         try:
-            return self.settings["outputformat"]
+            outformat = self.settings["outputformat"]
         except:
-            return "hepmc"
+            return "hepmc3"
+
+        # check that only supported formats are requested
+        if outformat != "hepmc2" and outformat != "hepmc3":
+            print("OutputFormat "+outformat+" not supported using hepmc3")
+            return "hepmc3"
+        
+        return outformat
 
     def get_Beamstrahlung(self):
         return self.settings.get("beamstrahlung",None)

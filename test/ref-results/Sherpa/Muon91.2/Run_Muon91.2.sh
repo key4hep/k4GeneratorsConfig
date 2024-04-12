@@ -4,4 +4,4 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f Muon91.2.dat
-$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Muon91.2.hepmc2g Muon91.2.edm4hep
+$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc3g Muon91.2.edm4hep

@@ -81,10 +81,11 @@ class Whizard(GeneratorBase):
                         elif name == "WIDTH":
                             dname = f"w{pname}"
                         self.add_process_option(dname, value)
-        if self.procinfo.get("output_format") != "evx":
-            self.add_process_option("sample_format", self.procinfo.get("output_format"))
-            self.add_process_option("?hepmc_output_cross_section","true")
-            self.add_process_option("?write_raw","false")
+
+        # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
+        self.add_process_option("sample_format", str(self.procinfo.get("output_format")).rstrip("23"))
+        self.add_process_option("?hepmc_output_cross_section","true")
+        self.add_process_option("?write_raw","false")
         self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":
             self.add_process_option("?unweighted", "true")
@@ -212,7 +213,7 @@ class Whizard(GeneratorBase):
     def write_key4hepfile(self):
         key4hepRun = ""
         key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
+        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
         self.write_Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):
