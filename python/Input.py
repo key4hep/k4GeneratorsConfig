@@ -71,7 +71,7 @@ class Input:
 
     def get_output_format(self):
         try:
-            return self.settings["ouputformat"]
+            return self.settings["outputformat"]
         except:
             return "hepmc"
 
