@@ -1,5 +1,5 @@
 (run){
- RANDOM_SEED 42;
+ RANDOM_SEED 4714;
  BEAM_1 11;
  BEAM_2 -11;
  BEAM_ENERGY_1 175.0;
@@ -11,21 +11,20 @@
 
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- MASS[6] 173;
- WIDTH[6] 1.4915;
- EVENT_OUTPUT HepMC_GenEvent[Top350_ISR];
- EVENT_GENERATION_MODE unweighted;
+ EVENT_OUTPUT HepMC3_GenEvent[Muon350_ISR.hepmc3g];
  EW_SCHEME 3;
- FRAGMENTATION None;
+ MASS[24] 80.419;
+ WIDTH[24] 2.0476;
+ EVENT_GENERATION_MODE unweighted;
 }(run)
 
 (processes){
-  Process 11 -11 -> 6 -6;
+  Process 11 -11 -> 13 -13;
   Order (0,2);
   End process;
 }(processes)
 
 (selector){
- PT 6 20 175.0
- PT -6 20 175.0
+ PT -13 20 175
+ PT 13 20 175
 }(selector)

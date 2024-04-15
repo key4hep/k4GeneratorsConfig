@@ -1,33 +1,15 @@
-import stat,os
+from GeneratorBase import GeneratorBase
 import MadgraphProcDB
 from Particles import Particle as part
 
-class Madgraph:
+class Madgraph(GeneratorBase):
     """Madgraph class"""
     def __init__(self, procinfo, settings):
-        self.name = "Madgraph"
+        super().__init__(procinfo, settings,"Madgraph","dat")
+
         self.version = "x.y.z"
-        self.procinfo = procinfo
-        self.settings = settings
-        self.ext = "dat"
         self.file = ""
 
-        self.outdir = f"{procinfo.get('OutDir')}/Madgraph/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
-        self.fullprocname = f"{self.procinfo.get('procname')}"
-
-        if self.procinfo.get("isrmode"):
-            self.outfileName  += "_ISR"
-            self.key4hepfile  += "_ISR"
-            self.fullprocname += "_ISR"
-
-            if self.procinfo.get_Beamstrahlung() is not None:
-                self.outfileName += "_BST"
-                self.key4hepfile += "_BST"
-                self.fullprocname += "_BST"
-
-        self.outfile = f"{self.outdir}/{self.outfileName}"
         self.add_header()
         self.executable  = "mg5_aMC"
         self.procDB = MadgraphProcDB.MadgraphProcDB(self.procinfo)
@@ -69,7 +51,7 @@ class Madgraph:
                 #   raise(ValueError)
                 #else:
                 self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
-                #self.outfile += f"_{self.get_BeamstrahlungPDLABEL()}"
+                #self.GeneratorDatacard += f"_{self.get_BeamstrahlungPDLABEL()}"
                 #self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.add_run_option("set pdlabel", "isronlyll")
@@ -233,24 +215,18 @@ class Madgraph:
     def write_file(self):
         self.write_run()
         self.file = self.run
-        self.outfile += "." + self.ext
-        with open(self.outfile, "w+") as file:
-            file.write(self.file)
+        self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self,shell,config):
-        key4hepRun = shell+"\n"
-        key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
+    def write_key4hepfile(self):
+        key4hepRun = ""
+        key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
         # now the running part temporarily on LHE
         key4hepRun += "gunzip Output/Events/run_01/unweighted_events.lhe.gz\n"
         key4hepRun += "ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         # temporarily kick out the header since the 
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.fullprocname}.edm4hep\n"
-        self.key4hepfile += ".sh"
-        with open(self.key4hepfile, "w+") as file:
-            file.write(key4hepRun)
-        os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o edm4hep unweighted_events.lhe {self.GeneratorDatacardBase}.edm4hep\n"
+        self.write_Key4hepScript(key4hepRun)        
 
     def add_run_option(self, key, value):
         if key in self.run:

@@ -1,29 +1,16 @@
-import os, stat
+from GeneratorBase import GeneratorBase
 import SherpaProcDB
 
-class Sherpa:
+class Sherpa(GeneratorBase):
     """Sherpa class"""
     def __init__(self, procinfo, settings):
-        self.name = "Sherpa"
+        super().__init__(procinfo, settings,"Sherpa","dat")
+
         self.version = "x.y.z"
-        self.procinfo = procinfo
-        self.ext = "dat"
         self.file = ""
         self.cuts = ""
 
-        self.outdir = f"{procinfo.get('OutDir')}/Sherpa/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
-        self.fullprocname = f"{self.procinfo.get('procname')}"
-
-        if self.procinfo.get("isrmode"):
-            self.outfileName += "_ISR"
-            self.key4hepfile += "_ISR"
-            self.fullprocname += "_ISR"
-
-        self.outfile = f"{self.outdir}/{self.outfileName}"
         self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
-        self.settings = settings
         if settings.get("usedefaults",True):
             self.procDB.write_DBInfo()
 
@@ -67,13 +54,12 @@ class Sherpa:
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
                         self.add_run_option(op_name, value)
-						
-        if  self.procinfo.get("output_format") == "hepmc":
-            eoutname="HepMC_GenEvent[{0}]".format(self.fullprocname)
+        if  self.procinfo.get("output_format") == "hepmc2":
+            eoutname="HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
 			
         elif self.procinfo.get("output_format") == "hepmc3":
-            eoutname="HepMC3_GenEvent[{0}]".format(self.fullprocname)
+            eoutname="HepMC3_GenEvent[{0}.hepmc3g]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
         self.run += self.procDB.get_run_out()
         self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
@@ -205,29 +191,22 @@ class Sherpa:
         self.ptext += "}(processes)\n\n"
         self.run += "}(run)\n\n"
         self.file = self.run + self.ptext + self.cuts
-        self.outfile += "." + self.ext
-        with open(self.outfile, "w+") as file:
-            file.write(self.file)
+        self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self,shell,config):
-        key4hepRun = shell+"\n"
-        key4hepRun += config+"\n"
+    def write_key4hepfile(self):
+        key4hepRun = ""
         if "Amegic" in self.file:
-            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
+            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
             key4hepRun +="./makelibs \n"
-            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
+            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
         else:
-            key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n" 
+            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n" 
 
-        if  self.procinfo.get("output_format") == "hepmc":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.fullprocname}.hepmc2g {self.fullprocname}.edm4hep\n"
-        elif self.procinfo.get("output_format") == "hepmc3":
-            key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.fullprocname}.hepmc3g {self.fullprocname}.edm4hep\n"
+        hepmcformat = self.procinfo.get("output_format")
+        hepmcversion = hepmcformat[-1]
+        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2}g {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase,hepmcversion)
 
-        self.key4hepfile += ".sh"
-        with open(self.key4hepfile, "w+") as file:
-            file.write(key4hepRun)
-        os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+        self.write_Key4hepScript(key4hepRun)
 
     def add_run_option(self, key, value):
         if self.gen_settings is not None:

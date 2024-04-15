@@ -1,35 +1,16 @@
+from GeneratorBase import GeneratorBase
 import Particles
 import WhizardProcDB
-import os, stat
 
-class Whizard:
+class Whizard(GeneratorBase):
     """Whizard class"""
     def __init__(self, procinfo, settings):
-        self.name = "Whizard"
+        super().__init__(procinfo, settings,"Whizard","sin")
+
         self.version = "x.y.z"
-        self.procinfo = procinfo
-        self.settings = settings
-        self.ext = "sin"
         self.file = ""
         self.cuts = ""
         self.integrate = ""
-
-        self.fullprocname = f"{self.procinfo.get('procname')}"
-        self.outdir = f"{procinfo.get('OutDir')}/Whizard/{self.procinfo.get('procname')}"
-        self.outfileName = f"Run_{self.procinfo.get('procname')}"
-        self.key4hepfile = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
-
-        if self.procinfo.get("isrmode"):
-            self.outfileName  += "_ISR"
-            self.key4hepfile  += "_ISR"
-            self.fullprocname += "_ISR"
-
-            if self.procinfo.get_Beamstrahlung() is not None:
-                self.outfileName += "_BST"
-                self.key4hepfile += "_BST"
-                self.fullprocname += "_BST"
-
-        self.outfile = f"{self.outdir}/{self.outfileName}"
 
         self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
         if settings.get("usedefaults",True):
@@ -100,10 +81,11 @@ class Whizard:
                         elif name == "WIDTH":
                             dname = f"w{pname}"
                         self.add_process_option(dname, value)
-        if self.procinfo.get("output_format") != "evx":
-            self.add_process_option("sample_format", self.procinfo.get("output_format"))
-            self.add_process_option("?hepmc_output_cross_section","true")
-            self.add_process_option("?write_raw","false")
+
+        # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
+        self.add_process_option("sample_format", str(self.procinfo.get("output_format")).rstrip("23"))
+        self.add_process_option("?hepmc_output_cross_section","true")
+        self.add_process_option("?write_raw","false")
         self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":
             self.add_process_option("?unweighted", "true")
@@ -226,19 +208,13 @@ class Whizard:
         self.process += "compile\n"
         self.write_integrate()
         self.file = f"{self.process}{self.integrate}"
-        self.outfile += "."+self.ext
-        with open(self.outfile, "w+") as file:
-            file.write(self.file)
+        self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self,shell,config):
-        self.key4hepfile += ".sh"
-        key4hepRun = shell+"\n"
-        key4hepRun += config+"\n"
-        key4hepRun += self.executable+" "+self.outfileName+"."+self.ext+"\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.fullprocname}.edm4hep\n"
-        with open(self.key4hepfile, "w+") as file:
-            file.write(key4hepRun)
-        os.chmod(self.key4hepfile, os.stat(self.key4hepfile).st_mode | stat.S_IEXEC)
+    def write_key4hepfile(self):
+        key4hepRun = ""
+        key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
+        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
+        self.write_Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):
         name = None

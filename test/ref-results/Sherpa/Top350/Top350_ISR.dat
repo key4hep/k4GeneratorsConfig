@@ -1,9 +1,9 @@
 (run){
- RANDOM_SEED 4712;
+ RANDOM_SEED 42;
  BEAM_1 11;
  BEAM_2 -11;
- BEAM_ENERGY_1 45.6;
- BEAM_ENERGY_2 45.6;
+ BEAM_ENERGY_1 175.0;
+ BEAM_ENERGY_2 175.0;
  MODEL SM;
  PDF_LIBRARY PDFESherpa;
  EVENTS 100000;
@@ -11,18 +11,21 @@
 
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- EVENT_OUTPUT HepMC_GenEvent[MuonNeutrino91.2_ISR];
- EW_SCHEME 3;
- MASS[24] 80.419;
- WIDTH[24] 2.0476;
+ MASS[6] 173;
+ WIDTH[6] 1.4915;
+ EVENT_OUTPUT HepMC3_GenEvent[Top350_ISR.hepmc3g];
  EVENT_GENERATION_MODE unweighted;
+ EW_SCHEME 3;
+ FRAGMENTATION None;
 }(run)
 
 (processes){
-  Process 11 -11 -> 14 -14;
+  Process 11 -11 -> 6 -6;
   Order (0,2);
   End process;
 }(processes)
 
 (selector){
+ PT 6 20 175.0
+ PT -6 20 175.0
 }(selector)

@@ -2,7 +2,7 @@ Generators:
   - Whizard
   - Madgraph
 
-OutputFormat: evx
+OutputFormat: hepmc3
 OutDir: Run-Cards
 Events: 100
 EventMode: unweighted

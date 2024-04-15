@@ -1,9 +1,9 @@
 (run){
- RANDOM_SEED 4716;
+ RANDOM_SEED 4711;
  BEAM_1 11;
  BEAM_2 -11;
- BEAM_ENERGY_1 175.0;
- BEAM_ENERGY_2 175.0;
+ BEAM_ENERGY_1 45.6;
+ BEAM_ENERGY_2 45.6;
  MODEL SM;
  PDF_LIBRARY None;
  EVENTS 100000;
@@ -11,7 +11,7 @@
 
  MASS[23] 91.1876;
  WIDTH[23] 2.4952;
- EVENT_OUTPUT HepMC_GenEvent[Tau350];
+ EVENT_OUTPUT HepMC3_GenEvent[Muon91.2.hepmc3g];
  EW_SCHEME 3;
  MASS[24] 80.419;
  WIDTH[24] 2.0476;
@@ -19,12 +19,12 @@
 }(run)
 
 (processes){
-  Process 11 -11 -> 15 -15;
+  Process 11 -11 -> 13 -13;
   Order (0,2);
   End process;
 }(processes)
 
 (selector){
- PT -15 20 175
- PT 15 20 175
+ PT -13 20 45.6
+ PT 13 20 45.6
 }(selector)
