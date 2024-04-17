@@ -6,6 +6,7 @@
 k4GeneratorsConfig::xsection::xsection():
   m_xsection(0.),
   m_xsectionError(0.),
+  m_sqrts(0.),
   m_generator(""),
   m_process(""),
   m_file(""),
@@ -13,10 +14,11 @@ k4GeneratorsConfig::xsection::xsection():
 {
   m_reader = new podio::ROOTReader();
 }
-k4GeneratorsConfig::xsection::xsection(double xsec, double xsecError, std::string generator, std::string process, std::string file)
+k4GeneratorsConfig::xsection::xsection(double xsec, double xsecError, double sqrts, std::string generator, std::string process, std::string file)
 {
   m_xsection      = xsec;
   m_xsectionError = xsecError;
+  m_sqrts         = sqrts;
   m_generator     = generator;
   m_process       = process;
   m_file          = file;
@@ -29,6 +31,7 @@ k4GeneratorsConfig::xsection::xsection(const xsection& theOriginal)
   if ( this != &theOriginal ){
     m_xsection      = theOriginal.m_xsection;
     m_xsectionError = theOriginal.m_xsectionError;
+    m_sqrts         = theOriginal.m_sqrts;
     m_generator     = theOriginal.m_generator;
     m_process       = theOriginal.m_process;
     m_file          = theOriginal.m_file;
@@ -41,6 +44,7 @@ k4GeneratorsConfig::xsection& k4GeneratorsConfig::xsection::operator=(const xsec
   if ( this != &theOriginal ){
     m_xsection      = theOriginal.m_xsection;
     m_xsectionError = theOriginal.m_xsectionError;
+    m_sqrts         = theOriginal.m_sqrts;
     m_generator     = theOriginal.m_generator;
     m_process       = theOriginal.m_process;
     m_file          = theOriginal.m_file;
@@ -60,8 +64,8 @@ bool k4GeneratorsConfig::xsection::processFile(){
   m_reader->openFile(m_file);
   
   // retrieve the RunInfo for the weight names, there should only be 1 entry per Run
-  m_reader->getEntries("RunInfo");
-  auto runinfo = podio::Frame(m_reader->readNextEntry("RunInfo"));
+  m_reader->getEntries(podio::Category::Run);
+  auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
   std::vector<std::string> weightNames = runinfo.getParameter<std::vector<std::string>>("WeightNames");
     if ( weightNames.size() > 0 ){
     std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames[0] << std::endl;
@@ -71,13 +75,13 @@ bool k4GeneratorsConfig::xsection::processFile(){
   }
 
   // retrieve the cross section for the last event if not possible it's not valid
-  if ( m_reader->getEntries("events") == 0 ){
+  if ( m_reader->getEntries(podio::Category::Event) == 0 ){
     m_xsection      = 0.;
     m_xsectionError = 0.;
     return false;
   }
-  unsigned int lastEvent = m_reader->getEntries("events") - 1;
-  auto event = podio::Frame(m_reader->readEntry("events",lastEvent));
+  unsigned int lastEvent = m_reader->getEntries(podio::Category::Event) - 1;
+  auto event = podio::Frame(m_reader->readEntry(podio::Category::Event,lastEvent));
   
   // decode the cross sections
   bool readOK = true;
@@ -100,6 +104,9 @@ bool k4GeneratorsConfig::xsection::processFile(){
     readOK = false;
   }
 
+  // decode sqrts
+  m_sqrts = event.getParameter<double>("event_scale");
+
   return readOK;
 }
 void k4GeneratorsConfig::xsection::setXsection(double xsec){
@@ -111,6 +118,9 @@ void k4GeneratorsConfig::xsection::setXsection(double xsec, double err){
 }
 void k4GeneratorsConfig::xsection::setXsectionError(double error){
   m_xsectionError = error;
+}
+void k4GeneratorsConfig::xsection::setSQRTS(double sqrts){
+  m_sqrts = sqrts;
 }
 void k4GeneratorsConfig::xsection::setGenerator(std::string gen){
   m_generator = gen;
@@ -127,6 +137,9 @@ double k4GeneratorsConfig::xsection::Xsection(){
 }
 double k4GeneratorsConfig::xsection::XsectionError(){
   return m_xsectionError;
+}
+double k4GeneratorsConfig::xsection::SQRTS(){
+  return m_sqrts;
 }
 std::string k4GeneratorsConfig::xsection::Generator(){
   return m_generator;
@@ -145,6 +158,7 @@ void k4GeneratorsConfig::xsection::Print(){
   std::cout << "xsection object summary:" << std::endl;
   std::cout << "File          : " << m_file          << std::endl;
   std::cout << "Process       : " << m_process       << std::endl;
+  std::cout << "SQRTS         : " << m_sqrts         << std::endl;
   std::cout << "Generator     : " << m_generator     << std::endl;
   std::cout << "xsection valid: " << m_isValid       << std::endl;
   std::cout << "xsection      : " << m_xsection      

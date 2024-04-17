@@ -123,7 +123,7 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
     std::string proc = xsec.Process();
     if ( proc.compare(previousProcess) != 0 ){
       if ( previousProcess.compare("XXXX")!= 0 ) output << std::endl;
-      output << proc << ":" << std::endl;
+      output << proc << " sqrts= " << xsec.SQRTS() << ":" << std::endl;
       previousProcess = proc;
     }
     // print the generator name and cross section with its error

@@ -151,8 +151,13 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // add the cross section errors as parameter vector to the Frame
   eventFrame.putParameter("CrossSectionErrors",evt.cross_section()->xsec_errs());
 
+  // add the event_scale
+  shared_ptr<HepMC3::DoubleAttribute> event_scalePtr = evt.attribute<HepMC3::DoubleAttribute>("event_scale");
+  double event_scale= event_scalePtr?(event_scalePtr->value()):0.0;
+  eventFrame.putParameter("SQRTS",event_scale);
+
   // write the frame to the Writer:
-  m_edm4hepWriter.writeFrame(eventFrame, "events");
+  m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
 
   // a cross section is attached to GenEvent, so we should try to decode it:
   // print the cross section and error every 10000 events
@@ -197,7 +202,7 @@ void WriterEDM4HEP::write_run_info() {
   runFrame.putParameter("WeightNames", weights);
 
   // write the frame to the Writer:
-  m_edm4hepWriter.writeFrame(runFrame, "RunInfo");
+  m_edm4hepWriter.writeFrame(runFrame, podio::Category::Run);
 
 }
 
