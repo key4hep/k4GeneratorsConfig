@@ -65,8 +65,11 @@ private:
     /// Helper routine for writing single particle to file
     edm4hep::MutableMCParticle write_particle(const ConstGenParticlePtr& p);
 
-    /// @param[in] evt Event to be serialized
-    double retrieveAttribute(const GenEvent& evt, std::string name);
+    /// retrieve the attribute of type double
+    double retrieveDoubleAttribute(const GenEvent& evt, std::string name);
+
+    /// retrieve the attribute of type int
+    double retrieveIntAttribute(const GenEvent& evt, std::string name);
 
     /// @}
 

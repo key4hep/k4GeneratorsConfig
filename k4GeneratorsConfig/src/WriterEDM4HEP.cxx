@@ -44,10 +44,6 @@ WriterEDM4HEP::WriterEDM4HEP(const std::string &filename, std::shared_ptr<GenRun
     {
         HEPMC3_ERROR("WriterEDM4HEP: could not open output file: " << filename )
     }
-    else
-    {
-      write_run_info();
-    }
 }
 
 WriterEDM4HEP::WriterEDM4HEP(std::ostream &stream, std::shared_ptr<GenRunInfo> run)
@@ -88,39 +84,63 @@ WriterEDM4HEP::~WriterEDM4HEP()
 void WriterEDM4HEP::write_event(const GenEvent &evt) 
 {
 
+  // make sure run_info is up to date
+  if ( !run_info() ) {
+    set_run_info(evt.run_info());
+    write_run_info();
+  }
+  if ( evt.run_info() && run_info() != evt.run_info() ) {
+    set_run_info(evt.run_info());
+    write_run_info();
+  }
+
+  // now deal with the event
   auto eventFrame = podio::Frame();
+
+  // to calculate SQRTS get the beam particles
+  HepMC3::FourVector beam1;
+  HepMC3::FourVector beam2;
+
+  // here is the collection
   edm4hep::MCParticleCollection particleCollection;
 
-  std::unordered_map<unsigned int, edm4hep::MutableMCParticle> _map;
-  for (auto _p:evt.particles()) {
-    //    std::cout << "Converting hepmc particle with Pdg_ID " << _p->pdg_id() << "and id " <<  _p->id() << std::endl;
-    if (_map.find(_p->id()) == _map.end()) {
-      edm4hep::MutableMCParticle edm_particle = write_particle(_p);
-      _map.insert({_p->id(), edm_particle});
+  std::unordered_map<unsigned int, edm4hep::MutableMCParticle> mapIDPart;
+  for (auto hepmcParticle:evt.particles()) {
+    // check the status of the particle
+    if ( hepmcParticle->status() == 4 ){
+      if ( beam1.e() == 0.)
+	beam1 = hepmcParticle->momentum();
+      else
+	beam2 = hepmcParticle->momentum();
+    }
+    //    std::cout << "Converting hepmc particle with Pdg_ID " << hepmcParticle->pdg_id() << "and id " <<  hepmcParticle->id() << std::endl;
+    if (mapIDPart.find(hepmcParticle->id()) == mapIDPart.end()) {
+      edm4hep::MutableMCParticle edm_particle = write_particle(hepmcParticle);
+      mapIDPart.insert({hepmcParticle->id(), edm_particle});
     }
     // mother/daughter links
-    auto prodvertex = _p->production_vertex();
+    auto prodvertex = hepmcParticle->production_vertex();
     if (nullptr != prodvertex) {
       for (auto particle_mother: prodvertex->particles_in()) {
-        if (_map.find(particle_mother->id()) == _map.end()) {
+        if (mapIDPart.find(particle_mother->id()) == mapIDPart.end()) {
           edm4hep::MutableMCParticle edm_particle = write_particle(particle_mother);
-          _map.insert({particle_mother->id(), edm_particle});
+          mapIDPart.insert({particle_mother->id(), edm_particle});
         }
-        _map[_p->id()].addToParents(_map[particle_mother->id()]);
+        mapIDPart[hepmcParticle->id()].addToParents(mapIDPart[particle_mother->id()]);
       }
     }
-    auto endvertex = _p->end_vertex();
+    auto endvertex = hepmcParticle->end_vertex();
     if (nullptr != endvertex) {
       for (auto particle_daughter: endvertex->particles_out()) {
-        if (_map.find(particle_daughter->id()) == _map.end()) {
+        if (mapIDPart.find(particle_daughter->id()) == mapIDPart.end()) {
           auto edm_particle = write_particle(particle_daughter);
-          _map.insert({particle_daughter->id(), edm_particle});
+          mapIDPart.insert({particle_daughter->id(), edm_particle});
         }
-        _map[_p->id()].addToDaughters(_map[particle_daughter->id()]);
+        mapIDPart[hepmcParticle->id()].addToDaughters(mapIDPart[particle_daughter->id()]);
       }
     }
   }
-  for (auto particle_pair: _map) {
+  for (auto particle_pair: mapIDPart) {
     particleCollection.push_back(particle_pair.second);
   }
 
@@ -153,21 +173,34 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   // add the event_scale
   std::string name = "event_scale";
-  eventFrame.putParameter(name,retrieveAttribute(evt,name));
+  eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
+
+  // add SQRTS
+  name = "SQRTS";
+  double sqrts = (HepMC3::FourVector(beam1+beam2)).m();
+  eventFrame.putParameter(name,sqrts);
+
+  // signal process ID
+  name = "signal_process_id";
+  eventFrame.putParameter(name,retrieveIntAttribute(evt,name));
+
+  // signal vertex ID
+  name = "signal_vertex_id";
+  eventFrame.putParameter(name,retrieveIntAttribute(evt,name));
 
   // add the alphaQED
   name = "alphaQED";
-  eventFrame.putParameter(name,retrieveAttribute(evt,name));
+  eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
 
   // add alphaQCD
   name = "alphaQCD";
-  eventFrame.putParameter(name,retrieveAttribute(evt,name));
+  eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
 
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
 
 }
-double WriterEDM4HEP::retrieveAttribute(const GenEvent &evt, std::string name) {
+double WriterEDM4HEP::retrieveDoubleAttribute(const GenEvent &evt, std::string name) {
 
   shared_ptr<HepMC3::DoubleAttribute> hepmcPtr = evt.attribute<HepMC3::DoubleAttribute>(name);
   double result = hepmcPtr?(hepmcPtr->value()):0.0;
@@ -175,9 +208,41 @@ double WriterEDM4HEP::retrieveAttribute(const GenEvent &evt, std::string name) {
   return result;
 }
 
+double WriterEDM4HEP::retrieveIntAttribute(const GenEvent &evt, std::string name) {
+
+  shared_ptr<HepMC3::IntAttribute> hepmcPtr = evt.attribute<HepMC3::IntAttribute>(name);
+  int result = hepmcPtr?(hepmcPtr->value()):0.0;
+
+  return result;
+}
 
 void WriterEDM4HEP::write_run_info() {
 
+  // create the frame
+  auto runFrame = podio::Frame();
+
+  // start with the generator information 
+  const std::vector<GenRunInfo::ToolInfo> listOfTools = run_info()->tools();
+  if ( listOfTools.size() == 0 ) {
+    std::cout << "WARNING: no tools found, hepmc run_info incomplete" << std::endl;
+  }
+  std::vector<std::string> listOfNames;
+  std::vector<std::string> listOfVersions;
+  std::vector<std::string> listOfDescriptions;
+  for ( auto tool: listOfTools ){
+    listOfNames.push_back(tool.name);
+    listOfVersions.push_back(tool.version);
+    listOfDescriptions.push_back(tool.description);
+  }
+
+  // add the three versions to EDM4HEP but only if there is at least one name
+  if ( listOfNames.size() > 0 ){
+    runFrame.putParameter("name",listOfNames);
+    runFrame.putParameter("version",listOfVersions);
+    runFrame.putParameter("description",listOfDescriptions);
+  }
+
+  // weight names
   std::vector<std::string> weights = run_info()->weight_names();
   std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
   for ( unsigned int i=0; i< weights.size() ; i++){
@@ -189,15 +254,8 @@ void WriterEDM4HEP::write_run_info() {
     weights.push_back("reference");
   }
 
-  // create the frame
-  auto runFrame = podio::Frame();
-
   // add the weights as parameters to the frame
   runFrame.putParameter("WeightNames", weights);
-
-  // add the SQRTS to the runFrame
-  double sqrts= 4711.;
-  runFrame.putParameter("SQRTS",sqrts);
 
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(runFrame, podio::Category::Run);
@@ -216,6 +274,9 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
   // convert momentum
   auto p = hepmcParticle->momentum();
   edm_particle.setMomentum( {float(p.px()), float(p.py()), float(p.pz())} );
+
+  // set the mass (energy is deduced in EDM4HEP
+  edm_particle.setMass(float(p.m()));
 
   // add spin (particle helicity) information if available
   std::shared_ptr<HepMC3::VectorFloatAttribute> spin = hepmcParticle->attribute<HepMC3::VectorFloatAttribute>("spin");
@@ -266,25 +327,6 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
     //    std::cout << "Writing COLORFLOW " << flow0 << " " << flow1 << std::endl; 
     edm_particle.setColorFlow(edm4hep::Vector2i(flow0, flow1));
   }
-
-  // try something
-  /*  HepMC3::GenEvent *mutableEvent = new GenEvent();  
-  std::shared_ptr<HepMC3::GenParticle> mutableHepMCparticle= std::make_shared<HepMC3::GenParticle>();  
-  HepMC3::FourVector myVec(10.,20.,30.,1000.);
-  mutableHepMCparticle->set_momentum(myVec);
-  mutableEvent->add_particle(mutableHepMCparticle);
-
-  std::vector<int> val;
-  val.push_back(4711);
-  val.push_back(4712);
-  mutableHepMCparticle->add_attribute("flows",std::make_shared<VectorIntAttribute>(val));  
-  std::cout << "Retrieving the attribute " << mutableHepMCparticle->attribute_as_string("flows") << std::endl;
-  std::cout << "Attribute names " << mutableHepMCparticle->attribute_names().size() << std::endl;
-  std::shared_ptr<HepMC3::VectorIntAttribute> colorFlowPtrM = mutableHepMCparticle->attribute<HepMC3::VectorIntAttribute>("flows");
-  std::cout << "Retrieval Pointer " << colorFlowPtrM << std::endl;
-  std::cout << "Retrieval Size " << colorFlowPtrM->value().size() << std::endl;
-  std::cout << "Retrieval val0 " << colorFlowPtrM->value()[0] << std::endl;
-  std::cout << "Retrieval val1 " << colorFlowPtrM->value()[1] << std::endl;*/
 
   return edm_particle;
 }
