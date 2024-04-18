@@ -254,10 +254,8 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
 	flow1 = colorFlowPtr->value()[1];
 	break;
       default:
-	std::cout << "k4GeneratorsConfig::WriterEDM4HEP::ERROR the vector has size " << colorFlowPtr->value().size() 
-		  << " greater then 2 as foreseen by EDM4HEP" << std::endl
-		  << "Stopping Execution" << std::endl;
-	exit(1);
+	std::cout << "k4GeneratorsConfig::WriterEDM4HEP::WARNING the vector has size " << colorFlowPtr->value().size() 
+		  << " greater then 2 as foreseen by EDM4HEP, undefined behaviour, colorflow not written to EDM4HEP" << std::endl;
 	break;
       }
     }
