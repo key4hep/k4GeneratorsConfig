@@ -152,38 +152,32 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   eventFrame.putParameter("CrossSectionErrors",evt.cross_section()->xsec_errs());
 
   // add the event_scale
-  shared_ptr<HepMC3::DoubleAttribute> event_scalePtr = evt.attribute<HepMC3::DoubleAttribute>("event_scale");
-  double event_scale= event_scalePtr?(event_scalePtr->value()):0.0;
-  eventFrame.putParameter("SQRTS",event_scale);
+  std::string name = "event_scale";
+  eventFrame.putParameter(name,retrieveAttribute(evt,name));
+
+  // add the alphaQED
+  name = "alphaQED";
+  eventFrame.putParameter(name,retrieveAttribute(evt,name));
+
+  // add alphaQCD
+  name = "alphaQCD";
+  eventFrame.putParameter(name,retrieveAttribute(evt,name));
 
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
 
-  // a cross section is attached to GenEvent, so we should try to decode it:
-  // print the cross section and error every 10000 events
-  if ( evt.event_number() % 10000 == 0 ){
-    if ( evt.cross_section() ) {
-      if ( evt.cross_section()->is_valid() ){
-	std::cout << "Xsection is valid" << std::endl;
-	double xsection      = evt.cross_section()->xsecs()[0];
-	double xsectionError = evt.cross_section()->xsec_errs()[0];
-	std::cout << "The cross section is " << xsection << " with error " << xsectionError << std::endl;
-      }
-      else{
-	std::cout << "Xsection is NOT valid" << std::endl;
-      }
-    }
-    else {
-	std::cout << "Xsection object not found" << std::endl;
-    }
-  }
+}
+double WriterEDM4HEP::retrieveAttribute(const GenEvent &evt, std::string name) {
 
+  shared_ptr<HepMC3::DoubleAttribute> hepmcPtr = evt.attribute<HepMC3::DoubleAttribute>(name);
+  double result = hepmcPtr?(hepmcPtr->value()):0.0;
+
+  return result;
 }
 
 
 void WriterEDM4HEP::write_run_info() {
 
-  std::cout << "Here we should write the header to EDM4HEP" << std::endl;
   std::vector<std::string> weights = run_info()->weight_names();
   std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
   for ( unsigned int i=0; i< weights.size() ; i++){
@@ -200,6 +194,10 @@ void WriterEDM4HEP::write_run_info() {
 
   // add the weights as parameters to the frame
   runFrame.putParameter("WeightNames", weights);
+
+  // add the SQRTS to the runFrame
+  double sqrts= 4711.;
+  runFrame.putParameter("SQRTS",sqrts);
 
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(runFrame, podio::Category::Run);

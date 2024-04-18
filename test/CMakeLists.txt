@@ -1,4 +1,4 @@
-add_test(NAME InputAndRun COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/check.sh)
+add_test(NAME InputAndRun COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/check.sh -r)
 set_tests_properties(InputAndRun
   PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

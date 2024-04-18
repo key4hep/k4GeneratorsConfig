@@ -74,6 +74,10 @@ bool k4GeneratorsConfig::xsection::processFile(){
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
   }
 
+  // decode sqrts
+  m_sqrts = runinfo.getParameter<double>("SQRTS");
+  std::cout << "read event scale " << m_sqrts << std::endl;
+
   // retrieve the cross section for the last event if not possible it's not valid
   if ( m_reader->getEntries(podio::Category::Event) == 0 ){
     m_xsection      = 0.;
@@ -103,9 +107,6 @@ bool k4GeneratorsConfig::xsection::processFile(){
     m_xsectionError = 0.;
     readOK = false;
   }
-
-  // decode sqrts
-  m_sqrts = event.getParameter<double>("event_scale");
 
   return readOK;
 }
