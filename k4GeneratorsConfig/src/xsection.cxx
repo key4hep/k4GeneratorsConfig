@@ -64,16 +64,18 @@ bool k4GeneratorsConfig::xsection::processFile(){
   m_reader->openFile(m_file);
   
   // retrieve the RunInfo for the weight names, there should only be 1 entry per Run
-  m_reader->getEntries(podio::Category::Run);
+  if ( m_reader->getEntries(podio::Category::Run) == 0 ){
+    return false;
+  }
   auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
   std::vector<std::string> weightNames = runinfo.getParameter<std::vector<std::string>>("WeightNames");
-    if ( weightNames.size() > 0 ){
+  if ( weightNames.size() > 0 ){
     std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames[0] << std::endl;
   }
   else {
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
   }
-
+  
   // retrieve the cross section for the last event if not possible it's not valid
   if ( m_reader->getEntries(podio::Category::Event) == 0 ){
     m_xsection      = 0.;
