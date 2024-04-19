@@ -130,8 +130,9 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
       }
     }
   }
+  // insert the edm4hepParticles into a collection
+  // keep a link between HepMC and EDM4HEP for further processing
   for (auto particle_pair: mapIDPart) {
-
     particleCollection.push_back(particle_pair.second);
     mapOID2PODIO.insert({particle_pair.first,particle_pair.second.getObjectID().index});
   }
@@ -327,13 +328,19 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
      edm_particle.setSpin(hel);
   }
 
-  // convert vertex info and time info:
+  // convert production vertex info and time info:
   auto prodVtx = hepmcParticle->production_vertex();
-
   if ( prodVtx!=nullptr ) {
     auto& pos = prodVtx->position();
     edm_particle.setVertex( {float(pos.x()), float(pos.y()), float(pos.z())} );
     edm_particle.setTime(pos.t());
+  }
+
+  // convert the decay vertex (if present) 
+  auto endpointVtx = hepmcParticle->end_vertex();
+  if ( endpointVtx!=nullptr ) {
+    auto& pos = endpointVtx->position();
+    edm_particle.setEndpoint( {float(pos.x()), float(pos.y()), float(pos.z())} );
   }
 
   // retrieve the color flow:
