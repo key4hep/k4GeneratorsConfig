@@ -97,22 +97,11 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // now deal with the event
   auto eventFrame = podio::Frame();
 
-  // to calculate SQRTS get the beam particles
-  HepMC3::FourVector beam1;
-  HepMC3::FourVector beam2;
-
   // here is the collection
   edm4hep::MCParticleCollection particleCollection;
 
   std::unordered_map<unsigned int, edm4hep::MutableMCParticle> mapIDPart;
   for (auto hepmcParticle:evt.particles()) {
-    // check the status of the particle
-    if ( hepmcParticle->status() == 4 ){
-      if ( beam1.e() == 0.)
-	beam1 = hepmcParticle->momentum();
-      else
-	beam2 = hepmcParticle->momentum();
-    }
     //    std::cout << "Converting hepmc particle with Pdg_ID " << hepmcParticle->pdg_id() << "and id " <<  hepmcParticle->id() << std::endl;
     if (mapIDPart.find(hepmcParticle->id()) == mapIDPart.end()) {
       edm4hep::MutableMCParticle edm_particle = write_particle(hepmcParticle);
@@ -177,7 +166,12 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   // add SQRTS
   name = "SQRTS";
-  double sqrts = (HepMC3::FourVector(beam1+beam2)).m();
+  double sqrts = 0.; 
+  if ( evt.beams().size()==2 ) {
+    ConstGenParticlePtr beam1 = evt.beams()[0];
+    ConstGenParticlePtr beam2 = evt.beams()[1];
+    sqrts = (beam1->momentum()+beam2->momentum()).m();
+  }
   eventFrame.putParameter(name,sqrts);
 
   // signal process ID
@@ -187,6 +181,29 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // signal vertex ID
   name = "signal_vertex_id";
   eventFrame.putParameter(name,retrieveIntAttribute(evt,name));
+
+  // now the PDFs: define the variables
+  std::vector<int> partonID; 
+  std::vector<double> x; 
+  std::vector<double> xf; 
+  std::vector<int> pdf_id; 
+  // retrieve the pdf information
+  HepMC3::ConstGenPdfInfoPtr pdfinfo = evt.pdf_info();
+  if ( pdfinfo ){
+    // store for transfer
+    for (unsigned int i=0; i<2; i++){
+      partonID.push_back(pdfinfo->parton_id[i]);
+      x.push_back(pdfinfo->x[i]);
+      xf.push_back(pdfinfo->xf[i]);
+      pdf_id.push_back(pdfinfo->pdf_id[i]);
+    }
+    // now write them to EDM4HEP
+    eventFrame.putParameter("PDF_parton_id",partonID);
+    eventFrame.putParameter("PDF_x",x);
+    eventFrame.putParameter("PDF_scale",pdfinfo->scale);
+    eventFrame.putParameter("PDF_xf",xf);
+    eventFrame.putParameter("PDF_pdf_id",pdf_id);
+  }
 
   // add the alphaQED
   name = "alphaQED";
