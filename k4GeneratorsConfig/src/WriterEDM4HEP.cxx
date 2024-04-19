@@ -101,7 +101,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   edm4hep::MCParticleCollection particleCollection;
   std::unordered_map<unsigned int, int> mapOID2PODIO;
 
-  std::unordered_map<unsigned int, edm4hep::MutableMCParticle> mapIDPart;
+  std::map<unsigned int, edm4hep::MutableMCParticle> mapIDPart;
   for (auto hepmcParticle:evt.particles()) {
     //    std::cout << "Converting hepmc particle with Pdg_ID " << hepmcParticle->pdg_id() << "and id " <<  hepmcParticle->id() << std::endl;
     if (mapIDPart.find(hepmcParticle->id()) == mapIDPart.end()) {
@@ -131,6 +131,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
     }
   }
   for (auto particle_pair: mapIDPart) {
+
     particleCollection.push_back(particle_pair.second);
     mapOID2PODIO.insert({particle_pair.first,particle_pair.second.getObjectID().index});
   }
