@@ -65,6 +65,9 @@ private:
     /// Helper routine for writing single particle to file
     edm4hep::MutableMCParticle write_particle(const ConstGenParticlePtr& p);
 
+    /// Helper routine to translate the HepMC Vertex ID
+  int write_signal_vertex_id(const GenEvent& evt, int hepmcVertex,std::unordered_map<unsigned int, int>&mapHEPMC2PODIO);
+
     /// retrieve the attribute of type double
     double retrieveDoubleAttribute(const GenEvent& evt, std::string name);
 

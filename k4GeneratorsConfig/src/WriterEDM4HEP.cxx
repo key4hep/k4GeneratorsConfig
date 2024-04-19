@@ -99,6 +99,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   // here is the collection
   edm4hep::MCParticleCollection particleCollection;
+  std::unordered_map<unsigned int, int> mapOID2PODIO;
 
   std::unordered_map<unsigned int, edm4hep::MutableMCParticle> mapIDPart;
   for (auto hepmcParticle:evt.particles()) {
@@ -131,10 +132,8 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   }
   for (auto particle_pair: mapIDPart) {
     particleCollection.push_back(particle_pair.second);
+    mapOID2PODIO.insert({particle_pair.first,particle_pair.second.getObjectID().index});
   }
-
-  // write the collection of MCParticles to the frame 
-  eventFrame.put(std::move(particleCollection), "MCParticles");
 
   // now we need the event header
   edm4hep::EventHeaderCollection evtHeaderCollection;
@@ -180,7 +179,13 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   // signal vertex ID
   name = "signal_vertex_id";
-  eventFrame.putParameter(name,retrieveIntAttribute(evt,name));
+  int signalVertexID = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapOID2PODIO);
+  // inconsistent use of attributes, fallback for SHERPA
+  if ( signalVertexID == 0 ){
+    name = "signal_process_vertex";
+    int signalVertexID = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapOID2PODIO);
+  }
+  eventFrame.putParameter(name,signalVertexID);
 
   // now the PDFs: define the variables
   std::vector<int> partonID; 
@@ -213,10 +218,29 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   name = "alphaQCD";
   eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
 
+  // LAST ITEM: write the collection of MCParticles to the frame mv empties the collection which we need for processing!!
+  eventFrame.put(std::move(particleCollection), "MCParticles");
+
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
 
 }
+  int WriterEDM4HEP::write_signal_vertex_id(const GenEvent& evt, int hepmcVertexID, std::unordered_map<unsigned int, int>&mapHEPMC2PODIO){
+
+  int result = 0;
+  int particleOID = 0;
+  for (auto vtx: evt.vertices() ){
+    if ( vtx->id() == hepmcVertexID && vtx->particles_in_size() > 0 ){
+      unsigned int hepmcParticleID = vtx->particles_in()[0]->id();
+      if ( mapHEPMC2PODIO.find(hepmcParticleID) != mapHEPMC2PODIO.end() ) {
+	return mapHEPMC2PODIO[hepmcParticleID];
+      }
+    }
+  }
+
+  return result;
+}
+
 double WriterEDM4HEP::retrieveDoubleAttribute(const GenEvent &evt, std::string name) {
 
   shared_ptr<HepMC3::DoubleAttribute> hepmcPtr = evt.attribute<HepMC3::DoubleAttribute>(name);
