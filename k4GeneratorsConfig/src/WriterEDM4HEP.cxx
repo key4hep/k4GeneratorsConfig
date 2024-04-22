@@ -316,23 +316,30 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
 
   // convert momentum
   auto p = hepmcParticle->momentum();
-  edm_particle.setMomentum( {p.px(), p.py(), p.pz()} );
+  edm_particle.setMomentum({p.px(), p.py(), p.pz()});
 
   // set the mass (energy is deduced in EDM4HEP
   edm_particle.setMass(p.m());
 
   // add spin (particle helicity) information if available
-  std::shared_ptr<HepMC3::VectorFloatAttribute> spin = hepmcParticle->attribute<HepMC3::VectorFloatAttribute>("spin");
-  if (spin) {
-     edm4hep::Vector3f hel(spin->value()[0], spin->value()[1], spin->value()[2]);
-     edm_particle.setSpin(hel);
+  //  std::shared_ptr<HepMC3::VectorFloatAttribute> spin = hepmcParticle->attribute<HepMC3::VectorFloatAttribute>("spin");
+  //if (spin) {
+  //   edm4hep::Vector3f hel(spin->value()[0], spin->value()[1], spin->value()[2]);
+  //   edm_particle.setSpin(hel);
+  //}
+  std::shared_ptr<HepMC3::DoubleAttribute> thetaPtr = hepmcParticle->attribute<HepMC3::DoubleAttribute>("theta");
+  std::shared_ptr<HepMC3::DoubleAttribute> phiPtr   = hepmcParticle->attribute<HepMC3::DoubleAttribute>("phi");
+  if ( thetaPtr && phiPtr ){
+    float theta = static_cast<float>(thetaPtr->value());
+    float phi   = static_cast<float>(phiPtr->value());
+    edm4hep::Vector3f hel( {cos(phi)*cos(theta), sin(phi)*cos(theta), sin(theta)});
   }
 
   // convert production vertex info and time info:
   auto prodVtx = hepmcParticle->production_vertex();
   if ( prodVtx!=nullptr ) {
     auto& pos = prodVtx->position();
-    edm_particle.setVertex( {pos.x(), pos.y(), pos.z()} );
+    edm_particle.setVertex({pos.x(), pos.y(), pos.z()});
     edm_particle.setTime(pos.t());
   }
 
@@ -340,7 +347,7 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
   auto endpointVtx = hepmcParticle->end_vertex();
   if ( endpointVtx!=nullptr ) {
     auto& pos = endpointVtx->position();
-    edm_particle.setEndpoint( {pos.x(), pos.y(), pos.z()} );
+    edm_particle.setEndpoint({pos.x(), pos.y(), pos.z()});
   }
 
   // retrieve the color flow:
