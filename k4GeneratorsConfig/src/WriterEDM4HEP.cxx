@@ -316,7 +316,7 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
 
   // convert momentum
   auto p = hepmcParticle->momentum();
-  edm_particle.setMomentum({p.px(), p.py(), p.pz()});
+  edm_particle.setMomentum(edm4hep::Vector3d(p.px(), p.py(), p.pz()));
 
   // set the mass (energy is deduced in EDM4HEP
   edm_particle.setMass(p.m());
@@ -332,14 +332,15 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
   if ( thetaPtr && phiPtr ){
     float theta = static_cast<float>(thetaPtr->value());
     float phi   = static_cast<float>(phiPtr->value());
-    edm4hep::Vector3f hel( {cos(phi)*cos(theta), sin(phi)*cos(theta), sin(theta)});
+    edm4hep::Vector3f hel(cos(phi)*cos(theta), sin(phi)*cos(theta), sin(theta));
+    edm_particle.setSpin(hel);
   }
 
   // convert production vertex info and time info:
   auto prodVtx = hepmcParticle->production_vertex();
   if ( prodVtx!=nullptr ) {
     auto& pos = prodVtx->position();
-    edm_particle.setVertex({pos.x(), pos.y(), pos.z()});
+    edm_particle.setVertex(edm4hep::Vector3d(pos.x(), pos.y(), pos.z()));
     edm_particle.setTime(pos.t());
   }
 
@@ -347,7 +348,7 @@ edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticleP
   auto endpointVtx = hepmcParticle->end_vertex();
   if ( endpointVtx!=nullptr ) {
     auto& pos = endpointVtx->position();
-    edm_particle.setEndpoint({pos.x(), pos.y(), pos.z()});
+    edm_particle.setEndpoint(edm4hep::Vector3d(pos.x(), pos.y(), pos.z()));
   }
 
   // retrieve the color flow:
