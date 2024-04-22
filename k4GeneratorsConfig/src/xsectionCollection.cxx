@@ -120,10 +120,18 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
     // only print valid cross sections
     if ( !xsec.isValid() ) continue;
     // if it's a new process print a new line
-    std::string proc = xsec.Process();
+    std::string proc     = xsec.Process();
+    std::string filename = xsec.File();
     if ( proc.compare(previousProcess) != 0 ){
       if ( previousProcess.compare("XXXX")!= 0 ) output << std::endl;
-      output << proc << " sqrts= " << xsec.SQRTS() << ":" << std::endl;
+      output << proc << " sqrts= " << xsec.SQRTS();
+      if ( filename.find("ISR") != std::string::npos ) {
+	output << " with ISR ";
+	if ( filename.find("BST") != std::string::npos ) {
+	  output << " with Beamstrahlung ";
+	}
+      } 
+      output << ":" << std::endl;
       previousProcess = proc;
     }
     // print the generator name and cross section with its error
