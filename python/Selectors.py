@@ -1,3 +1,5 @@
+import math
+
 class Selectors():
     """Selector Class"""
     def __init__(self, name, selector):
@@ -28,3 +30,13 @@ class Selectors():
 
     def get_MinMax(self):
         return self.get_Min(), self.get_Max()
+
+    def transform_Theta2Eta(self):
+        self.name = "Pseudorapidity"
+        # convert from theta to eta (min/max exchange) and from deg to rad
+        thetaMin = self.get_Min()*math.pi/180.
+        thetaMax = self.get_Max()*math.pi/180.
+        etaMax = -math.log(math.tan(thetaMin/2.))
+        setattr(self, "max", etaMax)
+        etaMin = -math.log(math.tan(thetaMax/2.))
+        setattr(self, "min", etaMin)

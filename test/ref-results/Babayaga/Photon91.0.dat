@@ -1,0 +1,11 @@
+fs gg
+seed 4711
+EWKc on
+nev 10000
+ecms 91.0
+store yes
+path .
+mode weighted
+thmin -2.0275894218001307
+thmax 2.027589421800132
+run

@@ -1,4 +1,5 @@
 Generators:
+  - Sherpa
   - Babayaga
 
 OutputFormat: hepmc3
@@ -21,6 +22,7 @@ Selectors:
       theta:
         Max: 165
         Min: 15
+        Flavour: [22]
 
 Sherpa:
   Run:
