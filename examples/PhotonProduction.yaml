@@ -1,0 +1,34 @@
+Generators:
+  - Babayaga
+
+OutputFormat: hepmc3
+OutDir: Run-Cards
+Events: 10000
+EventMode: weighted
+
+SqrtS: 91.0
+Model: SM
+ISRMode: 0
+
+Processes:
+  Photon91.0:
+     Final: [22, 22]
+     Order: [2,0]
+
+Selectors:
+  Process:
+    Photon91.0:
+      theta:
+        Max: 165
+        Min: 15
+
+Sherpa:
+  Run:
+    EW_SCHEME: 3
+
+
+ParticleData:
+  23:
+    mass: 91.1876
+    width: 2.4952
+

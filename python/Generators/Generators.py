@@ -1,6 +1,7 @@
 import Sherpa
 import Whizard
 import Madgraph
+import Babayaga
 
 class Generators:
     """Generator class"""
@@ -10,6 +11,7 @@ class Generators:
         self.sherpa = None
         self.whizard = None
         self.madgraph = None
+        self.babayaga = None
         self.proc_info = None
 
     def set_process_info(self, proc_info):
@@ -38,3 +40,11 @@ class Generators:
                 self.madgraph.write_key4hepfile()
             else:
                 print("Madgraph module not found. Unable to initialize Madgraph.")
+
+        if "Babayaga" in self.generator_list:
+            if Babayaga is not None:
+                self.babayaga = Babayaga.Babayaga(self.proc_info, self.settings)
+                self.babayaga.write_file()
+                self.babayaga.write_key4hepfile()
+            else:
+                print("Babayaga module not found. Unable to initialize Babayaga.")
