@@ -234,7 +234,7 @@ class Whizard(GeneratorBase):
                     lepton_type=lepton_type.capitalize() 
                 return f"{lepton_type}{flavor}"
             elif apdg > 20:
-                particle_mapping = {23: "Z", 25: "H", 24: "W-", -24: "W+"}
+                particle_mapping = {22: "gamma", 23: "Z", 25: "H", 24: "W-", -24: "W+"}
                 return particle_mapping.get(pdg, f"Cant find whizard id for pdg {pdg}")
             elif apdg <= 6:
                 return self.whizard_quarks(pdg)
