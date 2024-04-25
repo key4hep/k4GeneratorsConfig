@@ -6,6 +6,6 @@ ecms 91.0
 store yes
 path .
 mode weighted
-thmin -2.0275894218001307
-thmax 2.027589421800132
+thmin 15.0
+thmax 165.0
 run

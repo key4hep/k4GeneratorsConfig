@@ -74,13 +74,12 @@ class Babayaga(GeneratorBase):
     def add_Selector(self,key, value):
         key=key.lower()
         if key == "theta":
-            value.Transform2Deg()
-            self.add_one_ParticleSelector(value, "theta")
+            self.add_one_ParticleSelector(value, "theta","deg")
         else:
             print(f"{key} not a Standard Babayaga Selector")
 
-    def add_one_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_one_ParticleSelector(self,sel,name,unit=""):
+        Min,Max = sel.get_MinMax(unit)
         if name == "theta" :
             self.cuts+=f"thmin {Min}\n"
             self.cuts+=f"thmax {Max}\n"

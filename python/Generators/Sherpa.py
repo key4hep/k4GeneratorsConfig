@@ -109,8 +109,7 @@ class Sherpa(GeneratorBase):
         elif key == "eta":
             self.add_one_ParticleSelector(value, "PseudoRapidity")  
         elif key == "theta":
-            value.Transform2Eta()
-            self.add_one_ParticleSelector(value, "PseudoRapidity")  
+            self.add_one_ParticleSelector(value, "PseudoRapidity","eta")  
 
             # Two particle selectors
         elif key == "mass":
@@ -151,8 +150,8 @@ class Sherpa(GeneratorBase):
                     self.cuts+=sname
                     self.cuts+="\n"
 
-    def add_one_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_one_ParticleSelector(self,sel,name,unit=""):
+        Min,Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             sname = f" {name} {f} {Min} {Max}"

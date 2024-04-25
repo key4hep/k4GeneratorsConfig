@@ -144,8 +144,7 @@ class Whizard(GeneratorBase):
         elif key == "eta":
             self.add_one_ParticleSelector(value, "eta")
         elif key == "theta":
-            value.Transform2Rad()
-            self.add_one_ParticleSelector(value, "Theta")
+            self.add_one_ParticleSelector(value, "Theta","rad")
             # Two particle selectors
         elif key == "mass":
             self.add_two_ParticleSelector(value,"m")
@@ -179,8 +178,8 @@ class Whizard(GeneratorBase):
                 else:
                     self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
 
-    def add_one_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_one_ParticleSelector(self,sel,name,unit=""):
+        Min,Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             f=self.pdg_to_whizard(f)

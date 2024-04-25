@@ -150,8 +150,7 @@ class Madgraph(GeneratorBase):
         elif key == "eta":
             self.add_one_ParticleSelector(value, "eta") 
         elif key == "theta":
-            value.Transform2Eta()
-            self.add_one_ParticleSelector(value, "eta") 
+            self.add_one_ParticleSelector(value, "eta","eta") 
 
             # Two particle selectors
         elif key == "mass":
@@ -201,8 +200,8 @@ class Madgraph(GeneratorBase):
 
                 # self.add_run_option(sname, maxcut)
 
-    def add_one_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_one_ParticleSelector(self,sel,name,unit=""):
+        Min,Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             if f < 0:
