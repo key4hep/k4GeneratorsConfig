@@ -109,11 +109,8 @@ class Sherpa(GeneratorBase):
         elif key == "eta":
             self.add_one_ParticleSelector(value, "PseudoRapidity")  
         elif key == "theta":
-            print("before transfrom")
-            value.transform_Theta2Eta()
-            print("after transfrom")
+            value.Transform2Eta()
             self.add_one_ParticleSelector(value, "PseudoRapidity")  
-            print("after set")
 
             # Two particle selectors
         elif key == "mass":

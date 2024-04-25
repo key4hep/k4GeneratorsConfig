@@ -149,6 +149,9 @@ class Madgraph(GeneratorBase):
             self.add_one_ParticleSelector(value, "eta")
         elif key == "eta":
             self.add_one_ParticleSelector(value, "eta") 
+        elif key == "theta":
+            value.Transform2Eta()
+            self.add_one_ParticleSelector(value, "eta") 
 
             # Two particle selectors
         elif key == "mass":

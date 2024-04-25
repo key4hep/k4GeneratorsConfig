@@ -1,6 +1,8 @@
 Generators:
   - Sherpa
   - Babayaga
+  - Whizard
+  - Madgraph
 
 OutputFormat: hepmc3
 OutDir: Run-Cards
@@ -20,9 +22,10 @@ Selectors:
   Process:
     Photon91.0:
       theta:
-        Max: 165
-        Min: 15
+        Max: 165.
+        Min: 15.
         Flavour: [22]
+        Unit: deg
 
 Sherpa:
   Run:

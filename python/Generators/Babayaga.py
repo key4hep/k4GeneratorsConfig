@@ -74,6 +74,7 @@ class Babayaga(GeneratorBase):
     def add_Selector(self,key, value):
         key=key.lower()
         if key == "theta":
+            value.Transform2Deg()
             self.add_one_ParticleSelector(value, "theta")
         else:
             print(f"{key} not a Standard Babayaga Selector")

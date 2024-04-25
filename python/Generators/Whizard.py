@@ -143,6 +143,9 @@ class Whizard(GeneratorBase):
             self.add_one_ParticleSelector(value, "rap")
         elif key == "eta":
             self.add_one_ParticleSelector(value, "eta")
+        elif key == "theta":
+            value.Transform2Rad()
+            self.add_one_ParticleSelector(value, "Theta")
             # Two particle selectors
         elif key == "mass":
             self.add_two_ParticleSelector(value,"m")
