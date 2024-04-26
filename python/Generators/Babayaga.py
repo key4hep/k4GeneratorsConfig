@@ -60,19 +60,16 @@ class Babayaga(GeneratorBase):
             for proc, sel in procselectors.items():
                     for key, value in sel.items():
                         if key.startswith(self.procinfo.get('procname')):
-                            # print(key,proc)
-                            cut = key.split(proc)
-                            if len(cut)==2:
-                                self.add_Selector(cut[1], value)
+                            self.add_Selector(value)
         except Exception as e:
             print("Failed to pass process specific cuts in Babayaga")
             print(e)
             pass
         for key,value in selectors.items():
-            self.add_Selector(key, value)
+            self.add_Selector(value)
 
     def add_Selector(self,key, value):
-        key=key.lower()
+        key=value.name.lower()
         if key == "theta":
             self.add_one_ParticleSelector(value, "theta","deg")
         else:

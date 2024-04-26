@@ -2,7 +2,8 @@ import math
 
 class Selectors():
     """Selector Class"""
-    def __init__(self, name, selector):
+    def __init__(self, process, name, selector):
+        self.process = process
         self.name = name
         self.LoadSelector(selector)
         self.CalculateAllOutputs()

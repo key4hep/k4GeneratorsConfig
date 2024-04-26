@@ -133,7 +133,7 @@ class Input:
             try:
                 for proc in self.settings["selectors"]["Process"]:
                     for key, sel in self.settings["selectors"]["Process"][proc].items():
-                        pselectors[proc+key] = Selectors.Selectors(proc, sel) 
+                        pselectors[proc+key] = Selectors.Selectors(proc, key, sel) 
                     self.procselectors[proc] = pselectors 
             except Exception as e:
                 print("Failed to find process specific cuts. Using global.")
