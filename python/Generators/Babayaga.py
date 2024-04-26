@@ -17,7 +17,7 @@ class Babayaga(GeneratorBase):
             self.procDB.write_DBInfo()
 
         self.executable  = "babayaga-fcc.exe"
-        self.gen_settings = settings.get_block("whizard")
+        self.gen_settings = settings.get_block("babayaga")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 

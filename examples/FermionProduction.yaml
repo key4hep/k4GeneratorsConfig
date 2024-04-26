@@ -2,6 +2,7 @@ Generators:
   - Sherpa
   - Whizard
   - Madgraph
+  - KKMC
 
 OutputFormat: hepmc3
 OutDir: Run-Cards
