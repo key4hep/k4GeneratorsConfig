@@ -71,7 +71,6 @@ class KKMC(GeneratorBase):
         if f"{key}" in self.procDB.get_run_out():
             self.procDB.remove_option(key)
         if key in self.defaults:
-            print("Key in defaults")
             self.defaults = self.defaults.replace(key, value)
         else:
             print(f"Warning: {key} not set as defaults in KKCM. Ignoring")
