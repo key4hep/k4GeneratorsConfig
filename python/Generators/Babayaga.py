@@ -70,7 +70,7 @@ class Babayaga(GeneratorBase):
         for key,value in selectors.items():
             self.add_Selector(value)
 
-    def add_Selector(self,key, value):
+    def add_Selector(self,value):
         key=value.name.lower()
         if key == "theta":
             self.add_one_ParticleSelector(value, "theta","deg")
