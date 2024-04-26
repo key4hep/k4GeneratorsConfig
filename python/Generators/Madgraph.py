@@ -126,8 +126,10 @@ class Madgraph(GeneratorBase):
         try:
             procselectors = getattr(self.settings, "procselectors")
             for proc, sel in procselectors.items():
+                    if proc != self.procinfo.get('procname'):
+                        continue
                     for key, value in sel.items():
-                        if key.startswith(self.procinfo.get('procname')):
+                        if value.process==self.procinfo.get('procname'):
                             self.add_Selector(value)
         except Exception as e:
             print("Failed to pass process specific cuts in Madgraph")
