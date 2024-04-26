@@ -16,7 +16,7 @@ class Babayaga(GeneratorBase):
         if settings.get("usedefaults",True):
             self.procDB.write_DBInfo()
 
-        self.executable  = "babayaga-fcc.exe"
+        self.executable  = "babayaga"
         self.gen_settings = settings.get_block("babayaga")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
@@ -43,6 +43,7 @@ class Babayaga(GeneratorBase):
         self.add_process_option("path", ".")
         self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":
+            self.add_process_option("nsearch",10000)
             self.add_process_option("mode", "unweighted")
         else:
             self.add_process_option("mode", "weighted")
@@ -101,7 +102,8 @@ class Babayaga(GeneratorBase):
 
     def write_key4hepfile(self):
         key4hepRun = ""
-        key4hepRun += "cat "+self.GeneratorDatacardName+" | "+self.executable+"\n"
+        #key4hepRun += "cat "+self.GeneratorDatacardName+" | "+self.executable+"\n"
+        key4hepRun += self.executable+" --config "+self.GeneratorDatacardName+"\n"
         key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o {0} events.lhe {1}.{0}\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
         key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
         self.write_Key4hepScript(key4hepRun)
