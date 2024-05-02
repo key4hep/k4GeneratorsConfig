@@ -68,14 +68,7 @@ class Whizard(GeneratorBase):
                     name = self.is_whizard_particle_data(attr)
                     if name is not None:
                         value = getattr(p, attr)
-                        pname = self.pdg_to_whizard(p.get("pdg_code"))
-                        if p.get("pdg_code") < 20:
-                            pname = pname.lower()
-                            if abs(p.get("pdg_code")) == 6:
-                                pname = "top"
-                        replac = ["+", "-", "1", "2", "3", "m", "p"]
-                        for r in replac:
-                            pname = pname.replace(r, "")
+                        pname = self.whizard_MW_name(p.get("pdg_code"))
                         if name == "MASS":
                             dname = f"m{pname}"
                         elif name == "WIDTH":
@@ -246,3 +239,17 @@ class Whizard(GeneratorBase):
         quark_mapping = {1: "d", 2: "u", 3: "s", 4: "c", 5: "b", 6: "t"}
         q = quark_mapping.get(abs(pdg), "")
         return q.capitalize() if pdg > 0 else q
+
+    def whizard_MW_name(self,pdg):
+        if abs(pdg) <= 2:
+            raise(ValueError, "Whizard does not support light quark masses or widths")
+        if (abs(pdg) >= 12 and abs(pdg) <= 16) and pdg%2==0:
+            raise(ValueError, "Whizard does not support neutrino masses or widths")
+        if abs(pdg)==6:
+            return "top"
+        elif abs(pdg)==15:
+            return "tau"
+        elif abs(pdg)==24:
+            return "W"
+        else:
+            return self.pdg_to_whizard(pdg)

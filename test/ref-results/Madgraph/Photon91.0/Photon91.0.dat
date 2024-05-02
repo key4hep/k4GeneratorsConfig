@@ -27,5 +27,5 @@ set EBEAM 45.5
 set MZ 91.1876
 set WZ 2.4952
 set nevents 10000
-set eta_min_pdg 22: -2.0275894218001307
+set eta_min_pdg 22: -2.027589421800131
 set eta_max_pdg 22: 2.027589421800132
