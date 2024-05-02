@@ -73,7 +73,7 @@ class Whizard(GeneratorBase):
                             pname = pname.lower()
                             if abs(p.get("pdg_code")) == 6:
                                 pname = "top"
-                        replac = ["+", "-", "1", "2", "3"]
+                        replac = ["+", "-", "1", "2", "3", "m", "p"]
                         for r in replac:
                             pname = pname.replace(r, "")
                         if name == "MASS":
