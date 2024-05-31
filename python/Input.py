@@ -114,6 +114,9 @@ class Input:
     def get_isr_mode(self):
         return self.get("isrmode", 0)
 
+    def get_ew_mode(self):
+        return self.get("ewmode",0)
+
 
     def get_weighted_mode(self):
         return self.get("eventmode", "unweighted")
