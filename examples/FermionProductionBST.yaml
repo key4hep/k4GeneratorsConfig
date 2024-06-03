@@ -1,0 +1,26 @@
+Generators:
+  - Whizard
+  - Madgraph
+
+OutputFormat: hepmc3
+OutDir: Run-Cards
+Events: 10000
+EventMode: unweighted
+
+SqrtS: 240.
+Model: SM
+ISRMode: 1
+
+Processes:
+  Muon240:
+     Final: [13, -13]
+     Order: [2,0]
+     ISRmode: 1
+     Beamstrahlung: CEPC
+
+
+ParticleData:
+  23:
+    mass: 91.1876
+    width: 2.4952
+
