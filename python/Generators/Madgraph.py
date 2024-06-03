@@ -43,7 +43,7 @@ class Madgraph(GeneratorBase):
         self.set_particle_data()
         self.add_run_option("set nevents", self.procinfo.get("events"))
         if self.procinfo.get("isrmode"):
-            if self.procinfo.get_Beamstrahlung() is not None:
+            if self.procinfo.get("beamstrahlung") is not None:
                 #if self.gen_settings is None:
                 #   print("Please set the beamstrahlung parameter as Madgraph:beamstrahlung:---\n\
                 #       Options are: cepc240ll, clic3000ll, fcce240ll, fcce365ll, and ilc500ll.\n\
@@ -55,6 +55,7 @@ class Madgraph(GeneratorBase):
                 #self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.add_run_option("set pdlabel", "isronlyll")
+                print("Get Beamstrahlung not detected")
             self.add_run_option("set lpp1", "3")
             self.add_run_option("set lpp2", "-3")
         self.run += self.procDB.get_run_out()
@@ -63,8 +64,8 @@ class Madgraph(GeneratorBase):
 
 
     def get_BeamstrahlungPDLABEL(self):
-        ecm   = self.procinfo.get("sqrts")
-        accel = self.procinfo.get_Beamstrahlung()
+        ecm   = self.procinfo.sqrts
+        accel = self.procinfo.beamstrahlung
         if abs(ecm-240) < 10:
             if accel.lower() == "cepc":
                 return f"{accel.lower()}240ll";

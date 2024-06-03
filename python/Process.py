@@ -3,7 +3,7 @@ from Particles import Particle
 class Process:
     """A standard Process"""
 
-    _required_args = ['initial', 'final', 'sqrts', 'order', 'randomseed', 'decay', 'isrmode']
+    _required_args = ['initial', 'final', 'sqrts', 'order', 'randomseed', 'decay', 'isrmode','beamstrahlung']
 
     def __init__(self, args, procname, params, **options):
         self._init = False
@@ -89,15 +89,6 @@ class Process:
     def get_output_format(self):
         return self.output_format
 
-    def get_Beamstrahlung(self):
-        return self.Beamstrahlung
-
-    def get_BeamstrahlungFile(self):
-        if  self.Beamstrahlung is not None:
-            return f"{self.Beamstrahlung}_{self.sqrts}.circe"
-        else:
-            return None
-
     def get_PythiaTune(self):
         return self.PythiaTune
 
@@ -112,6 +103,12 @@ class Process:
 
     def get_rndmSeed(self):
         return self.get("randomseed")
+
+    def get_BeamstrahlungFile(self):
+        if self.get("beamstrahlung") is not None:
+             accel = self.beamstrahlung
+             sqrts = int(self.sqrts)
+             return f"{accel.upper()}{sqrts}.circe"
 
     def get_generatorDBLabel(self):
         return self.generatorDBLabel
@@ -132,7 +129,6 @@ class ProcessParameters:
         self.model = settings.get_model()
         self.events = settings.get_event_number()
         self.output_format        = settings.get_output_format()
-        self.Beamstrahlung        = settings.get_Beamstrahlung()
         self.PythiaTune           = settings.get_PythiaTune()
         self.ElectronPolarisation = settings.get_ElectronPolarisation()
         self.PositronPolarisation = settings.get_PositronPolarisation()

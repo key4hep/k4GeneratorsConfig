@@ -85,7 +85,7 @@ class Input:
         return outformat
 
     def get_Beamstrahlung(self):
-        return self.settings.get("beamstrahlung",None)
+        return self.get("beamstrahlung",None)
 
     def get_PythiaTune(self):
         return self.settings.get("pythiatune",None)
@@ -122,8 +122,8 @@ class Input:
         return self.get("eventmode", "unweighted")
 
     def CheckDefaults(self):
-        defaultName  = ["initial", "isrmode", "decay"]
-        defaultValue = [[11,-11], None, None]
+        defaultName  = ["initial", "isrmode", "beamstrahlung","decay"]
+        defaultValue = [[11,-11], None, None, None]
         for name, value in zip(defaultName,defaultValue):
             if not self.is_set(name):
                 setattr(self, name, value)

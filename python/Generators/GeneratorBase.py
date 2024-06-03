@@ -17,9 +17,9 @@ class GeneratorBase:
             self.GeneratorDatacardBase += "_ISR"
             self.key4hepScript         += "_ISR"
 
-            if self.procinfo.get_Beamstrahlung() is not None:
-                self.GeneratorDatacardBase += "_BST"
-                self.key4hepScript         += "_BST"
+            if self.procinfo.get("beamstrahlung") is not None:
+                self.GeneratorDatacardBase += "_BST"+self.procinfo.beamstrahlung.lower()
+                self.key4hepScript         += "_BST"+self.procinfo.beamstrahlung.lower()
 
         # take care of the extensions of the filenames
         self.GeneratorDatacardName = self.GeneratorDatacardBase+"."+self.inputFileExtension

@@ -40,13 +40,13 @@ class Whizard(GeneratorBase):
             self.add_process_option("?isr_handler", "true")
             self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2}"
             # insert circe
-            if self.procinfo.Beamstrahlung is not None:
+            if self.procinfo.get("beamstrahlung") is not None:
                 self.process += f" => circe2 "
             self.process += f" => isr,isr\n"
             isrmass = 0.000511
             self.add_process_option("isr_mass", isrmass)
             # insert the circe file
-            if self.procinfo.Beamstrahlung is not None:
+            if self.procinfo.get("beamstrahlung") is not None:
                 self.process += f"$circe_file= \"{self.procinfo.get_BeamstrahlungFile()}\"\n"
         else:
             self.add_process_option("?isr_handler", "false")
