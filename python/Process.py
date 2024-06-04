@@ -108,7 +108,7 @@ class Process:
         if self.get("beamstrahlung") is not None:
              accel = self.beamstrahlung
              sqrts = int(self.sqrts)
-             return f"{accel.upper()}{sqrts}.circe"
+             return f"{accel.lower()}{sqrts}.circe"
 
     def get_generatorDBLabel(self):
         return self.generatorDBLabel
