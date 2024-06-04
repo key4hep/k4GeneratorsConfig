@@ -55,7 +55,6 @@ class Madgraph(GeneratorBase):
                 #self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.add_run_option("set pdlabel", "isronlyll")
-                print("Get Beamstrahlung not detected")
             self.add_run_option("set lpp1", "3")
             self.add_run_option("set lpp2", "-3")
         self.run += self.procDB.get_run_out()

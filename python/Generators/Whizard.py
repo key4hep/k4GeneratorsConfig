@@ -45,9 +45,11 @@ class Whizard(GeneratorBase):
             self.process += f" => isr,isr\n"
             isrmass = 0.000511
             self.add_process_option("isr_mass", isrmass)
-            # insert the circe file
+            # insert the circe file and turn off polarization if necessary
             if self.procinfo.get("beamstrahlung") is not None:
-                self.process += f"$circe_file= \"{self.procinfo.get_BeamstrahlungFile()}\"\n"
+                self.process += f"$circe2_file= \"{self.procinfo.get_BeamstrahlungFile()}\"\n"
+                if self.procinfo.get_ElectronPolarisation()==0 and self.procinfo.get_PositronPolarisation()==0:
+                    self.process += f"?circe2_polarized= false\n"
         else:
             self.add_process_option("?isr_handler", "false")
 
