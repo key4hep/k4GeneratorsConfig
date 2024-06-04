@@ -1,5 +1,5 @@
 from Particles import Particle
-from CirceTool import Circe
+from CirceHelper import CirceHelper
 
 class Process:
     """A standard Process"""
@@ -107,7 +107,7 @@ class Process:
 
     def get_BeamstrahlungFile(self):
         if self.get("beamstrahlung") is not None:
-            circe = Circe(self.beamstrahlung,self.sqrts) 
+            circe = CirceHelper(self.beamstrahlung,self.sqrts) 
             return circe.getFile()
 
     def get_generatorDBLabel(self):

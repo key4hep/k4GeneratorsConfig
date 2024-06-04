@@ -1,5 +1,5 @@
-class Circe():
-    """Circe class"""
+class CirceHelper():
+    """CirceHelper class"""
     def __init__(self,accel,sqrts):
 
         self.File = "cepc240.circe"
