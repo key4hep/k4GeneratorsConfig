@@ -48,13 +48,21 @@ class Selectors():
 
     def get_Max(self,unit=""):
         try:
-            return getattr(self, "max"+unit)
+            maximum =  getattr(self, "max"+unit)
+            if unit == "eta":
+                return format(maximum,'.8f')
+            else:
+                return maximum
         except:
             print(f"No maximum found in selector {self.name}.")
 
     def get_Min(self,unit=""):
         try:
-            return getattr(self, "min"+unit)
+            minimum = getattr(self, "min"+unit)
+            if unit == "eta":
+                return format(minimum,'.8f')
+            else:
+                return minimum
         except:
             print(f"No minimum found in selector {self.name}")
 

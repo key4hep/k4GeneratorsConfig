@@ -3,7 +3,7 @@ class CirceHelper():
     def __init__(self,accel,sqrts):
 
         self.File = "cepc240.circe"
-        self.circeData = [ ("cepc",240), ("cepc",250), ("ilc",240), ("ilc",250), ("ilc",350), ("ilc",500),("clic",1000),("clic",1000)]
+        self.circeData = [ ("cepc",240), ("cepc",250), ("ilc",240), ("ilc",250), ("ilc",350), ("ilc",500),("clic",1000),("clic",3000)]
 
         self.calculateFile(accel,sqrts)
 
