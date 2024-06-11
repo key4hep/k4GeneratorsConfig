@@ -68,9 +68,9 @@ bool k4GeneratorsConfig::xsection::processFile(){
     return false;
   }
   auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
-  const auto& weightNames = runinfo.getParameter<std::vector<std::string>>("WeightNames");
+  const auto weightNames = runinfo.getParameter<std::string>("WeightNames");
   if ( weightNames.has_value() ){
-    std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames.value()[0] << std::endl;
+    std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames.value() << std::endl;
   }
   else {
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
@@ -86,29 +86,17 @@ bool k4GeneratorsConfig::xsection::processFile(){
   auto event = podio::Frame(m_reader->readEntry(podio::Category::Event,lastEvent));
 
   // decode sqrts
-  const auto& sqrts = event.getParameter<double>("SQRTS");
-  m_sqrts = sqrts.value_or(0.);
+  m_sqrts = event.getParameter<double>("SQRTS").value_or(0.);
 
   // decode the cross sections
-  bool readOK = true;
-  const auto& xsections = event.getParameter<std::vector<double>>("CrossSections");
-  if ( xsections.has_value() ){
-    m_xsection =  xsections.value()[0];
-  }
-  else {
-    m_xsection =  0.;
-    readOK = false;
-  }
+  const auto xsections = event.getParameter<double>("CrossSections");
+  bool readOK = xsections.has_value();
+  m_xsection =  xsections.value_or(0.);
 
   // decode the cross sections
-  const auto& xsectionErrors = event.getParameter<std::vector<double>>("CrossSectionErrors");
-  if ( xsectionErrors.has_value() ){
-    m_xsectionError = xsectionErrors.value()[0];
-  }
-  else {
-    m_xsectionError = 0.;
-    readOK = false;
-  }
+  const auto xsectionErrors = event.getParameter<double>("CrossSectionErrors");
+  readOK &= xsectionErrors.has_value();
+  m_xsectionError = xsectionErrors.value_or(0.);
 
   return readOK;
 }
