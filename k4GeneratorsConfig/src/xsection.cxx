@@ -62,20 +62,20 @@ bool k4GeneratorsConfig::xsection::processFile(){
 
   // open the edm4hep file
   m_reader->openFile(m_file);
-  
+
   // retrieve the RunInfo for the weight names, there should only be 1 entry per Run
   if ( m_reader->getEntries(podio::Category::Run) == 0 ){
     return false;
   }
   auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
-  std::vector<std::string> weightNames = runinfo.getParameter<std::vector<std::string>>("WeightNames");
-  if ( weightNames.size() > 0 ){
-    std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames[0] << std::endl;
+  const auto weightNames = runinfo.getParameter<std::string>("WeightNames");
+  if ( weightNames.has_value() ){
+    std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames.value() << std::endl;
   }
   else {
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
   }
-  
+
   // retrieve the cross section for the last event if not possible it's not valid
   if ( m_reader->getEntries(podio::Category::Event) == 0 ){
     m_xsection      = 0.;
@@ -84,30 +84,19 @@ bool k4GeneratorsConfig::xsection::processFile(){
   }
   unsigned int lastEvent = m_reader->getEntries(podio::Category::Event) - 1;
   auto event = podio::Frame(m_reader->readEntry(podio::Category::Event,lastEvent));
-  
+
   // decode sqrts
-  m_sqrts = event.getParameter<double>("SQRTS");
+  m_sqrts = event.getParameter<double>("SQRTS").value_or(0.);
 
   // decode the cross sections
-  bool readOK = true;
-  std::vector<double> xsections = event.getParameter<std::vector<double>>("CrossSections");
-  if ( xsections.size() > 0 ){
-    m_xsection =  xsections[0];
-  }
-  else {
-    m_xsection =  0.;
-    readOK = false;
-  }
-  
+  const auto xsections = event.getParameter<double>("CrossSections");
+  bool readOK = xsections.has_value();
+  m_xsection =  xsections.value_or(0.);
+
   // decode the cross sections
-  std::vector<double> xsectionErrors = event.getParameter<std::vector<double>>("CrossSectionErrors");
-  if ( xsectionErrors.size() > 0 ){
-    m_xsectionError = xsectionErrors[0];
-  }
-  else {
-    m_xsectionError = 0.;
-    readOK = false;
-  }
+  const auto xsectionErrors = event.getParameter<double>("CrossSectionErrors");
+  readOK &= xsectionErrors.has_value();
+  m_xsectionError = xsectionErrors.value_or(0.);
 
   return readOK;
 }
@@ -163,7 +152,7 @@ void k4GeneratorsConfig::xsection::Print(){
   std::cout << "SQRTS         : " << m_sqrts         << std::endl;
   std::cout << "Generator     : " << m_generator     << std::endl;
   std::cout << "xsection valid: " << m_isValid       << std::endl;
-  std::cout << "xsection      : " << m_xsection      
+  std::cout << "xsection      : " << m_xsection
 	    << " +- "             << m_xsectionError << " pb"<< std::endl;
   std::cout << std::endl;
 }
