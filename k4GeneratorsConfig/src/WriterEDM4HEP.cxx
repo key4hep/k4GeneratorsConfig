@@ -109,7 +109,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   for (auto hepmcParticle:evt.particles()) {
     //    std::cout << "Converting hepmc particle with Pdg_ID " << hepmcParticle->pdg_id() << "and id " <<  hepmcParticle->id() << std::endl;
     if (mapIDPart.find(hepmcParticle->id()) == mapIDPart.end()) {
-      edm4hep::MutableMCParticle edm_particle = write_particle(hepmcParticle);
+      edm4hep::MutableMCParticle edm_particle = transformParticle(hepmcParticle);
       mapIDPart.insert({hepmcParticle->id(), edm_particle});
     }
     // mother/daughter links
@@ -117,7 +117,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
     if (nullptr != prodvertex) {
       for (auto particle_mother: prodvertex->particles_in()) {
         if (mapIDPart.find(particle_mother->id()) == mapIDPart.end()) {
-          edm4hep::MutableMCParticle edm_particle = write_particle(particle_mother);
+          edm4hep::MutableMCParticle edm_particle = transformParticle(particle_mother);
           mapIDPart.insert({particle_mother->id(), edm_particle});
         }
         mapIDPart[hepmcParticle->id()].addToParents(mapIDPart[particle_mother->id()]);
@@ -127,7 +127,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
     if (nullptr != endvertex) {
       for (auto particle_daughter: endvertex->particles_out()) {
         if (mapIDPart.find(particle_daughter->id()) == mapIDPart.end()) {
-          auto edm_particle = write_particle(particle_daughter);
+          auto edm_particle = transformParticle(particle_daughter);
           mapIDPart.insert({particle_daughter->id(), edm_particle});
         }
         mapIDPart[hepmcParticle->id()].addToDaughters(mapIDPart[particle_daughter->id()]);
@@ -191,11 +191,11 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   //signal vertex ID
   name = "signal_vertex_id";
-  bool convertOK = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
+  bool convertOK = writeSignalVertex(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
   // inconsistent use of attributes, fallback for SHERPA
   if ( !convertOK ){
     name = "signal_process_vertex";
-    write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
+    writeSignalVertex(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
   }
 
   // add the alphaQED
@@ -236,7 +236,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
 
 }
-bool WriterEDM4HEP::write_signal_vertex_id(const GenEvent& evt, int hepmcVertexID, std::map<unsigned int, edm4hep::MutableMCParticle> &mapHEPMC2EDM4HEP, edm4hep::MutableGeneratorEventParameters& generatorParameters){
+bool WriterEDM4HEP::writeSignalVertex(const GenEvent& evt, int hepmcVertexID, std::map<unsigned int, edm4hep::MutableMCParticle> &mapHEPMC2EDM4HEP, edm4hep::MutableGeneratorEventParameters& generatorParameters){
 
   bool convertOK = false;
   // retrieve the vertices
@@ -315,7 +315,7 @@ void WriterEDM4HEP::write_run_info() {
 
 }
 
-edm4hep::MutableMCParticle WriterEDM4HEP::write_particle(const ConstGenParticlePtr& hepmcParticle)
+edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenParticlePtr& hepmcParticle)
 {
   edm4hep::MutableMCParticle edm_particle;
   edm_particle.setPDG(hepmcParticle->pdg_id());

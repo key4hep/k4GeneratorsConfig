@@ -26,70 +26,70 @@
 
 namespace HepMC3
 {
-
-class WriterEDM4HEP : public Writer
-{
-public:
-
+  
+  class WriterEDM4HEP : public Writer
+  {
+  public:
+    
     /// @brief Constructor
     /// @warning If file already exists, it will be cleared before writing
     WriterEDM4HEP(const std::string& filename,
-                      std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
-
+		  std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
+    
     /// @brief Constructor from ostream
     WriterEDM4HEP(std::ostream& stream,
-      std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
+		  std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
     /// @brief Constructor from temp ostream
     WriterEDM4HEP(std::shared_ptr<std::ostream> s_stream,
-                    std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
-
+		  std::shared_ptr<GenRunInfo> run = std::shared_ptr<GenRunInfo>());
+    
     /// @brief Destructor
     ~WriterEDM4HEP();
-
+    
     /// @brief Write event to file
     ///
     /// @param[in] evt Event to be serialized
     void write_event(const GenEvent& evt)  override;
-
+    
     /// @brief Write the GenRunInfo object to file.
     void write_run_info();
-
+    
     bool failed()  override;
-
+    
     /// @brief Close file stream
     void close()  override;
-
-private:
-
+    
+  private:
+    
     /// @brief Write particle
     ///
     /// Helper routine for writing single particle to file
-    edm4hep::MutableMCParticle write_particle(const ConstGenParticlePtr& p);
-
+    edm4hep::MutableMCParticle transformParticle(const ConstGenParticlePtr& p);
+    
     /// Helper routine to translate the HepMC Vertex ID
-    bool write_signal_vertex_id(const GenEvent& evt, int hepmcVertex,std::map<unsigned int, edm4hep::MutableMCParticle> &mapHEPMC2PODIO, edm4hep::MutableGeneratorEventParameters &genParams);
-
+    bool writeSignalVertex(const GenEvent& evt, int hepmcVertex,std::map<unsigned int, edm4hep::MutableMCParticle> &mapHEPMC2PODIO, edm4hep::MutableGeneratorEventParameters &genParams);
+    
     /// retrieve the attribute of type double
     double retrieveDoubleAttribute(const GenEvent& evt, std::string name);
-
+    
     /// retrieve the attribute of type int
     double retrieveIntAttribute(const GenEvent& evt, std::string name);
-
+    
     /// @}
-
-private:
-
+    
+  private:
+    
     std::ofstream m_file; //!< Output file
     std::shared_ptr<std::ostream> m_shared_stream;///< Output temp. stream
     std::ostream* m_stream; //!< Output stream
     unsigned long m_particle_counter; //!< Used to set bar codes
-
+    
     bool m_edm4hepWriterClosed;
     podio::ROOTWriter m_edm4hepWriter;
+    
+  };
   
-};
-
-
+  
 } // namespace HepMC3
 
 #endif
