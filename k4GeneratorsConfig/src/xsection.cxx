@@ -2,6 +2,8 @@
 #include <iostream>
 
 #include "podio/Frame.h"
+#include "edm4hep/Constants.h"
+#include "edm4hep/GeneratorEventParametersCollection.h"
 
 k4GeneratorsConfig::xsection::xsection():
   m_xsection(0.),
@@ -68,7 +70,7 @@ bool k4GeneratorsConfig::xsection::processFile(){
     return false;
   }
   auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
-  const auto weightNames = runinfo.getParameter<std::string>("WeightNames");
+  const auto weightNames = runinfo.getParameter<std::string>(edm4hep::labels::GeneratorWeightNames);
   if ( weightNames.has_value() ){
     std::cout << "k4GeneratorsConfig::Found Info on weight names: " << weightNames.value() << std::endl;
   }
@@ -85,20 +87,27 @@ bool k4GeneratorsConfig::xsection::processFile(){
   unsigned int lastEvent = m_reader->getEntries(podio::Category::Event) - 1;
   auto event = podio::Frame(m_reader->readEntry(podio::Category::Event,lastEvent));
 
+  // now get the event parameters there must be at least one entry!
+  const edm4hep::GeneratorEventParametersCollection &genParametersCollection = event.get<edm4hep::GeneratorEventParametersCollection>(edm4hep::labels::GeneratorEventParameters);
+  if ( genParametersCollection.size() == 0 ) return false;
+  edm4hep::GeneratorEventParameters genParameters = genParametersCollection[0];
+  
   // decode sqrts
-  m_sqrts = event.getParameter<double>("SQRTS").value_or(0.);
+  m_sqrts = genParameters.getSqrts();
 
   // decode the cross sections
-  const auto xsections = event.getParameter<double>("CrossSections");
-  bool readOK = xsections.has_value();
-  m_xsection =  xsections.value_or(0.);
+  m_xsection = 0.;
+  if ( genParameters.crossSections_size() > 0 ){
+    m_xsection =  genParameters.getCrossSections()[0];
+  }
+  
+  // decode the cross section errors
+  m_xsectionError = 0.;
+  if ( genParameters.crossSectionErrors_size() > 0 ){
+    m_xsectionError =  genParameters.getCrossSectionErrors()[0];
+  }
 
-  // decode the cross sections
-  const auto xsectionErrors = event.getParameter<double>("CrossSectionErrors");
-  readOK &= xsectionErrors.has_value();
-  m_xsectionError = xsectionErrors.value_or(0.);
-
-  return readOK;
+  return true;
 }
 void k4GeneratorsConfig::xsection::setXsection(double xsec){
   m_xsection = xsec;

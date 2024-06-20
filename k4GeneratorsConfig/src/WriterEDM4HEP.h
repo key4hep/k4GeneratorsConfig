@@ -20,6 +20,7 @@
 #include <string>
 #include <fstream>
 
+#include "edm4hep/MutableGeneratorEventParameters.h"
 #include "edm4hep/MCParticleCollection.h"
 #include "podio/ROOTWriter.h"
 
@@ -66,7 +67,7 @@ private:
     edm4hep::MutableMCParticle write_particle(const ConstGenParticlePtr& p);
 
     /// Helper routine to translate the HepMC Vertex ID
-  int write_signal_vertex_id(const GenEvent& evt, int hepmcVertex,std::unordered_map<unsigned int, int>&mapHEPMC2PODIO);
+    bool write_signal_vertex_id(const GenEvent& evt, int hepmcVertex,std::map<unsigned int, edm4hep::MutableMCParticle> &mapHEPMC2PODIO, edm4hep::MutableGeneratorEventParameters &genParams);
 
     /// retrieve the attribute of type double
     double retrieveDoubleAttribute(const GenEvent& evt, std::string name);

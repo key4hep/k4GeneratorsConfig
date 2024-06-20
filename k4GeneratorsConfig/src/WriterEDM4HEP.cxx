@@ -18,6 +18,11 @@
 
 #include "WriterEDM4HEP.h"
 
+#include "edm4hep/Constants.h"
+#include "edm4hep/GeneratorToolInfo.h"
+#include "edm4hep/GeneratorEventParametersCollection.h"
+#include "edm4hep/GeneratorPdfInfoCollection.h"
+
 #include "edm4hep/MCParticleCollection.h"
 #include "edm4hep/EventHeaderCollection.h"
 
@@ -99,7 +104,6 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
 
   // here is the collection
   edm4hep::MCParticleCollection particleCollection;
-  std::unordered_map<unsigned int, int> mapOID2PODIO;
 
   std::map<unsigned int, edm4hep::MutableMCParticle> mapIDPart;
   for (auto hepmcParticle:evt.particles()) {
@@ -130,12 +134,6 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
       }
     }
   }
-  // insert the edm4hepParticles into a collection
-  // keep a link between HepMC and EDM4HEP for further processing
-  for (auto particle_pair: mapIDPart) {
-    particleCollection.push_back(particle_pair.second);
-    mapOID2PODIO.insert({particle_pair.first,particle_pair.second.getObjectID().index});
-  }
 
   // now we need the event header
   edm4hep::EventHeaderCollection evtHeaderCollection;
@@ -152,18 +150,26 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // push to collection
   evtHeaderCollection.push_back(evtHeader);
 
-  // write the EventHeader collection to the frame 
-  eventFrame.put(std::move(evtHeaderCollection), "EventHeaders");
+  // write the EventHeader collection to the frame
+  eventFrame.put(std::move(evtHeaderCollection), edm4hep::labels::EventHeader);
+
+  // first the GeneratorEventParameters
+  edm4hep::GeneratorEventParametersCollection generatorParametersCollection;
+  edm4hep::MutableGeneratorEventParameters generatorParameters;
 
   // add the cross sections as parameter vector to the Frame
-  eventFrame.putParameter("CrossSections",evt.cross_section()->xsecs());
+  for (auto xsec: evt.cross_section()->xsecs()){
+    generatorParameters.addToCrossSections(xsec);
+  }
 
   // add the cross section errors as parameter vector to the Frame
-  eventFrame.putParameter("CrossSectionErrors",evt.cross_section()->xsec_errs());
+  for (auto xsecErr: evt.cross_section()->xsec_errs()){
+    generatorParameters.addToCrossSectionErrors(xsecErr);
+  }
 
   // add the event_scale
   std::string name = "event_scale";
-  eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
+  generatorParameters.setEventScale(retrieveDoubleAttribute(evt,name));
 
   // add SQRTS
   name = "SQRTS";
@@ -173,52 +179,51 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
     ConstGenParticlePtr beam2 = evt.beams()[1];
     sqrts = (beam1->momentum()+beam2->momentum()).m();
   }
-  eventFrame.putParameter(name,sqrts);
+  generatorParameters.setSqrts(sqrts);
 
   // signal process ID
   name = "signal_process_id";
-  eventFrame.putParameter(name,retrieveIntAttribute(evt,name));
+  generatorParameters.setSignalProcessId(retrieveIntAttribute(evt,name));
 
   // signal vertex ID
-  name = "signal_vertex_id";
-  int signalVertexID = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapOID2PODIO);
+  /*  name = "signal_vertex_id";
+  bool convertOK = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
   // inconsistent use of attributes, fallback for SHERPA
-  if ( signalVertexID == 0 ){
+  if ( !convertOK ){
     name = "signal_process_vertex";
-    int signalVertexID = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapOID2PODIO);
-  }
-  eventFrame.putParameter(name,signalVertexID);
+    write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
+    }*/
 
-  // now the PDFs: define the variables
-  std::vector<int> partonID; 
-  std::vector<double> x; 
-  std::vector<double> xf; 
-  std::vector<int> pdf_id; 
+  // add the alphaQED
+  name = "alphaQED";
+  generatorParameters.setAlphaQED(retrieveDoubleAttribute(evt,name));
+
+  // add alphaQCD
+  name = "alphaQCD";
+  generatorParameters.setAlphaQCD(retrieveDoubleAttribute(evt,name));
+
+  // add the object to the collection:
+  generatorParametersCollection.push_back(generatorParameters);
+  // write the GeneratorEventParameters collection to the frame 
+  eventFrame.put(std::move(generatorParametersCollection), edm4hep::labels::GeneratorEventParameters);
+
+  // now the PDFs:
+  edm4hep::GeneratorPdfInfoCollection pdfCollection;
+  edm4hep::MutableGeneratorPdfInfo pdfEDM4HEP;
+  //
   // retrieve the pdf information
   HepMC3::ConstGenPdfInfoPtr pdfinfo = evt.pdf_info();
   if ( pdfinfo ){
     // store for transfer
-    for (unsigned int i=0; i<2; i++){
-      partonID.push_back(pdfinfo->parton_id[i]);
-      x.push_back(pdfinfo->x[i]);
-      xf.push_back(pdfinfo->xf[i]);
-      pdf_id.push_back(pdfinfo->pdf_id[i]);
-    }
-    // now write them to EDM4HEP
-    eventFrame.putParameter("PDF_parton_id",partonID);
-    eventFrame.putParameter("PDF_x",x);
-    eventFrame.putParameter("PDF_scale",pdfinfo->scale);
-    eventFrame.putParameter("PDF_xf",xf);
-    eventFrame.putParameter("PDF_pdf_id",pdf_id);
+    pdfEDM4HEP.setPartonId({pdfinfo->parton_id[0],pdfinfo->parton_id[1]});
+    pdfEDM4HEP.setX({pdfinfo->x[0],pdfinfo->x[1]});
+    pdfEDM4HEP.setXf({pdfinfo->xf[0],pdfinfo->xf[1]});
+    pdfEDM4HEP.setLhapdfId({pdfinfo->pdf_id[0],pdfinfo->pdf_id[1]});
+    pdfEDM4HEP.setScale(pdfinfo->scale);
   }
-
-  // add the alphaQED
-  name = "alphaQED";
-  eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
-
-  // add alphaQCD
-  name = "alphaQCD";
-  eventFrame.putParameter(name,retrieveDoubleAttribute(evt,name));
+  //
+  pdfCollection.push_back(pdfEDM4HEP);
+  eventFrame.put(std::move(pdfCollection), edm4hep::labels::GeneratorPdfInfo);
 
   // LAST ITEM: write the collection of MCParticles to the frame mv empties the collection which we need for processing!!
   eventFrame.put(std::move(particleCollection), "MCParticles");
@@ -227,20 +232,25 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
 
 }
-  int WriterEDM4HEP::write_signal_vertex_id(const GenEvent& evt, int hepmcVertexID, std::unordered_map<unsigned int, int>&mapHEPMC2PODIO){
+bool WriterEDM4HEP::write_signal_vertex_id(const GenEvent& evt, int hepmcVertexID, std::map<unsigned int, edm4hep::MutableMCParticle> &mapHEPMC2EDM4HEP, edm4hep::MutableGeneratorEventParameters& generatorParameters){
 
-  int result = 0;
-  int particleOID = 0;
+  bool convertOK = false;
+  // retrieve the vertices
   for (auto vtx: evt.vertices() ){
-    if ( vtx->id() == hepmcVertexID && vtx->particles_in_size() > 0 ){
-      unsigned int hepmcParticleID = vtx->particles_in()[0]->id();
-      if ( mapHEPMC2PODIO.find(hepmcParticleID) != mapHEPMC2PODIO.end() ) {
-	return mapHEPMC2PODIO[hepmcParticleID];
+    // identify the signalvertex via its hepmcID
+    if ( vtx->id() == hepmcVertexID ) {
+      convertOK = true;
+      // now insert all incoming particles to the generatorParameters
+      for ( auto part : vtx->particles_in() ){
+	unsigned int hepmcParticleID = part->id();
+	if ( mapHEPMC2EDM4HEP.find(hepmcParticleID) != mapHEPMC2EDM4HEP.end() ) {
+	  generatorParameters.addToSignalVertex(mapHEPMC2EDM4HEP[hepmcParticleID]);
+	}
       }
     }
   }
 
-  return result;
+  return convertOK;
 }
 
 double WriterEDM4HEP::retrieveDoubleAttribute(const GenEvent &evt, std::string name) {
@@ -269,22 +279,18 @@ void WriterEDM4HEP::write_run_info() {
   if ( listOfTools.size() == 0 ) {
     std::cout << "WARNING: no tools found, hepmc run_info incomplete" << std::endl;
   }
-  std::vector<std::string> listOfNames;
-  std::vector<std::string> listOfVersions;
-  std::vector<std::string> listOfDescriptions;
-  for ( auto tool: listOfTools ){
-    listOfNames.push_back(tool.name);
-    listOfVersions.push_back(tool.version);
-    listOfDescriptions.push_back(tool.description);
-  }
 
-  // add the three versions to EDM4HEP but only if there is at least one name
-  if ( listOfNames.size() > 0 ){
-    runFrame.putParameter("name",listOfNames);
-    runFrame.putParameter("version",listOfVersions);
-    runFrame.putParameter("description",listOfDescriptions);
+  // the EDM4HEP structure
+  std::vector<edm4hep::GeneratorToolInfo> toolInfosVectEDM4HEP;
+  for ( auto hepmcTool:listOfTools){
+    edm4hep::GeneratorToolInfo edm4hepTool;
+    edm4hepTool.name    = hepmcTool.name;
+    edm4hepTool.version = hepmcTool.version;
+    edm4hepTool.description = hepmcTool.description;
+    toolInfosVectEDM4HEP.push_back(edm4hepTool);
   }
-
+  edm4hep::utils::putGenToolInfos(runFrame, toolInfosVectEDM4HEP);
+  
   // weight names
   std::vector<std::string> weights = run_info()->weight_names();
   std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
@@ -298,7 +304,7 @@ void WriterEDM4HEP::write_run_info() {
   }
 
   // add the weights as parameters to the frame
-  runFrame.putParameter("WeightNames", weights);
+  runFrame.putParameter(edm4hep::labels::GeneratorWeightNames, weights);
 
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(runFrame, podio::Category::Run);
