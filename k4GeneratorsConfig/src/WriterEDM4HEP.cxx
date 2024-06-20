@@ -135,6 +135,10 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
     }
   }
 
+  for (auto particle_pair: mapIDPart){
+    particleCollection.push_back(particle_pair.second);
+  }
+
   // now we need the event header
   edm4hep::EventHeaderCollection evtHeaderCollection;
   edm4hep::MutableEventHeader evtHeader;
@@ -181,18 +185,18 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   }
   generatorParameters.setSqrts(sqrts);
 
-  // signal process ID
+  //signal process ID
   name = "signal_process_id";
   generatorParameters.setSignalProcessId(retrieveIntAttribute(evt,name));
 
-  // signal vertex ID
-  /*  name = "signal_vertex_id";
+  //signal vertex ID
+  name = "signal_vertex_id";
   bool convertOK = write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
   // inconsistent use of attributes, fallback for SHERPA
   if ( !convertOK ){
     name = "signal_process_vertex";
     write_signal_vertex_id(evt,retrieveIntAttribute(evt,name),mapIDPart,generatorParameters);
-    }*/
+  }
 
   // add the alphaQED
   name = "alphaQED";
