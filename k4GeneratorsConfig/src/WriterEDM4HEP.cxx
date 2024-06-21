@@ -230,7 +230,7 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   eventFrame.put(std::move(pdfCollection), edm4hep::labels::GeneratorPdfInfo);
 
   // LAST ITEM: write the collection of MCParticles to the frame mv empties the collection which we need for processing!!
-  eventFrame.put(std::move(particleCollection), "MCParticles");
+  eventFrame.put(std::move(particleCollection), edm4hep::labels::MCParticles);
 
   // write the frame to the Writer:
   m_edm4hepWriter.writeFrame(eventFrame, podio::Category::Event);
