@@ -56,8 +56,10 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 	  if ( filenamePath.extension() == ".edm4hep" ){
 	    k4GeneratorsConfig::xsection *xsec = new k4GeneratorsConfig::xsection();
 	    xsec->setProcess(processPath.filename().string());
-	    xsec->setGenerator(generatorsPath.filename().string());
 	    xsec->setFile(filenamePath.string());
+	    // in some cases the generator name is not available, then derive from the filenam
+	    if ( xsec->Generator().empty() )
+	      xsec->setGenerator(generatorsPath.filename().string());
 	    m_xsectionCollection.push_back(*xsec);
 	    delete xsec;
 	  }
@@ -135,7 +137,7 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
       previousProcess = proc;
     }
     // print the generator name and cross section with its error
-    output << std::setw(15) << std::left << xsec.Generator() << " " 
+    output << std::setw(20) << std::left << xsec.Generator() << " " 
 	   << std::setw(8 ) << std::left << xsec.Xsection() << " +- " 
 	   << std::setw(8)  << std::left << xsec.XsectionError() << " pb" << std::endl;
   }

@@ -4,6 +4,7 @@
 #include "podio/Frame.h"
 #include "edm4hep/Constants.h"
 #include "edm4hep/GeneratorEventParametersCollection.h"
+#include "edm4hep/GeneratorToolInfo.h"
 
 k4GeneratorsConfig::xsection::xsection():
   m_xsection(0.),
@@ -76,6 +77,14 @@ bool k4GeneratorsConfig::xsection::processFile(){
   }
   else {
     std::cout << "k4GeneratorsConfig::Error: Info on weight names not found" << std::endl;
+  }
+
+  auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
+  if ( toolInfos.size() > 0 ){
+    m_generator = toolInfos[0].name;
+  }
+  else {
+    std::cout << "k4GeneratorsConfig::Error: ToolInfos not available" << std::endl;
   }
 
   // retrieve the cross section for the last event if not possible it's not valid
