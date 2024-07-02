@@ -33,7 +33,13 @@ class Babayaga(GeneratorBase):
         self.process    = f"fs {self.finalstate}\n"
         
         self.add_process_option("seed",self.procinfo.get_rndmSeed())
-        self.add_process_option("EWKc","on")
+
+        if self.procinfo.get_qed_order() == 0:
+            self.add_process_option("ord","born")
+            self.add_process_option("EWKc","off")
+        else:
+            self.add_process_option("ord","alpha")
+            self.add_process_option("EWKc","on")
 
         self.add_process_option("nev", self.procinfo.get("events"))
         self.add_process_option("ecms", self.procinfo.get("sqrts"))
