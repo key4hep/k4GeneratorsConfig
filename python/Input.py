@@ -122,8 +122,8 @@ class Input:
         return self.get("eventmode", "unweighted")
 
     def CheckDefaults(self):
-        defaultName  = ["initial", "isrmode", "beamstrahlung","decay"]
-        defaultValue = [[11,-11], None, None, None]
+        defaultName  = ["initial", "isrmode", "beamstrahlung","decay","nlo"]
+        defaultValue = [[11,-11], None, None, None,"lo"]
         for name, value in zip(defaultName,defaultValue):
             if not self.is_set(name):
                 setattr(self, name, value)

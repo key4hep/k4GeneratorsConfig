@@ -4,7 +4,7 @@ from CirceHelper import CirceHelper
 class Process:
     """A standard Process"""
 
-    _required_args = ['initial', 'final', 'sqrts', 'order', 'randomseed', 'decay', 'isrmode','beamstrahlung']
+    _required_args = ['initial', 'final', 'sqrts', 'order', 'nlo', 'randomseed', 'decay', 'isrmode','beamstrahlung']
 
     def __init__(self, args, procname, params, **options):
         self._init = False
@@ -86,6 +86,9 @@ class Process:
 
     def get_qed_order(self):
         return self.get("order")[0]
+
+    def get_nlo(self):
+        return self.get("nlo")
 
     def get_output_format(self):
         return self.output_format

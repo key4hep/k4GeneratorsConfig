@@ -42,6 +42,7 @@ Processes    : see README A list of processes which runcards should be generated
 		     Initial: [11, -11]
 		     Final: [13, -13]
 		     Order: [2,0]
+                     NLO: lo/qcd/qed (optional, default: lo)
                      RandomSeed : unsigned int (specify a random seed, important when generating multiple files for the same process)
 ParticleData : overwrite basic particle properties
 		ParticleData:

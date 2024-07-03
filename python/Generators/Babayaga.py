@@ -33,11 +33,12 @@ class Babayaga(GeneratorBase):
         self.process    = f"fs {self.finalstate}\n"
         
         self.add_process_option("seed",self.procinfo.get_rndmSeed())
-
-        if self.procinfo.get_qed_order() == 0:
+        
+        # overwrite if the variable nlo requests qed:
+        if self.procinfo.get_nlo().lower()=="lo":
             self.add_process_option("ord","born")
             self.add_process_option("EWKc","off")
-        else:
+        elif self.procinfo.get_nlo().lower() == "qed":
             self.add_process_option("ord","alpha")
             self.add_process_option("EWKc","on")
 
