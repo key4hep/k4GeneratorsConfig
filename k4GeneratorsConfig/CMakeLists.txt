@@ -68,3 +68,16 @@ install(TARGETS xsectionSummary
   EXPORT k4GeneratorsConfigTargets
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
+
+set(pythia_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pythiaRunner.cxx
+)
+
+add_executable(pythiaRunner ${pythia_sources})
+target_include_directories(pythiaRunner PRIVATE ${PYTHIA8_INCLUDE_DIR})
+target_link_libraries(pythiaRunner PRIVATE ${PYTHIA8_LIBRARY} )
+
+install(TARGETS pythiaRunner
+  EXPORT k4GeneratorsConfigTargets
+  DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
