@@ -26,26 +26,40 @@ class PythiaProcDB:
 
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if ( label == "12_12" ):
-            self.write_Difermion()
-        if ( label == "13_13" ):
-            self.write_Difermion()
-        if ( label == "14_14" ):
-            self.write_Difermion()
-        if ( label == "15_15" ):
-            self.write_Difermion()
-        if ( label == "16_16" ):
-            self.write_Difermion()
-        if ( label == "12_12" ):
-            self.write_Difermion()
+        if ( label == "1_1" ):
+            self.write_Difermion(1)
+        elif ( label == "2_2" ):
+            self.write_Difermion(2)
+        elif ( label == "3_3" ):
+            self.write_Difermion(3)
+        elif ( label == "4_4" ):
+            self.write_Difermion(4)
+        elif ( label == "5_5" ):
+            self.write_Difermion(5)
+        elif ( label == "6_6" ):
+            self.write_Difermion(6)
+        elif ( label == "12_12" ):
+            self.write_Difermion(12)
+        elif ( label == "13_13" ):
+            self.write_Difermion(13)
+        elif ( label == "14_14" ):
+            self.write_Difermion(14)
+        elif ( label == "15_15" ):
+            self.write_Difermion(15)
+        elif ( label == "16_16" ):
+            self.write_Difermion(16)
         elif ( label == "23_25" ):
             self.write_run_ZH()
 
-    def write_Difermion(self,):
-        self.procout  = "\n"
+    def write_Difermion(self,pdg):
+        self.procout  = "WeakSingleBoson:ffbar2gmZ = on\n"
+        self.procout  += "22:onMode = off\n"
+        self.procout  += f"22:onIfAny = {pdg}\n"
+        self.procout  += "23:onMode = off\n"
+        self.procout  += f"23:onIfAny = {pdg}\n"
 
     def write_run_ZH(self):
-        self.procout  = "\n" 
+        self.procout  = "HiggsSM:ffbar2HZ = on\n" 
 
     def get_run_out(self):
         return self.runout
