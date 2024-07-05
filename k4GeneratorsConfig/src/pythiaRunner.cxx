@@ -18,6 +18,7 @@
 
 #include <unistd.h>
 #include "Pythia8/Pythia.h"
+//#include "Pythia8Plugins/HepMC3.h"
 
 using namespace Pythia8;
 
@@ -50,13 +51,23 @@ int main(int argc, char** argv) {
 
   // Pythia generator.
   Pythia pythia;
-
+  // add the write hepmc flag to the settings
+  pythia.settings.addFlag("Main:writeHepMC",false);
+  pythia.settings.addWord("Main:HepMCFile","pythia");
   // Read in the rest of the settings and data from a separate file.
   pythia.readFile(filename);
 
   // Initialization.
   pythia.init();
 
+  // check for hepmc
+  const bool hepmc = pythia.flag("Main:writeHepMC");
+  const std::string hepmcFile = pythia.word("Main:HepMCFile");
+  std::cout << "HEPMC file name is " << hepmcFile << std::endl;
+  //  Pythia8ToHepMC3 ToHepMC;
+  //  if (hepmc)
+  //    ToHepMC.setNewFile(hepmcFile);
+  
   // Extract settings to be used in the main program.
   int nEvent  = pythia.mode("Main:numberOfEvents");
   int nAbort  = pythia.mode("Main:timesAllowErrors");
@@ -71,6 +82,10 @@ int main(int argc, char** argv) {
       cout << " Event generation aborted prematurely, owing to error!\n";
       break;
     }
+    // event was ok, write to hepmc file
+    //    if (hepmc) {
+    //      ToHepMC.writeNextEvent(pythia);
+    //    }
   // End of event loop.
   }
 

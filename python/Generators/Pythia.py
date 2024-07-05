@@ -20,14 +20,15 @@ class Pythia(GeneratorBase):
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
         if settings.get_block("selectors"):
             print("Pythia Warning: selectors not yet implemented")
-            self.write_selectors()
+            #self.write_selectors()
 
     def write_run(self):
 
+        self.run=""
         self.add_run_option("Random:setSeed", "on")
         self.add_run_option("Random:seed", self.procinfo.get_rndmSeed())
 
-        self.add_run_option("Beams:eCM",self.procinfo.get("sqrts")).
+        self.add_run_option("Beams:eCM",self.procinfo.get("sqrts"))
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
@@ -40,7 +41,6 @@ class Pythia(GeneratorBase):
             self.add_run_option("PartonLevel:ISR", "off")
 
         self.add_run_option("Main:numberOfEvents", self.procinfo.get("events"))
-        self.add_run_option("Main:writeHepMC","on")
         self.run += "\n"
         for p in self.procinfo.get_data_particles():
             for attr in dir(p):
@@ -48,22 +48,27 @@ class Pythia(GeneratorBase):
                     name = self.is_pythia_particle_data(attr)
                     if name is not None:
                         value = getattr(p, attr)
-                        op_name = f"{p.get('pdg_code')}:name"
+                        op_name = f"{p.get('pdg_code')}:{name}"
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
                         self.add_run_option(op_name, value)
 
+        if  "hepmc" in self.procinfo.get("output_format"):
+            self.add_run_option("Main:WriteHepMC", "on")
+            self.add_run_option("Main:HepMCFile",self.GeneratorDatacardName)
+        
         self.run += self.procDB.get_run_out()
+        self.run += self.procDB.get_proc_out()
 
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
                 for key,value in self.gen_settings["run"].items():
                     self.add_run_option(key, value)
 
-    def write_process(self):
+    def write_decay(self):
         if self.procinfo.get("decay"):
             print("Pythia Warning: Decay not yet implemented")
-            self.add_decay()
+            #self.add_decay()
 
     def write_selectors(self):
         selectors = getattr(self.settings,"selectors")
@@ -174,10 +179,8 @@ class Pythia(GeneratorBase):
 
     def write_file(self):
         self.write_run()
-        self.write_process()
-        self.ptext += "}(processes)\n\n"
-        self.run += "}(run)\n\n"
-        self.file = self.run + self.ptext + self.cuts
+        self.write_decay()
+        self.file = self.run + self.cuts
         self.write_GeneratorDatacard(self.file)
 
     def write_key4hepfile(self):
@@ -185,8 +188,7 @@ class Pythia(GeneratorBase):
         key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
 
         hepmcformat = self.procinfo.get("output_format")
-        hepmcversion = hepmcformat[-1]
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2}g {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase,hepmcversion)
+        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase)
 
         self.write_Key4hepScript(key4hepRun)
 
@@ -198,7 +200,6 @@ class Pythia(GeneratorBase):
         if key in self.run:
             if str(value) in self.run:
                 return
-            print(f"{key} has already been defined in {self.name} with value.")
             return
         self.run += f"{key} = {value}\n"
 
