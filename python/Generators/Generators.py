@@ -3,6 +3,7 @@ import Whizard
 import Madgraph
 import Babayaga
 import KKMC
+import Pythia
 
 class Generators:
     """Generator class"""
@@ -49,6 +50,7 @@ class Generators:
                 self.babayaga.write_key4hepfile()
             else:
                 print("Babayaga module not found. Unable to initialize Babayaga.")
+
         if "KKMC" in self.generator_list:
             if KKMC is not None:
                 self.kkmc = KKMC.KKMC(self.proc_info, self.settings)
@@ -56,3 +58,11 @@ class Generators:
                 self.kkmc.write_key4hepfile()
             else:
                 print("KKMC module not found. Unable to initialize KKMC.")
+
+        if "Pythia" in self.generator_list:
+            if Pythia is not None:
+                self.pythia = Pythia.Pythia(self.proc_info, self.settings)
+                self.pythia.write_file()
+                self.pythia.write_key4hepfile()
+            else:
+                print("Pythia module not found. Unable to initialize Pythia.")
