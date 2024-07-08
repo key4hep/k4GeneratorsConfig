@@ -67,8 +67,7 @@ class Pythia(GeneratorBase):
 
     def write_decay(self):
         if self.procinfo.get("decay"):
-            print("Pythia Warning: Decay not yet implemented")
-            #self.add_decay()
+            self.add_decay()
 
     def write_selectors(self):
         selectors = getattr(self.settings,"selectors")
@@ -158,24 +157,17 @@ class Pythia(GeneratorBase):
         for key in decay_opt:
             if str(key) not in self.procinfo.get_final_pdg():
                 print("Particle {0} not found in main process. Decay not allowed".format(key))
-        # Pythia requires the decaying particles get an additional label 25-> 25[a]
-        # so parse letters to the process definition
-        i = 97
-        fs=""
+        # Pythia turn off parent, then turn on
         decays=""
-        for p in self.procinfo.get_final_pdg_list():
-            parent = str(p) + f"[{chr(i)}] "
-            child = decay_opt[p]
-            fs += parent
-            decays += f"  Decay {parent} -> "
+        for parent in self.procinfo.get_final_pdg_list():
+            decays += f"{parent}:onMode off"
+            child = decay_opt[parent]
+            decays += f"{parent}:onIfAny "
             for c in child: 
                 decays += f"{c} "
             decays+="\n"  
-            i+=1
-        self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n"
+        self.ptext += "\n"
         self.ptext += decays
-
-		
 
     def write_file(self):
         self.write_run()
