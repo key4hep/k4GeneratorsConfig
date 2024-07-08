@@ -37,7 +37,7 @@ class PythiaProcDB:
         elif label == "5_5":
             self.write_Difermion(5)
         elif label == "6_6":
-            self.write_Difermion(6)
+            self.write_Ditop()
         elif label == "12_12":
             self.write_Difermion(12)
         elif label == "13_13":
@@ -56,10 +56,16 @@ class PythiaProcDB:
         self.procout  += "22:onMode = off\n"
         self.procout  += f"22:onIfAny = {pdg}\n"
         self.procout  += "23:onMode = off\n"
-        self.procout  += f"23:onIfAny = {pdg}\n"
-
+        self.procout  += f"23:onIfAny = {pdg}\n"    
+    
     def write_run_ZH(self):
-        self.procout  = "HiggsSM:ffbar2HZ = on\n" 
+        self.procout  = "HiggsSM:ffbar2HZ = on\n"
+        self.procout  += "25:onMode = on\n"
+        self.procout  += "23:onMode = on\n"
+
+    def write_Ditop(self):
+        self.procout  = "Top:ffbar2ttbar = on\n"
+        self.procout  += "6:onMode = on\n"
 
     def get_run_out(self):
         return self.runout
