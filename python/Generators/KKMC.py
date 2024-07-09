@@ -43,8 +43,9 @@ class KKMC(GeneratorBase):
         self.finalstate = self.pdg_to_KKMC(finalstate[0])
         self.add_process_option("_seed",self.procinfo.get_rndmSeed())
         self.add_process_option("_energy", self.procinfo.get("sqrts"))
-        # TODO add bes
         self.add_process_option("_besdelta", 0)
+        # TODO add bes
+        self.add_process_option("_besmode", 0)
         self.add_process_option("_ewmode", self.procinfo.get("ewmode"))
         self.add_process_option("_isrmode", self.procinfo.get("isrmode"))
         self.add_process_option("_fsrmode", self.settings.get("fsrmode",0))
@@ -81,8 +82,7 @@ class KKMC(GeneratorBase):
 
     def write_key4hepfile(self):
         key4hepRun = ""
-        key4hepRun += "KKMCee -c  "+self.GeneratorDatacardName + " -o events.lhe"+ "\n"
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o {0} events.lhe {1}.{0}\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
+        key4hepRun += "KKMCee -c  {0} -o {1}.{2}\n".format(self.GeneratorDatacardName,self.GeneratorDatacardBase,self.procinfo.get("output_format"))
         key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
         self.write_Key4hepScript(key4hepRun)
 
