@@ -74,8 +74,8 @@ set(pythia_sources
 )
 
 add_executable(pythiaRunner ${pythia_sources})
-target_include_directories(pythiaRunner PRIVATE ${PYTHIA8_INCLUDE_DIR})
-target_link_libraries(pythiaRunner PRIVATE ${PYTHIA8_LIBRARY} )
+target_include_directories(pythiaRunner PRIVATE ${PYTHIA8_INCLUDE_DIR} ${HEPMC3_INCLUDE_DIR})
+target_link_libraries(pythiaRunner PRIVATE ${PYTHIA8_LIBRARY} HepMC3::HepMC3 )
 
 install(TARGETS pythiaRunner
   EXPORT k4GeneratorsConfigTargets

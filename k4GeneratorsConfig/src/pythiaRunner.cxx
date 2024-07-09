@@ -18,7 +18,7 @@
 
 #include <unistd.h>
 #include "Pythia8/Pythia.h"
-//#include "Pythia8Plugins/HepMC3.h"
+#include "Pythia8Plugins/HepMC3.h"
 
 using namespace Pythia8;
 
@@ -64,9 +64,9 @@ int main(int argc, char** argv) {
   const bool hepmc = pythia.flag("Main:writeHepMC");
   const std::string hepmcFile = pythia.word("Main:HepMCFile");
   std::cout << "HEPMC file name is " << hepmcFile << std::endl;
-  //  Pythia8ToHepMC3 ToHepMC;
-  //  if (hepmc)
-  //    ToHepMC.setNewFile(hepmcFile);
+  Pythia8::Pythia8ToHepMC ToHepMC;
+  if (hepmc)
+    ToHepMC.setNewFile(hepmcFile);
   
   // Extract settings to be used in the main program.
   int nEvent  = pythia.mode("Main:numberOfEvents");
@@ -83,9 +83,9 @@ int main(int argc, char** argv) {
       break;
     }
     // event was ok, write to hepmc file
-    //    if (hepmc) {
-    //      ToHepMC.writeNextEvent(pythia);
-    //    }
+    if (hepmc) {
+      ToHepMC.writeNextEvent(pythia);
+    }
   // End of event loop.
   }
 

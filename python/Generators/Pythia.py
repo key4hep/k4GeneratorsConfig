@@ -55,7 +55,8 @@ class Pythia(GeneratorBase):
 
         if  "hepmc" in self.procinfo.get("output_format"):
             self.add_run_option("Main:WriteHepMC", "on")
-            self.add_run_option("Main:HepMCFile",self.GeneratorDatacardName)
+            outputFile = "{0}.{1}".format(self.GeneratorDatacardBase,self.procinfo.get("output_format"))
+            self.add_run_option("Main:HepMCFile",outputFile)
         
         self.run += self.procDB.get_run_out()
         self.run += self.procDB.get_proc_out()
@@ -180,7 +181,7 @@ class Pythia(GeneratorBase):
         key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
 
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase)
+        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase)
 
         self.write_Key4hepScript(key4hepRun)
 
