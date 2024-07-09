@@ -81,3 +81,17 @@ install(TARGETS pythiaRunner
   EXPORT k4GeneratorsConfigTargets
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
+set(analyze2f_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/analyze2f.cxx
+)
+
+add_executable(analyze2f ${analyze2f_sources})
+target_link_libraries(analyze2f PRIVATE
+  EDM4HEP::edm4hep podio::podioRootIO ROOT::Hist
+)
+
+install(TARGETS analyze2f
+  EXPORT k4GeneratorsConfigTargets
+  DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
+

@@ -78,6 +78,7 @@ set(libdir ${basic_libdir})
 set_target_properties(convertHepMC2EDM4HEP PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/$<0:>)
 set_target_properties(xsectionSummary PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/$<0:>)
 set_target_properties(pythiaRunner PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/$<0:>)
+set_target_properties(analyze2f PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/$<0:>)
 
 configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/k4GeneratorsConfig/convertHepMC2EDM4HEP_env.sh.in
