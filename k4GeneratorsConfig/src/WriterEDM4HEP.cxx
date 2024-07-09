@@ -98,7 +98,6 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
     set_run_info(evt.run_info());
     write_run_info();
   }
-
   // now deal with the event
   auto eventFrame = podio::Frame();
 
@@ -161,14 +160,14 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   edm4hep::GeneratorEventParametersCollection generatorParametersCollection;
   edm4hep::MutableGeneratorEventParameters generatorParameters;
 
-  // add the cross sections as parameter vector to the Frame
-  for (auto xsec: evt.cross_section()->xsecs()){
-    generatorParameters.addToCrossSections(xsec);
-  }
-
-  // add the cross section errors as parameter vector to the Frame
-  for (auto xsecErr: evt.cross_section()->xsec_errs()){
-    generatorParameters.addToCrossSectionErrors(xsecErr);
+  // add the cross sections and its errors as parameter vector to the Frame
+  if ( evt.cross_section() ) {
+    for (auto xsec: evt.cross_section()->xsecs()){
+      generatorParameters.addToCrossSections(xsec);
+    }
+    for (auto xsecErr: evt.cross_section()->xsec_errs()){
+      generatorParameters.addToCrossSectionErrors(xsecErr);
+    }
   }
 
   // add the event_scale
