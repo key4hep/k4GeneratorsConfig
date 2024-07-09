@@ -25,22 +25,22 @@ class Pythia(GeneratorBase):
     def write_run(self):
 
         self.run=""
-        self.add_run_option("Random:setSeed", "on")
-        self.add_run_option("Random:seed", self.procinfo.get_rndmSeed())
+        self.add_option("Random:setSeed", "on")
+        self.add_option("Random:seed", self.procinfo.get_rndmSeed())
 
-        self.add_run_option("Beams:eCM",self.procinfo.get("sqrts"))
+        self.add_option("Beams:eCM",self.procinfo.get("sqrts"))
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
-        self.add_run_option("Beams:idA", beam1_pdg)
-        self.add_run_option("Beams:idB", beam2_pdg)
+        self.add_option("Beams:idA", beam1_pdg)
+        self.add_option("Beams:idB", beam2_pdg)
 
         if self.procinfo.get("isrmode"):
-            self.add_run_option("PartonLevel:ISR", "on")
+            self.add_option("PartonLevel:ISR", "on")
         else:
-            self.add_run_option("PartonLevel:ISR", "off")
+            self.add_option("PartonLevel:ISR", "off")
 
-        self.add_run_option("Main:numberOfEvents", self.procinfo.get("events"))
+        self.add_option("Main:numberOfEvents", self.procinfo.get("events"))
         self.run += "\n"
         for p in self.procinfo.get_data_particles():
             for attr in dir(p):
@@ -51,20 +51,19 @@ class Pythia(GeneratorBase):
                         op_name = f"{p.get('pdg_code')}:{name}"
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
-                        self.add_run_option(op_name, value)
+                        self.add_option(op_name, value)
 
         if  "hepmc" in self.procinfo.get("output_format"):
-            self.add_run_option("Main:WriteHepMC", "on")
+            self.add_option("Main:WriteHepMC", "on")
             outputFile = "{0}.{1}".format(self.GeneratorDatacardBase,self.procinfo.get("output_format"))
-            self.add_run_option("Main:HepMCFile",outputFile)
+            self.add_option("Main:HepMCFile",outputFile)
         
         self.run += self.procDB.get_run_out()
         self.run += self.procDB.get_proc_out()
 
         if self.gen_settings is not None:
-            if "run" in self.gen_settings.keys():
-                for key,value in self.gen_settings["run"].items():
-                    self.add_run_option(key, value)
+            for key,value in self.gen_settings.items():
+                self.add_option(key, value)
 
     def write_decay(self):
         if self.procinfo.get("decay"):
@@ -161,14 +160,16 @@ class Pythia(GeneratorBase):
         # Pythia turn off parent, then turn on
         decays=""
         for parent in self.procinfo.get_final_pdg_list():
-            decays += f"{parent}:onMode off"
+            self.remove_option(f"{parent}:onMode")
+            self.remove_option(f"{parent}:onIfAny")
+            decays += f"{parent}:onMode off\n"
             child = decay_opt[parent]
             decays += f"{parent}:onIfAny "
             for c in child: 
                 decays += f"{c} "
             decays+="\n"  
-        self.ptext += "\n"
-        self.ptext += decays
+        self.run += "\n"
+        self.run += decays
 
     def write_file(self):
         self.write_run()
@@ -185,22 +186,20 @@ class Pythia(GeneratorBase):
 
         self.write_Key4hepScript(key4hepRun)
 
-    def add_run_option(self, key, value):
+    def add_option(self, key, value):
         if self.gen_settings is not None:
-            if "run" in self.gen_settings.keys():
-                if key in self.gen_settings["run"]:
-                    value = self.gen_settings["run"][key]
+            if key in self.gen_settings.items():
+                value = self.gen_settings.items()[key]
         if key in self.run:
             if str(value) in self.run:
-                return
+                self.remove_option(key)
             return
         self.run += f"{key} = {value}\n"
 
-    def add_process_option(self, key, value):
-        if key in self.ptext:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        self.ptext += f"{key} = {value}\n"
+    def remove_option(self,opt):
+        lines = self.run.split("\n")
+        filter_lines = [line for line in lines if opt not in line]
+        self.run = "\n".join(filter_lines)
 
     def is_pythia_particle_data(self, d):
         name = None

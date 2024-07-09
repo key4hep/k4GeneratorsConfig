@@ -1,0 +1,27 @@
+Random:setSeed = on
+Random:seed = 42
+Beams:eCM = 350
+Beams:idA = 11
+Beams:idB = -11
+PartonLevel:ISR = on
+Main:numberOfEvents = 100000
+
+23:m0 = 91.1876
+23:mWidth = 2.4952
+6:m0 = 173
+6:mWidth = 1.4915
+Main:WriteHepMC = on
+Main:HepMCFile = Top350_ISR.hepmc3
+Main:timesAllowErrors = 5          ! allow a few failures before quitting
+Init:showChangedSettings = on      ! list changed settings
+Init:showChangedParticleData = on  ! list changed particle data
+Next:numberCount = 1000            ! print message every n events
+Next:numberShowInfo = 1            ! print event information n times
+Next:numberShowProcess = 1         ! print process record n times
+Next:numberShowEvent = 1           ! print event record n times
+PDF:lepton = off                   ! no radiation off ficititious e+e-
+211:mayDecay  = true                 ! pi+-
+321:mayDecay  = true                 ! K+-
+130:mayDecay  = true                 ! K0_L
+Top:ffbar2ttbar(s:gmZ) = on
+6:onMode = on

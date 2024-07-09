@@ -1,0 +1,33 @@
+Random:setSeed = on
+Random:seed = 42
+Beams:eCM = 350
+Beams:idA = 11
+Beams:idB = -11
+PartonLevel:ISR = off
+Main:numberOfEvents = 10000
+
+25:m0 = 125
+25:mWidth = 0.00407
+23:m0 = 91.1876
+23:mWidth = 2.4952
+24:m0 = 80.379
+24:mWidth = 2.085
+Main:WriteHepMC = on
+Main:HepMCFile = ZHDecay350.hepmc3
+Main:timesAllowErrors = 5          ! allow a few failures before quitting
+Init:showChangedSettings = on      ! list changed settings
+Init:showChangedParticleData = on  ! list changed particle data
+Next:numberCount = 1000            ! print message every n events
+Next:numberShowInfo = 1            ! print event information n times
+Next:numberShowProcess = 1         ! print process record n times
+Next:numberShowEvent = 1           ! print event record n times
+PDF:lepton = off                   ! no radiation off ficititious e+e-
+211:mayDecay  = true                 ! pi+-
+321:mayDecay  = true                 ! K+-
+130:mayDecay  = true                 ! K0_L
+HiggsSM:ffbar2HZ = on
+
+23:onMode off
+23:onIfAny 15 -15 
+25:onMode off
+25:onIfAny 13 -13 
