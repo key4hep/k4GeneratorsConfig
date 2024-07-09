@@ -12,6 +12,8 @@
 #include "edm4hep/GeneratorToolInfo.h"
 #include "edm4hep/MCParticleCollection.h"
 
+#include "edm4hep/utils/kinematics.h"
+
 //
 int main(int argc, char** argv)
 {
@@ -81,40 +83,40 @@ int main(int argc, char** argv)
   TH1D* pdgAcostheta = new TH1D("pdgacostheta","Particle A cos(theta)",1000, -1.,1.);
   TH1D* pdgBcostheta = new TH1D("pdgbcostheta","Particle B cos(theta)",1000, -1.,1.);
 
+  TH1D* mpdgapdgb = new TH1D("mpdgapdgb","Invariant Mass(Particle A+B)",1000, 0., 1000.);
+
   //  loop over the events
   for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
     auto event = podio::Frame(reader->readNextEntry(podio::Category::Event));
     auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
     // do more stuff with this event
+    edm4hep::LorentzVectorM *particleA;
+    edm4hep::LorentzVectorM *particleB;
     for (auto part: mcParticles){
-      if ( part.getPDG() == pdgIDa ){
-	auto momentum = part.getMomentum();
-	double mag = momentum.x*momentum.x
-	  + momentum.y*momentum.y
-	  + momentum.z*momentum.z;
-	if ( mag > 0. )
-	  mag = sqrt(mag);
-	else
-	  mag = 0.;
-	double costheta = -9999;
-	if ( mag > 0. )
-	  costheta = momentum.z/mag;
+      if ( part.getPDG() == pdgIDa && !particleA ){
+	auto momentumA = part.getMomentum();
+	particleA = new edm4hep::LorentzVectorM(momentumA.x, momentumA.y, momentumA.z, part.getMass());
+	double costheta = cos(particleA->Theta());
 	pdgAcostheta->Fill(costheta);
       }
-      if ( part.getPDG() == pdgIDb ){
-	auto momentum = part.getMomentum();
-	double mag = momentum.x*momentum.x
-	  + momentum.y*momentum.y
-	  + momentum.z*momentum.z;
-	if ( mag > 0. )
-	  mag = sqrt(mag);
-	else
-	  mag = 0.;
-	double costheta = -9999;
-	if ( mag > 0. )
-	  costheta = momentum.z/mag;
+      if ( part.getPDG() == pdgIDb && !particleB){
+	auto momentumB = part.getMomentum();
+	particleB = new edm4hep::LorentzVectorM(momentumB.x, momentumB.y, momentumB.z, part.getMass());
+	double costheta = cos(particleB->Theta());
 	pdgBcostheta->Fill(costheta);
       }
+      if ( particleA && particleB ){
+	edm4hep::LorentzVectorM part = *particleA + *particleB;
+	mpdgapdgb->Fill(part.mass());
+      }
+      if ( particleA ) {
+	delete particleA;
+	particleA=0;
+      }
+    }
+    if ( particleB ) {
+      delete particleB;
+      particleB=0;
     }
   }
 
@@ -123,8 +125,11 @@ int main(int argc, char** argv)
   // instantiate the collection as pointer
   std::unique_ptr<TFile> outputFilePtr(TFile::Open(outFileName.c_str(),"RECREATE"));
   outputFilePtr->cd();
+
   pdgAcostheta->Write();
   pdgBcostheta->Write();
+  mpdgapdgb->Write();
+
   outputFilePtr->Write();
   outputFilePtr->Close();
 }
