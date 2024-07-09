@@ -4,4 +4,4 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 $PYTHIA8RUNNER/pythiaRunner -f MuonNeutrino91.2_ISR.dat
-$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonNeutrino91.2_ISR.hepmc MuonNeutrino91.2_ISR.edm4hep
+$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonNeutrino91.2_ISR.hepmc3 MuonNeutrino91.2_ISR.edm4hep
