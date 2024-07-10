@@ -4,4 +4,5 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f Tau91.2_ISR.dat
-$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau91.2_ISR.hepmc3g Tau91.2_ISR.edm4hep
+$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau91.2_ISR.hepmc3g Tau91.2_ISR.edm4hep
+analyze2f -a 15 -b -15 -i Tau91.2_ISR.edm4hep -f Tau91.2_ISR.root

@@ -34,11 +34,26 @@ class GeneratorBase:
         self.key4hep_config += "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
         self.key4hep_config += "fi\n\n"
 
+        self.analysis = self.write_analysis()
+        
+    def write_analysis(self):
+        # write the analysis part based on the final state
+        analysis = ""
+        finalStateList = self.procinfo.get_final_pdg_list()
+        if len(finalStateList) == 2:
+            analysis+= "analyze2f -a {0} -b {1} ".format(finalStateList[0],finalStateList[1])
+        else:
+            return ""
+        analysis += "-i {0}.edm4hep -f {0}.root\n".format(self.GeneratorDatacardBase)
+        return analysis
+
     def write_GeneratorDatacard(self,content):
         with open(self.GeneratorDatacard, "w+") as file:
             file.write(content)
 
     def write_Key4hepScript(self,content):
+        # append the analysis to the content
+        content += self.analysis
         # open the file for the evgen generation in EDM4HEP format
         with open(self.key4hepScript, "w+") as file:
             # set up KEY4HEP

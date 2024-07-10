@@ -4,4 +4,4 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard Photon91.0.sin
-$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Photon91.0.edm4hep
+$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Photon91.0.edm4hep

@@ -4,4 +4,5 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f ZH350_ISR.dat
-$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZH350_ISR.hepmc3g ZH350_ISR.edm4hep
+$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZH350_ISR.hepmc3g ZH350_ISR.edm4hep
+analyze2f -a 23 -b 25 -i ZH350_ISR.edm4hep -f ZH350_ISR.root

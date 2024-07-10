@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+if [ -z "${KEY4HEP_STACK}" ]; then
+    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
+fi
+
+KKMCee -c  Muon91.2.dat -o Muon91.2.hepmc3
+$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc3 Muon91.2.edm4hep
+analyze2f -a 13 -b -13 -i Muon91.2.edm4hep -f Muon91.2.root
