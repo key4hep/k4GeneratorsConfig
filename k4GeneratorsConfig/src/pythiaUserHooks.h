@@ -13,8 +13,12 @@ class pythiaUserHooks : public UserHooks {
   
   // Destructor deletes anti-kT jet finder and prints histograms.
   ~pythiaUserHooks();
+
+  // we work at the parton level
+  bool canVetoProcessLevel();
+  bool doVetoProcessLevel(Event& );
   
- private:
+private:
 };
 
 #endif

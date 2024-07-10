@@ -59,6 +59,11 @@ int main(int argc, char** argv) {
   // Read in the rest of the settings and data from a separate file.
   pythia.readFile(filename);
 
+  // setup the Userhooks for PYTHIA
+  auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>();
+  bool success = pythia.setUserHooksPtr( pythiaUserHooksPtr);
+  std::cout << "pythiaRunner::setting of UserHooks was successful: " << success << std::endl;
+
   // Initialization.
   pythia.init();
 
@@ -73,10 +78,6 @@ int main(int argc, char** argv) {
   // Extract settings to be used in the main program.
   int nEvent  = pythia.mode("Main:numberOfEvents");
   int nAbort  = pythia.mode("Main:timesAllowErrors");
-
-  // setup the Userhooks for PYTHIA
-  auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>();
-  pythia.setUserHooksPtr( pythiaUserHooksPtr);
 
   // Begin event loop.
   int iAbort = 0;
