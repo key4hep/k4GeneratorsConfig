@@ -10,4 +10,4 @@ sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe MuonNeutrino350.hepmc
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonNeutrino350.hepmc MuonNeutrino350.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 14 -b -14 -i MuonNeutrino350.edm4hep -f MuonNeutrino350.root
+$K4GENERATORSCONFIG/analyze2f -a 14 -b -14 -i MuonNeutrino350.edm4hep -o MuonNeutrino350.root

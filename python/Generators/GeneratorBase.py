@@ -44,7 +44,7 @@ class GeneratorBase:
             analysis+= "$K4GENERATORSCONFIG/analyze2f -a {0} -b {1} ".format(finalStateList[0],finalStateList[1])
         else:
             return ""
-        analysis += "-i {0}.edm4hep -f {0}.root\n".format(self.GeneratorDatacardBase)
+        analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
         return analysis
 
     def write_GeneratorDatacard(self,content):

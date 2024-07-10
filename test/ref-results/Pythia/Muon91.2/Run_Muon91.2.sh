@@ -6,4 +6,4 @@ fi
 $K4GENERATORSCONFIG/pythiaRunner -f Muon91.2.dat
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc3 Muon91.2.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 13 -b -13 -i Muon91.2.edm4hep -f Muon91.2.root
+$K4GENERATORSCONFIG/analyze2f -a 13 -b -13 -i Muon91.2.edm4hep -o Muon91.2.root

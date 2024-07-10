@@ -10,4 +10,4 @@ sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe ZHDecay350.hepmc
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc ZHDecay350.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 23 -b 25 -i ZHDecay350.edm4hep -f ZHDecay350.root
+$K4GENERATORSCONFIG/analyze2f -a 23 -b 25 -i ZHDecay350.edm4hep -o ZHDecay350.root
