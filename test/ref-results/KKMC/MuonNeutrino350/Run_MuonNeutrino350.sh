@@ -5,4 +5,5 @@ fi
 
 KKMCee -c  MuonNeutrino350.dat -o MuonNeutrino350.hepmc3
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonNeutrino350.hepmc3 MuonNeutrino350.edm4hep
-analyze2f -a 14 -b -14 -i MuonNeutrino350.edm4hep -f MuonNeutrino350.root
+
+$K4GENERATORSCONFIG/analyze2f -a 14 -b -14 -i MuonNeutrino350.edm4hep -f MuonNeutrino350.root

@@ -5,4 +5,5 @@ fi
 
 KKMCee -c  Tau91.2_ISR.dat -o Tau91.2_ISR.hepmc3
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau91.2_ISR.hepmc3 Tau91.2_ISR.edm4hep
-analyze2f -a 15 -b -15 -i Tau91.2_ISR.edm4hep -f Tau91.2_ISR.root
+
+$K4GENERATORSCONFIG/analyze2f -a 15 -b -15 -i Tau91.2_ISR.edm4hep -f Tau91.2_ISR.root

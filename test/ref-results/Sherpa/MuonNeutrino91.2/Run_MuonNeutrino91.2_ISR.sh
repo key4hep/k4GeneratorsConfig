@@ -5,4 +5,5 @@ fi
 
 Sherpa -f MuonNeutrino91.2_ISR.dat
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonNeutrino91.2_ISR.hepmc3g MuonNeutrino91.2_ISR.edm4hep
-analyze2f -a 14 -b -14 -i MuonNeutrino91.2_ISR.edm4hep -f MuonNeutrino91.2_ISR.root
+
+$K4GENERATORSCONFIG/analyze2f -a 14 -b -14 -i MuonNeutrino91.2_ISR.edm4hep -f MuonNeutrino91.2_ISR.root

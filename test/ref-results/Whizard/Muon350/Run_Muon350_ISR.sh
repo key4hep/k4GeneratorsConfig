@@ -5,4 +5,5 @@ fi
 
 whizard Muon350_ISR.sin
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Muon350_ISR.edm4hep
-analyze2f -a 13 -b -13 -i Muon350_ISR.edm4hep -f Muon350_ISR.root
+
+$K4GENERATORSCONFIG/analyze2f -a 13 -b -13 -i Muon350_ISR.edm4hep -f Muon350_ISR.root
