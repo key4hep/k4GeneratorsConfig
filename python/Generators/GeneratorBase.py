@@ -38,10 +38,10 @@ class GeneratorBase:
         
     def write_analysis(self):
         # write the analysis part based on the final state
-        analysis = ""
+        analysis = "\n"
         finalStateList = self.procinfo.get_final_pdg_list()
         if len(finalStateList) == 2:
-            analysis+= "analyze2f -a {0} -b {1} ".format(finalStateList[0],finalStateList[1])
+            analysis+= "$K4GENERATORSCONFIG/analyze2f -a {0} -b {1} ".format(finalStateList[0],finalStateList[1])
         else:
             return ""
         analysis += "-i {0}.edm4hep -f {0}.root\n".format(self.GeneratorDatacardBase)

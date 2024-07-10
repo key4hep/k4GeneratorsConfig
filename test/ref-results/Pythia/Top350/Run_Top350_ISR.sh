@@ -5,4 +5,5 @@ fi
 
 $K4GENERATORSCONFIG/pythiaRunner -f Top350_ISR.dat
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Top350_ISR.hepmc3 Top350_ISR.edm4hep
-analyze2f -a 6 -b -6 -i Top350_ISR.edm4hep -f Top350_ISR.root
+
+$K4GENERATORSCONFIG/analyze2f -a 6 -b -6 -i Top350_ISR.edm4hep -f Top350_ISR.root
