@@ -226,9 +226,9 @@ class Madgraph(GeneratorBase):
         key4hepRun += f"ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         # temporarily kick out the header since the 
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
+        key4hepRun += f"$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase)
+        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase)
         self.write_Key4hepScript(key4hepRun)        
 
     def add_run_option(self, key, value):

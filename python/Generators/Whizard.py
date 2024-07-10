@@ -214,7 +214,7 @@ class Whizard(GeneratorBase):
             key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
         # back to normal
         key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
+        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
         self.write_Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):

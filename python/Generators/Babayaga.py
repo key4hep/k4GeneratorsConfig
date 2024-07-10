@@ -108,8 +108,8 @@ class Babayaga(GeneratorBase):
     def write_key4hepfile(self):
         key4hepRun = ""
         key4hepRun += "cat "+self.GeneratorDatacardName+" | "+self.executable+"\n"
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i lhe -o {0} events.lhe {1}.{0}\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
-        key4hepRun += "$CONVERTHEPMC2EDM4HEP/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
+        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o {0} events.lhe {1}.{0}\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
+        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
         self.write_Key4hepScript(key4hepRun)
 
     def pdg_to_babayaga(self, pdg):
