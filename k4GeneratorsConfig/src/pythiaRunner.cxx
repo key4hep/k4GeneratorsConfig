@@ -20,6 +20,8 @@
 #include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/HepMC3.h"
 
+#include "pythiaUserHooks.h"
+
 using namespace Pythia8;
 
 //==========================================================================
@@ -71,6 +73,10 @@ int main(int argc, char** argv) {
   // Extract settings to be used in the main program.
   int nEvent  = pythia.mode("Main:numberOfEvents");
   int nAbort  = pythia.mode("Main:timesAllowErrors");
+
+  // setup the Userhooks for PYTHIA
+  auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>();
+  pythia.setUserHooksPtr( pythiaUserHooksPtr);
 
   // Begin event loop.
   int iAbort = 0;

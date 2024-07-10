@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 	double costheta = cos(particleA->Theta());
 	pdgAcostheta->Fill(costheta);
       }
-      if ( part.getPDG() == pdgIDb && !particleB){
+      if ( part.getPDG() == pdgIDb && !particleB ){
 	auto momentumB = part.getMomentum();
 	particleB = new edm4hep::LorentzVectorM(momentumB.x, momentumB.y, momentumB.z, part.getMass());
 	double costheta = cos(particleB->Theta());
@@ -127,10 +127,11 @@ int main(int argc, char** argv)
 	edm4hep::LorentzVectorM part = *particleA + *particleB;
 	mpdgapdgb->Fill(part.mass());
       }
-      if ( particleA ) {
-	delete particleA;
-	particleA=0;
-      }
+    }
+    // release memory after an event
+    if ( particleA ) {
+      delete particleA;
+      particleA=0;
     }
     if ( particleB ) {
       delete particleB;

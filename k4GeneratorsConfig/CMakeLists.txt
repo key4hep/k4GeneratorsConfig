@@ -71,6 +71,7 @@ install(TARGETS xsectionSummary
 
 set(pythia_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/pythiaRunner.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pythiaUserHooks.cxx
 )
 
 add_executable(pythiaRunner ${pythia_sources})
