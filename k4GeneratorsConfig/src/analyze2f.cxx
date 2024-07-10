@@ -65,15 +65,6 @@ int main(int argc, char** argv)
     exit(0);
   }
 
-  // get the frame parameters
-  auto event = podio::Frame(reader->readNextEntry(podio::Category::Event));
-  const edm4hep::GeneratorEventParametersCollection &genParametersCollection = event.get<edm4hep::GeneratorEventParametersCollection>(edm4hep::labels::GeneratorEventParameters);
-  if ( genParametersCollection.size() == 0 ) exit(0);
-  edm4hep::GeneratorEventParameters genParameters = genParametersCollection[0];
-  
-  // decode sqrts
-  double sqrts = genParameters.getSqrts();
-
   // decode the tool infor from Run
   auto runinfo = podio::Frame(reader->readNextEntry(podio::Category::Run));
   auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
@@ -89,13 +80,22 @@ int main(int argc, char** argv)
     exit(0);
   }
 
+  // get the frame parameters
+  auto event = podio::Frame(reader->readNextEntry(podio::Category::Event));
+  const edm4hep::GeneratorEventParametersCollection &genParametersCollection = event.get<edm4hep::GeneratorEventParametersCollection>(edm4hep::labels::GeneratorEventParameters);
+  if ( genParametersCollection.size() == 0 ) exit(0);
+  edm4hep::GeneratorEventParameters genParameters = genParametersCollection[0];
+  
+  // decode sqrts
+  double sqrts = genParameters.getSqrts();
+
   // histogram reservations
   // prepare some histograms
   std::stringstream ss;
   ss << "Particle PDGID = " << pdgIDa << " cos(theta)";
   TH1D* pdgAcostheta = new TH1D("pdgacostheta",ss.str().c_str(),1000, -1.,1.);
   ss.clear(); ss.str("");
-  ss << "Particle PDGID = " << pdgIDa << " cos(theta)";
+  ss << "Particle PDGID = " << pdgIDb << " cos(theta)";
   TH1D* pdgBcostheta = new TH1D("pdgbcostheta",ss.str().c_str(),1000, -1.,1.);
 
   ss.clear(); ss.str("");
@@ -104,7 +104,8 @@ int main(int argc, char** argv)
 
   //  loop over the events
   for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
-    auto event = podio::Frame(reader->readNextEntry(podio::Category::Event));
+    if (i)
+      event = podio::Frame(reader->readNextEntry(podio::Category::Event));
     auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
     // do more stuff with this event
     edm4hep::LorentzVectorM *particleA;
