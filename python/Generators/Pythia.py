@@ -87,7 +87,7 @@ class Pythia(GeneratorBase):
         for key,value in selectors.items():
             self.add_Selector(value)
         # PYTHIA special: write the selectors to the file proc.selectors
-        with open(self.GeneratorDatacardBase+self.PythiaSelectorFileExtension, "w+") as file:
+        with open(self.outdir+"/"+self.GeneratorDatacardBase+"."+self.PythiaSelectorFileExtension, "w+") as file:
             file.write(self.cuts)
 
 
@@ -153,7 +153,7 @@ class Pythia(GeneratorBase):
                 self.cuts+=sname
                 self.cuts+="\n"
             sname = "1 "
-            sname += f"{f} {name} < {Min}"
+            sname += f"{f} {name} < {Max}"
             if f"{f} {name} <" not in self.cuts:
                 self.cuts+=sname
                 self.cuts+="\n"
