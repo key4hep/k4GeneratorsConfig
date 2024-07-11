@@ -110,18 +110,18 @@ class Pythia(GeneratorBase):
             self.add_one_ParticleSelector(value, "Theta")  
 
             # Two particle selectors
-        #elif key == "mass":
-            #self.add_two_ParticleSelector(value,"Mass")
-        #elif key == "angle":
-            #self.add_two_ParticleSelector(value, "Angle")
-        #elif key == "deta":
-            #self.add_two_ParticleSelector(value, "DeltaEta")
-        #elif key == "drap":
-            #self.add_two_ParticleSelector(value, "DeltaY")
-        #elif key == "dphi":
-            #self.add_two_ParticleSelector(value, "DeltaPhi")
-        #elif key == "dr":
-            #self.add_two_ParticleSelector(value, "DeltaR")
+        elif key == "mass":
+            self.add_two_ParticleSelector(value,"Mass")
+        elif key == "angle":
+            self.add_two_ParticleSelector(value, "Angle")
+        elif key == "deta":
+            self.add_two_ParticleSelector(value, "DeltaEta")
+        elif key == "drap":
+            self.add_two_ParticleSelector(value, "DeltaY")
+        elif key == "dphi":
+            self.add_two_ParticleSelector(value, "DeltaPhi")
+        elif key == "dr":
+            self.add_two_ParticleSelector(value, "DeltaR")
         else:
             print(f"{key} not a Pythia Selector")
 
@@ -130,11 +130,17 @@ class Pythia(GeneratorBase):
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = flavs[0]
-            f2 = flavs[0]
+            f2 = flavs[1]
             if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
                 return
-            sname = f" {name} {f1} {f2} {Min} {Max}"
-            if f" {name} {f1} {f2}" not in self.cuts:
+            sname = "2 "
+            sname += f" {name} {f1} {f2} > {Min}"
+            if f" {name} {f1} {f2} >" not in self.cuts:
+                self.cuts+=sname
+                self.cuts+="\n"
+            sname = "2 "
+            sname += f" {f1} {f2} {name} < {Max}"
+            if f"  {f1} {f2} {name} <" not in self.cuts:
                 self.cuts+=sname
                 self.cuts+="\n"
         else:
@@ -143,10 +149,16 @@ class Pythia(GeneratorBase):
                 f2 = fl[1]
                 if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
                     continue
-                sname = f" {name} {f1} {f2} {Min} {Max}"
-                if f" {name} {f1} {f2}" not in self.cuts:
-                    self.cuts+=sname
-                    self.cuts+="\n"
+            sname = "2 "
+            sname += f" {name} {f1} {f2} > {Min}"
+            if f" {name} {f1} {f2} >" not in self.cuts:
+                self.cuts+=sname
+                self.cuts+="\n"
+            sname = "2 "
+            sname += f" {f1} {f2} {name} < {Max}"
+            if f"  {f1} {f2} {name} <" not in self.cuts:
+                self.cuts+=sname
+                self.cuts+="\n"
 
     def add_one_ParticleSelector(self,sel,name):
         Min,Max = sel.get_MinMax()

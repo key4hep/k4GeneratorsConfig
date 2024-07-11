@@ -20,7 +20,9 @@ class pythiaUserHooks : public UserHooks {
   bool canVetoProcessLevel();
   bool doVetoProcessLevel(Event& );
   
-  bool Veto1Selector(double, double, double, double, int);
+  bool Veto1ParticleSelector(double, double, double, double, int);
+  bool Veto2ParticleSelector(double, double, double, double, int,
+			     double, double, double, double, int );
 
   double PT(double, double);
   double ET(double, double, double, double);
@@ -28,16 +30,21 @@ class pythiaUserHooks : public UserHooks {
   double Theta(double, double, double);
   double Eta(double, double, double);
   
+  double Mass(double, double, double, double, double, double, double, double);
+  double Angle(double, double, double, double, double, double);
+
   void print();
 
 private:
 
   bool m_isValid;
 
-  std::vector<int> m_sel1PDGID;
-  std::vector<string> m_sel1Type;
-  std::vector<string> m_sel1Comparator;
-  std::vector<double> m_sel1Value;
+  std::vector<unsigned int> m_NbOfParticles;
+  std::vector<int> m_PDGID1;
+  std::vector<int> m_PDGID2;
+  std::vector<string> m_Type;
+  std::vector<string> m_Comparator;
+  std::vector<double> m_Value;
 
 };
 
