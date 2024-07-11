@@ -21,7 +21,7 @@ while getopts ${OPTSTRING} opt; do
       runEvgen="false"
       ;;
     r)
-      echo "Option -f was triggered, event generation step will be run only for one process per yaml file"
+      echo "Option -r was triggered, event generation step will be run only for one process per yaml file"
       runReducedEvgen="true"
       ;;
     h)
