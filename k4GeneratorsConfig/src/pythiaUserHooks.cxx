@@ -131,6 +131,7 @@ bool pythiaUserHooks::Veto1ParticleSelector(double energy, double px, double py,
 
   bool vetoed = false;
   for (unsigned int i=0; i<m_PDGID1.size(); i++){
+    if (m_NbOfParticles[i] != 1 ) continue;
     if ( pdg == m_PDGID1[i] ){
       double value = 0.;
       if ( m_Type[i].find("PT") != std::string::npos ){
@@ -275,6 +276,8 @@ double pythiaUserHooks::Angle(double px1, double py1, double pz1, double px2, do
   std::cout << "pythiaUserHooks::Single Particle Selectors" << std::endl;
   for (unsigned int i=0; i<m_PDGID1.size(); i++){
     std::cout << "PDGID: " << m_PDGID1[i] << " ";
+    if ( i < m_PDGID2.size() && m_NbOfParticles[i] == 2)
+      std::cout << "PDGID: " << m_PDGID2[i] << " ";
     if ( i < m_Type.size() )
       std::cout << "Type: " << m_Type[i] << " ";
     if ( i < m_Comparator.size() )
