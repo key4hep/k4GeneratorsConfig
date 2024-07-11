@@ -56,13 +56,16 @@ int main(int argc, char** argv) {
   // add the write hepmc flag to the settings
   pythia.settings.addFlag("Main:writeHepMC",false);
   pythia.settings.addWord("Main:HepMCFile","pythia");
+  pythia.settings.addWord("Main:SelectorsFile","PythiaSelectors");
   // Read in the rest of the settings and data from a separate file.
   pythia.readFile(filename);
 
   // setup the Userhooks for PYTHIA
-  auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>();
+  const std::string selectorFile = pythia.word("Main:SelectorsFile");
+  auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>(selectorFile);
   bool success = pythia.setUserHooksPtr( pythiaUserHooksPtr);
-  std::cout << "pythiaRunner::setting of UserHooks was successful: " << success << std::endl;
+  if ( !success ) 
+    std::cout << "WARNING::pythiaRunner::setting of UserHooks was unsuccessful: " << std::endl;
 
   // Initialization.
   pythia.init();

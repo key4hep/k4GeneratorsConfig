@@ -9,7 +9,8 @@ class Pythia(GeneratorBase):
         self.version = "x.y.z"
         self.file = ""
         self.cuts = ""
-
+        self.PythiaSelectorFileExtension = "selectors"
+        
         self.procDB = PythiaProcDB.PythiaProcDB(self.procinfo)
         if settings.get("usedefaults",True):
             self.procDB.write_DBInfo()
@@ -20,7 +21,7 @@ class Pythia(GeneratorBase):
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
         if settings.get_block("selectors"):
             print("Pythia Warning: selectors not yet implemented")
-            #self.write_selectors()
+            self.write_selectors()
 
     def write_run(self):
 
@@ -85,34 +86,37 @@ class Pythia(GeneratorBase):
             pass
         for key,value in selectors.items():
             self.add_Selector(value)
-        self.cuts+="}(selector)\n"
+        # PYTHIA special: write the selectors to the file proc.selectors
+        with open(self.GeneratorDatacardBase+self.PythiaSelectorFileExtension, "w+") as file:
+            file.write(self.cuts)
+
 
     def add_Selector(self,value):
         key=value.name.lower()
         if key == "pt":
             self.add_one_ParticleSelector(value, "PT")
-        elif key == "et":
-            self.add_one_ParticleSelector(value, "ET")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "Rapidity")
+        #elif key == "et":
+            #self.add_one_ParticleSelector(value, "ET")
+        #elif key == "rap":
+            #self.add_one_ParticleSelector(value, "Rapidity")
         elif key == "eta":
-            self.add_one_ParticleSelector(value, "PseudoRapidity")  
+            self.add_one_ParticleSelector(value, "Eta")  
         elif key == "theta":
-            self.add_one_ParticleSelector(value, "PseudoRapidity","eta")  
+            self.add_one_ParticleSelector(value, "Theta")  
 
             # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value,"Mass")
-        elif key == "angle":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "deta":
-            self.add_two_ParticleSelector(value, "DeltaEta")
-        elif key == "drap":
-            self.add_two_ParticleSelector(value, "DeltaY")
-        elif key == "dphi":
-            self.add_two_ParticleSelector(value, "DeltaPhi")
-        elif key == "dr":
-            self.add_two_ParticleSelector(value, "DeltaR")
+        #elif key == "mass":
+            #self.add_two_ParticleSelector(value,"Mass")
+        #elif key == "angle":
+            #self.add_two_ParticleSelector(value, "Angle")
+        #elif key == "deta":
+            #self.add_two_ParticleSelector(value, "DeltaEta")
+        #elif key == "drap":
+            #self.add_two_ParticleSelector(value, "DeltaY")
+        #elif key == "dphi":
+            #self.add_two_ParticleSelector(value, "DeltaPhi")
+        #elif key == "dr":
+            #self.add_two_ParticleSelector(value, "DeltaR")
         else:
             print(f"{key} not a Pythia Selector")
 
@@ -139,12 +143,18 @@ class Pythia(GeneratorBase):
                     self.cuts+=sname
                     self.cuts+="\n"
 
-    def add_one_ParticleSelector(self,sel,name,unit=""):
-        Min,Max = sel.get_MinMax(unit)
+    def add_one_ParticleSelector(self,sel,name):
+        Min,Max = sel.get_MinMax()
         f1 = sel.get_Flavours()
         for f in f1:
-            sname = f" {name} {f} {Min} {Max}"
-            if f" {name} {f}" not in self.cuts:
+            sname = "1 "
+            sname += f"{f} {name} > {Min}"
+            if f"{f} {name} >" not in self.cuts:
+                self.cuts+=sname
+                self.cuts+="\n"
+            sname = "1 "
+            sname += f"{f} {name} < {Min}"
+            if f"{f} {name} <" not in self.cuts:
                 self.cuts+=sname
                 self.cuts+="\n"
 
@@ -174,7 +184,7 @@ class Pythia(GeneratorBase):
     def write_file(self):
         self.write_run()
         self.write_decay()
-        self.file = self.run + self.cuts
+        self.file = self.run
         self.write_GeneratorDatacard(self.file)
 
     def write_key4hepfile(self):
