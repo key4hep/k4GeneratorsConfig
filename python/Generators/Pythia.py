@@ -23,7 +23,6 @@ class Pythia(GeneratorBase):
         self.selectorsFile         = self.GeneratorDatacardBase+"."+self.PythiaSelectorFileExtension
         self.selectorsFileWithPath = self.outdir+"/"+self.selectorsFile
         if settings.get_block("selectors"):
-            print("Pythia Warning: selectors not yet implemented")
             self.write_selectors()
 
     def write_run(self):
