@@ -232,11 +232,16 @@ double pythiaUserHooks::Rapidity(double energy, double pz){
 }
 double pythiaUserHooks::Theta(double px, double py, double pz){
 
-  double tantheta = 0.;
+  double costheta = 0.;
   double pt = PT(px,py);
-  if ( pz != 0. )
-    tantheta = pt/pz;
-  double theta = atan(tantheta);
+  double p = pt*pt+pz*pz;
+  if ( p >= 0.){
+    p = sqrt(p);
+  }
+  if ( p != 0. ){
+    costheta = pz/p;
+  }
+  double theta = acos(costheta);
 
   return theta;
 }
