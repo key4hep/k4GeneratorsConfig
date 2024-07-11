@@ -24,6 +24,7 @@ class pythiaUserHooks : public UserHooks {
 
   double PT(double, double);
   double ET(double, double, double, double);
+  double Rapidity(double,double);
   double Theta(double, double, double);
   double Eta(double, double, double);
   

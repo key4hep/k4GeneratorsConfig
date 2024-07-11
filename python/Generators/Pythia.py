@@ -95,10 +95,10 @@ class Pythia(GeneratorBase):
         key=value.name.lower()
         if key == "pt":
             self.add_one_ParticleSelector(value, "PT")
-        #elif key == "et":
-            #self.add_one_ParticleSelector(value, "ET")
-        #elif key == "rap":
-            #self.add_one_ParticleSelector(value, "Rapidity")
+        elif key == "et":
+            self.add_one_ParticleSelector(value, "ET")
+        elif key == "rap":
+            self.add_one_ParticleSelector(value, "Rapidity")
         elif key == "eta":
             self.add_one_ParticleSelector(value, "Eta")  
         elif key == "theta":

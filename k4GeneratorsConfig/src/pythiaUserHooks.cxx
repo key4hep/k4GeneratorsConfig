@@ -95,8 +95,11 @@ bool pythiaUserHooks::Veto1Selector(double energy, double px, double py, double 
       if ( m_sel1Type[i].find("PT") != std::string::npos ){
 	value = PT(px,py);
       }
-      else if ( m_sel1Type[i].find("Theta") != std::string::npos ){
+      else if ( m_sel1Type[i].find("ET") != std::string::npos ){
 	value = ET(energy,px,py,pz);
+      }
+      else if ( m_sel1Type[i].find("Rapidity") != std::string::npos ){
+	value = Rapidity(energy,pz);
       }
       else if ( m_sel1Type[i].find("Theta") != std::string::npos ){
 	value = Theta(px,py,pz);
@@ -135,6 +138,12 @@ double pythiaUserHooks::ET(double energy, double px, double py, double pz){
   double et = energy * sin(Theta(px,py,pz));
   
   return et;
+}
+double pythiaUserHooks::Rapidity(double energy, double pz){
+
+  double rap = 0.5*log((energy+pz)/(energy-pz));
+
+  return rap;
 }
 double pythiaUserHooks::Theta(double px, double py, double pz){
 
