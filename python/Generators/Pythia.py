@@ -19,6 +19,9 @@ class Pythia(GeneratorBase):
         self.gen_settings = settings.get_block("pythia")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
+
+        self.selectorsFile         = self.GeneratorDatacardBase+"."+self.PythiaSelectorFileExtension
+        self.selectorsFileWithPath = self.outdir+"/"+self.selectorsFile
         if settings.get_block("selectors"):
             print("Pythia Warning: selectors not yet implemented")
             self.write_selectors()
@@ -54,6 +57,8 @@ class Pythia(GeneratorBase):
                             self.procDB.remove_option(op_name)
                         self.add_option(op_name, value)
 
+        self.add_option("Main:SelectorsFile",self.selectorsFile)
+        
         if  "hepmc" in self.procinfo.get("output_format"):
             self.add_option("Main:WriteHepMC", "on")
             outputFile = "{0}.{1}".format(self.GeneratorDatacardBase,self.procinfo.get("output_format"))
@@ -87,7 +92,7 @@ class Pythia(GeneratorBase):
         for key,value in selectors.items():
             self.add_Selector(value)
         # PYTHIA special: write the selectors to the file proc.selectors
-        with open(self.outdir+"/"+self.GeneratorDatacardBase+"."+self.PythiaSelectorFileExtension, "w+") as file:
+        with open(self.selectorsFileWithPath, "w+") as file:
             file.write(self.cuts)
 
 

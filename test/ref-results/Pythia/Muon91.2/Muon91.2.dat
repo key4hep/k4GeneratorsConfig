@@ -8,6 +8,7 @@ Main:numberOfEvents = 100000
 
 23:m0 = 91.1876
 23:mWidth = 2.4952
+Main:SelectorsFile = Muon91.2.selectors
 Main:WriteHepMC = on
 Main:HepMCFile = Muon91.2.hepmc3
 Main:timesAllowErrors = 5          ! allow a few failures before quitting

@@ -10,6 +10,7 @@ Main:numberOfEvents = 100000
 23:mWidth = 2.4952
 6:m0 = 173
 6:mWidth = 1.4915
+Main:SelectorsFile = Top350_ISR.selectors
 Main:WriteHepMC = on
 Main:HepMCFile = Top350_ISR.hepmc3
 Main:timesAllowErrors = 5          ! allow a few failures before quitting
