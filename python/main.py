@@ -21,7 +21,7 @@ def make_output_directory(generators, output_directory, procname):
         generator_directory = os.path.join(output_directory, generator, procname)
         if not os.path.exists(generator_directory):
             os.makedirs(generator_directory)
-
+            
 def main():
     #parser = argparse.ArgumentParser(prog='k4gen',description='Process input YAML files.')
     parser = argparse.ArgumentParser(
@@ -56,16 +56,29 @@ PositronPolarisation : float (between [-1.,1.])
 Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF) 
     '''))
     parser.add_argument('-f', nargs='*', type=str, default=[], help='Input YAML file')
+    parser.add_argument('--ecms', nargs='*', type=float, default=[], help='energies to be processed overrides nominal yaml input file settings')
     args = parser.parse_args()
     files = args.f
+    energies = args.ecms
+
+    # now execut file processes
+    if len(energies) == 0:
+        executeFiles(files)
+    else:
+        for sqrts in energies:
+            executeFiles(files,sqrts)
+
+def executeFiles(files,sqrts=0):
+
+    if sqrts == 0:
+        print("Generating and writing configuration files")
+    else:
+        print("Generating and writing configuration files for ECM= ",sqrts)
 
     for yaml_file in files:
         settings = Settings.Input(yaml_file)
         settings.gens()
-        processes = settings.get_processes()
-        sqrt_s = settings.get_sqrt_s()
-        model = settings.get_model()
-        events = settings.get_event_number()
+        processes = settings.get_processes(sqrts)
         particle_data = settings.get_particle_data()
         generators = generators_module.Generators(settings)
         try:

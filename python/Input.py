@@ -60,13 +60,21 @@ class Input:
             raise ValueError("No Generators set!")
         return getattr(self, "generators")
 
-    def get_processes(self):
+    def get_processes(self,sqrtsOverride=0):
         processes = getattr(self,"processes")
         if not processes:
             raise ValueError("No processes defined!")
         # Set all keys to be lower case 
         for proc, value in processes.items():
             processes[proc] = {k.lower(): v for k, v in value.items()}
+        # overwrite now sqrts with new value
+        # now calculate the process extension if necessary
+        if sqrtsOverride != 0:
+            procExt = "_"+str(sqrtsOverride)
+            processes = {proc+procExt: value for proc, value in processes.items()}
+            for proc, values in processes.items():
+                values['sqrts'] = sqrtsOverride
+
         return processes
 
     def get_output_format(self):
