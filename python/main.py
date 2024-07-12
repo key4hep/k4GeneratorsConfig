@@ -56,11 +56,19 @@ PositronPolarisation : float (between [-1.,1.])
 Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF) 
     '''))
     parser.add_argument('-f', nargs='*', type=str, default=[], help='Input YAML file')
-    parser.add_argument('--ecms', nargs='*', type=float, default=[], help='energies to be processed overrides nominal yaml input file settings')
+    parser.add_argument('--ecms', nargs='*', type=float, default=[], help='energies to be processed, overrides nominal yaml input file settings')
+    parser.add_argument('--ecmsFiles', nargs='*', type=str, default=[], help='yaml files with energies format ecms: [energy1,....] ')
     args = parser.parse_args()
     files = args.f
     energies = args.ecms
+    ecmsfiles = args.ecmsFiles
 
+    # so additionallt we read the argument ecmsFile
+    for ecmsfile in ecmsfiles:
+        #open and read ecms file and append the energies to the command line arguments
+        ecmSettings = Settings.ECMSInput(ecmsfile)
+        energies.extend(ecmSettings.energies())
+    
     # now execut file processes
     if len(energies) == 0:
         executeFiles(files)

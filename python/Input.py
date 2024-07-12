@@ -154,3 +154,24 @@ class Input:
                 if name.lower()=="process":
                     continue
                 self.selectors[name.lower()] = Selectors.Selectors(name.lower(), self.settings["selectors"][name])
+
+
+class ECMSInput:
+    """Class for loading YAML files with center of mass energies"""
+    def __init__(self, file):
+        self.file = file
+        if not os.path.isfile(self.file):
+            raise FileNotFoundError(self.file)
+        else:
+            self.load_file()
+
+    def load_file(self):
+        with open(self.file, 'r') as file:
+            self.settings = yaml.safe_load(file)
+        self.settings = {k.lower(): v for k, v in self.settings.items()}
+
+    def energies(self):
+        ecmsList = []
+        for key,value in self.settings.items():
+            ecmsList.extend(value)
+        return ecmsList
