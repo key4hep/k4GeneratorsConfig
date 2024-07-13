@@ -1,4 +1,5 @@
 #include "xsectionCollection.h"
+#include "xsection2Root.h"
 #include <filesystem>
 #include <algorithm>
 #include <iostream>
@@ -54,6 +55,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 	  std::filesystem::path filenamePath = files.path();
 	  if ( !std::filesystem::is_regular_file(filenamePath) ) continue;
 	  if ( filenamePath.extension() == ".edm4hep" ){
+	    std::cout << "xsectionCollection:: processing " << processPath.filename().string() << std::endl;
 	    k4GeneratorsConfig::xsection *xsec = new k4GeneratorsConfig::xsection();
 	    xsec->setProcess(processPath.filename().string());
 	    xsec->setFile(filenamePath.string());
@@ -89,17 +91,30 @@ bool k4GeneratorsConfig::xsectionCollection::compareLength(xsection A, xsection 
 bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection B){
 
   // retrieve the process as ordering variable
-  std::string processA = A.Process();
-  std::string processB = B.Process();
+  std::string processNgenA = A.Process() + A.Generator();
+  std::string processNgenB = B.Process() + B.Generator();
+
   std::vector<std::string> listOf2;
-  listOf2.push_back(processA);
-  listOf2.push_back(processB);
+  listOf2.push_back(processNgenA);
+  listOf2.push_back(processNgenB);
   sort(listOf2.begin(),listOf2.end());
 
   // if the order is changed return true otherwise false
-  if ( processA.compare(listOf2[0]) == 0 ) return true;
+  if ( processNgenA.compare(listOf2[0]) == 0 ) return true;
   
   return false;
+}
+void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename){
+
+  xsection2Root out(filename); 
+  
+  for (auto xsec: m_xsectionCollection){
+    if ( xsec.isValid() ){
+      out.add2Tree(xsec);
+    }
+  }
+  out.writeTree();
+  
 }
 void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
   
@@ -109,7 +124,7 @@ void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
     }
     else {
       if ( xsec.isValid() ){
-      xsec.Print();
+	xsec.Print();
       }
     }
 

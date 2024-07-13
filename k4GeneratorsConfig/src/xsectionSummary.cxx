@@ -8,16 +8,21 @@ int main(int argc, char** argv)
 {
 
   std::string filename="XsectionSummary.dat";
+  std::string fileRoot="XsectionSummary.root";
   int c;
-  while ((c = getopt (argc, argv, "hf:")) != -1)
+  while ((c = getopt (argc, argv, "hf:r:")) != -1)
     switch (c){
     case 'f':
       filename = optarg;
+      break;
+    case 'r':
+      fileRoot = optarg;
       break;
     case 'h':
       std::cout << "Usage: xsectionSummary -h -f filename" << std::endl;
       std::cout << "-h: print this help" << std::endl;
       std::cout << "-f filename: print the summary information to this file" << std::endl;
+      std::cout << "-r filename: write the RootTree to this file" << std::endl;
       exit(0);
     default:
       exit(0);
@@ -33,6 +38,8 @@ int main(int argc, char** argv)
   std::ofstream outFile(filename);
   std::ostream &output = outFile;
   xsecColl->PrintSummary(output);
+  // write to root
+  xsecColl->Write2Root(fileRoot);  
   // delete the pointer
   delete xsecColl; xsecColl=0;
 }

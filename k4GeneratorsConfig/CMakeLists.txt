@@ -57,11 +57,12 @@ set(xsection_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionSummary.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionCollection.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection2Root.cxx
 )
 
 add_executable(xsectionSummary ${xsection_sources})
 target_link_libraries(xsectionSummary PRIVATE
-  EDM4HEP::edm4hep podio::podioRootIO
+  EDM4HEP::edm4hep podio::podioRootIO ROOT::Tree
 )
 
 install(TARGETS xsectionSummary

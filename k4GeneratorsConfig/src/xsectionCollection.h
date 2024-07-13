@@ -18,6 +18,7 @@ class xsectionCollection {
   void orderCollection();
   bool compareLength(xsection, xsection);
   bool compareLexical(xsection, xsection);
+  void Write2Root(std::string);
   void Print(bool onlyOK=false);
   void PrintSummary(std::ostream &output=std::cout) const;
 
