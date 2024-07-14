@@ -3,6 +3,7 @@
 
 #include "TFile.h"
 #include "TTree.h"
+#include "TH2D.h"
 
 #include <string>
 #include <unordered_map>
@@ -17,16 +18,21 @@ class xsection2Root {
   ~xsection2Root();
 
   void Init();
+  void Finalize();
   
   void add2Tree(xsection&);
   void writeTree();
+  void writeHistos();
 
 
  private:
   TFile *m_file;
   TTree *m_tree;
+  std::vector<TH2D*> m_histos;
 
   // data members
+  std::string m_process;
+  int m_processCode;
   double m_crossSection;
   double m_crossSectionError;
   double m_sqrts;
@@ -34,6 +40,7 @@ class xsection2Root {
   int m_generatorCode;  
 
   std::vector<std::string> m_generatorsList;
+  std::vector<std::string> m_processesList;
 };
 }
 

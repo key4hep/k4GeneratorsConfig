@@ -113,7 +113,7 @@ void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename){
       out.add2Tree(xsec);
     }
   }
-  out.writeTree();
+  out.Finalize();
   
 }
 void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK){
