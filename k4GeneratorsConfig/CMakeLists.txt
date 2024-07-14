@@ -62,7 +62,7 @@ set(xsection_sources
 
 add_executable(xsectionSummary ${xsection_sources})
 target_link_libraries(xsectionSummary PRIVATE
-  EDM4HEP::edm4hep podio::podioRootIO ROOT::Tree ROOT::Hist
+  EDM4HEP::edm4hep podio::podioRootIO ROOT::Tree ROOT::Hist ROOT::Gpad
 )
 
 install(TARGETS xsectionSummary

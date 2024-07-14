@@ -4,6 +4,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TH2D.h"
+#include "TGraphErrors.h"
 
 #include <string>
 #include <unordered_map>
@@ -29,6 +30,7 @@ class xsection2Root {
   TFile *m_file;
   TTree *m_tree;
   std::vector<TH2D*> m_histos;
+  std::vector<TGraphErrors*> m_graphs;
 
   // data members
   std::string m_process;

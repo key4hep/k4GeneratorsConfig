@@ -1,6 +1,9 @@
 #include <sstream>
 #include "xsection2Root.h"
 
+#include "TCanvas.h"
+#include "TMultiGraph.h"
+
 k4GeneratorsConfig::xsection2Root::xsection2Root()
 {
   m_file = new TFile("xsection2RootSummary.root","RECREATE");
@@ -80,20 +83,60 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
       name << gen << proc;
       desc << gen << "::Process: " << proc << ": CrossSection vs Sqrts";
       m_histos.push_back(new TH2D(name.str().c_str(),desc.str().c_str(),600,0.,600.,1000,0.,10000.));
+      name << "Graph";
+      m_graphs.push_back(new TGraphErrors());
+      m_graphs[m_graphs.size()-1]->SetName(name.str().c_str());
       name.clear(); name.str(""); desc.clear(); desc.str("");
     }
   }
 
   //access the data and write to the histo via the index of the generatorList
   for (unsigned int entry=0; entry < m_tree->GetEntries(); entry++){
+    // a tree for root analysis
     m_tree->GetEntry(entry);
-    m_histos[m_generatorCode+m_processCode*m_generatorsList.size()]->Fill(m_sqrts,m_crossSection,1.);
+    // calculate the index of histos and graphs
+    unsigned int index = m_generatorCode+m_processCode*m_generatorsList.size();
+    // histos as benchmark
+    m_histos[index]->Fill(m_sqrts,m_crossSection,1.);
+    // graphs for pecise drawing
+    m_graphs[index]->AddPoint(m_sqrts,m_crossSection);
+    unsigned int lastPoint = m_graphs[m_generatorCode+m_processCode*m_generatorsList.size()]->GetN()-1;
+    m_graphs[index]->SetPointError(lastPoint,m_sqrts*1e-4,m_crossSectionError);
   }
-
   // write the histos out
   for (auto histo: m_histos){
     histo->Write();
   }
+  for (auto graph: m_graphs){
+    graph->Write();
+  }
+  // produce a png
+  TCanvas *c1 = new TCanvas("c1","CrossSectionsCanvas");
+  for (unsigned int proc=0; proc<m_processesList.size(); proc++){
+    TMultiGraph *mg = new TMultiGraph();
+    for (unsigned int gen=0; gen<m_generatorsList.size(); gen++){
+      unsigned int index = gen+proc*m_generatorsList.size();
+      m_graphs[index]->SetStats(kFALSE);
+      m_graphs[index]->SetMarkerStyle(20+gen);
+      m_graphs[index]->SetMarkerColor(gen);
+      m_graphs[index]->SetMarkerSize(1.5);
+      mg->Add(m_graphs[index],"AP");
+    }
+    // draw and set the stuff for the multigraphs
+    mg->Draw("AP");
+    mg->GetXaxis()->SetTitle("#sqrt{s} [GeV");
+    mg->GetYaxis()->SetTitle("#sigma [pb]");
+
+    name << m_processesList[proc] << ".png";
+    c1->BuildLegend(0.55,0.55,0.9,0.9);
+    c1->Print(name.str().c_str());
+
+    // clear and delete
+    name.clear(); name.str("");
+    delete mg; mg=0;
+  }
+
+  delete c1; 
 }
 void k4GeneratorsConfig::xsection2Root::writeTree(){
   m_tree->Write();
