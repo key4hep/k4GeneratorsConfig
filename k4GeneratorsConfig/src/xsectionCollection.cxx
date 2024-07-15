@@ -110,7 +110,7 @@ void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename){
   
   for (auto xsec: m_xsectionCollection){
     if ( xsec.isValid() ){
-      out.add2Tree(xsec);
+      out.Execute(xsec);
     }
   }
   out.Finalize();

@@ -3,6 +3,8 @@
 
 #include "TFile.h"
 #include "TTree.h"
+#include "TProfile.h"
+#include "TH1D.h"
 #include "TH2D.h"
 #include "TGraphErrors.h"
 
@@ -19,6 +21,7 @@ class xsection2Root {
   ~xsection2Root();
 
   void Init();
+  void Execute(xsection&);
   void Finalize();
   
   void add2Tree(xsection&);
@@ -29,16 +32,19 @@ class xsection2Root {
  private:
   TFile *m_file;
   TTree *m_tree;
-  std::vector<TH2D*> m_histos;
+  std::vector<TH2D*>         m_histos;
+  std::vector<TProfile*>     m_profiles;
+  std::vector<TH1D*>         m_averages;
   std::vector<TGraphErrors*> m_graphs;
+  std::vector<TGraph*>       m_graphsDelta;
 
   // data members
-  std::string m_process;
-  int m_processCode;
-  double m_crossSection;
-  double m_crossSectionError;
-  double m_sqrts;
-  std::string m_generator;
+  std::string  m_process;
+  int          m_processCode;
+  double       m_crossSection;
+  double       m_crossSectionError;
+  double       m_sqrts;
+  std::string  m_generator;
   int m_generatorCode;  
 
   std::vector<std::string> m_generatorsList;
