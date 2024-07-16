@@ -4,6 +4,7 @@ Beams:eCM = 250
 Beams:idA = 11
 Beams:idB = -11
 PartonLevel:ISR = off
+PDF:lepton = off
 Main:numberOfEvents = 10000
 
 25:m0 = 125
@@ -22,7 +23,6 @@ Next:numberCount = 1000            ! print message every n events
 Next:numberShowInfo = 1            ! print event information n times
 Next:numberShowProcess = 1         ! print process record n times
 Next:numberShowEvent = 1           ! print event record n times
-PDF:lepton = off                   ! no radiation off ficititious e+e-
 211:mayDecay  = true                 ! pi+-
 321:mayDecay  = true                 ! K+-
 130:mayDecay  = true                 ! K0_L

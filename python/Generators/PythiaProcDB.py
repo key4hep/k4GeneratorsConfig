@@ -15,8 +15,6 @@ class PythiaProcDB:
         self.runout +="Next:numberShowInfo = 1            ! print event information n times\n"
         self.runout +="Next:numberShowProcess = 1         ! print process record n times\n"
         self.runout +="Next:numberShowEvent = 1           ! print event record n times\n"
-        #! 3) Beam parameter settings. Incoming beams do not radiate.
-        self.runout +="PDF:lepton = off                   ! no radiation off ficititious e+e-\n"
         # !4) Tell that also long-lived should decay.
         #13:mayDecay   = true                 ! mu+-
         self.runout +="211:mayDecay  = true                 ! pi+-\n"

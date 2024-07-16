@@ -40,8 +40,10 @@ class Pythia(GeneratorBase):
 
         if self.procinfo.get("isrmode"):
             self.add_option("PartonLevel:ISR", "on")
+            self.add_option("PDF:lepton", "on")
         else:
             self.add_option("PartonLevel:ISR", "off")
+            self.add_option("PDF:lepton", "off")
 
         self.add_option("Main:numberOfEvents", self.procinfo.get("events"))
         self.run += "\n"
