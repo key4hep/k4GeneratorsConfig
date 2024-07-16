@@ -21,3 +21,7 @@ jobs:
       with:
         build_type: ${{ matrix.build_type }}
         image: ${{ matrix.image }}
+    - uses: actions/upload-artifact@v4
+        with:
+          name: Cross section report
+          path: test/xsectionSummary.dat
