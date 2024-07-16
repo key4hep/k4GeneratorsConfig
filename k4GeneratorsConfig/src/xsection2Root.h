@@ -34,7 +34,7 @@ class xsection2Root {
   TTree *m_tree;
   std::vector<TH2D*>         m_histos;
   std::vector<TProfile*>     m_profiles;
-  std::vector<TH1D*>         m_averages;
+  std::vector<TH1D*>         m_rms;
   std::vector<TGraphErrors*> m_graphs;
   std::vector<TGraph*>       m_graphsDelta;
 

@@ -96,8 +96,8 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
     desc << "Process: " << proc << ": CrossSection vs Sqrts";
     m_profiles.push_back(new TProfile(name.str().c_str(),desc.str().c_str(),6000,0.001,600.001,0.,0.,"s"));
     name.clear(); name.str("");
-    name << proc << "Average";
-    m_averages.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),6000,0.001,600.001));
+    name << proc << "RMS";
+    m_rms.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),6000,0.001,600.001));
     name.clear(); name.str(""); desc.clear(); desc.str("");
   }
 
@@ -119,28 +119,26 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
     }
   }
 
-  // for the profileAverages divide by the Central value if 1+0
-  for (unsigned int i=0; i<m_averages.size(); i++){
+  // for the profileRms divide by the Central value if 1+0
+  for (unsigned int i=0; i<m_rms.size(); i++){
     // the number of bins is higher by 2 for the vecto overflow and underflow
     unsigned int nbins = m_profiles[i]->GetNbinsX()+2;
     std::vector<Double_t> content;
     content.resize(nbins,0.);
     std::vector<Double_t> error;
     error.resize(nbins,0.);
+    std::vector<Double_t> almostzero;
+    almostzero.resize(nbins,0.);
     for (unsigned int k=0; k<nbins ; k++){
       content[k] = m_profiles[i]->GetBinContent(k);
       error[k]   = m_profiles[i]->GetBinError(k);
       if ( content[k] > 0. ) {
-	error[k]   = error[k]/content[k];
-	content[k] = 1.;
+	error[k]      = error[k]/content[k];
+	almostzero[k] = 1.e-6;
       }
     }
-    m_averages[i]->SetContent(&content[0]);
-    m_averages[i]->SetError(&error[0]);
-    for (unsigned int k=0; k<nbins ; k++){
-      content[k] = m_averages[i]->GetBinContent(k);
-      error[k]   = m_averages[i]->GetBinError(k);
-    }
+    m_rms[i]->SetContent(&error[0]);
+    m_rms[i]->SetError(&almostzero[0]);
   }
   
   // write the histos out
@@ -153,7 +151,7 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
   for (auto prof: m_profiles){
     prof->Write();
   }
-  for (auto prof: m_averages){
+  for (auto prof: m_rms){
     prof->Write();
   }
   
@@ -198,18 +196,16 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
     name.clear(); name.str("");
 
     // and now the profile but as Averae, draw first, then modify
-    m_averages[proc]->Draw();
-    m_averages[proc]->SetMinimum(0.85);
-    m_averages[proc]->SetMaximum(1.15);
-    m_averages[proc]->SetStats(kFALSE);
-    m_averages[proc]->SetStats(kFALSE);
-    m_averages[proc]->SetMarkerStyle(20);
-    m_averages[proc]->SetMarkerColor(kBlue);
-    m_averages[proc]->SetMarkerSize(1.25);
-    m_averages[proc]->GetXaxis()->SetTitle("#sqrt{s} [GeV");
-    m_averages[proc]->GetYaxis()->SetTitle("Norm +-RMS");
+    m_rms[proc]->Draw();
+    m_rms[proc]->SetStats(kFALSE);
+    m_rms[proc]->SetStats(kFALSE);
+    m_rms[proc]->SetMarkerStyle(20);
+    m_rms[proc]->SetMarkerColor(kBlue);
+    m_rms[proc]->SetMarkerSize(1.25);
+    m_rms[proc]->GetXaxis()->SetTitle("#sqrt{s} [GeV");
+    m_rms[proc]->GetYaxis()->SetTitle("RMS(Generators)/Average(Generators)");
 
-    name << m_processesList[proc] << "Average" << ".png";
+    name << m_processesList[proc] << "RMS" << ".png";
     c1->Print(name.str().c_str());
 
     // clear and delete
