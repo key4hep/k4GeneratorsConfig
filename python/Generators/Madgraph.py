@@ -172,7 +172,7 @@ class Madgraph(GeneratorBase):
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = flavs[0]
-            f2 = flavs[0]
+            f2 = flavs[1]
             if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
                 return
             sname = f"{name}_min_pdg"
