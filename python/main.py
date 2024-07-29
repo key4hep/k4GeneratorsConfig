@@ -70,13 +70,16 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         energies.extend(ecmSettings.energies())
     
     # now execut file processes
+    rndmSeedFallback = 4711
     if len(energies) == 0:
-        executeFiles(files)
+        executeFiles(files,rndmSeedFallback)
     else:
         for sqrts in energies:
-            executeFiles(files,sqrts)
+            executeFiles(files,sqrts,rndmSeedFallback)
+            #offset for next round by number of yaml files
+            rndmSeedFallback = rndmSeedFallback + len(files)
 
-def executeFiles(files,sqrts=0):
+def executeFiles(files,sqrts=0,rndmSeedFallback=4711):
 
     if sqrts == 0:
         print("Generating and writing configuration files")
@@ -103,12 +106,12 @@ def executeFiles(files,sqrts=0):
             try:
                 randomseed = value['randomseed']
             except:
-                randomseed = 4711+rndmIncrement
+                randomseed = rndmSeedFallback+rndmIncrement
                 value['randomseed'] = randomseed
+                rndmIncrement += 1
             param = process_module.ProcessParameters(settings)
             process_instances[key] = process_module.Process(value, key, param, OutDir=output_dir)
             #increment counter for randomseed
-            rndmIncrement += 1
 
         for process_instance in process_instances.values():
             process_instance.process_info()
