@@ -72,10 +72,10 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     # now execut file processes
     rndmSeedFallback = 4711
     if len(energies) == 0:
-        executeFiles(files,rndmSeedFallback)
+        executeFiles(files,rndmSeedFallback=rndmSeedFallback)
     else:
         for sqrts in energies:
-            executeFiles(files,sqrts,rndmSeedFallback)
+            executeFiles(files,sqrts=sqrts,rndmSeedFallback=rndmSeedFallback)
             #offset for next round by number of yaml files
             rndmSeedFallback = rndmSeedFallback + len(files)
 
