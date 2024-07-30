@@ -58,10 +58,13 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     parser.add_argument('-f', nargs='*', type=str, default=[], help='Input YAML file')
     parser.add_argument('--ecms', nargs='*', type=float, default=[], help='energies to be processed, overrides nominal yaml input file settings')
     parser.add_argument('--ecmsFiles', nargs='*', type=str, default=[], help='yaml files with energies format ecms: [energy1,....] ')
-    args = parser.parse_args()
-    files = args.f
-    energies = args.ecms
+    parser.add_argument('--seed', nargs=1, type=int, default=4711, help='initial random number seed, increment for each file')
+
+    args      = parser.parse_args()
+    files     = args.f
+    energies  = args.ecms
     ecmsfiles = args.ecmsFiles
+    rndmSeed  = args.seed
 
     # so additionallt we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
@@ -70,14 +73,13 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         energies.extend(ecmSettings.energies())
     
     # now execut file processes
-    rndmSeedFallback = 4711
     if len(energies) == 0:
-        executeFiles(files,rndmSeedFallback=rndmSeedFallback)
+        executeFiles(files,rndmSeedFallback=rndmSeed)
     else:
         for sqrts in energies:
-            executeFiles(files,sqrts=sqrts,rndmSeedFallback=rndmSeedFallback)
+            rndmIncrement = executeFiles(files,sqrts=sqrts,rndmSeedFallback=rndmSeed)
             #offset for next round by number of yaml files
-            rndmSeedFallback = rndmSeedFallback + len(files)
+            rndmSeed = rndmSeed + rndmIncrement
 
 def executeFiles(files,sqrts=0,rndmSeedFallback=4711):
 
@@ -118,6 +120,8 @@ def executeFiles(files,sqrts=0,rndmSeedFallback=4711):
             process_instance.set_particle_data(particle_data)
             generators.set_process_info(process_instance)
             generators.initialize_generators()
+
+    return rndmIncrement
 
 
 if __name__ == '__main__':
