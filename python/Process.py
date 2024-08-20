@@ -1,10 +1,21 @@
 from Particles import Particle
 from CirceHelper import CirceHelper
 
+
 class Process:
     """A standard Process"""
 
-    _required_args = ['initial', 'final', 'sqrts', 'order', 'nlo', 'randomseed', 'decay', 'isrmode','beamstrahlung']
+    _required_args = [
+        "initial",
+        "final",
+        "sqrts",
+        "order",
+        "nlo",
+        "randomseed",
+        "decay",
+        "isrmode",
+        "beamstrahlung",
+    ]
 
     def __init__(self, args, procname, params, **options):
         self._init = False
@@ -15,7 +26,6 @@ class Process:
 
         for arg in self._required_args:
             setattr(self, arg, params.settings.get(arg))
-        
         for setting in dir(params):
             if not setting.startswith("__"):
                 setattr(self, setting, getattr(params, setting))
@@ -23,7 +33,7 @@ class Process:
         for option, value in options.items():
             setattr(self, option, value)
 
-        for key,value in args.items():
+        for key, value in args.items():
             setattr(self, key, value)
 
     def process_info(self):
@@ -38,14 +48,16 @@ class Process:
             self._fpdg.append(str(p))
             self._proclabel += f"{self._finfo[p].name} "
             self._parts.append(self._finfo[p])
-        # generate the label for the generatorDB 
+        # generate the label for the generatorDB
         finalstate = [abs(part) for part in self.final]
         # sort ascending
         finalstate.sort()
         for pdg in finalstate:
             self.generatorDBLabel += f"_{str(abs(pdg))}"
         # remove leading _
-        self.generatorDBLabel = self.generatorDBLabel[(self.generatorDBLabel.index("_")+1):] 
+        self.generatorDBLabel = self.generatorDBLabel[
+            (self.generatorDBLabel.index("_") + 1) :
+        ]
 
     def set_particle_data(self, pdata):
         if pdata is None or self._init:
@@ -110,7 +122,7 @@ class Process:
 
     def get_BeamstrahlungFile(self):
         if self.get("beamstrahlung") is not None:
-            circe = CirceHelper(self.beamstrahlung,self.sqrts) 
+            circe = CirceHelper(self.beamstrahlung, self.sqrts)
             return circe.getFile()
 
     def get_generatorDBLabel(self):
@@ -125,14 +137,12 @@ class Process:
 
 
 class ProcessParameters:
-
-
     def __init__(self, settings):
         self.settings = settings
         self.model = settings.get_model()
         self.events = settings.get_event_number()
-        self.output_format        = settings.get_output_format()
-        self.PythiaTune           = settings.get_PythiaTune()
+        self.output_format = settings.get_output_format()
+        self.PythiaTune = settings.get_PythiaTune()
         self.ElectronPolarisation = settings.get_ElectronPolarisation()
         self.PositronPolarisation = settings.get_PositronPolarisation()
         self.PolDensity = settings.get_PolDensity()

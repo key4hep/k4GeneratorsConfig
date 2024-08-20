@@ -1,37 +1,40 @@
 from GeneratorBase import GeneratorBase
 import PythiaProcDB
 
+
 class Pythia(GeneratorBase):
     """Pythia class"""
+
     def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings,"Pythia","dat")
+        super().__init__(procinfo, settings, "Pythia", "dat")
 
         self.version = "x.y.z"
         self.file = ""
         self.cuts = ""
         self.PythiaSelectorFileExtension = "selectors"
-        
+
         self.procDB = PythiaProcDB.PythiaProcDB(self.procinfo)
-        if settings.get("usedefaults",True):
+        if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
-        self.executable  = "$K4GENERATORSCONFIG/pythiaRunner -f"
+        self.executable = "$K4GENERATORSCONFIG/pythiaRunner -f"
         self.gen_settings = settings.get_block("pythia")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
-        self.selectorsFile         = self.GeneratorDatacardBase+"."+self.PythiaSelectorFileExtension
-        self.selectorsFileWithPath = self.outdir+"/"+self.selectorsFile
+        self.selectorsFile = (
+            self.GeneratorDatacardBase + "." + self.PythiaSelectorFileExtension
+        )
+        self.selectorsFileWithPath = self.outdir + "/" + self.selectorsFile
         if settings.get_block("selectors"):
             self.write_selectors()
 
     def write_run(self):
-
-        self.run=""
+        self.run = ""
         self.add_option("Random:setSeed", "on")
         self.add_option("Random:seed", self.procinfo.get_rndmSeed())
 
-        self.add_option("Beams:eCM",self.procinfo.get("sqrts"))
+        self.add_option("Beams:eCM", self.procinfo.get("sqrts"))
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
@@ -58,18 +61,20 @@ class Pythia(GeneratorBase):
                             self.procDB.remove_option(op_name)
                         self.add_option(op_name, value)
 
-        self.add_option("Main:SelectorsFile",self.selectorsFile)
-        
-        if  "hepmc" in self.procinfo.get("output_format"):
+        self.add_option("Main:SelectorsFile", self.selectorsFile)
+
+        if "hepmc" in self.procinfo.get("output_format"):
             self.add_option("Main:WriteHepMC", "on")
-            outputFile = "{0}.{1}".format(self.GeneratorDatacardBase,self.procinfo.get("output_format"))
-            self.add_option("Main:HepMCFile",outputFile)
-        
+            outputFile = "{0}.{1}".format(
+                self.GeneratorDatacardBase, self.procinfo.get("output_format")
+            )
+            self.add_option("Main:HepMCFile", outputFile)
+
         self.run += self.procDB.get_run_out()
         self.run += self.procDB.get_proc_out()
 
         if self.gen_settings is not None:
-            for key,value in self.gen_settings.items():
+            for key, value in self.gen_settings.items():
                 self.add_option(key, value)
 
     def write_decay(self):
@@ -77,28 +82,27 @@ class Pythia(GeneratorBase):
             self.add_decay()
 
     def write_selectors(self):
-        selectors = getattr(self.settings,"selectors")
+        selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
             for proc, sel in procselectors.items():
-                if proc != self.procinfo.get('procname'):
+                if proc != self.procinfo.get("procname"):
                     continue
                 for key, value in sel.items():
-                    if value.process==self.procinfo.get('procname'):
+                    if value.process == self.procinfo.get("procname"):
                         self.add_Selector(value)
         except Exception as e:
             print("Failed to pass process specific cuts in Pythia")
             print(e)
             pass
-        for key,value in selectors.items():
+        for key, value in selectors.items():
             self.add_Selector(value)
         # PYTHIA special: write the selectors to the file proc.selectors
         with open(self.selectorsFileWithPath, "w+") as file:
             file.write(self.cuts)
 
-
-    def add_Selector(self,value):
-        key=value.name.lower()
+    def add_Selector(self, value):
+        key = value.name.lower()
         if key == "pt":
             self.add_one_ParticleSelector(value, "PT")
         elif key == "et":
@@ -106,13 +110,13 @@ class Pythia(GeneratorBase):
         elif key == "rap":
             self.add_one_ParticleSelector(value, "Rapidity")
         elif key == "eta":
-            self.add_one_ParticleSelector(value, "Eta")  
+            self.add_one_ParticleSelector(value, "Eta")
         elif key == "theta":
-            self.add_one_ParticleSelector(value, "Theta","rad")  
+            self.add_one_ParticleSelector(value, "Theta", "rad")
 
             # Two particle selectors
         elif key == "mass":
-            self.add_two_ParticleSelector(value,"Mass")
+            self.add_two_ParticleSelector(value, "Mass")
         elif key == "angle":
             self.add_two_ParticleSelector(value, "Angle")
         elif key == "deta":
@@ -126,76 +130,84 @@ class Pythia(GeneratorBase):
         else:
             print(f"{key} not a Pythia Selector")
 
-    def add_two_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_two_ParticleSelector(self, sel, name):
+        Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = flavs[0]
             f2 = flavs[1]
-            if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+            if (
+                str(f1) not in self.procinfo.get_final_pdg()
+                or str(f2) not in self.procinfo.get_final_pdg()
+            ):
                 return
             sname = "2 "
             sname += f" {name} {f1} {f2} > {Min}"
             if f" {name} {f1} {f2} >" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
+                self.cuts += sname
+                self.cuts += "\n"
             sname = "2 "
             sname += f" {f1} {f2} {name} < {Max}"
             if f"  {f1} {f2} {name} <" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
+                self.cuts += sname
+                self.cuts += "\n"
         else:
             for fl in flavs:
                 f1 = fl[0]
                 f2 = fl[1]
-                if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+                if (
+                    str(f1) not in self.procinfo.get_final_pdg()
+                    or str(f2) not in self.procinfo.get_final_pdg()
+                ):
                     continue
             sname = "2 "
             sname += f" {name} {f1} {f2} > {Min}"
             if f" {name} {f1} {f2} >" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
+                self.cuts += sname
+                self.cuts += "\n"
             sname = "2 "
             sname += f" {f1} {f2} {name} < {Max}"
             if f"  {f1} {f2} {name} <" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
+                self.cuts += sname
+                self.cuts += "\n"
 
-    def add_one_ParticleSelector(self,sel,name,unit=""):
-        Min,Max = sel.get_MinMax(unit)
+    def add_one_ParticleSelector(self, sel, name, unit=""):
+        Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             sname = "1 "
             sname += f"{f} {name} > {Min}"
             if f"{f} {name} >" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
+                self.cuts += sname
+                self.cuts += "\n"
             sname = "1 "
             sname += f"{f} {name} < {Max}"
             if f"{f} {name} <" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
-
-
+                self.cuts += sname
+                self.cuts += "\n"
 
     def add_decay(self):
-        # Simple check first that parents are 
+        # Simple check first that parents are
         # in the main process
         decay_opt = self.procinfo.get("decay")
         for key in decay_opt:
             if str(key) not in self.procinfo.get_final_pdg():
-                print("Particle {0} not found in main process. Decay not allowed".format(key))
+                print(
+                    "Particle {0} not found in main process. Decay not allowed".format(
+                        key
+                    )
+                )
         # Pythia turn off parent, then turn on
-        decays=""
+        decays = ""
         for parent in self.procinfo.get_final_pdg_list():
             self.remove_option(f"{parent}:onMode")
             self.remove_option(f"{parent}:onIfAny")
             decays += f"{parent}:onMode off\n"
             child = decay_opt[parent]
             decays += f"{parent}:onIfAny "
-            for c in child: 
+            for c in child:
                 decays += f"{c} "
-            decays+="\n"  
+            decays += "\n"
         self.run += "\n"
         self.run += decays
 
@@ -207,10 +219,12 @@ class Pythia(GeneratorBase):
 
     def write_key4hepfile(self):
         key4hepRun = ""
-        key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
+        key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase)
+        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
+            hepmcformat, self.GeneratorDatacardBase
+        )
 
         self.write_Key4hepScript(key4hepRun)
 
@@ -224,7 +238,7 @@ class Pythia(GeneratorBase):
             return
         self.run += f"{key} = {value}\n"
 
-    def remove_option(self,opt):
+    def remove_option(self, opt):
         lines = self.run.split("\n")
         filter_lines = [line for line in lines if opt not in line]
         self.run = "\n".join(filter_lines)

@@ -1,5 +1,6 @@
 class MadgraphProcDB:
     """MadgraphProcDB class"""
+
     def __init__(self, process):
         self.process = process
         self.runout = ""
@@ -8,25 +9,25 @@ class MadgraphProcDB:
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if ( label == "12_12" ):
+        if label == "12_12":
             self.runout += self.write_Difermion()
-        if ( label == "13_13" ):
+        if label == "13_13":
             self.runout += self.write_Difermion()
-        if ( label == "14_14" ):
+        if label == "14_14":
             self.runout += self.write_Difermion()
-        if ( label == "15_15" ):
+        if label == "15_15":
             self.runout += self.write_Difermion()
-        if ( label == "16_16" ):
+        if label == "16_16":
             self.runout += self.write_Difermion()
-        if ( label == "12_12" ):
+        if label == "12_12":
             self.runout += self.write_Difermion()
-        elif ( label == "23_25" ):
+        elif label == "23_25":
             self.runout += self.write_run_ZH()
 
     def write_Difermion(self):
         out = ""
+        out += f"\n {{ {self.process.final[0]}: 0 }} =  pt_min_pdg"
         return out
-
 
     def get_run_out(self):
         return self.runout
@@ -38,8 +39,7 @@ class MadgraphProcDB:
         out = ""
         return out
 
-
-    def remove_option(self,opt):
+    def remove_option(self, opt):
         lines = self.runout.split("\n")
         filter_lines = [line for line in lines if opt not in line]
         self.runout = "\n".join(filter_lines)

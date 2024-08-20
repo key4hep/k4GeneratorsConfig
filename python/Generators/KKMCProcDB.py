@@ -1,5 +1,6 @@
 class KKMCProcDB:
     """KKMCProcDB class"""
+
     def __init__(self, process):
         self.process = process
         self.runout = ""
@@ -8,18 +9,18 @@ class KKMCProcDB:
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if ( label == "11_11" ):
+        if label == "11_11":
             self.write_Difermion()
-        if ( label == "13_13" ):
+        if label == "13_13":
             self.write_Difermion()
-        if ( label == "22_22" ):
+        if label == "22_22":
             self.write_Diphoton()
 
     def write_Difermion(self):
-        self.runout  = ""
+        self.runout = ""
 
     def write_Diphoton(self):
-        self.runout  = ""
+        self.runout = ""
 
     def get_run_out(self):
         return self.runout
@@ -27,7 +28,7 @@ class KKMCProcDB:
     def get_proc_out(self):
         return self.procout
 
-    def remove_option(self,opt):
+    def remove_option(self, opt):
         lines = self.runout.split("\n")
         filter_lines = [line for line in lines if opt not in line]
         self.runout = "\n".join(filter_lines)

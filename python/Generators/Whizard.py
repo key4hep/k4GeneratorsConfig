@@ -1,11 +1,12 @@
 from GeneratorBase import GeneratorBase
-import Particles
 import WhizardProcDB
+
 
 class Whizard(GeneratorBase):
     """Whizard class"""
+
     def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings,"Whizard","sin")
+        super().__init__(procinfo, settings, "Whizard", "sin")
 
         self.version = "x.y.z"
         self.file = ""
@@ -13,10 +14,10 @@ class Whizard(GeneratorBase):
         self.integrate = ""
 
         self.procDB = WhizardProcDB.WhizardProcDB(self.procinfo)
-        if settings.get("usedefaults",True):
+        if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
-        self.executable  = "whizard"
+        self.executable = "whizard"
         self.gen_settings = settings.get_block("whizard")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
@@ -26,7 +27,9 @@ class Whizard(GeneratorBase):
     def write_process(self):
         self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
         self.whiz_beam2 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(2))
-        self.finalstate = ", ".join(map(self.pdg_to_whizard, self.procinfo.get_final_pdg_list()))
+        self.finalstate = ", ".join(
+            map(self.pdg_to_whizard, self.procinfo.get_final_pdg_list())
+        )
 
         try:
             if "model" in self.gen_settings:
@@ -34,7 +37,7 @@ class Whizard(GeneratorBase):
         except:
             self.process = f"model = {self.procinfo.get('model')}\n"
 
-        self.add_process_option("seed",self.procinfo.get_rndmSeed())
+        self.add_process_option("seed", self.procinfo.get_rndmSeed())
 
         if self.procinfo.get("isrmode"):
             self.add_process_option("?isr_handler", "true")
@@ -47,13 +50,21 @@ class Whizard(GeneratorBase):
             self.add_process_option("isr_mass", isrmass)
             # insert the circe file and turn off polarization if necessary
             if self.procinfo.get("beamstrahlung") is not None:
-                self.process += f"$circe2_file= \"{self.procinfo.get_BeamstrahlungFile()}\"\n"
-                if self.procinfo.get_ElectronPolarisation()==0 and self.procinfo.get_PositronPolarisation()==0:
+                self.process += (
+                    f'$circe2_file= "{self.procinfo.get_BeamstrahlungFile()}"\n'
+                )
+                if (
+                    self.procinfo.get_ElectronPolarisation() == 0
+                    and self.procinfo.get_PositronPolarisation() == 0
+                ):
                     self.process += f"?circe2_polarized= false\n"
         else:
             self.add_process_option("?isr_handler", "false")
 
-        if self.procinfo.get_ElectronPolarisation()!=0 or self.procinfo.get_PositronPolarisation()!=0:
+        if (
+            self.procinfo.get_ElectronPolarisation() != 0
+            or self.procinfo.get_PositronPolarisation() != 0
+        ):
             self.process += f"beams_pol_density = @({self.procinfo.get_PolDensity()[0]}), @({self.procinfo.get_PolDensity()[1]})\n"
             self.process += f"beams_pol_fraction = {self.procinfo.get_ElectronPolarisation()}, {self.procinfo.get_PositronPolarisation()}\n"
 
@@ -78,9 +89,11 @@ class Whizard(GeneratorBase):
                         self.add_process_option(dname, value)
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
-        self.add_process_option("sample_format", str(self.procinfo.get("output_format")).rstrip("23"))
-        self.add_process_option("?hepmc_output_cross_section","true")
-        self.add_process_option("?write_raw","false")
+        self.add_process_option(
+            "sample_format", str(self.procinfo.get("output_format")).rstrip("23")
+        )
+        self.add_process_option("?hepmc_output_cross_section", "true")
+        self.add_process_option("?write_raw", "false")
         self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":
             self.add_process_option("?unweighted", "true")
@@ -92,7 +105,7 @@ class Whizard(GeneratorBase):
 
     def add_decay(self):
         decay_opt = self.procinfo.get("decay")
-        decays=""
+        decays = ""
         for key in decay_opt:
             parent = self.pdg_to_whizard(key)
             decays += f"process decay{parent} = {parent} => "
@@ -102,8 +115,8 @@ class Whizard(GeneratorBase):
                 else:
                     decays += self.pdg_to_whizard(child) + ", "
 
-            decays +="\n"
-            decays +=f"unstable {parent} (decay{parent})\n"
+            decays += "\n"
+            decays += f"unstable {parent} (decay{parent})\n"
             # decays +=f"integrate (decay{parent})\n"
             self.procs.append(f"decay{parent}")
 
@@ -111,24 +124,24 @@ class Whizard(GeneratorBase):
 
     def write_selectors(self):
         self.cuts = "cuts = "
-        selectors = getattr(self.settings,"selectors")
+        selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
             for proc, sel in procselectors.items():
-                if proc != self.procinfo.get('procname'):
+                if proc != self.procinfo.get("procname"):
                     continue
                 for key, value in sel.items():
-                     if value.process==self.procinfo.get('procname'):
+                    if value.process == self.procinfo.get("procname"):
                         self.add_Selector(value)
         except Exception as e:
             print("Failed to pass process specific cuts in Whizard")
             print(e)
             pass
-        for key,value in selectors.items():
+        for key, value in selectors.items():
             self.add_Selector(value)
 
     def add_Selector(self, value):
-        key=value.name.lower()
+        key = value.name.lower()
         if key == "pt":
             self.add_one_ParticleSelector(value, "Pt")
         elif key == "energy":
@@ -138,16 +151,15 @@ class Whizard(GeneratorBase):
         elif key == "eta":
             self.add_one_ParticleSelector(value, "eta")
         elif key == "theta":
-            self.add_one_ParticleSelector(value, "Theta","rad")
+            self.add_one_ParticleSelector(value, "Theta", "rad")
             # Two particle selectors
         elif key == "mass":
-            self.add_two_ParticleSelector(value,"m")
+            self.add_two_ParticleSelector(value, "m")
         else:
             print(f"{key} not a Standard Whizard Selector")
 
-
-    def add_two_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_two_ParticleSelector(self, sel, name):
+        Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = self.pdg_to_whizard(flavs[0])
@@ -155,10 +167,10 @@ class Whizard(GeneratorBase):
             if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                 return
             if self.cutsadded is False:
-                self.cuts+=f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                self.cuts += f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
                 self.cutsadded = True
             else:
-                self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                self.cuts += f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
 
         else:
             for fl in flavs:
@@ -167,22 +179,21 @@ class Whizard(GeneratorBase):
                 if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                     continue
                 if self.cutsadded is False:
-                    self.cuts+=f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                    self.cuts += f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
                     self.cutsadded = True
                 else:
-                    self.cuts+=f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                    self.cuts += f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
 
-    def add_one_ParticleSelector(self,sel,name,unit=""):
-        Min,Max = sel.get_MinMax(unit)
+    def add_one_ParticleSelector(self, sel, name, unit=""):
+        Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
-            f=self.pdg_to_whizard(f)
+            f = self.pdg_to_whizard(f)
             if self.cutsadded is False:
-                self.cuts+=f" all {Min} < {name} <= {Max} [{f}] \n"
+                self.cuts += f" all {Min} < {name} <= {Max} [{f}] \n"
                 self.cutsadded = True
             else:
-                self.cuts+=f" and all {Min} < {name} <= {Max} [{f}] \n"
-
+                self.cuts += f" and all {Min} < {name} <= {Max} [{f}] \n"
 
     def write_integrate(self):
         for p in self.procs:
@@ -213,8 +224,10 @@ class Whizard(GeneratorBase):
             accel = self.procinfo.get("beamstrahlung")
             key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
         # back to normal
-        key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
-        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(self.procinfo.get("output_format"),self.GeneratorDatacardBase)
+        key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
+        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(
+            self.procinfo.get("output_format"), self.GeneratorDatacardBase
+        )
         self.write_Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):
@@ -229,10 +242,10 @@ class Whizard(GeneratorBase):
         apdg = abs(pdg)
         if type(pdg) is int:
             if 11 <= apdg <= 16:
-                lepton_type = "e" if pdg%2==1 else "n"
+                lepton_type = "e" if pdg % 2 == 1 else "n"
                 flavor = (apdg - 11) // 2 + 1
                 if pdg < 0:
-                    lepton_type=lepton_type.capitalize() 
+                    lepton_type = lepton_type.capitalize()
                 return f"{lepton_type}{flavor}"
             elif apdg > 20:
                 particle_mapping = {22: "gamma", 23: "Z", 25: "H", 24: "Wp", -24: "Wm"}
@@ -247,16 +260,16 @@ class Whizard(GeneratorBase):
         q = quark_mapping.get(abs(pdg), "")
         return q.capitalize() if pdg > 0 else q
 
-    def whizard_MW_name(self,pdg):
+    def whizard_MW_name(self, pdg):
         if abs(pdg) <= 2:
-            raise(ValueError, "Whizard does not support light quark masses or widths")
-        if (abs(pdg) >= 12 and abs(pdg) <= 16) and pdg%2==0:
-            raise(ValueError, "Whizard does not support neutrino masses or widths")
-        if abs(pdg)==6:
+            raise (ValueError, "Whizard does not support light quark masses or widths")
+        if (abs(pdg) >= 12 and abs(pdg) <= 16) and pdg % 2 == 0:
+            raise (ValueError, "Whizard does not support neutrino masses or widths")
+        if abs(pdg) == 6:
             return "top"
-        elif abs(pdg)==15:
+        elif abs(pdg) == 15:
             return "tau"
-        elif abs(pdg)==24:
+        elif abs(pdg) == 24:
             return "W"
         else:
             return self.pdg_to_whizard(pdg)
