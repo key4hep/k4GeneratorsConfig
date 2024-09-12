@@ -8,25 +8,16 @@ class MadgraphProcDB:
 
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
+        if len(self.process.final) == 2:
+            if abs(self.process.final[0]) <= 16:
+                self.runout += self.write_Difermion()
         label = self.process.get_generatorDBLabel()
-        if label == "12_12":
-            self.runout += self.write_Difermion()
-        if label == "13_13":
-            self.runout += self.write_Difermion()
-        if label == "14_14":
-            self.runout += self.write_Difermion()
-        if label == "15_15":
-            self.runout += self.write_Difermion()
-        if label == "16_16":
-            self.runout += self.write_Difermion()
-        if label == "12_12":
-            self.runout += self.write_Difermion()
-        elif label == "23_25":
+        if label == "23_25":
             self.runout += self.write_run_ZH()
 
     def write_Difermion(self):
         out = ""
-        out += f"\n {{ {self.process.final[0]}: 0 }} =  pt_min_pdg"
+        out += f"\nset pt_min_pdg {{{self.process.final[0]}: 0 }}\n"
         return out
 
     def get_run_out(self):

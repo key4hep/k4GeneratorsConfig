@@ -17,7 +17,7 @@ class Pythia(GeneratorBase):
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
-        self.executable = "$K4GENERATORSCONFIG/pythiaRunner -f"
+        self.executable = "$K4GenBuildDir/bin/pythiaRunner -f"
         self.gen_settings = settings.get_block("pythia")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
@@ -222,7 +222,7 @@ class Pythia(GeneratorBase):
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
+        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
 

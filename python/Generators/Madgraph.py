@@ -1,6 +1,5 @@
 from GeneratorBase import GeneratorBase
 import MadgraphProcDB
-import Selectors
 from Particles import Particle as part
 
 
@@ -143,8 +142,6 @@ class Madgraph(GeneratorBase):
 
     def write_selectors(self):
         selectors = getattr(self.settings, "selectors")
-        if not selectors:
-            self.add_default_Selectors()
         try:
             procselectors = getattr(self.settings, "procselectors")
             for proc, sel in procselectors.items():
@@ -188,22 +185,6 @@ class Madgraph(GeneratorBase):
             self.add_two_ParticleSelector(value, "DeltaR")
         else:
             print(f"{key} not a MadGraph Selector")
-
-    def add_default_Selectors(self):
-        sel = Selectors.Selectors(self.proc, "Default", None)
-        self.add_one_DefaultParticleSelector(sel, "pt")
-        self.add_one_DefaultParticleSelector(sel, "e")
-        self.add_one_DefaultParticleSelector(sel, "eta")
-        self.add_one_DefaultParticleSelector(sel, "eta")
-        self.add_one_DefaultParticleSelector(sel, "eta", "eta")
-
-        # Two particle selectors
-        self.add_two_DefaultParticleSelector(sel, "mxx")
-        self.add_two_DefaultParticleSelector(sel, "Angle")
-        self.add_two_DefaultParticleSelector(sel, "Angle")
-        self.add_two_DefaultParticleSelector(sel, "DeltaY")
-        self.add_two_DefaultParticleSelector(sel, "DeltaPhi")
-        self.add_two_DefaultParticleSelector(sel, "DeltaR")
 
     def add_two_ParticleSelector(self, sel, name, flavs=None):
         Min, Max = sel.get_MinMax()
@@ -263,14 +244,6 @@ class Madgraph(GeneratorBase):
             # maxcut = f"{f}: {Max}"
             # self.run+=f"set {sname} {maxcut}\n"
 
-    def add_one_DefaultParticleSelector(self, sel, name, unit=""):
-        self.add_one_ParticleSelector(
-            sel, name, unit, self.procinfo.get_final_pdg_list()
-        )
-
-    def add_two_DefaultParticleSelector(self, sel, name, unit=""):
-        self.add_two_ParticleSelector(sel, name, self.procinfo.get_final_pdg_list())
-
     def add_min_max_cut(self, flav, name, Min, Max):
         sname = f"{name}_min_pdg"
         mincut = f"{flav}: {Min}"
@@ -295,9 +268,9 @@ class Madgraph(GeneratorBase):
         )
         # temporarily kick out the header since the
         key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
+        key4hepRun += f"$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
+        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
         self.write_Key4hepScript(key4hepRun)

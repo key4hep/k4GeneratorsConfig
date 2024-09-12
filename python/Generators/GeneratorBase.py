@@ -50,7 +50,7 @@ class GeneratorBase:
         analysis = "\n"
         finalStateList = self.procinfo.get_final_pdg_list()
         if len(finalStateList) == 2:
-            analysis += "$K4GENERATORSCONFIG/analyze2f -a {0} -b {1} ".format(
+            analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} ".format(
                 finalStateList[0], finalStateList[1]
             )
         else:
