@@ -76,7 +76,6 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     )
     parser.add_argument(
         "--nevts",
-        nargs=1,
         type=int,
         default=-1,
         help="Number of events to be generated",
@@ -86,7 +85,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     energies = args.ecms
     ecmsfiles = args.ecmsFiles
     rndmSeed  = args.seed
-    events = args.nevts[0]
+    events = args.nevts
 
     # so additionallt we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
