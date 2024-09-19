@@ -5,8 +5,10 @@ import Babayaga
 import KKMC
 import Pythia
 
+
 class Generators:
     """Generator class"""
+
     def __init__(self, settings):
         self.settings = settings
         self.generator_list = settings.gens()

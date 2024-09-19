@@ -6,6 +6,6 @@ fi
 Sherpa -f ZHDecay350.dat
 ./makelibs 
 Sherpa -f ZHDecay350.dat
-$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc3g ZHDecay350.edm4hep
+$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc3g ZHDecay350.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 23 -b 25 -i ZHDecay350.edm4hep -o ZHDecay350.root
+$K4GenBuildDir/bin/analyze2f -a 23 -b 25 -i ZHDecay350.edm4hep -o ZHDecay350.root

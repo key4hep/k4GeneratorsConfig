@@ -7,7 +7,7 @@ mg5_aMC Muon240_ISR_BSTcepc.dat
 gunzip Output/Events/run_01/unweighted_events.lhe.gz
 ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
 sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe
-$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe Muon240_ISR_BSTcepc.hepmc
-$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon240_ISR_BSTcepc.hepmc Muon240_ISR_BSTcepc.edm4hep
+$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe Muon240_ISR_BSTcepc.hepmc
+$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon240_ISR_BSTcepc.hepmc Muon240_ISR_BSTcepc.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 13 -b -13 -i Muon240_ISR_BSTcepc.edm4hep -o Muon240_ISR_BSTcepc.root
+$K4GenBuildDir/bin/analyze2f -a 13 -b -13 -i Muon240_ISR_BSTcepc.edm4hep -o Muon240_ISR_BSTcepc.root

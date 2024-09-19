@@ -19,5 +19,12 @@ for dir in ${SrcDir[@]}; do
 	export PYTHONPATH=${K4GenDir}/python/${dir}:$PYTHONPATH
 done
 
+export K4GenBuildDir=${K4GenDir}/build/
+
+if [[ ! -d ${K4GenBuildDir} ]]; then
+	echo "Build directory not found! "
+	exit 1
+fi
+
 # Set executable
 alias k4gen="python3 ${K4GenDir}/python/main.py"

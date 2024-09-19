@@ -1,25 +1,27 @@
 from GeneratorBase import GeneratorBase
 import SherpaProcDB
 
+
 class Sherpa(GeneratorBase):
     """Sherpa class"""
+
     def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings,"Sherpa","dat")
+        super().__init__(procinfo, settings, "Sherpa", "dat")
 
         self.version = "x.y.z"
         self.file = ""
         self.cuts = ""
 
         self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
-        if settings.get("usedefaults",True):
+        if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
-        self.executable  = "Sherpa -f"
+        self.executable = "Sherpa -f"
         self.gen_settings = settings.get_block("sherpa")
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
         if settings.get_block("selectors"):
-            self.cuts="(selector){\n"
+            self.cuts = "(selector){\n"
             self.write_selectors()
 
     def write_run(self):
@@ -27,7 +29,7 @@ class Sherpa(GeneratorBase):
 
         self.add_run_option("RANDOM_SEED", self.procinfo.get_rndmSeed())
 
-        ENG = self.procinfo.get("sqrts") / 2.
+        ENG = self.procinfo.get("sqrts") / 2.0
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
@@ -54,21 +56,19 @@ class Sherpa(GeneratorBase):
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
                         self.add_run_option(op_name, value)
-        if  self.procinfo.get("output_format") == "hepmc2":
-            eoutname="HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
+        if self.procinfo.get("output_format") == "hepmc2":
+            eoutname = "HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
-			
+
         elif self.procinfo.get("output_format") == "hepmc3":
-            eoutname="HepMC3_GenEvent[{0}.hepmc3g]".format(self.GeneratorDatacardBase)
+            eoutname = "HepMC3_GenEvent[{0}.hepmc3g]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
         self.run += self.procDB.get_run_out()
         self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
-                for key,value in self.gen_settings["run"].items():
+                for key, value in self.gen_settings["run"].items():
                     self.add_run_option(key, value)
-
-
 
     def write_process(self):
         self.ptext = "(processes){\n"
@@ -80,25 +80,25 @@ class Sherpa(GeneratorBase):
         self.ptext += "  End process;\n"
 
     def write_selectors(self):
-        selectors = getattr(self.settings,"selectors")
+        selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
             for proc, sel in procselectors.items():
-                if proc != self.procinfo.get('procname'):
+                if proc != self.procinfo.get("procname"):
                     continue
                 for key, value in sel.items():
-                    if value.process==self.procinfo.get('procname'):
+                    if value.process == self.procinfo.get("procname"):
                         self.add_Selector(value)
         except Exception as e:
             print("Failed to pass process specific cuts in Sherpa")
             print(e)
             pass
-        for key,value in selectors.items():
+        for key, value in selectors.items():
             self.add_Selector(value)
-        self.cuts+="}(selector)\n"
+        self.cuts += "}(selector)\n"
 
-    def add_Selector(self,value):
-        key=value.name.lower()
+    def add_Selector(self, value):
+        key = value.name.lower()
         if key == "pt":
             self.add_one_ParticleSelector(value, "PT")
         elif key == "et":
@@ -106,13 +106,13 @@ class Sherpa(GeneratorBase):
         elif key == "rap":
             self.add_one_ParticleSelector(value, "Rapidity")
         elif key == "eta":
-            self.add_one_ParticleSelector(value, "PseudoRapidity")  
+            self.add_one_ParticleSelector(value, "PseudoRapidity")
         elif key == "theta":
-            self.add_one_ParticleSelector(value, "PseudoRapidity","eta")  
+            self.add_one_ParticleSelector(value, "PseudoRapidity", "eta")
 
             # Two particle selectors
         elif key == "mass":
-            self.add_two_ParticleSelector(value,"Mass")
+            self.add_two_ParticleSelector(value, "Mass")
         elif key == "angle":
             self.add_two_ParticleSelector(value, "Angle")
         elif key == "deta":
@@ -126,65 +126,71 @@ class Sherpa(GeneratorBase):
         else:
             print(f"{key} not a Sherpa Selector")
 
-    def add_two_ParticleSelector(self,sel,name):
-        Min,Max = sel.get_MinMax()
+    def add_two_ParticleSelector(self, sel, name):
+        Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = flavs[0]
             f2 = flavs[1]
-            if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+            if (
+                str(f1) not in self.procinfo.get_final_pdg()
+                or str(f2) not in self.procinfo.get_final_pdg()
+            ):
                 return
             sname = f" {name} {f1} {f2} {Min} {Max}"
             if f" {name} {f1} {f2}" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
+                self.cuts += sname
+                self.cuts += "\n"
         else:
             for fl in flavs:
                 f1 = fl[0]
                 f2 = fl[1]
-                if str(f1) not in self.procinfo.get_final_pdg() or str(f2) not in self.procinfo.get_final_pdg():
+                if (
+                    str(f1) not in self.procinfo.get_final_pdg()
+                    or str(f2) not in self.procinfo.get_final_pdg()
+                ):
                     continue
                 sname = f" {name} {f1} {f2} {Min} {Max}"
                 if f" {name} {f1} {f2}" not in self.cuts:
-                    self.cuts+=sname
-                    self.cuts+="\n"
+                    self.cuts += sname
+                    self.cuts += "\n"
 
-    def add_one_ParticleSelector(self,sel,name,unit=""):
-        Min,Max = sel.get_MinMax(unit)
+    def add_one_ParticleSelector(self, sel, name, unit=""):
+        Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             sname = f" {name} {f} {Min} {Max}"
             if f" {name} {f}" not in self.cuts:
-                self.cuts+=sname
-                self.cuts+="\n"
-
-
+                self.cuts += sname
+                self.cuts += "\n"
 
     def add_decay(self):
-        # Simple check first that parents are 
+        # Simple check first that parents are
         # in the main process
         decay_opt = self.procinfo.get("decay")
         for key in decay_opt:
             if str(key) not in self.procinfo.get_final_pdg():
-                print("Particle {0} not found in main process. Decay not allowed".format(key))
+                print(
+                    "Particle {0} not found in main process. Decay not allowed".format(
+                        key
+                    )
+                )
         # Sherpa requires the decaying particles get an additional label 25-> 25[a]
         # so parse letters to the process definition
         i = 97
-        fs=""
-        decays=""
+        fs = ""
+        decays = ""
         for p in self.procinfo.get_final_pdg_list():
             parent = str(p) + f"[{chr(i)}] "
             child = decay_opt[p]
             fs += parent
             decays += f"  Decay {parent} -> "
-            for c in child: 
+            for c in child:
                 decays += f"{c} "
-            decays+="\n"  
-            i+=1
+            decays += "\n"
+            i += 1
         self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n"
         self.ptext += decays
-
-		
 
     def write_file(self):
         self.write_run()
@@ -197,15 +203,17 @@ class Sherpa(GeneratorBase):
     def write_key4hepfile(self):
         key4hepRun = ""
         if "Amegic" in self.file:
-            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
-            key4hepRun +="./makelibs \n"
-            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n"
+            key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
+            key4hepRun += "./makelibs \n"
+            key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         else:
-            key4hepRun += self.executable+" "+self.GeneratorDatacardName+"\n" 
+            key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         hepmcformat = self.procinfo.get("output_format")
         hepmcversion = hepmcformat[-1]
-        key4hepRun += "$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2}g {1}.edm4hep\n".format(hepmcformat,self.GeneratorDatacardBase,hepmcversion)
+        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2}g {1}.edm4hep\n".format(
+            hepmcformat, self.GeneratorDatacardBase, hepmcversion
+        )
 
         self.write_Key4hepScript(key4hepRun)
 

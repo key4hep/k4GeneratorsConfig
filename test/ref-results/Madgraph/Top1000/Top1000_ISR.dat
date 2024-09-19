@@ -32,3 +32,5 @@ set nevents 100000
 set pdlabel isronlyll
 set lpp1 3
 set lpp2 -3
+
+set pt_min_pdg {6: 0 }

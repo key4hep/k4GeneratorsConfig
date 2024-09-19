@@ -1,0 +1,26 @@
+(run){
+ RANDOM_SEED 4715;
+ BEAM_1 11;
+ BEAM_2 -11;
+ BEAM_ENERGY_1 45.6;
+ BEAM_ENERGY_2 45.6;
+ MODEL SM;
+ PDF_LIBRARY None;
+ EVENTS 100000;
+
+
+ MASS[23] 91.1876;
+ WIDTH[23] 2.4952;
+ EVENT_OUTPUT HepMC3_GenEvent[charm91.2.hepmc3g];
+ EVENT_GENERATION_MODE unweighted;
+ EW_SCHEME 3;
+}(run)
+
+(processes){
+  Process 11 -11 -> 4 -4;
+  Order (0,2);
+  End process;
+}(processes)
+
+(selector){
+}(selector)
