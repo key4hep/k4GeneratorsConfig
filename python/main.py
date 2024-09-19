@@ -74,11 +74,19 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         default=[],
         help="yaml files with energies format ecms: [energy1,....] ",
     )
+    parser.add_argument(
+        "--nevts",
+        nargs=1,
+        type=int,
+        default=-1,
+        help="Number of events to be generated",
+    )
     args = parser.parse_args()
     files = args.f
     energies = args.ecms
     ecmsfiles = args.ecmsFiles
     rndmSeed  = args.seed
+    events = args.nevts[0]
 
     # so additionallt we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
@@ -88,15 +96,15 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
     # now execut file processes
     if len(energies) == 0:
-        executeFiles(files, rndmSeedFallback=rndmSeed)
+        executeFiles(files, rndmSeed, events)
     else:
         for sqrts in energies:
-            rndmIncrement = executeFiles(files,sqrts=sqrts,rndmSeedFallback=rndmSeed)
+            rndmIncrement = executeFiles(files,sqrts,rndmSeed,events)
             # offset for next round by number of yaml files
             rndmSeed = rndmSeed + rndmIncrement
 
 
-def executeFiles(files, sqrts=0, rndmSeedFallback=4711):
+def executeFiles(files, sqrts=0, rndmSeedFallback=4711, events=-1):
     if sqrts == 0:
         print("Generating and writing configuration files")
     else:
@@ -104,6 +112,9 @@ def executeFiles(files, sqrts=0, rndmSeedFallback=4711):
 
     for yaml_file in files:
         settings = Settings.Input(yaml_file)
+        if events != -1:
+            print(events)
+            settings.set("events", events)
         settings.gens()
         processes = settings.get_processes(sqrts)
         particle_data = settings.get_particle_data()
@@ -129,7 +140,6 @@ def executeFiles(files, sqrts=0, rndmSeedFallback=4711):
                 value, key, param, OutDir=output_dir
             )
             # increment counter for randomseed
-
         for process_instance in process_instances.values():
             process_instance.process_info()
             process_instance.set_particle_data(particle_data)

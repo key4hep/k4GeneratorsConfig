@@ -129,6 +129,9 @@ class Input:
     def get_weighted_mode(self):
         return self.get("eventmode", "unweighted")
 
+    def set(self,key,value):
+        setattr(self,key,value)
+
     def CheckDefaults(self):
         defaultName = ["initial", "isrmode", "beamstrahlung", "decay", "nlo"]
         defaultValue = [[11, -11], None, None, None, "lo"]
