@@ -405,7 +405,7 @@ BeginX
 ********************************************************************************
 ********************************************************************************
 * FOAM GENERATION PARAMETERS
- 3020      4720      Ranmar initial random number seed (KKMC and FOAM)
+ 3020      4715      Ranmar initial random number seed (KKMC and FOAM)
 *indx_____data______ccccccccc0cccc__________General_____ccc0ccccccccc0ccccccccc0
  3021          20000 FOAM Maximum number of cells (5000 default, 2000 for map)
  3022              0 FOAM Vopt: set to 0 to save vertices, 1 to NOT save them

@@ -1,5 +1,5 @@
 Random:setSeed = on
-Random:seed = 4719
+Random:seed = 4714
 Beams:eCM = 350
 Beams:idA = 11
 Beams:idB = -11

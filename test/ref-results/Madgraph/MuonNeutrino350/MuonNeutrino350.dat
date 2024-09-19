@@ -22,9 +22,10 @@ import model sm
 generate e- e+ > vm vm~ 
 output Output
 launch
-set iseed 4720
+set iseed 4715
 set EBEAM 175.0
 set MZ 91.1876
 set WZ 2.4952
 set nevents 100000
+
 set pt_min_pdg {14: 0 }

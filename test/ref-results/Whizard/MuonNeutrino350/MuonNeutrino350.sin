@@ -1,5 +1,5 @@
 model = SM
-seed = 4720
+seed = 4715
 ?isr_handler = false
 process proc = e1, E1 => n2, N2
 n_events = 100000
