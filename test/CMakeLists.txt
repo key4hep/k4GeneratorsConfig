@@ -1,7 +1,23 @@
-add_test(NAME InputAndRun COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/check.sh -r)
-set_tests_properties(InputAndRun
-  PROPERTIES
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    ENVIRONMENT "K4GENERATORSCONFIG=${PROJECT_BINARY_DIR}/bin"
-    TIMEOUT 3500
-)
+set(TEST_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/check-runs.sh")
+set(TEST_TIMEOUT 3500)
+set(TEST_ENVIRONMENT "K4GENERATORSCONFIG=${PROJECT_BINARY_DIR}/bin")
+
+function(add_custom_test name generator)
+  add_test(NAME ${name}_${generator} COMMAND ${TEST_COMMAND} ${generator} -r)
+  set_tests_properties(${name}_${generator}
+    PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      ENVIRONMENT ${TEST_ENVIRONMENT}
+      TIMEOUT ${TEST_TIMEOUT}
+  )
+endfunction()
+
+# Add tests using the function with simplified names
+add_custom_test(InputAndRun Sherpa)
+add_custom_test(InputAndRun KKMC)
+add_custom_test(InputAndRun Whizard)
+add_custom_test(InputAndRun Babayaga)
+add_custom_test(InputAndRun Pythia)
+add_custom_test(InputAndRun Madgraph)
+
+#add_test(NAME Finalize COMMAND ${CMAKE_BINARY_DIR}/bin/xsectionSummary -f ${CMAKE_SOURCE_DIR}/test/xsectionSummary.dat)
