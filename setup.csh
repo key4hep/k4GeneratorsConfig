@@ -31,5 +31,13 @@ foreach dir ( $SrcDir )
    endif
 end
 
+setenv K4GenBuildDir "${K4GenDir}/build/"
+
+# Check if the directory exists
+if (! -d "${K4GenBuildDir}") then
+    echo "Build directory not found!"
+    exit 1
+endif
+
 # Set executable
 alias k4gen "python3 ${K4GenDir}/python/main.py"
