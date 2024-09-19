@@ -1,6 +1,7 @@
 // File to read EDM4HEP output and extract the cross sections
 #include <iostream>
 #include <fstream>
+#include <unistd.h>
 
 #include "TFile.h"
 #include "TH1D.h"
