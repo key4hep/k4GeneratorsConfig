@@ -75,6 +75,13 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         help="yaml files with energies format ecms: [energy1,....] ",
     )
     parser.add_argument(
+        "--seed",
+        nargs=1,
+        type=int,
+        default=4711,
+        help="initial random number seed, increment for each file",
+    )
+    parser.add_argument(
         "--nevts",
         type=int,
         default=-1,
@@ -95,7 +102,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
     # now execut file processes
     if len(energies) == 0:
-        executeFiles(files, rndmSeed, events)
+        executeFiles(files, 0, rndmSeed, events)
     else:
         for sqrts in energies:
             rndmIncrement = executeFiles(files,sqrts,rndmSeed,events)
@@ -103,7 +110,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
             rndmSeed = rndmSeed + rndmIncrement
 
 
-def executeFiles(files, sqrts=0, rndmSeedFallback=4711, events=-1):
+def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
     if sqrts == 0:
         print("Generating and writing configuration files")
     else:
