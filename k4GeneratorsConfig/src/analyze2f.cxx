@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     std::cout << "analyze2f the tool " << toolInfos[0].name << std::endl;
   }
   else {
-    std::cout << "k4GeneratorsConfig::Error: ToolInfos not available" << std::endl;
+    std::cout << "k4GeneratorsConfig::Warning: ToolInfos not available" << std::endl;
   }
 
   // retrieve the cross section for the last event if not possible it's not valid

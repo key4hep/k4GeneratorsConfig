@@ -89,10 +89,11 @@ class KKMC(GeneratorBase):
 
     def write_key4hepfile(self):
         key4hepRun = ""
-        key4hepRun += "KKMCee -c  {0} -o {1}.{2}\n".format(
+        key4hepRun += "KKMCee -c  {0} --nevts {3} -o {1}.{2}\n".format(
             self.GeneratorDatacardName,
             self.GeneratorDatacardBase,
             self.procinfo.get("output_format"),
+            self.procinfo.get("events")
         )
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
