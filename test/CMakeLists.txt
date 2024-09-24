@@ -19,7 +19,7 @@ set_tests_properties("xsectionRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       ENVIRONMENT ${TEST_ENVIRONMENT}
-      DEPENDS ${InputAndRunList)
+      DEPENDS ${InputAndRunList}
 )
 
 function(add_custom_test name generator)
