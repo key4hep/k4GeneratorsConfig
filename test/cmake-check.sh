@@ -50,7 +50,7 @@ EXAMPLEDIR="${PWD}/../examples"
 
 # only copy if the file does not exist yet:
 ls -l 
-eco now check for ci-setups
+echo now check for ci-setups
 ls -l ci-setups
 for yamlFileWithPath in "$EXAMPLEDIR"/FermionProduction.*yaml; do
    yamlFile="$(basename "$yamlFileWithPath")"
