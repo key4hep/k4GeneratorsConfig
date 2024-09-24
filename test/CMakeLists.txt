@@ -2,7 +2,7 @@ set(TEST_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check.sh")
 set(TEST_TIMEOUT 3500)
 set(TEST_ENVIRONMENT "K4GENERATORSCONFIG=${PROJECT_BINARY_DIR}/bin")
 
-add_test(NAME setupGeneratorRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-setup.sh" )
+add_test(NAME setupGeneratorRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-yaml.sh" )
 set_tests_properties("setupGeneratorRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

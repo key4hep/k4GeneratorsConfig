@@ -26,10 +26,6 @@ cd ci-setups
 
 # STEP 1: check the input
 
-for yamlFile in *.yaml; do
-    processYAML "$yamlFile"
-done
-
 function processYAML() {
     local yamlFile="$1"
     local filename="${yamlFile%.yaml}"
@@ -72,6 +68,10 @@ function checkFile() {
         echo "Did not find $outFile. Not checking!"
     fi
 }
+
+for yamlFile in *.yaml; do
+    processYAML "$yamlFile"
+done
 
 
 exit 0
