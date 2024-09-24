@@ -49,10 +49,13 @@ REFDIR="${PWD}/ref-results"
 EXAMPLEDIR="${PWD}/../examples"
 
 # only copy if the file does not exist yet:
+ls -l ci-setups
 for yamlFileWithPath in "$EXAMPLEDIR"/FermionProduction.*yaml; do
    yamlFile="$(basename "$yamlFileWithPath")"
-   if [[ ! -f ci-setups/$yamlFile ]]; then
+   echo checking for ci/setups/"$yamlFile"
+   if [[ ! -f ci-setups/"$yamlFile" ]]; then
       echo copying $yamlFileWithPath to ci-setups
+      ls -l ci-setups
       cp "$yamlFileWithPath" ci-setups
    fi
 done
