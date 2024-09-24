@@ -54,7 +54,6 @@ for yamlFileWithPath in "$EXAMPLEDIR"/FermionProduction.*yaml; do
    echo checking for ci-setups/"$yamlFile"
    if [[ ! -f ci-setups/"$yamlFile" ]]; then
       echo copying $yamlFileWithPath to ci-setups
-      ls -l ci-setups/"$yamlFile"
       cp "$yamlFileWithPath" ci-setups
       ls -l ci-setups/"$yamlFile"
    fi
