@@ -8,6 +8,9 @@ CWD=${PWD}
 # only create the directory if it does not exist yet
 if [[ ! -d ${CWD}/ci-setups ]]; then
    mkdir -p ${CWD}/ci-setups
+else
+    # clean up the content if necessary
+    rm -Rf ci-setups/*
 fi
 
 EXAMPLEDIR="${PWD}/../examples"

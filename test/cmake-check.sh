@@ -110,5 +110,5 @@ fi
 
 # STEP 4: clean up
 # rm -r "${CWD}/ci-setups"
-rm -r ${CWD}/ci-setups
+#rm -r ${CWD}/ci-setups
 exit 0
