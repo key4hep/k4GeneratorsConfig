@@ -14,7 +14,7 @@ set_tests_properties("xsectionRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       ENVIRONMENT ${TEST_ENVIRONMENT}
-      DEPENDS "InputAndRun_Sherpa" "InputAndRun_KKMC" "InputAndRun_Whizard" "InputAndRun_Babayaga" "InputAndRun_Pythia" "InputAndRun_Madgraph"
+      DEPENDS "InputAndRun_Sherpa;InputAndRun_KKMC;InputAndRun_Whizard;InputAndRun_Babayaga;InputAndRun_Pythia;InputAndRun_Madgraph"
 )
 
 function(add_custom_test name generator)
