@@ -9,6 +9,14 @@ set_tests_properties("setupGeneratorRuns"
       ENVIRONMENT ${TEST_ENVIRONMENT}
 )
 
+add_test(NAME xsectionRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-xsection.sh" )
+set_tests_properties("xsectionRuns"
+    PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      ENVIRONMENT ${TEST_ENVIRONMENT}
+      DEPENDS "InputAndRun_Sherpa" "InputAndRun_KKMC" "InputAndRun_Whizard" "InputAndRun_Babayaga" "InputAndRun_Pythia" "InputAndRun_Madgraph"
+)
+
 function(add_custom_test name generator)
   add_test(NAME ${name}_${generator} COMMAND ${TEST_COMMAND} ${generator} -r)
   set_tests_properties(${name}_${generator}

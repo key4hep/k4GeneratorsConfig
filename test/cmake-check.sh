@@ -102,13 +102,6 @@ if [[ $runEvgen = "true" ]]; then
     echo tried $counter generator runs
     echo with  $counterRan successful executions
 
-    # STEP 4
-    # since we have run the generators we can also do the summary now:
-    echo Extracting the cross sections by reading EDM4HEP files
-    $K4GENERATORSCONFIG/xsectionSummary -f ${CWD}/xsectionSummary.dat
 fi
 
-# STEP 4: clean up
-# rm -r "${CWD}/ci-setups"
-#rm -r ${CWD}/ci-setups
 exit 0
