@@ -4,10 +4,9 @@ set(TEST_ENVIRONMENT "K4GENERATORSCONFIG=${PROJECT_BINARY_DIR}/bin")
 
 set(generatorList Babayaga KKMC Madgraph Pythia Sherpa Whizard )
 foreach(generator ${generatorList})
-  list(APPEND InputAndRunList "InputAndRun_${generator} " )
-  message(${generator} "appended to the runlist ")
+  list(APPEND InputAndRunList "InputAndRun_${generator};" )
+  message(${generator} " appended to the runlist ")
 endforeach()
-message("the list is " ${InputAndRunList} )
 
 add_test(NAME setupGeneratorRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-yaml.sh" )
 set_tests_properties("setupGeneratorRuns"
