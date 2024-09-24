@@ -40,7 +40,11 @@ done
 
 
 CWD=${PWD}
-mkdir -p ${CWD}/ci-setups
+# only create the directory if it does not exist yet
+if [[ ! -d /path/to/directory ]]; then
+   mkdir -p ${CWD}/ci-setups
+fi
+
 REFDIR="${PWD}/ref-results"
 EXAMPLEDIR="${PWD}/../examples"
 
