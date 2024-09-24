@@ -4,28 +4,16 @@ set(TEST_ENVIRONMENT "K4GENERATORSCONFIG=${PROJECT_BINARY_DIR}/bin")
 
 set(generatorList Babayaga KKMC Madgraph Pythia Sherpa Whizard )
 foreach(generator ${generatorList})
-  list(APPEND InputAndRunList InputAndRun_${generator} )
-  message("Appended to list " InputAndRun_${generator} )
-  message("Appended to list " ${InputAndRunList} )
+  list(APPEND InputAndRunList "InputAndRun_${generator} " )
+  message(${generator} "appended to the runlist ")
 endforeach()
-
-foreach(generator ${InputAndRunList})
-  message("Listing the List " ${generator})
-endforeach()
+message("the list is " ${InputAndRunList} )
 
 add_test(NAME setupGeneratorRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-yaml.sh" )
 set_tests_properties("setupGeneratorRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       ENVIRONMENT ${TEST_ENVIRONMENT}
-)
-
-add_test(NAME xsectionRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-xsection.sh" )
-set_tests_properties("xsectionRuns"
-    PROPERTIES
-      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-      ENVIRONMENT ${TEST_ENVIRONMENT}
-      DEPENDS ${InputAndRunList}
 )
 
 function(add_custom_test name generator)
@@ -46,5 +34,13 @@ add_custom_test(InputAndRun Whizard)
 add_custom_test(InputAndRun Babayaga)
 add_custom_test(InputAndRun Pythia)
 add_custom_test(InputAndRun Madgraph)
+
+add_test(NAME xsectionRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-xsection.sh" )
+set_tests_properties("xsectionRuns"
+    PROPERTIES
+      WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+      ENVIRONMENT ${TEST_ENVIRONMENT}
+      DEPENDS ${InputAndRunList}
+)
 
 #add_test(NAME Finalize COMMAND ${CMAKE_BINARY_DIR}/bin/xsectionSummary -f ${CMAKE_SOURCE_DIR}/test/xsectionSummary.dat)
