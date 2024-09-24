@@ -2,6 +2,11 @@ set(TEST_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check.sh")
 set(TEST_TIMEOUT 3500)
 set(TEST_ENVIRONMENT "K4GENERATORSCONFIG=${PROJECT_BINARY_DIR}/bin")
 
+set(generatorList Babayaga KKMC Madgraph Pythia Sherpa Whizard )
+foreach(generator IN ${generatorList})[
+  list(APPEND InputAndRunList InputAndRun_${generator} )
+  ]
+
 add_test(NAME setupGeneratorRuns COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/cmake-check-yaml.sh" )
 set_tests_properties("setupGeneratorRuns"
     PROPERTIES
@@ -14,7 +19,7 @@ set_tests_properties("xsectionRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       ENVIRONMENT ${TEST_ENVIRONMENT}
-      DEPENDS "InputAndRun_Sherpa;InputAndRun_KKMC;InputAndRun_Whizard;InputAndRun_Babayaga;InputAndRun_Pythia;InputAndRun_Madgraph"
+      DEPENDS ${InputAndRunList)
 )
 
 function(add_custom_test name generator)
