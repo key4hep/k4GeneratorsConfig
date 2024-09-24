@@ -14,7 +14,6 @@ echo Extracting the cross sections by reading EDM4HEP files
 $K4GENERATORSCONFIG/xsectionSummary -f ${CWD}/xsectionSummary.dat
 
 cat ${CWD}/xsectionSummary.dat
-ls -l DIRK
 
 # cleanup at the end
 rm -r ${CWD}/ci-setups
