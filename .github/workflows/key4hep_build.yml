@@ -24,4 +24,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: Cross_section_report_${{ matrix.build_type }}_${{ matrix.image }}
-        path: test/xsectionSummary.dat
+        path: xsectionSummary.dat
