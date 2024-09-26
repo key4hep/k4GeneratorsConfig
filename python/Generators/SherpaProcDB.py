@@ -17,12 +17,15 @@ class SherpaProcDB:
             self.write_Difermion()
         if label == "15_15":
             self.write_Difermion()
+            self.runout += " MASSIVE[15] 1\n"
         if label == "16_16":
             self.write_Difermion()
         if label == "12_12":
             self.write_Difermion()
-        elif label == "23_25":
+        if label == "23_25":
             self.write_run_ZH()
+        if label == "5_5":
+            self.runout = " MASSIVE[5] 1\n"
 
     def write_Difermion(self):
         self.runout = ""
