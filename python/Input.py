@@ -9,6 +9,7 @@ class Input:
     def __init__(self, file):
         self.file = file
         self.settings = None
+        self.anatool = None
         if not os.path.isfile(file):
             raise FileNotFoundError(file)
         else:
@@ -29,6 +30,7 @@ class Input:
                 setattr(self, key.lower(), value)
         self.LoadCuts()
         self.CheckDefaults()
+        self.LoadAnalysis()
 
     def load_file(self):
         with open(self.file, "r") as file:
@@ -161,6 +163,41 @@ class Input:
                     name.lower(), self.settings["selectors"][name]
                 )
 
+    def LoadAnalysis(self):
+        self.anasettings = self.get_block("analysis")
+        if self.anasettings is not None:
+            self.anasettings = {k.lower(): v for k, v in self.anasettings.items()}
+            self.anatool = self.anasettings["tool"]
+            self.anatool = self.anatool.lower()
+            if self.anatool=="rivet":
+                # check for rivet path
+                if "RIVET_ANALYSIS_PATH" in os.environ:
+                    self.rivetpath = os.environ["RIVET_ANALYSIS_PATH"]
+                    if "rivetpath" in self.settings:
+                        self.rivetpath = self.anasettings["rivetpath"]
+                else:
+                    try:
+                        self.rivetpath = self.anasettings["rivetpath"]
+                    except:
+                        print("Rivet Analysis path has not been found")
+                        self.anatool=None
+                # Set the analysis name
+                try:
+                    self.analysisname = self.anasettings["rivetanalysis"]
+                except:
+                    print("No rivet analysis specified. Using MC_XS instead.")
+                    print("Set an analysis with Analysis: RivetAnalysis: Name")
+                    self.analysisname = ["MC_XS"]
+                # Set yoda info
+                try:
+                    self.yodaoutput = self.anasettings["yodaoutdir"]
+                except:
+                    self.yodaoutput = os.getcwd()+"/yodafiles"
+                    if not os.path.isdir(self.yodaoutput):
+                        os.mkdir(self.yodaoutput)
+
+    def IsRivet(self):
+        return self.anatool=="rivet"
 
 class ECMSInput:
     """Class for loading YAML files with center of mass energies"""
