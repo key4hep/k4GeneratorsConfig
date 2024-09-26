@@ -1,0 +1,168 @@
+MuonNeutrino_150 sqrts= 150:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    2.7491   +- 0.0012983 pb
+Pythia               2.79759  +- 0        pb
+SHERPA-MC            2.74852  +- 0.000200696 pb
+Whizard              2.74844  +- 0.000321448 pb
+
+MuonNeutrino_200 sqrts= 200:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    0.97947  +- 0.00033257 pb
+Pythia               1.00406  +- 5.753e-09 pb
+SHERPA-MC            0.979309 +- 7.03807e-05 pb
+Whizard              0.979469 +- 0.000114835 pb
+
+MuonNeutrino_350 sqrts= 350:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    0.23082  +- 8.5214e-05 pb
+Pythia               0.239909 +- 5.58817e-10 pb
+SHERPA-MC            0.230974 +- 1.68629e-05 pb
+Whizard              0.230992 +- 2.70011e-05 pb
+
+MuonNeutrino_91.2 sqrts= 91.2:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    3949.4   +- 1.4237   pb
+Pythia               3950.61  +- 0        pb
+SHERPA-MC            3948.63  +- 0.286123 pb
+Whizard              3949.96  +- 0.465219 pb
+
+Muon_150 sqrts= 150:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    5.5809   +- 0.00500702 pb
+Pythia               5.91431  +- 0        pb
+SHERPA-MC            5.57765  +- 0.000831959 pb
+Whizard              5.57784  +- 0.00108517 pb
+
+Muon_200 sqrts= 200:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    2.8447   +- 0.00243089 pb
+Pythia               3.05402  +- 1.73825e-08 pb
+SHERPA-MC            2.84405  +- 0.000315744 pb
+Whizard              2.84378  +- 0.000514342 pb
+
+Muon_350 sqrts= 350:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    0.88308  +- 0.000744389 pb
+Pythia               0.963163 +- 4.6717e-09 pb
+SHERPA-MC            0.882477 +- 8.46058e-05 pb
+Whizard              0.882216 +- 0.00014921 pb
+
+Muon_91.2 sqrts= 91.2:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    2011.1   +- 0.620184 pb
+Pythia               1998.11  +- 6.4589e-06 pb
+SHERPA-MC            2010.39  +- 0.143659 pb
+Whizard              2010.49  +- 0.217699 pb
+
+QuarkB_150 sqrts= 150:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    7.8904   +- 0.00703333 pb
+Pythia               8.2289   +- 3.9125e-08 pb
+SHERPA-MC            7.89686  +- 0.00121155 pb
+Whizard              7.89179  +- 0.00142692 pb
+
+QuarkB_200 sqrts= 200:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    3.1304   +- 0.00255468 pb
+Pythia               3.29873  +- 1.44884e-08 pb
+SHERPA-MC            3.13246  +- 0.000516128 pb
+Whizard              3.13273  +- 0.000599633 pb
+
+QuarkB_350 sqrts= 350:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    0.81584  +- 0.000633214 pb
+Pythia               0.872508 +- 1.3994e-09 pb
+SHERPA-MC            0.815806 +- 0.000167294 pb
+Whizard              0.816427 +- 0.000157951 pb
+
+QuarkB_91.2 sqrts= 91.2:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    8766.4   +- 3.64518  pb
+Pythia               9022.48  +- 5.28545e-05 pb
+SHERPA-MC            8848.92  +- 0.646246 pb
+Whizard              8787.26  +- 1.04002  pb
+
+QuarkD_150 sqrts= 150:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    7.9074   +- 0.00609032 pb
+Pythia               8.25554  +- 4.79645e-08 pb
+SHERPA-MC            7.89813  +- 0.000879986 pb
+Whizard              7.91024  +- 0.00144724 pb
+
+QuarkD_200 sqrts= 200:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    3.1359   +- 0.00251327 pb
+Pythia               3.30411  +- 0        pb
+SHERPA-MC            3.13269  +- 0.000409174 pb
+Whizard              3.13623  +- 0.000602049 pb
+
+QuarkD_350 sqrts= 350:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    0.81622  +- 0.000753627 pb
+Pythia               0.872926 +- 5.31129e-09 pb
+SHERPA-MC            0.815745 +- 0.000117258 pb
+Whizard              0.816936 +- 0.000159062 pb
+
+QuarkD_91.2 sqrts= 91.2:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    8861.2   +- 3.31691  pb
+Pythia               9124.41  +- 0        pb
+SHERPA-MC            8849.74  +- 0.636662 pb
+Whizard              8862.32  +- 1.01778  pb
+
+QuarkU_150 sqrts= 150:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    10.7346  +- 0.00892761 pb
+Pythia               11.4918  +- 0        pb
+SHERPA-MC            10.7408  +- 0.00221265 pb
+Whizard              10.7421  +- 0.00226755 pb
+
+QuarkU_200 sqrts= 200:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    4.9956   +- 0.00463169 pb
+Pythia               5.42964  +- 0        pb
+SHERPA-MC            5.00624  +- 0.000943866 pb
+Whizard              5.00232  +- 0.000998181 pb
+
+QuarkU_350 sqrts= 350:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    1.46703  +- 0.00118005 pb
+Pythia               1.62105  +- 1.0105e-08 pb
+SHERPA-MC            1.46996  +- 0.000213447 pb
+Whizard              1.46849  +- 0.000283391 pb
+
+QuarkU_91.2 sqrts= 91.2:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    6925     +- 2.4503   pb
+Pythia               7091.13  +- 0        pb
+SHERPA-MC            6909.92  +- 0.49558  pb
+Whizard              6923.43  +- 0.780432 pb
+
+Tau_150 sqrts= 150:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    5.5833   +- 0.00519266 pb
+Pythia               5.91314  +- 0        pb
+SHERPA-MC            5.57724  +- 0.000854738 pb
+Whizard              5.57651  +- 0.00109645 pb
+
+Tau_200 sqrts= 200:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    2.8426   +- 0.00221664 pb
+Pythia               3.05378  +- 2.08332e-08 pb
+SHERPA-MC            2.84453  +- 0.000319865 pb
+Whizard              2.84343  +- 0.000501544 pb
+
+Tau_350 sqrts= 350:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    0.88313  +- 0.000659918 pb
+Pythia               0.963145 +- 0        pb
+SHERPA-MC            0.882446 +- 8.57359e-05 pb
+Whizard              0.882283 +- 0.000148996 pb
+
+Tau_91.2 sqrts= 91.2:
+KKMC                 0        +- 0        pb
+MadGraph5_aMC@NLO    2006     +- 0.699293 pb
+Pythia               1993.63  +- 0        pb
+SHERPA-MC            2010.31  +- 0.139265 pb
+Whizard              2005.99  +- 0.219619 pb
+
