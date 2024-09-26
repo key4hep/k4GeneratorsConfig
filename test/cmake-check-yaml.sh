@@ -4,6 +4,29 @@ set -e
 shopt -s expand_aliases
 source ../setup.sh
 
+EXAMPLEDIR="${PWD}/../examples"
+
+OPTSTRING="d:h"
+while getopts ${OPTSTRING} opt; do
+  case ${opt} in
+    d)
+      echo "Option -g was triggered, Argument: ${OPTARG}"
+      EXAMPLEDIR="${OPTARG}"
+      echo $EXAMPLEDIR is searched for
+      ;;
+    h)
+      echo "Arguments are:" 
+      echo "-h for help"
+      echo "-d YAMLDIRECTORY "
+      exit 0
+      ;;
+    ?)
+      echo "Invalid option: -${OPTARG}."
+      exit 1
+      ;;
+  esac
+done
+
 CWD=${PWD}
 # only create the directory if it does not exist yet
 if [[ ! -d ${CWD}/ci-setups ]]; then
@@ -13,10 +36,9 @@ else
     rm -Rf ci-setups/*
 fi
 
-EXAMPLEDIR="${PWD}/../examples"
 
 # only copy if the file does not exist yet:
-for yamlFileWithPath in "$EXAMPLEDIR"/FermionProduction.*yaml; do
+for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
    yamlFile="$(basename "$yamlFileWithPath")"
    echo checking for ci-setups/"$yamlFile"
    if [[ ! -f ci-setups/"$yamlFile" ]]; then
