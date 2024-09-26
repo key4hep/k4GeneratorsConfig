@@ -1,0 +1,24 @@
+Top_350 sqrts= 350:
+MadGraph5_aMC@NLO    0.25291  +- 3.81428e-05 pb
+Pythia               0.261514 +- 0.00136477 pb
+SHERPA-MC            0.253432 +- 4.40095e-06 pb
+Whizard              0.252927 +- 3.38632e-06 pb
+
+Top_400 sqrts= 400:
+MadGraph5_aMC@NLO    0.6231   +- 0.000291671 pb
+Pythia               0.680722 +- 0.00334057 pb
+SHERPA-MC            0.624237 +- 3.38092e-05 pb
+Whizard              0.623093 +- 2.97182e-05 pb
+
+Top_500 sqrts= 500:
+MadGraph5_aMC@NLO    0.54843  +- 0.00040801 pb
+Pythia               0.604343 +- 0.0030691 pb
+SHERPA-MC            0.549603 +- 4.35292e-05 pb
+Whizard              0.548597 +- 4.08029e-05 pb
+
+Top_550 sqrts= 550:
+MadGraph5_aMC@NLO    0.48082  +- 0.00038718 pb
+Pythia               0.535849 +- 0.00276845 pb
+SHERPA-MC            0.481725 +- 4.17002e-05 pb
+Whizard              0.480957 +- 3.9504e-05 pb
+

@@ -103,6 +103,14 @@ int main(int argc, char** argv)
   ss << "Invariant Mass(" << pdgIDa << "," << pdgIDb << ")";
   TH1D* mpdgapdgb = new TH1D("mpdgapdgb",ss.str().c_str(),1000, 0., sqrts);
 
+  ss.clear(); ss.str("");
+  ss << "PT(" << pdgIDa << "," << pdgIDb << ")";
+  TH1D* ptpdgapdgb = new TH1D("ptpdgapdgb",ss.str().c_str(),1000, 0., sqrts);
+
+  ss.clear(); ss.str("");
+  ss << "PZ(" << pdgIDa << "," << pdgIDb << ")";
+  TH1D* pzpdgapdgb = new TH1D("pzpdgapdgb",ss.str().c_str(),1000, 0., sqrts);
+
   //  loop over the events
   for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
     if (i)
@@ -127,6 +135,8 @@ int main(int argc, char** argv)
       if ( particleA && particleB ){
 	edm4hep::LorentzVectorM part = *particleA + *particleB;
 	mpdgapdgb->Fill(part.mass());
+	ptpdgapdgb->Fill(part.pt());
+	pzpdgapdgb->Fill(part.pz());
       }
     }
     // release memory after an event
