@@ -159,6 +159,8 @@ int main(int argc, char** argv)
   pdgAcostheta->Write();
   pdgBcostheta->Write();
   mpdgapdgb->Write();
+  ptpdgapdgb->Write();
+  pzpdgapdgb->Write();
 
   outputFilePtr->Write();
   outputFilePtr->Close();
