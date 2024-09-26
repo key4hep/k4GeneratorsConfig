@@ -56,6 +56,12 @@ class GeneratorBase:
         else:
             return ""
         analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
+        if self.settings.IsRivet():
+            yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
+            analysis += f"rivet" 
+            for ana in self.settings.analysisname:
+                analysis += f" -a {ana}"
+            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
         return analysis
 
     def write_GeneratorDatacard(self, content):

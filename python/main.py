@@ -118,8 +118,10 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
 
     for yaml_file in files:
         settings = Settings.Input(yaml_file)
+        # ana = analysis.Analysis(settings)
+        if settings.IsRivet():
+            print("Rivet enabled")
         if events != -1:
-            print(events)
             settings.set("events", events)
         settings.gens()
         processes = settings.get_processes(sqrts)
