@@ -24,6 +24,8 @@ class SherpaProcDB:
             self.write_Difermion()
         if label == "23_25":
             self.write_run_ZH()
+        if label=="25_23":
+            self.write_run_ZH()
         if label == "5_5":
             self.runout = " MASSIVE[5] 1\n"
 
@@ -43,6 +45,7 @@ class SherpaProcDB:
     def write_run_ZH(self):
         self.runout = " WIDTH[25] 0\n"
         self.runout += " WIDTH[23] 0\n"
+        self.runout += "EW_SCHEME 3\n"
 
     def remove_option(self, opt):
         lines = self.runout.split("\n")
