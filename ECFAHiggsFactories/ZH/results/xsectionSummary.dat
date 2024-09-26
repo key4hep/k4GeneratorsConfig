@@ -1,36 +1,30 @@
-ZH sqrts= 250:
-MadGraph5_aMC@NLO    0.24014  +- 2.3354e-05 pb
-Pythia               0.240832 +- 0.00115065 pb
-SHERPA-MC            0.252796 +- 6.41974e-06 pb
-Whizard              0.23999  +- 4.42056e-06 pb
-
 ZH_240 sqrts= 240:
-MadGraph5_aMC@NLO    0.2403   +- 2.0047e-05 pb
-Pythia               0.237857 +- 0.00111722 pb
-SHERPA-MC            0.25296  +- 4.57996e-06 pb
-Whizard              0.240147 +- 3.17662e-06 pb
+MadGraph5_aMC@NLO    0.2403   +- 2.0048e-05 pb
+Pythia               0.121768 +- 0.000509187 pb
+SHERPA-MC            0.240316 +- 4.35105e-06 pb
+Whizard              0.240313 +- 3.17881e-06 pb
 
 ZH_250 sqrts= 250:
-MadGraph5_aMC@NLO    0.24014  +- 2.5981e-05 pb
-Pythia               0.24223  +- 0.0011643 pb
-SHERPA-MC            0.252785 +- 6.52617e-06 pb
-Whizard              0.239994 +- 4.41033e-06 pb
+MadGraph5_aMC@NLO    0.24015  +- 2.5981e-05 pb
+Pythia               0.126744 +- 0.000553479 pb
+SHERPA-MC            0.240149 +- 6.19996e-06 pb
+Whizard              0.240159 +- 4.41336e-06 pb
 
 ZH_300 sqrts= 300:
-MadGraph5_aMC@NLO    0.18086  +- 3.1894e-05 pb
-Pythia               0.186924 +- 0.000960713 pb
-SHERPA-MC            0.190389 +- 1.13018e-05 pb
-Whizard              0.180747 +- 7.45749e-06 pb
+MadGraph5_aMC@NLO    0.18086  +- 3.1895e-05 pb
+Pythia               0.100505 +- 0.000489821 pb
+SHERPA-MC            0.180871 +- 1.07368e-05 pb
+Whizard              0.18087  +- 7.46254e-06 pb
 
 ZH_400 sqrts= 400:
 MadGraph5_aMC@NLO    0.0951   +- 3.0107e-05 pb
-Pythia               0.101645 +- 0.00055386 pb
-SHERPA-MC            0.100084 +- 1.17504e-05 pb
-Whizard              0.0950053 +- 6.91931e-06 pb
+Pythia               0.0558115 +- 0.000292086 pb
+SHERPA-MC            0.0950796 +- 1.11629e-05 pb
+Whizard              0.0950692 +- 6.92396e-06 pb
 
 ZH_550 sqrts= 550:
 MadGraph5_aMC@NLO    0.04624  +- 2.3742e-05 pb
-Pythia               0.0505153 +- 0.000280558 pb
-SHERPA-MC            0.0486639 +- 8.86262e-06 pb
-Whizard              0.0461957 +- 4.54229e-06 pb
+Pythia               0.0279937 +- 0.000150193 pb
+SHERPA-MC            0.0462306 +- 8.41948e-06 pb
+Whizard              0.0462267 +- 4.54534e-06 pb
 
