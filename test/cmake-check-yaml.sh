@@ -39,21 +39,23 @@ fi
 
 # only copy if the file does not exist yet:
 for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
-   yamlFile="$(basename "$yamlFileWithPath")"
-   echo checking for ci-setups/"$yamlFile"
-   if [[ ! -f ci-setups/"$yamlFile" ]]; then
-      echo copying $yamlFileWithPath to ci-setups
-      cp -f "$yamlFileWithPath" ci-setups
-   fi
+    yamlFile="$(basename "$yamlFileWithPath")"
+    echo checking for ci-setups/"$yamlFile"
+    if [[ ! -f ci-setups/"$yamlFile" ]]; then
+	echo copying $yamlFileWithPath to ci-setups
+	cp -f "$yamlFileWithPath" ci-setups
+    fi
 done
 
 for ecmsFileWithPath in "$EXAMPLEDIR"/*.dat; do
-   ecmsFile="$(basename "$ecmsFileWithPath")"
-   echo checking for ci-setups/"$ecmsFile"
-   if [[ ! -f ci-setups/"$ecmsFile" ]]; then
-      echo copying $ecmsFileWithPath to ci-setups
-      cp -f "$ecmsFileWithPath" ci-setups
-   fi
+    ecmsFile="$(basename "$ecmsFileWithPath")"
+    if [[ test x"ecmsFile" != "x" ]]; then
+	echo checking for ci-setups/"$ecmsFile"
+	if [[ ! -f ci-setups/"$ecmsFile" ]]; then
+	    echo copying $ecmsFileWithPath to ci-setups
+	    cp -f "$ecmsFileWithPath" ci-setups
+	fi
+    fi
 done
 
 cd ci-setups
