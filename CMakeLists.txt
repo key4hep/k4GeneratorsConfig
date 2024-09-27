@@ -87,9 +87,19 @@ configure_file(
 install(DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/ DESTINATION ${CMAKE_INSTALL_BINDIR}  FILES_MATCHING PATTERN "*env.sh*" )
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/python
-  DESTINATION python
-  REGEX test_.*\\.py$ EXCLUDE  # Don't install python unittests
+  DESTINATION ${CMAKE_INSTALL_PREFIX}
+  REGEX test_.*\\.py|main.py$ EXCLUDE  # Don't install python unittests
   PATTERN __pycache__ EXCLUDE  # Or pythons caches
 )
+# Install main as an executable
+install(PROGRAMS ${PROJECT_SOURCE_DIR}/python/main.py DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+
+install(CODE "execute_process(COMMAND bash -c \"set -e
+    link_target=${CMAKE_INSTALL_PREFIX}/python/main.py
+    link_name=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/k4GeneratorsConfig
+    rm -f $link_name
+    ln -s $link_target $link_name
+    \")")
+
 # Install the share directory to make them easily accessible
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/ECFAHiggsFactories DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME})
