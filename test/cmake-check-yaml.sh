@@ -49,7 +49,7 @@ done
 
 for ecmsFileWithPath in "$EXAMPLEDIR"/*.dat; do
     ecmsFile="$(basename "$ecmsFileWithPath")"
-    if [[ test x"ecmsFile" != "x" ]]; then
+    if [[ x"ecmsFile" != "x" ]]; then
 	echo checking for ci-setups/"$ecmsFile"
 	if [[ ! -f ci-setups/"$ecmsFile" ]]; then
 	    echo copying $ecmsFileWithPath to ci-setups
