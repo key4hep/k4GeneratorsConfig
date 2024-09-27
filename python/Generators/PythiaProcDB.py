@@ -59,9 +59,15 @@ class PythiaProcDB:
             self.write_Difermion(16)
         elif label == "22_22":
             self.write_Diphoton()
+        elif label == "23_23":
+            self.write_ZZ()
+        elif label == "24_24":
+            self.write_WW()
         elif label == "23_25":
             self.write_run_ZH()
-
+        elif label == "25_23":
+            self.write_run_ZH()
+            
     def write_Difermion(self, pdg):
         self.procout = "WeakSingleBoson:ffbar2gmZ = on\n"
         self.procout += "22:onMode = off\n"
@@ -72,6 +78,14 @@ class PythiaProcDB:
     def write_Diphoton(self):
         self.procout = "PromptPhoton:ffbar2gammagamma = on\n"
 
+    def write_ZZ(self):
+        self.procout = "WeakDoubleBoson:ffbar2gmZgmZ = on\n"
+        self.procout += "23:onMode = on\n"
+        
+    def write_WW(self):
+        self.procout = "WeakDoubleBoson:ffbar2WW = on\n"
+        self.procout += "24:onMode = on\n"
+    
     def write_run_ZH(self):
         self.procout = "HiggsSM:ffbar2HZ = on\n"
         self.procout += "25:onMode = on\n"
