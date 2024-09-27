@@ -91,3 +91,5 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/python
   REGEX test_.*\\.py$ EXCLUDE  # Don't install python unittests
   PATTERN __pycache__ EXCLUDE  # Or pythons caches
 )
+# Install the share directory to make them easily accessible
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME})
