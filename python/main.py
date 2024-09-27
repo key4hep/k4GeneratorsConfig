@@ -85,6 +85,8 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         help="Number of events to be generated",
     )
     args = parser.parse_args()
+    if not args.f:
+        parser.error('No input file specified, needed to define the processes, add to the command line: -f YAMLFILE ')
     files = args.f
     energies = args.ecms
     ecmsfiles = args.ecmsFiles
