@@ -65,7 +65,9 @@ class PythiaProcDB:
             self.write_WW()
         elif label == "23_25":
             self.write_run_ZH()
-
+        elif label == "25_23":
+            self.write_run_ZH()
+            
     def write_Difermion(self, pdg):
         self.procout = "WeakSingleBoson:ffbar2gmZ = on\n"
         self.procout += "22:onMode = off\n"
