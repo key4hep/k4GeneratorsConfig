@@ -17,7 +17,10 @@ set_tests_properties("setupGeneratorRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       ENVIRONMENT ${TEST_ENVIRONMENT}
+      FIXTURES_SETUP  processYamls
 )
+
+set_tests_properties(createDB   PROPERTIES )
 
 # second test running the generators
 function(add_custom_test name generator)
@@ -27,7 +30,7 @@ function(add_custom_test name generator)
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
       ENVIRONMENT ${TEST_ENVIRONMENT}
       TIMEOUT ${TEST_TIMEOUT}
-      DEPENDS "setupGeneratorRuns"
+      FIXTURES_REQUIRED processYamls
   )
 endfunction()
 
