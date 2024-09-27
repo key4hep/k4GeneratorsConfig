@@ -47,16 +47,17 @@ for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
     fi
 done
 
-for ecmsFileWithPath in "$EXAMPLEDIR"/*.dat; do
-    ecmsFile="$(basename "$ecmsFileWithPath")"
-    if [[ x"ecmsFile" != "x" ]]; then
+# check whether ecms.dat files are available:
+if [[ ls "$EXAMPLEDIR"/*.dat ]]; then
+    for ecmsFileWithPath in "$EXAMPLEDIR"/*.dat; do
+	ecmsFile="$(basename "$ecmsFileWithPath")"
 	echo checking for ci-setups/"$ecmsFile"
 	if [[ ! -f ci-setups/"$ecmsFile" ]]; then
 	    echo copying $ecmsFileWithPath to ci-setups
 	    cp -f "$ecmsFileWithPath" ci-setups
 	fi
-    fi
-done
+    done
+fi
 
 cd ci-setups
 
