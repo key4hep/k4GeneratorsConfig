@@ -56,7 +56,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     """
         ),
     )
-    parser.add_argument("-f", nargs="*", type=str, default=[], help="Input YAML file")
+    parser.add_argument("inputfiles", nargs="+", type=str, help="Input YAML file")
     parser.add_argument(
         "--ecms",
         nargs="*",
@@ -85,9 +85,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         help="Number of events to be generated",
     )
     args = parser.parse_args()
-    if not args.f:
-        parser.error('No input file specified, needed to define the processes, add to the command line: -f YAMLFILE ')
-    files = args.f
+    files = args.inputfiles
     energies = args.ecms
     ecmsfiles = args.ecmsFiles
     rndmSeed = args.seed
