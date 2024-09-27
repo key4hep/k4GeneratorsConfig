@@ -20,8 +20,6 @@ set_tests_properties("setupGeneratorRuns"
       FIXTURES_SETUP  "processYamls"
 )
 
-set_tests_properties(createDB   PROPERTIES )
-
 # second test running the generators
 function(add_custom_test name generator)
   add_test(NAME ${name}_${generator} COMMAND ${TEST_COMMAND} ${generator} -r)
