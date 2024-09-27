@@ -47,6 +47,15 @@ for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
    fi
 done
 
+for ecmsFileWithPath in "$EXAMPLEDIR"/*.dat; do
+   ecmsFile="$(basename "$ecmsFileWithPath")"
+   echo checking for ci-setups/"$ecmsFile"
+   if [[ ! -f ci-setups/"$ecmsFile" ]]; then
+      echo copying $ecmsFileWithPath to ci-setups
+      cp -f "$ecmsFileWithPath" ci-setups
+   fi
+done
+
 cd ci-setups
 
 # STEP 1: check the input
@@ -58,7 +67,11 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    k4generatorsConfig -f "../$yamlFile" --nevts 100
+    if [[ ! -f ../ecms.dat ]]; then
+	k4generatorsConfig -f "../$yamlFile" --nevts 100
+    else
+	k4generatorsConfig -f "../$yamlFile" --ecmsFile ../ecms.dat
+    fi
     checkOutputs
     cd ..
 }
