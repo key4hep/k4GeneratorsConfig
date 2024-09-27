@@ -92,4 +92,4 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/python
   PATTERN __pycache__ EXCLUDE  # Or pythons caches
 )
 # Install the share directory to make them easily accessible
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/share DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME})
+install(DIRECTORY ${PROJECT_SOURCE_DIR}/share/ECFAHiggsFactories DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME})
