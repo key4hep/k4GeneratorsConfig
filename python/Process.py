@@ -1,5 +1,5 @@
 from Particles import Particle
-from CirceHelper import CirceHelper
+from Generators.CirceHelper import CirceHelper
 
 
 class Process:
