@@ -48,11 +48,11 @@ for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
 done
 
 # check whether ecms.dat files are available:
-for ecmsFileWithPath in "$EXAMPLEDIR"/*.dat; do
+for ecmsFileWithPath in "$EXAMPLEDIR"/"ecms"*.dat; do
     ecmsFile="$(basename "$ecmsFileWithPath")"
     echo checking for "$ecmsFileWithPath"
     echo checking  ci-setups/"$ecmsFile"
-    if [[ -f "$ecmsFileWithPath" && ! -f ci-setups/"$ecmsFile" ]]; then
+    if [[ -f "$ecmsFileWithPath" && ! -f ci-setups/"$ecmsFile" && "$ecmsFile" != "ecms.dat" ]]; then
 	echo copying $ecmsFileWithPath to ci-setups
 	cp -f "$ecmsFileWithPath" ci-setups
     fi
@@ -69,10 +69,10 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    if [[ ! -f ../ecms.dat ]]; then
+    if [[ ! -f ../ecms"$filename".dat ]]; then
 	k4generatorsConfig -f "../$yamlFile" --nevts 100
     else
-	k4generatorsConfig -f "../$yamlFile" --ecmsFile ../ecms.dat
+	k4generatorsConfig -f "../$yamlFile" --ecmsFile ../ecms"$filename".dat
     fi
     checkOutputs
     cd ..
