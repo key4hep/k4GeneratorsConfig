@@ -1,5 +1,5 @@
-from GeneratorBase import GeneratorBase
-import SherpaProcDB
+from .GeneratorBase import GeneratorBase
+from . import SherpaProcDB
 
 
 class Sherpa(GeneratorBase):

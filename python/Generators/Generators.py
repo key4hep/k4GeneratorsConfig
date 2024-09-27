@@ -1,9 +1,9 @@
-import Sherpa
-import Whizard
-import Madgraph
-import Babayaga
-import KKMC
-import Pythia
+from . import Sherpa
+from . import Whizard
+from . import Madgraph
+from . import Babayaga
+from . import KKMC
+from . import Pythia
 
 
 class Generators:
