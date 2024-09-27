@@ -58,7 +58,7 @@ function processYAML() {
     mkdir -p "test-$filename"
     cd "test-$filename"
     echo "Processing file: $yamlFile"
-    k4gen -f "../$yamlFile" --nevts 100
+    k4generatorsConfig -f "../$yamlFile" --nevts 100
     checkOutputs
     cd ..
 }

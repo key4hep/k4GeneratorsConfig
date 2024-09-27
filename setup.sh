@@ -27,4 +27,4 @@ if [[ ! -d ${K4GenBuildDir} ]]; then
 fi
 
 # Set executable
-alias k4gen="python3 ${K4GenDir}/python/main.py"
+alias k4generatorsConfig="python3 ${K4GenDir}/python/main.py"
