@@ -58,8 +58,6 @@ for ecmsFileWithPath in "$EXAMPLEDIR"/"ecms"*.dat; do
     fi
 done
 
-ls -l MURKS.dat
-
 cd ci-setups
 
 # STEP 1: check the input
