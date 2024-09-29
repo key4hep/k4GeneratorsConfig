@@ -1,12 +1,9 @@
+#!/usr/bin/env python3
+
 import os
 import sys
 import argparse
 import textwrap
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "Tools")))
-sys.path.insert(
-    1, os.path.abspath(os.path.join(os.path.dirname(__file__), "Generators"))
-)
 
 import Input as Settings
 import Process as process_module
@@ -88,10 +85,12 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         help="Number of events to be generated",
     )
     args = parser.parse_args()
+    if not args.f:
+        parser.error('No input file specified, needed to define the processes, add to the command line: -f YAMLFILE ')
     files = args.f
     energies = args.ecms
     ecmsfiles = args.ecmsFiles
-    rndmSeed  = args.seed
+    rndmSeed = args.seed
     events = args.nevts
 
     # so additionallt we read the argument ecmsFile
@@ -105,7 +104,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         executeFiles(files, 0, rndmSeed, events)
     else:
         for sqrts in energies:
-            rndmIncrement = executeFiles(files,sqrts,rndmSeed,events)
+            rndmIncrement = executeFiles(files, sqrts, rndmSeed, events)
             # offset for next round by number of yaml files
             rndmSeed = rndmSeed + rndmIncrement
 

@@ -1,5 +1,5 @@
-from GeneratorBase import GeneratorBase
-import KKMCProcDB
+from .GeneratorBase import GeneratorBase
+from . import KKMCProcDB
 import os, sys
 
 
@@ -93,7 +93,7 @@ class KKMC(GeneratorBase):
             self.GeneratorDatacardName,
             self.GeneratorDatacardBase,
             self.procinfo.get("output_format"),
-            self.procinfo.get("events")
+            self.procinfo.get("events"),
         )
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             self.procinfo.get("output_format"), self.GeneratorDatacardBase

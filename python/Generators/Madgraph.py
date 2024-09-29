@@ -1,5 +1,5 @@
-from GeneratorBase import GeneratorBase
-import MadgraphProcDB
+from .GeneratorBase import GeneratorBase
+from . import MadgraphProcDB
 from Particles import Particle as part
 
 
