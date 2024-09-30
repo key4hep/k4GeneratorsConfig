@@ -6,7 +6,7 @@ import Selectors
 class Input:
     """Class for loading YAML files"""
 
-    def __init__(self, file):
+    def __init__(self, file, sqrts):
         self.file = file
         self.settings = None
         self.anatool = None
@@ -28,7 +28,7 @@ class Input:
                     setattr(self, "events", value)
             else:
                 setattr(self, key.lower(), value)
-        self.LoadCuts()
+        self.LoadCuts(sqrts)
         self.CheckDefaults()
         self.LoadAnalysis()
 
@@ -141,7 +141,7 @@ class Input:
             if not self.is_set(name):
                 setattr(self, name, value)
 
-    def LoadCuts(self):
+    def LoadCuts(self,sqrtsOverride):
         # if self.get_block("selectors"):
         self.selectors = {}
         self.procselectors = {}
@@ -149,6 +149,9 @@ class Input:
         try:
             for proc in self.settings["selectors"]["Process"]:
                 for key, sel in self.settings["selectors"]["Process"][proc].items():
+                    # if sqrts >0, we have to extend the process ID with _sqrts so that the cuts are applied for all
+                    if sqrtsOverride > 0. :
+                        proc = proc+"_"+str(sqrtsOverride)
                     pselectors[proc + key] = Selectors.Selectors(proc, key, sel)
                 self.procselectors[proc] = pselectors
         except Exception as e:

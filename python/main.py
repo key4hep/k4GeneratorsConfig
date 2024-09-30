@@ -114,7 +114,7 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         print("Generating and writing configuration files for ECM= ", sqrts)
 
     for yaml_file in files:
-        settings = Settings.Input(yaml_file)
+        settings = Settings.Input(yaml_file, sqrts)
         # ana = analysis.Analysis(settings)
         if settings.IsRivet():
             print("Rivet enabled")

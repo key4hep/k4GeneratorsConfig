@@ -10,9 +10,9 @@ OPTSTRING="d:h"
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
     d)
-      echo "Option -g was triggered, Argument: ${OPTARG}"
+      echo "Option -d was triggered, Argument: ${OPTARG}"
       EXAMPLEDIR="${OPTARG}"
-      echo $EXAMPLEDIR is searched for
+      echo Searching for yaml files in directory $EXAMPLEDIR
       ;;
     h)
       echo "Arguments are:" 
@@ -40,7 +40,6 @@ fi
 # only copy if the file does not exist yet:
 for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
     yamlFile="$(basename "$yamlFileWithPath")"
-    echo checking for ci-setups/"$yamlFile"
     if [[ ! -f ci-setups/"$yamlFile" ]]; then
 	echo copying $yamlFileWithPath to ci-setups
 	cp -f "$yamlFileWithPath" ci-setups
@@ -50,8 +49,6 @@ done
 # check whether ecms.dat files are available:
 for ecmsFileWithPath in "$EXAMPLEDIR"/"ecms"*.dat; do
     ecmsFile="$(basename "$ecmsFileWithPath")"
-    echo checking for "$ecmsFileWithPath"
-    echo checking  ci-setups/"$ecmsFile"
     if [[ -f "$ecmsFileWithPath" && ! -f ci-setups/"$ecmsFile" && "$ecmsFile" != "ecms.dat" ]]; then
 	echo copying $ecmsFileWithPath to ci-setups
 	cp -f "$ecmsFileWithPath" ci-setups
