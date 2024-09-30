@@ -9,6 +9,20 @@ class SherpaProcDB:
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
+        if label == "1_1":
+            self.write_Difermion()
+        if label == "2_2":
+            self.write_Difermion()
+        if label == "3_3":
+            self.write_Difermion()
+        if label == "4_4":
+            self.write_Difermion()
+        if label == "5_5":
+            self.write_Difermion()
+            self.runout += " MASSIVE[5] 1\n"
+        if label == "6_6":
+            self.write_Difermion()
+            self.runout += " MASSIVE[6] 1\n"
         if label == "12_12":
             self.write_Difermion()
         if label == "13_13":
@@ -20,32 +34,45 @@ class SherpaProcDB:
             self.runout += " MASSIVE[15] 1\n"
         if label == "16_16":
             self.write_Difermion()
-        if label == "12_12":
-            self.write_Difermion()
+        if label=="23_23":
+            self.write_run_ZZ()
+        if label=="24_24":
+            self.write_run_WW()
         if label == "23_25":
             self.write_run_ZH()
         if label=="25_23":
             self.write_run_ZH()
-        if label == "5_5":
-            self.runout = " MASSIVE[5] 1\n"
-
+        # the electroweak scheme is common to all implemented processes so far
+        self.runout += " EW_SCHEME 3;\n"
+        
+            
     def write_Difermion(self):
         self.runout = ""
         # Use Gmu scheme as default
-        self.runout += " EW_SCHEME 3;\n"
         self.runout += " MASS[24] 80.419;\n"
         self.runout += " WIDTH[24] 2.0476;\n"
+
+    def write_ZZ(self):
+        self.runout = ""
+        # Use Gmu scheme as default
+        self.runout += " MASS[24] 80.419;\n"
+        self.runout += " WIDTH[24] 2.0476;\n"
+
+    def write_WW(self):
+        self.runout = ""
+        # Use Gmu scheme as default
+        self.runout += " MASS[24] 80.419;\n"
+        self.runout += " WIDTH[24] 2.0476;\n"
+
+    def write_run_ZH(self):
+        self.runout = " WIDTH[25] 0\n"
+        self.runout += " WIDTH[23] 0\n"
 
     def get_run_out(self):
         return self.runout
 
     def get_proc_out(self):
         return self.procout
-
-    def write_run_ZH(self):
-        self.runout = " WIDTH[25] 0\n"
-        self.runout += " WIDTH[23] 0\n"
-        self.runout += "EW_SCHEME 3\n"
 
     def remove_option(self, opt):
         lines = self.runout.split("\n")
