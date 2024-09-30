@@ -35,13 +35,13 @@ class SherpaProcDB:
         if label == "16_16":
             self.write_Difermion()
         if label=="23_23":
-            self.write_run_ZZ()
+            self.write_ZZ()
         if label=="24_24":
-            self.write_run_WW()
+            self.write_WW()
         if label == "23_25":
-            self.write_run_ZH()
+            self.write_ZH()
         if label=="25_23":
-            self.write_run_ZH()
+            self.write_ZH()
         # the electroweak scheme is common to all implemented processes so far
         self.runout += " EW_SCHEME 3;\n"
         
@@ -64,7 +64,7 @@ class SherpaProcDB:
         self.runout += " MASS[24] 80.419;\n"
         self.runout += " WIDTH[24] 2.0476;\n"
 
-    def write_run_ZH(self):
+    def write_ZH(self):
         self.runout = " WIDTH[25] 0\n"
         self.runout += " WIDTH[23] 0\n"
 
