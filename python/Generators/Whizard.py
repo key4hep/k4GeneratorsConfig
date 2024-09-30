@@ -27,8 +27,9 @@ class Whizard(GeneratorBase):
     def write_process(self):
         self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
         self.whiz_beam2 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(2))
+        fsParticles = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
         self.finalstate = ", ".join(
-            map(self.pdg_to_whizard, self.procinfo.get_final_pdg_list())
+            map(self.pdg_to_whizard, fsParticles)
         )
 
         try:
@@ -237,6 +238,9 @@ class Whizard(GeneratorBase):
         if d == "width":
             name = "WIDTH"
         return name
+
+    def particle_to_whizard(self, particle):
+        return particle.get("pdg_code")
 
     def pdg_to_whizard(self, pdg):
         apdg = abs(pdg)
