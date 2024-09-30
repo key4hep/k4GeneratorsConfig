@@ -1,0 +1,28 @@
+Photon_150 sqrts= 150:
+Babayaga             17.853   +- 0.0376132 pb
+MadGraph5_aMC@NLO    19.127   +- 0.010405 pb
+Pythia               20.0841  +- 0.168884 pb
+SHERPA-MC            19.2118  +- 0.00076588 pb
+Whizard              19.1705  +- 0.030394 pb
+
+Photon_200 sqrts= 200:
+Babayaga             10.0437  +- 0.0209337 pb
+MadGraph5_aMC@NLO    10.761   +- 0.005249 pb
+Pythia               11.1684  +- 0.0955214 pb
+SHERPA-MC            10.8071  +- 0.000485047 pb
+Whizard              10.7667  +- 0.0200289 pb
+
+Photon_350 sqrts= 350:
+Babayaga             3.28341  +- 0.00681362 pb
+MadGraph5_aMC@NLO    3.5138   +- 0.0020518 pb
+Pythia               3.75296  +- 0.0327062 pb
+SHERPA-MC            3.52851  +- 0.000162982 pb
+Whizard              3.5208   +- 0.00713394 pb
+
+Photon_91.2 sqrts= 91.2:
+Babayaga             48.3492  +- 0.101341 pb
+MadGraph5_aMC@NLO    51.713   +- 0.027106 pb
+Pythia               53.9321  +- 0.439827 pb
+SHERPA-MC            51.9657  +- 0.00259671 pb
+Whizard              51.7743  +- 0.0889879 pb
+
