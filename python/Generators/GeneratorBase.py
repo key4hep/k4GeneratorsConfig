@@ -48,7 +48,7 @@ class GeneratorBase:
     def write_analysis(self):
         # write the analysis part based on the final state
         analysis = "\n"
-        finalStateList = self.procinfo.get_final_pdg_list()
+        finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
         if len(finalStateList) == 2:
             analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} ".format(
                 finalStateList[0], finalStateList[1]
