@@ -1,0 +1,30 @@
+ZZ_170 sqrts= 170:
+Pythia               0.483358 +- 0.00248658 pb
+
+ZZ_180 sqrts= 180:
+Pythia               0.578736 +- 0.00238134 pb
+
+ZZ_190 sqrts= 190:
+MadGraph5_aMC@NLO    1.102    +- 0.0026986 pb
+Pythia               1.29673  +- 0.00627101 pb
+SHERPA-MC            1.09979  +- 0        pb
+Whizard              1.10083  +- 0.0015099 pb
+
+ZZ_200 sqrts= 200:
+MadGraph5_aMC@NLO    1.3105   +- 0.0033232 pb
+Pythia               1.52592  +- 0.0077502 pb
+SHERPA-MC            1.31114  +- 1.86214e-05 pb
+Whizard              1.31064  +- 0.00156861 pb
+
+ZZ_400 sqrts= 400:
+MadGraph5_aMC@NLO    0.56476  +- 0.0017962 pb
+Pythia               0.724252 +- 0.0035915 pb
+SHERPA-MC            0.566693 +- 0.000140207 pb
+Whizard              0.566791 +- 0.000233836 pb
+
+ZZ_550 sqrts= 550:
+MadGraph5_aMC@NLO    0.36335  +- 0.00085331 pb
+Pythia               0.482634 +- 0.00234063 pb
+SHERPA-MC            0.363344 +- 0.000102003 pb
+Whizard              0.363637 +- 0.000129163 pb
+
