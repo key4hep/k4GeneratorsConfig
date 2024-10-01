@@ -61,6 +61,9 @@ class Madgraph(GeneratorBase):
                 self.add_run_option("set pdlabel", "isronlyll")
             self.add_run_option("set lpp1", "3")
             self.add_run_option("set lpp2", "-3")
+        if self.procinfo.get_ElectronPolarisation() != 0 or self.procinfo.get_PositronPolarisation()!= 0:
+            self.add_run_option("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
+            self.add_run_option("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
         self.run += self.procDB.get_run_out()
         # if self.settings.get_block("selectors"):
         self.write_selectors()
