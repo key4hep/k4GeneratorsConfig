@@ -71,8 +71,8 @@ bool k4GeneratorsConfig::xsection::processFile(){
     return false;
   }
   auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
-  const auto weightNames = runinfo.getParameter<std::string>(edm4hep::labels::GeneratorWeightNames).value();
-  if ( weightNames.size() == 0 ){
+  const auto weightNames = runinfo.getParameter<std::string>(edm4hep::labels::GeneratorWeightNames);
+  if ( !weightNames.has_value() ){
     std::cout << "k4GeneratorsConfig::Warning: Info on weight names not found" << std::endl;
   }
   
