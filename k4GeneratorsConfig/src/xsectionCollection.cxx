@@ -62,6 +62,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 	    // in some cases the generator name is not available, then derive from the filenam
 	    if ( xsec->Generator().empty() )
 	      xsec->setGenerator(generatorsPath.filename().string());
+	    std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
 	    m_xsectionCollection.push_back(*xsec);
 	    delete xsec;
 	  }
