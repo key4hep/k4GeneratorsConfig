@@ -302,6 +302,7 @@ void WriterEDM4HEP::write_run_info() {
   
   // weight names
   std::vector<std::string> weights = run_info()->weight_names();
+
   // add the weights as parameters to the frame
   runFrame.putParameter(edm4hep::labels::GeneratorWeightNames, weights);
 
