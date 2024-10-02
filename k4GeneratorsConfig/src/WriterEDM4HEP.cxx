@@ -175,13 +175,19 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   generatorParameters.setEventScale(retrieveDoubleAttribute(evt,name));
 
   // add SQRTS
-  name = "SQRTS";
   double sqrts = 0.; 
   if ( evt.beams().size()==2 ) {
     ConstGenParticlePtr beam1 = evt.beams()[0];
     ConstGenParticlePtr beam2 = evt.beams()[1];
     sqrts = (beam1->momentum()+beam2->momentum()).m();
   }
+  // special treatement for MADGRAPH: overwrite beams to get the SQRTS correctly
+  if ( run_info()->tools().size() > 0 ) {
+    if ( run_info()->tools()[0].name.find("MadGraph") != std::string::npos){
+      sqrts = retrieveDoubleAttribute(evt,"EBMUP1") + retrieveDoubleAttribute(evt,"EBMUP2");
+    }
+  }
+  // now we write to the structure:
   generatorParameters.setSqrts(sqrts);
 
   //signal process ID
