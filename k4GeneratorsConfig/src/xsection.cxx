@@ -70,12 +70,12 @@ bool k4GeneratorsConfig::xsection::processFile(){
   if ( m_reader->getEntries(podio::Category::Run) == 0 ){
     return false;
   }
-  auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
+  auto runinfo = podio::Frame(m_reader->readEntry(podio::Category::Run,0));
   const auto weightNames = runinfo.getParameter<std::string>(edm4hep::labels::GeneratorWeightNames);
   if ( !weightNames.has_value() ){
     std::cout << "k4GeneratorsConfig::Warning: Info on weight names not found" << std::endl;
   }
-  
+    
   auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
   if ( toolInfos.size() > 0 ){
     m_generator = toolInfos[0].name;
