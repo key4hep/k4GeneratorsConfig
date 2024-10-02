@@ -302,16 +302,6 @@ void WriterEDM4HEP::write_run_info() {
   
   // weight names
   std::vector<std::string> weights = run_info()->weight_names();
-  std::cout << "WriterEDM4HEP found " << weights.size() << " weight names for conversion" << std::endl;
-  for ( unsigned int i=0; i< weights.size() ; i++){
-    std::cout << "Weight index " << i << " name " << weights[i] << std::endl;
-  }
-
-  if ( weights.size() == 0 ){
-    std::cout << "No weight names found, writing a single name to the frame" << std::endl;
-    weights.push_back("reference");
-  }
-
   // add the weights as parameters to the frame
   runFrame.putParameter(edm4hep::labels::GeneratorWeightNames, weights);
 
