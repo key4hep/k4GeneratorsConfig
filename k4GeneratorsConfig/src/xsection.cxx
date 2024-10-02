@@ -71,17 +71,17 @@ bool k4GeneratorsConfig::xsection::processFile(){
     return false;
   }
   auto runinfo = podio::Frame(m_reader->readNextEntry(podio::Category::Run));
-  const auto weightNames = runinfo.getParameter<std::string>(edm4hep::labels::GeneratorWeightNames);
+  /* const auto weightNames = runinfo.getParameter<std::string>(edm4hep::labels::GeneratorWeightNames);
   if ( !weightNames ){
     std::cout << "k4GeneratorsConfig::Warning: Info on weight names not found" << std::endl;
-  }
+    }*/
 
   auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
   if ( toolInfos.size() > 0 ){
     m_generator = toolInfos[0].name;
   }
   else {
-    std::cout << "k4GeneratorsConfig::Error: ToolInfos not available" << std::endl;
+    std::cout << "k4GeneratorsConfig::Warning ToolInfos not available" << std::endl;
   }
 
   // retrieve the cross section for the last event if not possible it's not valid
