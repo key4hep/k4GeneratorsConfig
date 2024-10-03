@@ -80,17 +80,21 @@ int main(int argc, char** argv) {
     exit(0);
   }
 
+  int nEvent  = pythia.mode("Main:numberOfEvents");
   int nAbort  = pythia.mode("Main:timesAllowErrors");
 
   // Begin infinite event loop - to be exited at end of file.
   int iAbort = 0;
-  while (true) {
+  for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
     
     // Generate event.
     if (!pythia.next()) {
       
       // Leave event loop if at end of file.
-      if (pythia.info.atEndOfFile()) break;
+      if (pythia.info.atEndOfFile()) {
+	std::cout << "pythiaLHERunner:: reached EOF at event " << iEvent << " when " << nEvent << " were exopected" << std::endl;
+	break;
+      }
 
       if (++iAbort < nAbort) continue;
       cout << " Event generation aborted prematurely, owing to error!\n";

@@ -289,6 +289,8 @@ class Madgraph(GeneratorBase):
         content  = "Main:timesAllowErrors = 5\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
+        content += "Main:numberOfEvents = {0}\n".format(self.procinfo.get("events"))
+
         # open the file for the evgen generation in EDM4HEP format
         with open(self.outdir + "/"+pythiaFile, "w+") as file:
             # the generator specific part
