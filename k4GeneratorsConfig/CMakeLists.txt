@@ -83,6 +83,18 @@ install(TARGETS pythiaRunner
   EXPORT k4GeneratorsConfigTargets
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )
+set(pythiaLHE_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/pythiaLHERunner.cxx
+)
+
+add_executable(pythiaLHERunner ${pythiaLHE_sources})
+target_include_directories(pythiaLHERunner PRIVATE ${PYTHIA8_INCLUDE_DIR} ${HEPMC3_INCLUDE_DIR})
+target_link_libraries(pythiaLHERunner PRIVATE ${PYTHIA8_LIBRARY} HepMC3::HepMC3 )
+
+install(TARGETS pythiaLHERunner
+  EXPORT k4GeneratorsConfigTargets
+  DESTINATION "${CMAKE_INSTALL_BINDIR}"
+)
 set(analyze2f_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/analyze2f.cxx
 )

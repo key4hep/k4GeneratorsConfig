@@ -269,14 +269,30 @@ class Madgraph(GeneratorBase):
         key4hepRun += (
             f"ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         )
+        # adding the Pythia step a poetriori
+        pythiaFile = "pythia.cmnd"
+        self.write_PythiaCMND(pythiaFile)
+        key4hepRun += "$K4GenBuildDir/bin/pythiaLHERunner -f {0} -l unweighted_events.lhe -o {1}.hepmc\n".format(
+            pythiaFile,self.GeneratorDatacardBase
+        )
         # temporarily kick out the header since the
-        key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        key4hepRun += f"$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
+        #key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
+        #key4hepRun += f"$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
         hepmcformat = self.procinfo.get("output_format")
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
         self.write_Key4hepScript(key4hepRun)
+
+    def write_PythiaCMND(self, pythiaFile):
+        # append the analysis to the content
+        content  = "Main:timesAllowErrors = 5\n"
+        content += "Main:WriteHepMC = on\n"
+        content += "Beams:frameType = 4\n"
+        # open the file for the evgen generation in EDM4HEP format
+        with open(self.outdir + "/"+pythiaFile, "w+") as file:
+            # the generator specific part
+            file.write(content)
 
     def add_run_option(self, key, value):
         if key in self.run:
