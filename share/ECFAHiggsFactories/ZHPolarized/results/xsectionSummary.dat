@@ -1,0 +1,20 @@
+ZH_240 sqrts= 240:
+Madgraph             0.15628  +- 0        pb
+Whizard              0.239997 +- 3.17463e-06 pb
+
+ZH_250 sqrts= 250:
+Madgraph             0.15618  +- 0        pb
+Whizard              0.239843 +- 4.40756e-06 pb
+
+ZH_300 sqrts= 300:
+Madgraph             0.11762  +- 0        pb
+Whizard              0.180632 +- 7.45273e-06 pb
+
+ZH_400 sqrts= 400:
+Madgraph             0.061848 +- 0        pb
+Whizard              0.0949441 +- 6.91485e-06 pb
+
+ZH_550 sqrts= 550:
+Madgraph             0.030072 +- 0        pb
+Whizard              0.0461659 +- 4.53936e-06 pb
+
