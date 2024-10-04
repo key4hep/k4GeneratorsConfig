@@ -42,6 +42,8 @@ class SherpaProcDB:
             self.write_ZH()
         if label=="25_23":
             self.write_ZH()
+        if label=="12_12_25":
+            self.write_Hnunu()
         if label=="23_25_25":
             self.write_ZH()
         # the electroweak scheme is common to all implemented processes so far
@@ -69,6 +71,11 @@ class SherpaProcDB:
     def write_ZH(self):
         self.runout = " WIDTH[25] 0\n"
         self.runout += " WIDTH[23] 0\n"
+
+    def write_Hnunu(self):
+        self.runout = " WIDTH[25] 0\n"
+        self.runout += " MASS[24] 80.419;\n"
+        self.runout += " WIDTH[24] 2.0476;\n"
 
     def write_ZHH(self):
         self.runout = " WIDTH[25] 0\n"

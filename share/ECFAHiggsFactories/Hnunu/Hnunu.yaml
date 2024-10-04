@@ -1,0 +1,32 @@
+Generators:
+  - Sherpa
+  - Whizard
+  - Madgraph
+  - Pythia
+
+OutputFormat: hepmc3
+OutDir: Run-Cards
+Events: 10000
+EventMode: unweighted
+
+
+SqrtS: 250.
+Model: SM
+ISRMode: 0
+
+Processes:
+  Hnunu:
+     Final: [25, 12, -12]
+     Order: [3,0]
+
+ParticleData:
+  25:
+    mass: 125
+    width: 0
+  23:
+    mass: 91.1876
+    width: 0
+  24:
+    mass: 80.419
+    width: 0
+

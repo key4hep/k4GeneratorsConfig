@@ -67,6 +67,8 @@ class PythiaProcDB:
             self.write_run_ZH()
         elif label == "25_23":
             self.write_run_ZH()
+        elif label == "12_12_25":
+            self.write_run_Hnunu()
             
     def write_Difermion(self, pdg):
         self.procout = "WeakSingleBoson:ffbar2gmZ = on\n"
@@ -90,6 +92,10 @@ class PythiaProcDB:
         self.procout = "HiggsSM:ffbar2HZ = on\n"
         self.procout += "25:onMode = on\n"
         self.procout += "23:onMode = on\n"
+
+    def write_run_Hnunu(self):
+        self.procout = "HiggsSM:ff2Hff(t:WW) = on\n"
+        self.procout += "25:onMode = on\n"
 
     def write_Ditop(self):
         self.procout = "Top:ffbar2ttbar(s:gmZ) = on\n"
