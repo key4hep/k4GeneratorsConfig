@@ -1,24 +1,29 @@
 Hnunu_240 sqrts= 240:
+Madgraph             0.022076 +- 0        pb
 Pythia               0.00733727 +- 3.70613e-05 pb
 SHERPA-MC            0.02133  +- 9.48896e-05 pb
 Whizard              0.0221763 +- 0.000170939 pb
 
 Hnunu_250 sqrts= 250:
+Madgraph             0.0230472 +- 0        pb
 Pythia               0.00897801 +- 2.3565e-05 pb
 SHERPA-MC            0.0215677 +- 0.000106497 pb
 Whizard              0.0231641 +- 0.000185892 pb
 
 Hnunu_300 sqrts= 300:
+Madgraph             0.0279666 +- 0        pb
 Pythia               0.0195516 +- 0.000100927 pb
 SHERPA-MC            0.0224256 +- 0.000145667 pb
 Whizard              0.0270601 +- 0.000410654 pb
 
 Hnunu_400 sqrts= 400:
+Madgraph             0.049321 +- 0        pb
 Pythia               0.0464354 +- 0.000229854 pb
 SHERPA-MC            0.0306731 +- 0.000231585 pb
 Whizard              0.0494613 +- 0.0015711 pb
 
 Hnunu_550 sqrts= 550:
+Madgraph             0.092034 +- 0        pb
 Pythia               0.0898461 +- 0.000427316 pb
 SHERPA-MC            0.0515667 +- 0.000413846 pb
 Whizard              0.09063  +- 0.00464161 pb
