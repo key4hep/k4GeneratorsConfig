@@ -75,7 +75,7 @@ bool k4GeneratorsConfig::xsection::processFile(){
   if ( !weightNames.has_value() ){
     std::cout << "k4GeneratorsConfig::Warning: Info on weight names not found" << std::endl;
     }*/
-    
+
   auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
   if ( toolInfos.size() > 0 ){
     m_generator = toolInfos[0].name;
