@@ -1,20 +1,25 @@
 ZHH_350 sqrts= 350:
 Madgraph             3.54412e-06 +- 0        pb
+SHERPA-MC            3.5488e-06 +- 1.09747e-09 pb
 Whizard              3.55039e-06 +- 4.62273e-09 pb
 
 ZHH_400 sqrts= 400:
 Madgraph             7.1654e-05 +- 0        pb
+SHERPA-MC            7.16978e-05 +- 2.53004e-08 pb
 Whizard              7.17139e-05 +- 8.84989e-08 pb
 
 ZHH_450 sqrts= 450:
 Madgraph             0.00012827 +- 0        pb
+SHERPA-MC            0.000128261 +- 5.9629e-08 pb
 Whizard              0.000128239 +- 1.53942e-07 pb
 
 ZHH_500 sqrts= 500:
 Madgraph             0.000157867 +- 0        pb
+SHERPA-MC            0.00015786 +- 9.72565e-08 pb
 Whizard              0.000157971 +- 1.93398e-07 pb
 
 ZHH_550 sqrts= 550:
 Madgraph             0.000169435 +- 0        pb
+SHERPA-MC            0.000169641 +- 1.38165e-07 pb
 Whizard              0.000169467 +- 2.31713e-07 pb
 

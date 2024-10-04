@@ -16,7 +16,7 @@ ISRMode: 0
 Processes:
   ZHH:
      Final: [23, 25, 25]
-     Order: [2,0]
+     Order: [3,0]
 
 ParticleData:
   25:
