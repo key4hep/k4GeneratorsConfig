@@ -49,14 +49,20 @@ class ModelInputs:
         # create the particle data from the standard input
         for pdg, mass in self.m_masses.items():
             particleData[pdg] = dict(mass=mass,width=0)
+        # we might have widths defined, but not the mass
         for pdg, width in self.m_widths.items():
-            particleData[pdg]["width"] = width
+            if pdg in particleData:
+                particleData[pdg]["width"] = width
+            else:
+                particleData[pdg] = dict(mass=0,width=width)
 
         for pdg in userParticleData:
             # check if the particle is already there, if not create the dict
+            mass  = userParticleData[pdg].get("mass",0.)
+            width = userParticleData[pdg].get("width",0.)
             if pdg in particleData:
-                particleData[pdg]["width"] = userParticleData[pdg]["width"]  
-                particleData[pdg]["mass"]  = userParticleData[pdg]["mass"]
+                particleData[pdg]["mass"]  = mass
+                particleData[pdg]["width"] = width 
             else:
                 particleData[pdg] = dict(mass=mass,width=width)
 
