@@ -82,7 +82,10 @@ class Process:
         return list(self._finfo)
 
     def get(self, name):
-        return getattr(self, name)
+        try:
+            return getattr(self, name)
+        except:
+            return None
 
     def get_args(self):
         return self._required_args
@@ -141,6 +144,7 @@ class ProcessParameters:
         self.settings = settings
         self.model = settings.get_model()
         self.events = settings.get_event_number()
+        print(self.events)
         self.output_format = settings.get_output_format()
         self.PythiaTune = settings.get_PythiaTune()
         self.ElectronPolarisation = settings.get_ElectronPolarisation()

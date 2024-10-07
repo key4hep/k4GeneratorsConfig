@@ -47,6 +47,10 @@ class Pythia(GeneratorBase):
         else:
             self.add_option("PartonLevel:ISR", "off")
             self.add_option("PDF:lepton", "off")
+        if self.procinfo.get("fsrmode"):
+            self.add_option("PartonLevel:FSR", "on")
+        else:
+            self.add_option("PartonLevel:FSR", "off")
 
         self.add_option("Main:numberOfEvents", self.procinfo.get("events"))
         self.run += "\n"

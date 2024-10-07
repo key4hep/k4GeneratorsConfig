@@ -44,6 +44,10 @@ class Sherpa(GeneratorBase):
             self.add_run_option("PDF_LIBRARY", "PDFESherpa")
         else:
             self.add_run_option("PDF_LIBRARY", "None")
+        if self.procinfo.get("fsrmode"):
+            self.add_run_option("YFS_MODE", "FULL")
+        else:
+            self.add_run_option("YFS_MODE", "None")
         self.add_run_option("EVENTS", self.procinfo.get("events"))
         self.run += "\n\n"
         for p in self.procinfo.get_data_particles():
@@ -61,7 +65,7 @@ class Sherpa(GeneratorBase):
             self.add_run_option("EVENT_OUTPUT", eoutname)
 
         elif self.procinfo.get("output_format") == "hepmc3":
-            eoutname = "HepMC3_GenEvent[{0}.hepmc3g]".format(self.GeneratorDatacardBase)
+            eoutname = "HepMC3_GenEvent[{0}.hepmc3]".format(self.GeneratorDatacardBase)
             self.add_run_option("EVENT_OUTPUT", eoutname)
         self.run += self.procDB.get_run_out()
         self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
