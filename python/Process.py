@@ -144,7 +144,6 @@ class ProcessParameters:
         self.settings = settings
         self.model = settings.get_model()
         self.events = settings.get_event_number()
-        print(self.events)
         self.output_format = settings.get_output_format()
         self.PythiaTune = settings.get_PythiaTune()
         self.ElectronPolarisation = settings.get_ElectronPolarisation()
