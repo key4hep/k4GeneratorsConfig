@@ -9,42 +9,40 @@ class SherpaProcDB:
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if label == "1_1":
+        if label == "11_11_1_1":
             self.write_Difermion()
-        if label == "2_2":
+        if label == "11_11_2_2":
             self.write_Difermion()
-        if label == "3_3":
+        if label == "11_11_3_3":
             self.write_Difermion()
-        if label == "4_4":
+        if label == "11_11_4_4":
             self.write_Difermion()
-        if label == "5_5":
+        if label == "11_11_5_5":
             self.write_Difermion()
             self.runout += " MASSIVE[5] 1\n"
-        if label == "6_6":
+        if label == "11_11_6_6":
             self.write_Difermion()
             self.runout += " MASSIVE[6] 1\n"
-        if label == "12_12":
+        if label == "11_11_12_12":
             self.write_Difermion()
-        if label == "13_13":
+        if label == "11_11_13_13":
             self.write_Difermion()
-        if label == "14_14":
+        if label == "11_11_14_14":
             self.write_Difermion()
-        if label == "15_15":
+        if label == "11_11_15_15":
             self.write_Difermion()
             self.runout += " MASSIVE[15] 1\n"
-        if label == "16_16":
+        if label == "11_11_16_16":
             self.write_Difermion()
-        if label=="23_23":
+        if label=="11_11_23_23":
             self.write_ZZ()
-        if label=="24_24":
+        if label=="11_11_24_24":
             self.write_WW()
-        if label == "23_25":
+        if label == "11_11_23_25":
             self.write_ZH()
-        if label=="25_23":
-            self.write_ZH()
-        if label=="12_12_25":
+        if label=="11_11_12_12_25":
             self.write_Hnunu()
-        if label=="23_25_25":
+        if label=="11_11_23_25_25":
             self.write_ZH()
         # the electroweak scheme is common to all implemented processes so far
         self.runout += " EW_SCHEME 3;\n"
