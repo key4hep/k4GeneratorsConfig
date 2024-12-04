@@ -215,7 +215,7 @@ class Sherpa(GeneratorBase):
 
         hepmcformat = self.procinfo.get("output_format")
         hepmcversion = hepmcformat[-1]
-        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2}g {1}.edm4hep\n".format(
+        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2} {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase, hepmcversion
         )
 
