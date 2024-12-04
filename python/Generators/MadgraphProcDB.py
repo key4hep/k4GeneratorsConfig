@@ -12,7 +12,7 @@ class MadgraphProcDB:
             if abs(self.process.final[0]) <= 16:
                 self.runout += self.write_Difermion()
         label = self.process.get_generatorDBLabel()
-        if label == "23_25":
+        if label == "11_11_23_25":
             self.runout += self.write_run_ZH()
 
     def write_Difermion(self):
