@@ -8,7 +8,7 @@ class MadgraphProcDB:
 
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
-        if len(self.process.final) == 2:
+        if self.generatorDBLabel.startswith("11_11") and len(self.process.final) == 2 :
             if abs(self.process.final[0]) <= 16:
                 self.runout += self.write_Difermion()
         label = self.process.get_generatorDBLabel()
