@@ -49,15 +49,24 @@ class Process:
             self._proclabel += f"{self._finfo[p].name} "
             self._parts.append(self._finfo[p])
         # generate the label for the generatorDB
-        finalstate = [abs(part) for part in self.final]
-        # sort ascending
-        finalstate.sort()
-        for pdg in finalstate:
+        # first the initial state
+        initialstate = [abs(self.initial[0]), abs(self.initial[1])]
+        #sort ascending
+        initialstate.sort()
+        # add to label
+        for pdg in initialstate:
             self.generatorDBLabel += f"_{str(abs(pdg))}"
-        # remove leading _
+        # remove leading "_"
         self.generatorDBLabel = self.generatorDBLabel[
             (self.generatorDBLabel.index("_") + 1) :
         ]
+        # now the final state
+        finalstate = [abs(part) for part in self.final]
+        # sort ascending
+        finalstate.sort()
+        # add to label
+        for pdg in finalstate:
+            self.generatorDBLabel += f"_{str(abs(pdg))}"
 
     def set_particle_data(self, pdata):
         if pdata is None or self._init:
