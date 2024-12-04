@@ -9,11 +9,11 @@ class KKMCProcDB:
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if label == "11_11":
+        if label == "11_11_11_11":
             self.write_Difermion()
-        if label == "13_13":
+        if label == "11_11_13_13":
             self.write_Difermion()
-        if label == "22_22":
+        if label == "11_11_22_22":
             self.write_Diphoton()
 
     def write_Difermion(self):
