@@ -180,7 +180,7 @@ class Input:
                         self.rivetpath = self.anasettings["rivetpath"]
                     except:
                         print("Rivet Analysis path has not been found")
-                        self.anatool=None
+                        print("Assuming correctly set and will hope for the best.")
                 # Set the analysis name
                 try:
                     self.analysisname = self.anasettings["rivetanalysis"]
