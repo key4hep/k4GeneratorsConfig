@@ -8,19 +8,19 @@ class WhizardProcDB:
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if label == "12_12":
+        if label == "11_11_12_12":
             self.runout += self.write_Difermion()
-        if label == "13_13":
+        if label == "11_11_13_13":
             self.runout += self.write_Difermion()
-        if label == "14_14":
+        if label == "11_11_14_14":
             self.runout += self.write_Difermion()
-        if label == "15_15":
+        if label == "11_11_15_15":
             self.runout += self.write_Difermion()
-        if label == "16_16":
+        if label == "11_11_16_16":
             self.runout += self.write_Difermion()
-        if label == "12_12":
+        if label == "11_11_12_12":
             self.runout += self.write_Difermion()
-        elif label == "23_25":
+        elif label == "11_11_23_25":
             self.runout += self.write_ZH()
 
     def write_Difermion(self):
