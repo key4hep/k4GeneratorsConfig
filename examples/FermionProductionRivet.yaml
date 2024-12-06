@@ -1,0 +1,81 @@
+Generators:
+  - Sherpa
+  - Whizard
+  - Madgraph
+  - KKMC
+  - Pythia
+
+OutputFormat: hepmc3
+OutDir: Run-Cards
+Events: 100000
+EventMode: unweighted
+
+SqrtS: 91.2
+Model: SM
+ISRMode: 0
+
+Analysis:
+  Tool: Rivet
+  RivetAnalysis: [MC_ZINC]
+
+Processes:
+  Muon91.2:
+     Final: [13, -13]
+     Order: [2,0]
+
+  MuonNeutrino91.2:
+     Final: [14, -14]
+     Order: [2,0]
+     ISRMode: 1
+  
+  Tau91.2:
+     Final: [15, -15]
+     Order: [2,0]
+     ISRMode: 1
+     
+  Muon350:
+     Final: [13, -13]
+     Order: [2,0]
+     SqrtS: 350
+     ISRMode: 1
+     
+  MuonNeutrino350:
+     Final: [14, -14]
+     Order: [2,0]
+     SqrtS: 350
+
+  Tau350:
+     Final: [15, -15]
+     Order: [2,0]
+     SqrtS: 350
+
+
+Selectors:
+  Process:
+    Tau350:
+      PT:
+        Max: 175
+        Min: 20
+        Flavour: [-15,15]
+    Muon350:
+      PT:
+        Max: 175
+        Min: 20
+        Flavour: [-13,13]
+    Muon91.2:
+      PT:
+        Max: 45.6
+        Min: 20
+        Flavour: [-13,13]
+
+
+Sherpa:
+  Run:
+    EW_SCHEME: 3
+
+
+ParticleData:
+  23:
+    mass: 91.1876
+    width: 2.4952
+
