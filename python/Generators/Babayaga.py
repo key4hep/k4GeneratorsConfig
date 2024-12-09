@@ -1,5 +1,5 @@
-from .GeneratorBase import GeneratorBase
-from . import BabayagaProcDB
+from GeneratorBase import GeneratorBase
+from BabayagaProcDB import BabayagaProcDB
 
 
 class Babayaga(GeneratorBase):
@@ -13,7 +13,7 @@ class Babayaga(GeneratorBase):
         self.process = ""
         self.cuts = ""
 
-        self.procDB = BabayagaProcDB.BabayagaProcDB(self.procinfo)
+        self.procDB = BabayagaProcDB(self.procinfo)
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 

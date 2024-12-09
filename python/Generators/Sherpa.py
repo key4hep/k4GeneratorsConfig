@@ -1,5 +1,5 @@
-from .GeneratorBase import GeneratorBase
-from . import SherpaProcDB
+from GeneratorBase import GeneratorBase
+from SherpaProcDB import SherpaProcDB
 
 
 class Sherpa(GeneratorBase):
@@ -12,7 +12,7 @@ class Sherpa(GeneratorBase):
         self.file = ""
         self.cuts = ""
 
-        self.procDB = SherpaProcDB.SherpaProcDB(self.procinfo)
+        self.procDB = SherpaProcDB(self.procinfo)
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
