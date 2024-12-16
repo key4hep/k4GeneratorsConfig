@@ -15,15 +15,20 @@ class Generators:
         for generatorName in self.generator_list:
             # get the module
             try:
-                # import the generators
                 generator   = importlib.import_module(f"Generators.{generatorName}")
                 # get the ClassObject
-                generatorClass = getattr(generator,generatorName)
-                # execute the object
-                generatorObj = generatorClass(self.proc_info, self.settings)
-                #writing file
-                generatorObj.write_file()
-                #writing key4hep file 
-                generatorObj.write_key4hepfile()
+                if hasattr(generator,generatorName):
+                    generatorClass = getattr(generator,generatorName)
+                    # execute the object
+                    try:
+                        generatorObj = generatorClass(self.proc_info, self.settings)
+                        #writing file
+                        generatorObj.write_file()
+                        #writing key4hep file 
+                        generatorObj.write_key4hepfile()
+                    except:
+                        print(f"Requested Generator: {generatorName} object could not be executed, output files not written for {self.proc_info.get('_proclabel')}")
+                else:
+                    print(f"Requested Generator: {generatorName} class could not be loaded via getattr {self.proc_info.get('_proclabel')}")
             except:
-                print("Requested Generator: "+generatorName+" could not be configured for "+self.proc_info.get("_proclabel"))
+                print(f"Requested Generator: {generatorName} could not be configured for {self.proc_info.get('_proclabel')}")

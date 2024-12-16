@@ -1,5 +1,5 @@
 from .GeneratorBase import GeneratorBase
-from . import WhizardProcDB
+from .WhizardProcDB import WhizardProcDB
 
 
 class Whizard(GeneratorBase):
