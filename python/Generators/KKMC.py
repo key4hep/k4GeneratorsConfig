@@ -1,5 +1,5 @@
-from GeneratorBase import GeneratorBase
-from KKMCProcDB import KKMCProcDB
+from .GeneratorBase import GeneratorBase
+from . import KKMCProcDB
 import os, sys
 
 

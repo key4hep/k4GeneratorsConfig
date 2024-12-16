@@ -1,5 +1,5 @@
-from GeneratorBase import GeneratorBase
-from BabayagaProcDB import BabayagaProcDB
+from .GeneratorBase import GeneratorBase
+from . import BabayagaProcDB
 
 
 class Babayaga(GeneratorBase):

@@ -1,5 +1,5 @@
-from GeneratorBase import GeneratorBase
-from PythiaProcDB import PythiaProcDB
+from .GeneratorBase import GeneratorBase
+from . import PythiaProcDB
 
 
 class Pythia(GeneratorBase):

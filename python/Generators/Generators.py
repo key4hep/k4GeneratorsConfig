@@ -1,13 +1,5 @@
 import importlib
 
-from . import Sherpa
-from . import Whizard
-from . import Madgraph
-from . import Babayaga
-from . import KKMC
-from . import Pythia
-
-
 class Generators:
     """Generator class"""
 
@@ -23,7 +15,8 @@ class Generators:
         for generatorName in self.generator_list:
             # get the module
             try:
-                generator   = importlib.import_module(generatorName)
+                # import the generators
+                generator   = importlib.import_module(f"Generators.{generatorName}")
                 # get the ClassObject
                 generatorClass = getattr(generator,generatorName)
                 # execute the object
