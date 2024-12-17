@@ -1,5 +1,5 @@
 from .GeneratorBase import GeneratorBase
-from . import PythiaProcDB
+from .PythiaProcDB import PythiaProcDB
 
 
 class Pythia(GeneratorBase):
@@ -13,7 +13,7 @@ class Pythia(GeneratorBase):
         self.cuts = ""
         self.PythiaSelectorFileExtension = "selectors"
 
-        self.procDB = PythiaProcDB.PythiaProcDB(self.procinfo)
+        self.procDB = PythiaProcDB(self.procinfo)
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
