@@ -33,3 +33,4 @@ class Generators:
                 # all that remains is an excption from the execution of the modules
                 print(f"Execution of {generatorName} for {self.proc_info.get('_proclabel')} resulted in an exception, check the module for problems with loading doownstream modules like the corresponding ProcDB etc")
                 print("Datacard files and execution scripts not written for this generator")
+                raise
