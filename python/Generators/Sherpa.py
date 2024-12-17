@@ -7,7 +7,7 @@ class Sherpa(GeneratorBase):
 
     def __init__(self, procinfo, settings):
         super().__init__(procinfo, settings, "Sherpa", "dat")
-        print("GOT INTO SHERPA")
+
         self.version = "x.y.z"
         self.file = ""
         self.cuts = ""
@@ -15,7 +15,6 @@ class Sherpa(GeneratorBase):
         self.procDB = SherpaProcDB(self.procinfo)
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
-        print("SHERPA AFTER PROCDB")
 
         self.executable = "Sherpa -f"
         self.gen_settings = settings.get_block("sherpa")
