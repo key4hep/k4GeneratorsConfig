@@ -357,40 +357,6 @@ edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenPartic
     edm_particle.setEndpoint(edm4hep::Vector3d(pos.x(), pos.y(), pos.z()));
   }
 
-  // retrieve the color flow:
-  std::shared_ptr<HepMC3::IntAttribute> flow1Ptr = hepmcParticle->attribute<HepMC3::IntAttribute>("flow1");
-  std::shared_ptr<HepMC3::IntAttribute> flow2Ptr = hepmcParticle->attribute<HepMC3::IntAttribute>("flow2");
-  std::shared_ptr<HepMC3::VectorIntAttribute> colorFlowPtr = hepmcParticle->attribute<HepMC3::VectorIntAttribute>("flows");
-
-  // if one of the pointers is present we should fill the color flow object
-  if ( colorFlowPtr || flow1Ptr || flow2Ptr) {
-    int flow0 = 0;
-    int flow1 = 0;
-
-    // first try whether the new (HepMC3.2 and higher) implmentation was used
-    if ( colorFlowPtr ){
-      switch ( colorFlowPtr->value().size() ){
-      case 1:
-	flow0 = colorFlowPtr->value()[0];
-	break;
-      case 2:
-	flow0 = colorFlowPtr->value()[0];
-	flow1 = colorFlowPtr->value()[1];
-	break;
-      default:
-	std::cout << "k4GeneratorsConfig::WriterEDM4HEP::WARNING the vector has size " << colorFlowPtr->value().size() 
-		  << " greater then 2 as foreseen by EDM4HEP, undefined behaviour, colorflow not written to EDM4HEP" << std::endl;
-	break;
-      }
-    }
-    else {
-      if ( flow1Ptr ) flow0 = flow1Ptr->value();
-      if ( flow2Ptr ) flow1 = flow2Ptr->value();
-    }
-    //    std::cout << "Writing COLORFLOW " << flow0 << " " << flow1 << std::endl; 
-    edm_particle.setColorFlow(edm4hep::Vector2i(flow0, flow1));
-  }
-
   return edm_particle;
 }
 
