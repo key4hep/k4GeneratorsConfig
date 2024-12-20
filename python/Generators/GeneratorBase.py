@@ -55,7 +55,7 @@ class GeneratorBase:
         self.key4hep_config += "fi\n\n"
 
         # write out the analysis to the analysisContent variable
-        sself.prepare_Analysis()
+        self.prepare_Analysis()
 
     def prepare_analysis(self):
         
