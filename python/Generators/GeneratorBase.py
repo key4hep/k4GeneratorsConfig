@@ -49,10 +49,11 @@ class GeneratorBase:
         )
         self.key4hep_config += "fi\n\n"
 
-        self.analysis = self.write_analysis()
+        self.analysis = self.prepare_analysis()
 
-    def write_analysis(self):
-        # write the analysis part based on the final state
+    def prepare_analysis(self):
+        
+        # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
         finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
         if len(finalStateList) == 2:
@@ -62,12 +63,15 @@ class GeneratorBase:
         else:
             return ""
         analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
+
+        # write the RIVET analysis
         if self.settings.IsRivet():
             yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
             analysis += f"rivet" 
             for ana in self.settings.analysisname:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
+            
         return analysis
 
     def write_GeneratorDatacard(self, content):
