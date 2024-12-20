@@ -61,12 +61,12 @@ class GeneratorBase:
         analysis = "\n"
         finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
         if len(finalStateList) == 2:
-            analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} ".format(
-                finalStateList[0], finalStateList[1]
+            analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} -i {2}.edm4hep -o {2}.root\n".format(
+                finalStateList[0], finalStateList[1], self.GeneratorDatacardBase
             )
         else:
             return ""
-        analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
+        #analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
 
         # write the RIVET analysis
         if self.settings.IsRivet():
