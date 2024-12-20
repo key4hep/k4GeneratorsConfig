@@ -5,28 +5,17 @@ class GeneratorBase:
     """GeneratorBase class"""
 
     def __init__(self, procinfo, settings, name, inputFileExtension):
-
-        # formal settings
         self.procinfo = procinfo
         self.settings = settings
         self.name = name
         self.inputFileExtension = inputFileExtension
-        
-        # initialize the variables containing the Datacard and Key4HEP content
-        self.datacard = ""
-        self.key4hep  = ""
-        self.analysis = ""
 
-        # the output directory is determined from the explicitely defined outdirectory name + generator name + process name
         self.outdir = (
             f"{procinfo.get('OutDir')}/{self.name}/{self.procinfo.get('procname')}"
         )
-
-        # now determine the filenames from the process
         self.GeneratorDatacardBase = f"{self.procinfo.get('procname')}"
         self.key4hepScript = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
 
-        # adding to the filenames ISR and BST if requested
         if self.procinfo.get("isrmode"):
             self.GeneratorDatacardBase += "_ISR"
             self.key4hepScript += "_ISR"
@@ -37,7 +26,7 @@ class GeneratorBase:
                 )
                 self.key4hepScript += "_BST" + self.procinfo.beamstrahlung.lower()
 
-        # take care of the extensions of the datacard and key4hepscript name
+        # take care of the extensions of the filenames
         self.GeneratorDatacardName = (
             self.GeneratorDatacardBase + "." + self.inputFileExtension
         )
@@ -54,29 +43,26 @@ class GeneratorBase:
         )
         self.key4hep_config += "fi\n\n"
 
-        # write out the analysis to the analysisContent variable
-        self.prepare_Analysis()
+        self.analysis = self.write_analysis()
 
-    def prepare_analysis(self):
-        
-        # write the analysis part based on the final state for EDM4HEP
+    def write_analysis(self):
+        # write the analysis part based on the final state
         analysis = "\n"
         finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
         if len(finalStateList) == 2:
-            analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} -i {2}.edm4hep -o {2}.root\n".format(
-                finalStateList[0], finalStateList[1], self.GeneratorDatacardBase
+            analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} ".format(
+                finalStateList[0], finalStateList[1]
             )
-
-        # write the analysis part for RIVET
+        else:
+            return ""
+        analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
         if self.settings.IsRivet():
             yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
             analysis += f"rivet" 
             for ana in self.settings.analysisname:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
-
-        # write the content to the class variable for use
-        self.analysis = analysis
+        return analysis
 
     def write_GeneratorDatacard(self, content):
         with open(self.GeneratorDatacard, "w+") as file:
