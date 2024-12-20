@@ -50,10 +50,12 @@ class GeneratorBase:
         self.key4hep_config += "fi\n\n"
 
         # three types of global variables for the file content
-        self.analysis = "" 
-        self.prepare_analysis()
+        self.datacardContent = ""
+        self.key4hepContent  = ""
+        self.analysisContent = "" 
+        self.prepare_analysisContent()
 
-    def prepare_analysis(self):
+    def prepare_analysisContent(self):
         
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
@@ -74,7 +76,7 @@ class GeneratorBase:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
             
-        self.analysis = analysis
+        self.analysisContent = analysis
 
     def write_GeneratorDatacard(self, content):
         with open(self.GeneratorDatacard, "w+") as file:
@@ -82,7 +84,7 @@ class GeneratorBase:
 
     def write_Key4hepScript(self, content):
         # append the analysis to the content
-        content += self.analysis
+        content += self.analysisContent
         # open the file for the evgen generation in EDM4HEP format
         with open(self.key4hepScript, "w+") as file:
             # set up KEY4HEP
