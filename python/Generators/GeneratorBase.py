@@ -53,6 +53,8 @@ class GeneratorBase:
         self.datacardContent = ""
         self.key4hepContent  = ""
         self.analysisContent = "" 
+
+        # the analysis depends only on the procss, not on the generator, so we can prepare it at the initialization stage:
         self.prepare_analysisContent()
 
     def prepare_analysisContent(self):
@@ -64,9 +66,6 @@ class GeneratorBase:
             analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} -i {2}.edm4hep -o {2}.root\n".format(
                 finalStateList[0], finalStateList[1], self.GeneratorDatacardBase
             )
-        else:
-            return ""
-        #analysis += "-i {0}.edm4hep -o {0}.root\n".format(self.GeneratorDatacardBase)
 
         # write the RIVET analysis
         if self.settings.IsRivet():
