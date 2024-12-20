@@ -1,5 +1,5 @@
 from .GeneratorBase import GeneratorBase
-from . import KKMCProcDB
+from .KKMCProcDB import KKMCProcDB
 import os, sys
 
 
@@ -14,7 +14,7 @@ class KKMC(GeneratorBase):
         self.process = ""
         self.cuts = ""
 
-        self.procDB = KKMCProcDB.KKMCProcDB(self.procinfo)
+        self.procDB = KKMCProcDB(self.procinfo)
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
