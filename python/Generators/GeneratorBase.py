@@ -46,13 +46,17 @@ class GeneratorBase:
         self.analysisContent = "" 
         
         # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
-        self.prepare_key4hepContent()
+        self.prepare_key4hepScript()
         
         # the analysis depends only on the process, not on the generator, so we can prepare it at the initialization stage:
         self.prepare_analysisContent()
 
-    def prepare_key4hepContent(self):
-        
+
+    def add2generatorDatacard(self,content):
+        # data encapsulation: add to the content in the base class
+        self.datacardContent += content
+       
+    def prepare_key4hepScript(self):
         # set up for key4hep run of event generation
         key4hep_config = "#!/usr/bin/env bash\n"
         key4hep_config += 'if [ -z "${KEY4HEP_STACK}" ]; then\n'
@@ -60,10 +64,13 @@ class GeneratorBase:
             "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
         )
         key4hep_config += "fi\n\n"
-        #
-        self.key4hep_config = key4hep_config
-        self.key4hepContent = key4hep_config
+        # store it
+        self.add2key4hepScript(key4hep_config)
 
+    def add2key4hepScript(self,content):
+        # data encapsulation: add to the content in the base class
+        self.key4hepContent += content
+        
     def prepare_analysisContent(self):
         
         # write the EDM4HEP analysis part based on the final state
@@ -94,7 +101,7 @@ class GeneratorBase:
         # open the file for the evgen generation in EDM4HEP format
         with open(self.key4hepScript, "w+") as file:
             # set up KEY4HEP
-            file.write(self.key4hep_config)
+            file.write(self.key4hepContent)
             # the generator specific part
             file.write(content)
         # make the script executable
