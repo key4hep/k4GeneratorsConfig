@@ -5,17 +5,23 @@ class GeneratorBase:
     """GeneratorBase class"""
 
     def __init__(self, procinfo, settings, name, inputFileExtension):
+
+        # general settings of the class
         self.procinfo = procinfo
         self.settings = settings
         self.name = name
         self.inputFileExtension = inputFileExtension
 
+        # define the output directory as function of the OutDir spec + generator name + process name
         self.outdir = (
             f"{procinfo.get('OutDir')}/{self.name}/{self.procinfo.get('procname')}"
         )
+
+        # configure the filenames
         self.GeneratorDatacardBase = f"{self.procinfo.get('procname')}"
         self.key4hepScript = f"{self.outdir}/Run_{self.procinfo.get('procname')}"
 
+        # add ISR and BST if requested
         if self.procinfo.get("isrmode"):
             self.GeneratorDatacardBase += "_ISR"
             self.key4hepScript += "_ISR"
