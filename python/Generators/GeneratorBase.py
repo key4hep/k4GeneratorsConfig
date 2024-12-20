@@ -49,7 +49,9 @@ class GeneratorBase:
         )
         self.key4hep_config += "fi\n\n"
 
-        self.analysis = self.prepare_analysis()
+        # three types of global variables for the file content
+        self.analysis = "" 
+        self.prepare_analysis()
 
     def prepare_analysis(self):
         
@@ -72,7 +74,7 @@ class GeneratorBase:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
             
-        return analysis
+        self.analysis = analysis
 
     def write_GeneratorDatacard(self, content):
         with open(self.GeneratorDatacard, "w+") as file:
