@@ -41,7 +41,7 @@ class GeneratorBase:
         self.GeneratorDatacard = f"{self.outdir}/{self.GeneratorDatacardName}"
 
         # three types of global variables for the file content
-        self.datacardContent = ""
+        self.__datacardContent = ""
         self.__key4hepContent  = ""
         self.__analysisContent = "" 
         
@@ -54,7 +54,7 @@ class GeneratorBase:
 
     def add2generatorDatacard(self,content):
         # data encapsulation: add to the content in the base class
-        self.datacardContent += content
+        self.__datacardContent += content
        
     def prepare_key4hepScript(self):
         # set up for key4hep run of event generation
