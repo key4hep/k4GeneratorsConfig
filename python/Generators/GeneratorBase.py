@@ -1,6 +1,5 @@
 import os, stat
 
-
 class GeneratorBase:
     """GeneratorBase class"""
 
@@ -41,21 +40,29 @@ class GeneratorBase:
         # composition of file+directory
         self.GeneratorDatacard = f"{self.outdir}/{self.GeneratorDatacardName}"
 
-        # set up for key4hep run of event generation
-        self.key4hep_config = "#!/usr/bin/env bash\n"
-        self.key4hep_config += 'if [ -z "${KEY4HEP_STACK}" ]; then\n'
-        self.key4hep_config += (
-            "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
-        )
-        self.key4hep_config += "fi\n\n"
-
         # three types of global variables for the file content
         self.datacardContent = ""
         self.key4hepContent  = ""
         self.analysisContent = "" 
-
-        # the analysis depends only on the procss, not on the generator, so we can prepare it at the initialization stage:
+        
+        # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
+        self.prepare_key4hepContent()
+        
+        # the analysis depends only on the process, not on the generator, so we can prepare it at the initialization stage:
         self.prepare_analysisContent()
+
+    def prepare_key4hepContent(self):
+        
+        # set up for key4hep run of event generation
+        key4hep_config = "#!/usr/bin/env bash\n"
+        key4hep_config += 'if [ -z "${KEY4HEP_STACK}" ]; then\n'
+        key4hep_config += (
+            "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
+        )
+        key4hep_config += "fi\n\n"
+        #
+        self.key4hep_config = key4hep_config
+        self.key4hepContent = key4hep_config
 
     def prepare_analysisContent(self):
         
@@ -76,7 +83,7 @@ class GeneratorBase:
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
             
         self.analysisContent = analysis
-
+        
     def write_GeneratorDatacard(self, content):
         with open(self.GeneratorDatacard, "w+") as file:
             file.write(content)
