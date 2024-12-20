@@ -42,8 +42,8 @@ class GeneratorBase:
 
         # three types of global variables for the file content
         self.datacardContent = ""
-        self.key4hepContent  = ""
-        self.analysisContent = "" 
+        self.__key4hepContent  = ""
+        self.__analysisContent = "" 
         
         # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
         self.prepare_key4hepScript()
@@ -69,10 +69,9 @@ class GeneratorBase:
 
     def add2key4hepScript(self,content):
         # data encapsulation: add to the content in the base class
-        self.key4hepContent += content
+        self.__key4hepContent += content
         
     def prepare_analysisContent(self):
-        
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
         finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
@@ -88,8 +87,13 @@ class GeneratorBase:
             for ana in self.settings.analysisname:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
-            
-        self.analysisContent = analysis
+
+        # add to the text to the data member
+        self.add2analysis(analysis)
+    
+    def add2analysis(self,content):
+        # data encapsulation: add to the content in the base class
+        self.__analysisContent += content
         
     def write_GeneratorDatacard(self, content):
         with open(self.GeneratorDatacard, "w+") as file:
@@ -97,11 +101,11 @@ class GeneratorBase:
 
     def write_Key4hepScript(self, content):
         # append the analysis to the content
-        content += self.analysisContent
+        content += self.__analysisContent
         # open the file for the evgen generation in EDM4HEP format
         with open(self.key4hepScript, "w+") as file:
             # set up KEY4HEP
-            file.write(self.key4hepContent)
+            file.write(self.__key4hepContent)
             # the generator specific part
             file.write(content)
         # make the script executable
