@@ -46,17 +46,37 @@ class GeneratorBase:
         self.__analysisContent = "" 
         
         # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
-        self.prepare_key4hepScript()
+        self.prepareKey4hepScript()
         
         # the analysis depends only on the process, not on the generator, so we can prepare it at the initialization stage:
-        self.prepare_analysisContent()
+        self.prepareAnalysisContent()
 
 
-    def add2generatorDatacard(self,content):
+    def add2GeneratorDatacard(self,content):
         # data encapsulation: add to the content in the base class
         self.__datacardContent += content
        
-    def prepare_key4hepScript(self):
+    def resetGeneratorDatacard(self):
+        # data encapsulation: reset the datacard content to ""
+        self.__datacardContent = ""
+       
+    def add2Key4hepScript(self,content):
+        # data encapsulation: add to the content in the base class
+        self.__key4hepContent += content
+        
+    def resetKey4hepScript(self):
+        # data encapsulation: reset the  KEY4HEP script content to ""
+        self.__key4hepContent = ""
+        
+    def add2Analysis(self,content):
+        # data encapsulation: add to the content in the base class
+        self.__analysisContent += content
+        
+    def resetAnalysis(self):
+        # data encapsulation: reset analysis content to ""
+        self.__analysisContent = ""
+        
+    def prepareKey4hepScript(self):
         # set up for key4hep run of event generation
         key4hep_config = "#!/usr/bin/env bash\n"
         key4hep_config += 'if [ -z "${KEY4HEP_STACK}" ]; then\n'
@@ -65,13 +85,9 @@ class GeneratorBase:
         )
         key4hep_config += "fi\n\n"
         # store it
-        self.add2key4hepScript(key4hep_config)
+        self.add2Key4hepScript(key4hep_config)
 
-    def add2key4hepScript(self,content):
-        # data encapsulation: add to the content in the base class
-        self.__key4hepContent += content
-        
-    def prepare_analysisContent(self):
+    def prepareAnalysisContent(self):
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
         finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
@@ -89,24 +105,23 @@ class GeneratorBase:
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
 
         # add to the text to the data member
-        self.add2analysis(analysis)
+        self.add2Analysis(analysis)
     
-    def add2analysis(self,content):
-        # data encapsulation: add to the content in the base class
-        self.__analysisContent += content
-        
-    def write_GeneratorDatacard(self, content):
-        with open(self.GeneratorDatacard, "w+") as file:
-            file.write(content)
+    def write2Disk(self):
+        # the content has been filled, now we write to disk
+        self.writeGeneratorDatacard()
+        self.writeKey4hepScript()
 
-    def write_Key4hepScript(self, content):
-        # append the analysis to the content
-        content += self.__analysisContent
+    def writeGeneratorDatacard(self):
+        with open(self.GeneratorDatacard, "w+") as file:
+            file.write(self.__datacardContent)
+
+    def writeKey4hepScript(self):
         # open the file for the evgen generation in EDM4HEP format
         with open(self.key4hepScript, "w+") as file:
             # set up KEY4HEP
             file.write(self.__key4hepContent)
-            # the generator specific part
-            file.write(content)
+            # set up Analysis
+            file.write(self.__analysisContent)
         # make the script executable
         os.chmod(self.key4hepScript, os.stat(self.key4hepScript).st_mode | stat.S_IEXEC)

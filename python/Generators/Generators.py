@@ -20,10 +20,8 @@ class Generators:
                 generatorClass = getattr(generator,generatorName)
                 # execute the object
                 generatorObj = generatorClass(self.proc_info, self.settings)
-                #writing file
-                generatorObj.write_file()
-                #writing key4hep file 
-                generatorObj.write_key4hepfile()
+                # execute the generator
+                generatorObj.execute()
 
             except ModuleNotFoundError:
                 print(f"{generatorName} python module not found for {self.proc_info.get('_proclabel')}")

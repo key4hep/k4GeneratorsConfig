@@ -29,7 +29,17 @@ class Pythia(GeneratorBase):
         if settings.get_block("selectors"):
             self.write_selectors()
 
-    def write_run(self):
+    def execute(self):
+        # prepare the datacard
+        self.fill_run()
+        self.fill_decay()
+        # prepare the key4hepfile
+        self.fill_key4hepScript()
+
+        # write the cards
+        self.write2Disk()
+
+    def fill_run(self):
         self.run = ""
         self.add_option("Random:setSeed", "on")
         self.add_option("Random:seed", self.procinfo.get_rndmSeed())
@@ -81,7 +91,9 @@ class Pythia(GeneratorBase):
             for key, value in self.gen_settings.items():
                 self.add_option(key, value)
 
-    def write_decay(self):
+        self.add2GeneratorDatacard(self.run)
+
+    def fill_decay(self):
         if self.procinfo.get("decay"):
             self.add_decay()
 
@@ -212,16 +224,10 @@ class Pythia(GeneratorBase):
             for c in child:
                 decays += f"{c} "
             decays += "\n"
-        self.run += "\n"
-        self.run += decays
+        self.add2Datacard("\n")
+        self.add2Datacard(decays)
 
-    def write_file(self):
-        self.write_run()
-        self.write_decay()
-        self.file = self.run
-        self.write_GeneratorDatacard(self.file)
-
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
@@ -229,8 +235,7 @@ class Pythia(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
-
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
     def add_option(self, key, value):
         if self.gen_settings is not None:

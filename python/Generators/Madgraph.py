@@ -22,7 +22,16 @@ class Madgraph(GeneratorBase):
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
-    def write_run(self):
+    def execute(self):
+        # prepare the datacard
+        self.fill_run()
+        # prepare the key4hepfile
+        self.fill_key4hepScript()
+
+        # write the cards
+        self.write2Disk()
+
+    def fill_run(self):
         try:
             if "model" in self.gen_settings:
                 self.add_run_option("import model", self.gen_settings["model"].lower())
@@ -69,6 +78,8 @@ class Madgraph(GeneratorBase):
         self.write_selectors()
         # else:
         #     self.add_default_Selectors()
+        # now the structure is filled, transfer it to the baseclass
+        self.add2GeneratorDatacard(self.run)
 
     def get_BeamstrahlungPDLABEL(self):
         ecm = self.procinfo.sqrts
@@ -257,11 +268,11 @@ class Madgraph(GeneratorBase):
         self.run += f"set {sname} {maxcut}\n"
 
     def write_file(self):
-        self.write_run()
+        self.fill_run()
         self.file = self.run
         self.write_GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         # now the running part temporarily on LHE
@@ -282,7 +293,7 @@ class Madgraph(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
     def write_PythiaCMND(self, pythiaFile):
         # append the analysis to the content
