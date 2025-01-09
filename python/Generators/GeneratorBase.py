@@ -1,6 +1,7 @@
+import abc
 import os, stat
 
-class GeneratorBase:
+class GeneratorBase(abc.ABC):
     """GeneratorBase class"""
 
     def __init__(self, procinfo, settings, name, inputFileExtension):
@@ -51,6 +52,8 @@ class GeneratorBase:
         # the analysis depends only on the process, not on the generator, so we can prepare it at the initialization stage:
         self.prepareAnalysisContent()
 
+    def execute(self):
+        raise NotImplementedError()
 
     def add2GeneratorDatacard(self,content):
         # data encapsulation: add to the content in the base class
