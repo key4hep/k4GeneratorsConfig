@@ -4,6 +4,7 @@ class WhizardProcDB:
     def __init__(self, process):
         self.process = process
         self.runout = ""
+        self.procout = ""
 
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
@@ -37,6 +38,9 @@ class WhizardProcDB:
 
     def get_run_out(self):
         return self.runout
+
+    def get_proc_out(self):
+        return self.procout
 
     def remove_option(self, opt):
         lines = self.runout.split("\n")

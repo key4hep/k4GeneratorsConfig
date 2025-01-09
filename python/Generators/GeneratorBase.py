@@ -76,8 +76,10 @@ class GeneratorBase(abc.ABC):
             print("Datacard files and execution scripts not written for this generator")
             raise
         
+        self.procDB_settings = ""
         if self.settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
+            self.procDB_settings = self.procDB.get_run_out()+self.procDB.get_proc_out()
         
     def execute(self):
         raise NotImplementedError()
