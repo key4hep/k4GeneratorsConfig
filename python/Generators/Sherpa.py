@@ -24,6 +24,10 @@ class Sherpa(GeneratorBase):
             self.cuts = "(selector){\n"
             self.write_selectors()
 
+    def execute(self):
+        self.fill_datacard()
+        self.fill_key4hepScript()
+        
     def write_run(self):
         self.run = "(run){\n"
 
@@ -196,15 +200,15 @@ class Sherpa(GeneratorBase):
         self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n"
         self.ptext += decays
 
-    def write_file(self):
+    def fill_datacard(self):
         self.write_run()
         self.write_process()
         self.ptext += "}(processes)\n\n"
         self.run += "}(run)\n\n"
         self.file = self.run + self.ptext + self.cuts
-        self.write_GeneratorDatacard(self.file)
+        self.add2GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         if "Amegic" in self.file:
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
@@ -219,7 +223,7 @@ class Sherpa(GeneratorBase):
             hepmcformat, self.GeneratorDatacardBase, hepmcversion
         )
 
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
     def add_run_option(self, key, value):
         if self.gen_settings is not None:

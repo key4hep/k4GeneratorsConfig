@@ -31,13 +31,14 @@ class Pythia(GeneratorBase):
 
     def execute(self):
         # prepare the datacard
-        self.fill_run()
-        self.fill_decay()
+        self.fill_datacard()
         # prepare the key4hepfile
         self.fill_key4hepScript()
 
-        # write the cards
-        self.write2Disk()
+    def fill_datacard(self):
+        # prepare the datacard
+        self.fill_run()
+        self.fill_decay()
 
     def fill_run(self):
         self.run = ""

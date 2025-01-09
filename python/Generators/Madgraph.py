@@ -24,14 +24,11 @@ class Madgraph(GeneratorBase):
 
     def execute(self):
         # prepare the datacard
-        self.fill_run()
+        self.fill_datacard()
         # prepare the key4hepfile
         self.fill_key4hepScript()
 
-        # write the cards
-        self.write2Disk()
-
-    def fill_run(self):
+    def fill_datacard(self):
         try:
             if "model" in self.gen_settings:
                 self.add_run_option("import model", self.gen_settings["model"].lower())

@@ -29,6 +29,10 @@ class KKMC(GeneratorBase):
         with open(defaultfile, "r") as file:
             self.defaults = file.read()
 
+    def execute(self):
+        self.fill_datacard()
+        self.fill_key4hepScript()
+        
     def write_process(self):
         if (
             abs(self.procinfo.get_beam_flavour(1)) != 11
@@ -83,11 +87,11 @@ class KKMC(GeneratorBase):
         else:
             print(f"Warning: {key} not set as defaults in KKCM. Ignoring")
 
-    def write_file(self):
+    def fill_datacard(self):
         self.write_process()
-        self.write_GeneratorDatacard(self.defaults)
+        self.add2GeneratorDatacard(self.defaults)
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += "KKMCee -c  {0} --nevts {3} -o {1}.{2}\n".format(
             self.GeneratorDatacardName,
@@ -98,7 +102,7 @@ class KKMC(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
     def pdg_to_KKMC(self, pdg):
         apdg = abs(400 + int(pdg))

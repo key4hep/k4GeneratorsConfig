@@ -22,6 +22,8 @@ class Generators:
                 generatorObj = generatorClass(self.proc_info, self.settings)
                 # execute the generator
                 generatorObj.execute()
+                # finalize the generator
+                generatorObj.finalize()
 
             except ModuleNotFoundError:
                 print(f"{generatorName} python module not found for {self.proc_info.get('_proclabel')}")

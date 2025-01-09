@@ -24,6 +24,10 @@ class Whizard(GeneratorBase):
 
         self.procs = []
 
+    def execute(self):
+        self.fill_datacard()
+        self.fill_key4hepScript()
+
     def write_process(self):
         self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
         self.whiz_beam2 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(2))
@@ -209,16 +213,16 @@ class Whizard(GeneratorBase):
             self.procDB.remove_option(key)
         self.process += f"{key} = {value}\n"
 
-    def write_file(self):
+    def fill_datacard(self):
         self.write_process()
         if self.cuts != "cuts = ":
             self.process += self.cuts
         self.process += "compile\n"
         self.write_integrate()
         self.file = f"{self.process}{self.integrate}"
-        self.write_GeneratorDatacard(self.file)
+        self.add2GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         # temporary fix for circe until we know where the files are stored in KEY4HEP
         if self.procinfo.get("beamstrahlung") is not None:
@@ -229,7 +233,7 @@ class Whizard(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
     def is_whizard_particle_data(self, d):
         name = None

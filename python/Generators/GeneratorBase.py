@@ -107,7 +107,7 @@ class GeneratorBase:
         # add to the text to the data member
         self.add2Analysis(analysis)
     
-    def write2Disk(self):
+    def finalize(self):
         # the content has been filled, now we write to disk
         self.writeGeneratorDatacard()
         self.writeKey4hepScript()
