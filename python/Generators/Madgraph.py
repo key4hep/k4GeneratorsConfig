@@ -1,5 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .MadgraphProcDB import MadgraphProcDB
 from Particles import Particle as part
 
 
@@ -14,9 +13,6 @@ class Madgraph(GeneratorBase):
 
         self.add_header()
         self.executable = "mg5_aMC"
-        self.procDB = MadgraphProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
     def execute(self):
         # prepare the datacard

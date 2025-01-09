@@ -1,6 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .SherpaProcDB import SherpaProcDB
-
 
 class Sherpa(GeneratorBase):
     """Sherpa class"""
@@ -11,10 +9,6 @@ class Sherpa(GeneratorBase):
         self.version = "x.y.z"
         self.file = ""
         self.cuts = ""
-
-        self.procDB = SherpaProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "Sherpa -f"
 

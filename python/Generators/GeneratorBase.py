@@ -1,4 +1,5 @@
 import abc
+import importlib
 import os, stat
 
 class GeneratorBase(abc.ABC):
@@ -10,6 +11,7 @@ class GeneratorBase(abc.ABC):
         self.procinfo = procinfo
         self.settings = settings
         self.name = name
+        self.procDBName = f"{name}ProcDB"
         self.inputFileExtension = inputFileExtension
 
         # define the output directory as function of the OutDir spec + generator name + process name
@@ -57,6 +59,25 @@ class GeneratorBase(abc.ABC):
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
+        # the generator ProcDB settings are stored in a public member:
+        try:
+            generatorProcDB      = importlib.import_module(f"Generators.{self.procDBName}")
+            # get the ClassObject
+            generatorProcDBClass = getattr(generatorProcDB,self.procDBName)
+            # execute the object
+            self.procDB          = generatorProcDBClass(self.procinfo)
+        except ModuleNotFoundError:
+            print(f"{self.procDBName} python module not found for {self.procinfo.get('_proclabel')}")
+        except AttributeError:
+            print(f"{self.procDBName} class could not be loaded with getattr for {self.procinfo.get('_proclabel')} or class initialization did not work")
+        except:
+            # all that remains is an excption from the execution of the modules
+            print(f"Execution of {self.procDBName} for {self.procinfo.get('_proclabel')} resulted in an exception")
+            print("Datacard files and execution scripts not written for this generator")
+            raise
+        
+        if self.settings.get("usedefaults", True):
+            self.procDB.write_DBInfo()
         
     def execute(self):
         raise NotImplementedError()

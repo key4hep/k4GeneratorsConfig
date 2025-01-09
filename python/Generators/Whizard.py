@@ -1,6 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .WhizardProcDB import WhizardProcDB
-
 
 class Whizard(GeneratorBase):
     """Whizard class"""
@@ -12,10 +10,6 @@ class Whizard(GeneratorBase):
         self.file = ""
         self.cuts = ""
         self.integrate = ""
-
-        self.procDB = WhizardProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "whizard"
 

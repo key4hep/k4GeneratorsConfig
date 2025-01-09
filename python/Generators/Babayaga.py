@@ -1,6 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .BabayagaProcDB import BabayagaProcDB
-
 
 class Babayaga(GeneratorBase):
     """Babayaga class"""
@@ -12,10 +10,6 @@ class Babayaga(GeneratorBase):
         self.file = ""
         self.process = ""
         self.cuts = ""
-
-        self.procDB = BabayagaProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "babayaga-fcc.exe"
         self.procs = []

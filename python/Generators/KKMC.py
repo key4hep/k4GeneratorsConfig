@@ -1,5 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .KKMCProcDB import KKMCProcDB
 import os, sys
 
 
@@ -13,10 +12,6 @@ class KKMC(GeneratorBase):
         self.file = ""
         self.process = ""
         self.cuts = ""
-
-        self.procDB = KKMCProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "KKMC-fcc.exe"
         self.procs = []

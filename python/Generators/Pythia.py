@@ -1,6 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .PythiaProcDB import PythiaProcDB
-
 
 class Pythia(GeneratorBase):
     """Pythia class"""
@@ -12,10 +10,6 @@ class Pythia(GeneratorBase):
         self.file = ""
         self.cuts = ""
         self.PythiaSelectorFileExtension = "selectors"
-
-        self.procDB = PythiaProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "$K4GenBuildDir/bin/pythiaRunner -f"
 
