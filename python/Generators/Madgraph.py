@@ -18,14 +18,10 @@ class Madgraph(GeneratorBase):
         if settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
 
-        self.gen_settings = settings.get_block("madgraph")
-        if self.gen_settings is not None:
-            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
-
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
-        # prepare the key4hepfile
+        # prepare the key4hep script
         self.fill_key4hepScript()
 
     def fill_datacard(self):

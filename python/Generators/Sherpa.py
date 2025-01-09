@@ -17,15 +17,15 @@ class Sherpa(GeneratorBase):
             self.procDB.write_DBInfo()
 
         self.executable = "Sherpa -f"
-        self.gen_settings = settings.get_block("sherpa")
-        if self.gen_settings is not None:
-            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
+
         if settings.get_block("selectors"):
             self.cuts = "(selector){\n"
             self.write_selectors()
 
     def execute(self):
+        # prepare the datacard
         self.fill_datacard()
+        # prepare the key4hep script
         self.fill_key4hepScript()
         
     def write_run(self):

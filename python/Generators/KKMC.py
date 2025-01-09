@@ -19,10 +19,6 @@ class KKMC(GeneratorBase):
             self.procDB.write_DBInfo()
 
         self.executable = "KKMC-fcc.exe"
-        self.gen_settings = settings.get_block("kkmc")
-        if self.gen_settings is not None:
-            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
-
         self.procs = []
         # Load default settigns
         defaultfile = os.path.dirname(__file__) + "/.KKMCDefaults"
@@ -30,7 +26,9 @@ class KKMC(GeneratorBase):
             self.defaults = file.read()
 
     def execute(self):
+        # prepare the datacard
         self.fill_datacard()
+        # prepare the key4hep script
         self.fill_key4hepScript()
         
     def write_process(self):

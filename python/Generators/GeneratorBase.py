@@ -52,6 +52,12 @@ class GeneratorBase(abc.ABC):
         # the analysis depends only on the process, not on the generator, so we can prepare it at the initialization stage:
         self.prepareAnalysisContent()
 
+        # the generator settings are stored in a public member:
+        self.gen_settings = settings.get_block(self.name.lower())
+        if self.gen_settings is not None:
+            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
+
+        
     def execute(self):
         raise NotImplementedError()
 
