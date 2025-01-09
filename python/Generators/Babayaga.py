@@ -24,6 +24,10 @@ class Babayaga(GeneratorBase):
 
         self.procs = []
 
+    def execute(self):
+        self.fill_datacard()
+        self.fill_key4hepScript()
+
     def write_process(self):
         if (
             abs(self.procinfo.get_beam_flavour(1)) != 11
@@ -104,14 +108,14 @@ class Babayaga(GeneratorBase):
             self.procDB.remove_option(key)
         self.process += f"{key} {value}\n"
 
-    def write_file(self):
+    def fill_datacard(self):
         self.write_process()
         self.file = self.process + self.cuts
         # last command is run
         self.file += "run\n"
-        self.write_GeneratorDatacard(self.file)
+        self.add2GeneratorDatacard(self.file)
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += (
             "cat " + self.GeneratorDatacardName + " | " + self.executable + "\n"
@@ -122,7 +126,7 @@ class Babayaga(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
     def pdg_to_babayaga(self, pdg):
         apdg = abs(int(pdg))
