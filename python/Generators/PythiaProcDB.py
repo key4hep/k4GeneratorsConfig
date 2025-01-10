@@ -1,10 +1,11 @@
-class PythiaProcDB:
+from .ProcDBBase import ProcDBBase
+
+class PythiaProcDB(ProcDBBase):
     """PythiaProcDB class"""
 
     def __init__(self, process):
+        super().__init__(process)
         self.process = process
-        self.runout = ""
-        self.procout = ""
 
     def write_DBInfo(self):
         # general stuff

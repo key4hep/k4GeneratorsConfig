@@ -1,10 +1,11 @@
-class WhizardProcDB:
+from .ProcDBBase import ProcDBBase
+
+class WhizardProcDB(ProcDBBase):
     """WhizardProcDB class"""
 
     def __init__(self, process):
+        super().__init__(process)
         self.process = process
-        self.runout = ""
-        self.procout = ""
 
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
