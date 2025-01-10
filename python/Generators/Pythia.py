@@ -63,7 +63,7 @@ class Pythia(GeneratorBase):
                             self.procDB.remove_option(op_name)
                         self.add_option(op_name, value)
 
-        self.add_option("Main:SelectorsFile", self.getOptionalFileName)
+        self.add_option("Main:SelectorsFile", self.getOptionalFileName())
 
         if "hepmc" in self.procinfo.get("output_format"):
             self.add_option("Main:WriteHepMC", "on")
