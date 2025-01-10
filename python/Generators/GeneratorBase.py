@@ -12,7 +12,8 @@ class GeneratorBase(abc.ABC):
         self.settings = settings
         self.name = name
         self.procDBName = f"{name}ProcDB"
-        self.inputFileExtension = inputFileExtension
+        self.inputFileExtension    = inputFileExtension
+        self.__optionalFileExtension = ""
 
         # define the output directory as function of the OutDir spec + generator name + process name
         self.outdir = (
@@ -47,6 +48,7 @@ class GeneratorBase(abc.ABC):
         self.__datacardContent = ""
         self.__key4hepContent  = ""
         self.__analysisContent = "" 
+        self.__optfileContent  = "" 
         
         # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
         self.prepareKey4hepScript()
@@ -115,6 +117,23 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: reset analysis content to ""
         self.__analysisContent = ""
         
+    def add2OptionalFile(self,content):
+        # data encapsulation: add to the content in the base class
+        self.__optfileContent += content
+       
+    def resetOptionalFile(self):
+        # data encapsulation: reset the optionalFile content to ""
+        self.__optfileContent = ""
+       
+    def setOptionalFileNameAndExtension(self,filename,extension):
+        # data encapsulation: reset the optionalFile content to ""
+        self.__optionalFileExtension = extension
+        self.__optionalFileName      = f"{filename}.{self.__optionalFileExtension}"
+        self.__optionalFile          = f"{self.outdir}/{filename}.{self.__optionalFileExtension}"
+       
+    def getOptionalFileName(self):
+        return self.__optionalFileName
+       
     def prepareKey4hepScript(self):
         # set up for key4hep run of event generation
         key4hep_config = "#!/usr/bin/env bash\n"
@@ -150,6 +169,7 @@ class GeneratorBase(abc.ABC):
         # the content has been filled, now we write to disk
         self.writeGeneratorDatacard()
         self.writeKey4hepScript()
+        self.writeOptionalFile()
 
     def writeGeneratorDatacard(self):
         with open(self.GeneratorDatacard, "w+") as file:
@@ -164,3 +184,9 @@ class GeneratorBase(abc.ABC):
             file.write(self.__analysisContent)
         # make the script executable
         os.chmod(self.key4hepScript, os.stat(self.key4hepScript).st_mode | stat.S_IEXEC)
+
+    def writeOptionalFile(self):
+        if len(self.__optionalFileExtension) > 0:
+            with open(self.__optionalFile, "w+") as file:
+                file.write(self.__optfileContent)
+

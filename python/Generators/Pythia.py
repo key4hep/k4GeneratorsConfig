@@ -9,16 +9,12 @@ class Pythia(GeneratorBase):
         self.version = "x.y.z"
         self.file = ""
         self.cuts = ""
-        self.PythiaSelectorFileExtension = "selectors"
 
         self.executable = "$K4GenBuildDir/bin/pythiaRunner -f"
 
-        self.selectorsFile = (
-            self.GeneratorDatacardBase + "." + self.PythiaSelectorFileExtension
-        )
-        self.selectorsFileWithPath = self.outdir + "/" + self.selectorsFile
+        self.setOptionalFileNameAndExtension(self.GeneratorDatacardBase,"selectors")
         if settings.get_block("selectors"):
-            self.write_selectors()
+            self.fill_selectors()
 
     def execute(self):
         # prepare the datacard
@@ -67,7 +63,7 @@ class Pythia(GeneratorBase):
                             self.procDB.remove_option(op_name)
                         self.add_option(op_name, value)
 
-        self.add_option("Main:SelectorsFile", self.selectorsFile)
+        self.add_option("Main:SelectorsFile", self.getOptionalFileName)
 
         if "hepmc" in self.procinfo.get("output_format"):
             self.add_option("Main:WriteHepMC", "on")
@@ -89,7 +85,7 @@ class Pythia(GeneratorBase):
         if self.procinfo.get("decay"):
             self.add_decay()
 
-    def write_selectors(self):
+    def fill_selectors(self):
         selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
@@ -106,8 +102,7 @@ class Pythia(GeneratorBase):
         for key, value in selectors.items():
             self.add_Selector(value)
         # PYTHIA special: write the selectors to the file proc.selectors
-        with open(self.selectorsFileWithPath, "w+") as file:
-            file.write(self.cuts)
+        self.add2OptionalFile(self.cuts)
 
     def add_Selector(self, value):
         key = value.name.lower()
