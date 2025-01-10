@@ -21,17 +21,7 @@ class MadgraphProcDB(ProcDBBase):
         out += f"\nset pt_min_pdg {{{self.process.final[0]}: 0 }}\n"
         return out
 
-    def get_run_out(self):
-        return self.runout
-
-    def get_proc_out(self):
-        return self.procout
-
     def write_run_ZH(self):
         out = ""
         return out
 
-    def remove_option(self, opt):
-        lines = self.runout.split("\n")
-        filter_lines = [line for line in lines if opt not in line]
-        self.runout = "\n".join(filter_lines)

@@ -23,13 +23,3 @@ class BabayagaProcDB(ProcDBBase):
     def write_Diphoton(self):
         self.runout = ""
 
-    def get_run_out(self):
-        return self.runout
-
-    def get_proc_out(self):
-        return self.procout
-
-    def remove_option(self, opt):
-        lines = self.runout.split("\n")
-        filter_lines = [line for line in lines if opt not in line]
-        self.runout = "\n".join(filter_lines)
