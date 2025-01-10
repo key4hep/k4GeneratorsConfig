@@ -10,6 +10,9 @@ class ProcDBBase(abc.ABC):
         self.runout = ""
         self.procout = ""
 
+    def write_DBInfo(self):
+        return
+        
     def get_run_out(self):
         return self.runout
 

@@ -67,7 +67,14 @@ class GeneratorBase(abc.ABC):
             # execute the object
             self.procDB          = generatorProcDBClass(self.procinfo)
         except ModuleNotFoundError:
-            print(f"{self.procDBName} python module not found for {self.procinfo.get('_proclabel')}")
+            print(f"{self.procDBName} python module not found for {self.procinfo.get('_proclabel')}, no standard settings available")
+            # load the baseclass in this case to ensure execution
+            baseClass = "ProcDBBase"
+            generatorProcDB      = importlib.import_module(f"Generators.{baseClass}")
+            # get the ClassObject
+            generatorProcDBClass = getattr(generatorProcDB,baseClass)
+            # execute the object
+            self.procDB          = generatorProcDBClass(self.procinfo)
         except AttributeError:
             print(f"{self.procDBName} class could not be loaded with getattr for {self.procinfo.get('_proclabel')} or class initialization did not work")
         except:
