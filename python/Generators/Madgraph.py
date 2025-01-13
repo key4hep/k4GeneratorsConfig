@@ -23,9 +23,9 @@ class Madgraph(GeneratorBase):
     def fill_datacard(self):
         try:
             if "model" in self.gen_settings:
-                self.add_run_option("import model", self.gen_settings["model"].lower())
+                self.add_option("import model", self.gen_settings["model"].lower())
         except:
-            self.add_run_option("import model", self.procinfo.get("model").lower())
+            self.add_option("import model", self.procinfo.get("model").lower())
         self.mg_particles = list(
             map(self.pdg_to_madgraph, self.procinfo.get_particles())
         )
@@ -36,14 +36,17 @@ class Madgraph(GeneratorBase):
                 self.proc += "> "
         if self.procinfo.get("decay"):
             self.add_decay()
-        self.add_run_option("generate", self.proc)
-        # self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
-        self.add_run_option("output", "Output")
-        self.add_run_option("launch", None)
-        self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
-        self.add_run_option("set EBEAM", self.procinfo.get("sqrts") / 2.0)
-        self.set_particle_data()
-        self.add_run_option("set nevents", self.procinfo.get("events"))
+        self.add_option("generate", self.proc)
+        # self.add_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
+        self.add_option("output", "Output")
+        self.add_option("launch", None)
+        self.add_option("set iseed", self.procinfo.get_rndmSeed())
+        self.add_option("set EBEAM", self.procinfo.get("sqrts") / 2.0)
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
+
+        self.add_option("set nevents", self.procinfo.get("events"))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -52,16 +55,16 @@ class Madgraph(GeneratorBase):
                 #       See arxiv 2108.10261 for more details.")
                 #   raise(ValueError)
                 # else:
-                self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
+                self.add_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
                 # self.GeneratorDatacard += f"_{self.get_BeamstrahlungPDLABEL()}"
                 # self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
-                self.add_run_option("set pdlabel", "isronlyll")
-            self.add_run_option("set lpp1", "3")
-            self.add_run_option("set lpp2", "-3")
+                self.add_option("set pdlabel", "isronlyll")
+            self.add_option("set lpp1", "3")
+            self.add_option("set lpp2", "-3")
         if self.procinfo.get_ElectronPolarisation() != 0 or self.procinfo.get_PositronPolarisation()!= 0:
-            self.add_run_option("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
-            self.add_run_option("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
+            self.add_option("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
+            self.add_option("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
         self.run += self.procDB.get_run_out()
         # if self.settings.get_block("selectors"):
         self.write_selectors()
@@ -113,17 +116,6 @@ class Madgraph(GeneratorBase):
             )
             print("Using ILC at 500GeV")
             return "ilc500ll"
-
-    def set_particle_data(self):
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = p.get("name").replace("+", "").replace("-", "")
-                    _prop = self.is_mg_particle_data(attr)
-                    if _prop is not None:
-                        value = getattr(p, attr)
-                        op_name = f"set {_prop}{name}"
-                        self.add_run_option(op_name, value)
 
     def add_decay(self):
         # Simple check first that parents are
@@ -229,7 +221,7 @@ class Madgraph(GeneratorBase):
                 # maxcut = f"{f1}: {Max}"
                 # self.run+=f"set {sname} {maxcut}\n"
 
-                # self.add_run_option(sname, maxcut)
+                # self.add_option(sname, maxcut)
 
     def add_one_ParticleSelector(self, sel, name, unit="", f1=None):
         Min, Max = sel.get_MinMax(unit)
@@ -296,7 +288,7 @@ class Madgraph(GeneratorBase):
             # the generator specific part
             file.write(content)
 
-    def add_run_option(self, key, value):
+    def add_option(self, key, value):
         if key in self.run:
             print(f"{key} has already been defined in {self.name}.")
             return
@@ -308,12 +300,16 @@ class Madgraph(GeneratorBase):
     def pdg_to_madgraph(self, particle):
         return particle.get("name")
 
-    def is_mg_particle_data(self, d):
+    def is_particle_data(self, d):
         if d == "mass":
             return "M"
         if d == "width":
             return "W"
         return None
+
+    def get_particle_operator(self, part, prop):
+        particleName = part.get("name").replace("+", "").replace("-", "")
+        return f"set {prop}{particleName}"
 
     def add_header(self):
         self.run = """#************************************************************

@@ -25,52 +25,46 @@ class Sherpa(GeneratorBase):
     def write_run(self):
         self.run = "(run){\n"
 
-        self.add_run_option("RANDOM_SEED", self.procinfo.get_rndmSeed())
+        self.add_option("RANDOM_SEED", self.procinfo.get_rndmSeed())
 
         ENG = self.procinfo.get("sqrts") / 2.0
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
-        self.add_run_option("BEAM_1", beam1_pdg)
-        self.add_run_option("BEAM_2", beam2_pdg)
+        self.add_option("BEAM_1", beam1_pdg)
+        self.add_option("BEAM_2", beam2_pdg)
 
-        self.add_run_option("BEAM_ENERGY_1", ENG)
-        self.add_run_option("BEAM_ENERGY_2", ENG)
-        self.add_run_option("MODEL", self.procinfo.get("model"))
+        self.add_option("BEAM_ENERGY_1", ENG)
+        self.add_option("BEAM_ENERGY_2", ENG)
+        self.add_option("MODEL", self.procinfo.get("model"))
 
         if self.procinfo.get("isrmode"):
-            self.add_run_option("PDF_LIBRARY", "PDFESherpa")
+            self.add_option("PDF_LIBRARY", "PDFESherpa")
         else:
-            self.add_run_option("PDF_LIBRARY", "None")
+            self.add_option("PDF_LIBRARY", "None")
         if self.procinfo.get("fsrmode"):
-            self.add_run_option("YFS_MODE", "FULL")
+            self.add_option("YFS_MODE", "FULL")
         else:
-            self.add_run_option("YFS_MODE", "None")
-        self.add_run_option("EVENTS", self.procinfo.get("events"))
+            self.add_option("YFS_MODE", "None")
+        self.add_option("EVENTS", self.procinfo.get("events"))
         self.run += "\n\n"
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = self.is_sherpa_particle_data(attr)
-                    if name is not None:
-                        value = getattr(p, attr)
-                        op_name = f"{name}[{p.get('pdg_code')}]"
-                        if op_name in self.procDB.get_run_out():
-                            self.procDB.remove_option(op_name)
-                        self.add_run_option(op_name, value)
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
+
         if self.procinfo.get("output_format") == "hepmc2":
             eoutname = "HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
-            self.add_run_option("EVENT_OUTPUT", eoutname)
+            self.add_option("EVENT_OUTPUT", eoutname)
 
         elif self.procinfo.get("output_format") == "hepmc3":
             eoutname = "HepMC3_GenEvent[{0}.hepmc3]".format(self.GeneratorDatacardBase)
-            self.add_run_option("EVENT_OUTPUT", eoutname)
+            self.add_option("EVENT_OUTPUT", eoutname)
         self.run += self.procDB.get_run_out()
-        self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
+        self.add_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
                 for key, value in self.gen_settings["run"].items():
-                    self.add_run_option(key, value)
+                    self.add_option(key, value)
 
     def write_process(self):
         self.ptext = "(processes){\n"
@@ -219,7 +213,7 @@ class Sherpa(GeneratorBase):
 
         self.add2Key4hepScript(key4hepRun)
 
-    def add_run_option(self, key, value):
+    def add_option(self, key, value):
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
                 if key in self.gen_settings["run"]:
@@ -237,10 +231,14 @@ class Sherpa(GeneratorBase):
             return
         self.ptext += f" {key} {value};\n"
 
-    def is_sherpa_particle_data(self, d):
+    def is_particle_data(self, d):
         name = None
         if d == "mass":
             name = "MASS"
         if d == "width":
             name = "WIDTH"
         return name
+
+    def get_particle_operator(self, part, prop):
+        return f"{prop}[{part.get('pdg_code')}]"
+

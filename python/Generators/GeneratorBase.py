@@ -101,6 +101,32 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: reset the datacard content to ""
         self.__datacardContent = ""
        
+    def add_option(self,key,value):
+        raise NotImplementedError()
+
+    def prepareParticles(self):
+        # retrieve the particles from the input
+        for part in self.procinfo.get_data_particles():
+            # loop over all attributes
+            for attr in dir(part):
+                # make sure it's not a special attribute
+                if not callable(getattr(part, attr)) and not attr.startswith("__"):
+                    # now we know it's just a field name:
+                    prop = self.is_particle_data(attr)
+                    if prop is not None:
+                        op_name = self.get_particle_operator(part,prop)
+                        # remove from the Standard=ProcDB settings if necessary
+                        if op_name in self.procDB.get_run_out():
+                            self.procDB.remove_option(op_name)
+                        value = getattr(part, attr)
+                        self.add_option(op_name, value)
+
+    def is_particle_data(self, attr):
+        raise NotImplementedError()
+
+    def get_particle_operator(self, part, name):
+        raise NotImplementedError()
+
     def add2Key4hepScript(self,content):
         # data encapsulation: add to the content in the base class
         self.__key4hepContent += content

@@ -35,17 +35,17 @@ class Whizard(GeneratorBase):
         except:
             self.process = f"model = {self.procinfo.get('model')}\n"
 
-        self.add_process_option("seed", self.procinfo.get_rndmSeed())
+        self.add_option("seed", self.procinfo.get_rndmSeed())
 
         if self.procinfo.get("isrmode"):
-            self.add_process_option("?isr_handler", "true")
+            self.add_option("?isr_handler", "true")
             self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2}"
             # insert circe
             if self.procinfo.get("beamstrahlung") is not None:
                 self.process += f" => circe2 "
             self.process += f" => isr,isr\n"
             isrmass = 0.000511
-            self.add_process_option("isr_mass", isrmass)
+            self.add_option("isr_mass", isrmass)
             # insert the circe file and turn off polarization if necessary
             if self.procinfo.get("beamstrahlung") is not None:
                 self.process += (
@@ -57,7 +57,7 @@ class Whizard(GeneratorBase):
                 ):
                     self.process += f"?circe2_polarized= false\n"
         else:
-            self.add_process_option("?isr_handler", "false")
+            self.add_option("?isr_handler", "false")
 
         if (
             self.procinfo.get_ElectronPolarisation() != 0
@@ -68,35 +68,25 @@ class Whizard(GeneratorBase):
 
         self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
 
-        self.add_process_option("n_events", self.procinfo.get("events"))
-        self.add_process_option("sqrts", self.procinfo.get("sqrts"))
+        self.add_option("n_events", self.procinfo.get("events"))
+        self.add_option("sqrts", self.procinfo.get("sqrts"))
         if self.procinfo.get("decay"):
             self.add_decay()
 
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = self.is_whizard_particle_data(attr)
-                    if name is not None:
-                        value = getattr(p, attr)
-                        pname = self.whizard_MW_name(p.get("pdg_code"))
-                        if name == "MASS":
-                            dname = f"m{pname}"
-                        elif name == "WIDTH":
-                            dname = f"w{pname}"
-                        self.add_process_option(dname, value)
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
-        self.add_process_option(
+        self.add_option(
             "sample_format", str(self.procinfo.get("output_format")).rstrip("23")
         )
-        self.add_process_option("?hepmc_output_cross_section", "true")
-        self.add_process_option("?write_raw", "false")
+        self.add_option("?hepmc_output_cross_section", "true")
+        self.add_option("?write_raw", "false")
         self.process += self.procDB.get_run_out()
         if self.procinfo.eventmode == "unweighted":
-            self.add_process_option("?unweighted", "true")
+            self.add_option("?unweighted", "true")
         else:
-            self.add_process_option("?unweighted", "false")
+            self.add_option("?unweighted", "false")
         if self.settings.get_block("selectors"):
             self.cutsadded = False
             self.write_selectors()
@@ -198,7 +188,7 @@ class Whizard(GeneratorBase):
             self.integrate += f"integrate ({p})\n"
         self.integrate += "simulate (proc) { iterations = 5:5000}\n"
 
-    def add_process_option(self, key, value):
+    def add_option(self, key, value):
         if key in self.process:
             print(f"{key} has already been defined in {self.name}.")
             return
@@ -228,13 +218,21 @@ class Whizard(GeneratorBase):
         )
         self.add2Key4hepScript(key4hepRun)
 
-    def is_whizard_particle_data(self, d):
+    def is_particle_data(self, d):
         name = None
         if d == "mass":
             name = "MASS"
         if d == "width":
             name = "WIDTH"
         return name
+
+    def get_particle_operator(self, part, prop):
+        pname = self.whizard_MW_name(part.get("pdg_code"))
+        if prop == "MASS":
+            return f"m{pname}"
+        elif prop == "WIDTH":
+            return f"w{pname}"
+
 
     def particle_to_whizard(self, particle):
         return particle.get("pdg_code")

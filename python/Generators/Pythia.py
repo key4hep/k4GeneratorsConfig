@@ -52,16 +52,9 @@ class Pythia(GeneratorBase):
 
         self.add_option("Main:numberOfEvents", self.procinfo.get("events"))
         self.run += "\n"
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = self.is_pythia_particle_data(attr)
-                    if name is not None:
-                        value = getattr(p, attr)
-                        op_name = f"{p.get('pdg_code')}:{name}"
-                        if op_name in self.procDB.get_run_out():
-                            self.procDB.remove_option(op_name)
-                        self.add_option(op_name, value)
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
 
         self.add_option("Main:SelectorsFile", self.getOptionalFileName())
 
@@ -239,10 +232,14 @@ class Pythia(GeneratorBase):
         filter_lines = [line for line in lines if opt not in line]
         self.run = "\n".join(filter_lines)
 
-    def is_pythia_particle_data(self, d):
+    def is_particle_data(self, d):
         name = None
         if d == "mass":
             name = "m0"
         if d == "width":
             name = "mWidth"
         return name
+
+    def get_particle_operator(self, part, prop):
+        return f"{part.get('pdg_code')}:{prop}"
+
