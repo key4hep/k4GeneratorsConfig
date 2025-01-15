@@ -95,7 +95,7 @@ class GeneratorBase(abc.ABC):
             self.procDB_settings = self.procDB.get_run_out()+self.procDB.get_proc_out()
         
     def execute(self):
-        raise NotImplementedError()
+        raise NotImplementedError("execute")
 
     def add2GeneratorDatacard(self,content):
         # data encapsulation: add to the content in the base class
@@ -110,7 +110,31 @@ class GeneratorBase(abc.ABC):
         self.__datacardContent = ""
        
     def add_option(self,key,value):
-        raise NotImplementedError()
+        raise NotImplementedError("add_option")
+
+    def formatLine(self,key,value):
+        raise NotImplementedError("formatLine")
+
+    def addOption2GeneratorDatacard(self,key,value):
+        # check if the key is already defined in the datacard, then we take the last one (TBC):
+        if key in self.__datacardContent:
+            self.removeOptionGeneratorDatacard(key)
+        # check if the key is defined in the inputYaml file
+        if self.gen_settings is not None:
+            if key in self.gen_settings.items():
+                # key found we superseed the value with the input yaml
+                value = self.gen_settings.items()[key]
+        # format the line through in the generator specific format
+        line = self.formatLine(key,value)
+        # add the linebreak
+        line += "\n"
+        # push to the datacard
+        self.add2GeneratorDatacard(line)
+
+    def removeOptionGeneratorDatacard(self, opt):
+        lines = self.__datacardContent.split("\n")
+        filter_lines = [line for line in lines if opt not in line]
+        self.__datacardContent = "\n".join(filter_lines)
 
     def prepareParticles(self):
         # retrieve the particles from the input
@@ -127,7 +151,7 @@ class GeneratorBase(abc.ABC):
                         if op_name in self.procDB.get_run_out():
                             self.procDB.remove_option(op_name)
                         value = getattr(part, attr)
-                        self.add_option(op_name, value)
+                        self.addOption2GeneratorDatacard(op_name, value)
 
     def is_particle_data(self, attr):
         raise NotImplementedError()

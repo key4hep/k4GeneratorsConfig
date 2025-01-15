@@ -26,51 +26,48 @@ class Pythia(GeneratorBase):
         self.fill_decay()
 
     def fill_run(self):
-        self.run = ""
-        self.add_option("Random:setSeed", "on")
-        self.add_option("Random:seed", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("Random:setSeed", "on")
+        self.addOption2GeneratorDatacard("Random:seed", self.procinfo.get_rndmSeed())
 
-        self.add_option("Beams:eCM", self.procinfo.get("sqrts"))
+        self.addOption2GeneratorDatacard("Beams:eCM", self.procinfo.get("sqrts"))
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
-        self.add_option("Beams:idA", beam1_pdg)
-        self.add_option("Beams:idB", beam2_pdg)
+        self.addOption2GeneratorDatacard("Beams:idA", beam1_pdg)
+        self.addOption2GeneratorDatacard("Beams:idB", beam2_pdg)
 
         if self.procinfo.get("isrmode"):
-            self.add_option("PartonLevel:ISR", "on")
-            self.add_option("PDF:lepton", "on")
+            self.addOption2GeneratorDatacard("PartonLevel:ISR", "on")
+            self.addOption2GeneratorDatacard("PDF:lepton", "on")
         else:
-            self.add_option("PartonLevel:ISR", "off")
-            self.add_option("PDF:lepton", "off")
+            self.addOption2GeneratorDatacard("PartonLevel:ISR", "off")
+            self.addOption2GeneratorDatacard("PDF:lepton", "off")
         if self.procinfo.get("fsrmode"):
-            self.add_option("PartonLevel:FSR", "on")
+            self.addOption2GeneratorDatacard("PartonLevel:FSR", "on")
         else:
-            self.add_option("PartonLevel:FSR", "off")
+            self.addOption2GeneratorDatacard("PartonLevel:FSR", "off")
 
-        self.add_option("Main:numberOfEvents", self.procinfo.get("events"))
-        self.run += "\n"
+        self.addOption2GeneratorDatacard("Main:numberOfEvents", self.procinfo.get("events"))
+        self.add2GeneratorDatacard("\n")
 
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
 
-        self.add_option("Main:SelectorsFile", self.getOptionalFileName())
+        self.addOption2GeneratorDatacard("Main:SelectorsFile", self.getOptionalFileName())
 
         if "hepmc" in self.procinfo.get("output_format"):
-            self.add_option("Main:WriteHepMC", "on")
+            self.addOption2GeneratorDatacard("Main:WriteHepMC", "on")
             outputFile = "{0}.{1}".format(
                 self.GeneratorDatacardBase, self.procinfo.get("output_format")
             )
-            self.add_option("Main:HepMCFile", outputFile)
+            self.addOption2GeneratorDatacard("Main:HepMCFile", outputFile)
 
-        self.run += self.procDB.get_run_out()
-        self.run += self.procDB.get_proc_out()
+        self.add2GeneratorDatacard(self.procDB_settings)
 
         if self.gen_settings is not None:
             for key, value in self.gen_settings.items():
-                self.add_option(key, value)
+                self.addOption2GeneratorDatacard(key, value)
 
-        self.add2GeneratorDatacard(self.run)
 
     def fill_decay(self):
         if self.procinfo.get("decay"):
@@ -186,8 +183,8 @@ class Pythia(GeneratorBase):
         # Pythia turn off parent, then turn on
         decays = ""
         for parent in self.procinfo.get_final_pdg_list():
-            self.remove_option(f"{parent}:onMode")
-            self.remove_option(f"{parent}:onIfAny")
+            self.removeOptionGeneratorDatacard(f"{parent}:onMode")
+            self.removeOptionGeneratorDatacard(f"{parent}:onIfAny")
             decays += f"{parent}:onMode off\n"
             child = decay_opt[parent]
             decays += f"{parent}:onIfAny "
@@ -207,20 +204,8 @@ class Pythia(GeneratorBase):
         )
         self.add2Key4hepScript(key4hepRun)
 
-    def add_option(self, key, value):
-        if self.gen_settings is not None:
-            if key in self.gen_settings.items():
-                value = self.gen_settings.items()[key]
-        if key in self.run:
-            if str(value) in self.run:
-                self.remove_option(key)
-            return
-        self.run += f"{key} = {value}\n"
-
-    def remove_option(self, opt):
-        lines = self.run.split("\n")
-        filter_lines = [line for line in lines if opt not in line]
-        self.run = "\n".join(filter_lines)
+    def formatLine(self,key,value):
+        return f"{key} = {value}"
 
     def is_particle_data(self, d):
         name = None
