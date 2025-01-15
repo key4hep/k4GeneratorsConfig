@@ -7,12 +7,11 @@ class Babayaga(GeneratorBase):
         super().__init__(procinfo, settings, "Babayaga", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
+
         self.process = ""
         self.cuts = ""
 
         self.executable = "babayaga-fcc.exe"
-        self.procs = []
 
     def execute(self):
         # prepare the datacard
@@ -102,10 +101,10 @@ class Babayaga(GeneratorBase):
 
     def fill_datacard(self):
         self.write_process()
-        self.file = self.process + self.cuts
+        datacard = self.process + self.cuts
         # last command is run
-        self.file += "run\n"
-        self.add2GeneratorDatacard(self.file)
+        datacard += "run\n"
+        self.add2GeneratorDatacard(datacard)
 
     def fill_key4hepScript(self):
         key4hepRun = ""

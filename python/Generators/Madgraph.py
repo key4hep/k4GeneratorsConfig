@@ -9,7 +9,6 @@ class Madgraph(GeneratorBase):
         super().__init__(procinfo, settings, "Madgraph", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
 
         self.add_header()
         self.executable = "mg5_aMC"
@@ -250,8 +249,7 @@ class Madgraph(GeneratorBase):
 
     def write_file(self):
         self.fill_run()
-        self.file = self.run
-        self.write_GeneratorDatacard(self.file)
+        self.write_GeneratorDatacard(self.run)
 
     def fill_key4hepScript(self):
         key4hepRun = ""

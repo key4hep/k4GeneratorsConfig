@@ -7,7 +7,7 @@ class Whizard(GeneratorBase):
         super().__init__(procinfo, settings, "Whizard", "sin")
 
         self.version = "x.y.z"
-        self.file = ""
+
         self.cuts = ""
         self.integrate = ""
 
@@ -202,8 +202,9 @@ class Whizard(GeneratorBase):
             self.process += self.cuts
         self.process += "compile\n"
         self.write_integrate()
-        self.file = f"{self.process}{self.integrate}"
-        self.add2GeneratorDatacard(self.file)
+        datacard = f"{self.process}{self.integrate}"
+        
+        self.add2GeneratorDatacard(datacard)
 
     def fill_key4hepScript(self):
         key4hepRun = ""

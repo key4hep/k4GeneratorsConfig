@@ -9,7 +9,7 @@ class KKMC(GeneratorBase):
         super().__init__(procinfo, settings, "KKMC", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
+
         self.process = ""
         self.cuts = ""
 

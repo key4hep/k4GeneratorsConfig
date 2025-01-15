@@ -7,7 +7,7 @@ class Sherpa(GeneratorBase):
         super().__init__(procinfo, settings, "Sherpa", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
+
         self.cuts = ""
 
         self.executable = "Sherpa -f"
@@ -193,12 +193,12 @@ class Sherpa(GeneratorBase):
         self.write_process()
         self.ptext += "}(processes)\n\n"
         self.run += "}(run)\n\n"
-        self.file = self.run + self.ptext + self.cuts
-        self.add2GeneratorDatacard(self.file)
+        datacard = self.run + self.ptext + self.cuts
+        self.add2GeneratorDatacard(datacard)
 
     def fill_key4hepScript(self):
         key4hepRun = ""
-        if "Amegic" in self.file:
+        if "Amegic" in self.getGeneratorDatacard():
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
             key4hepRun += "./makelibs \n"
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
