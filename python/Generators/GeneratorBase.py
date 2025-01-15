@@ -97,6 +97,10 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: add to the content in the base class
         self.__datacardContent += content
        
+    def getGeneratorDatacard(self):
+        # return content
+        return self.__datacardContent
+       
     def resetGeneratorDatacard(self):
         # data encapsulation: reset the datacard content to ""
         self.__datacardContent = ""
@@ -131,6 +135,10 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: add to the content in the base class
         self.__key4hepContent += content
         
+    def getKey4hepScript(self):
+        # return content
+        return self.__key4hepContent
+        
     def resetKey4hepScript(self):
         # data encapsulation: reset the  KEY4HEP script content to ""
         self.__key4hepContent = ""
@@ -139,6 +147,10 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: add to the content in the base class
         self.__analysisContent += content
         
+    def getAnalysis(self):
+        # return content
+        return self.__analysisContent
+        
     def resetAnalysis(self):
         # data encapsulation: reset analysis content to ""
         self.__analysisContent = ""
@@ -146,6 +158,10 @@ class GeneratorBase(abc.ABC):
     def add2OptionalFile(self,content):
         # data encapsulation: add to the content in the base class
         self.__optfileContent += content
+       
+    def getOptionalFile(self):
+        # return content
+        return self.__optfileContent
        
     def resetOptionalFile(self):
         # data encapsulation: reset the optionalFile content to ""
