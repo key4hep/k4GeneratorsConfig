@@ -7,8 +7,6 @@ class Pythia(GeneratorBase):
         super().__init__(procinfo, settings, "Pythia", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
-        self.cuts = ""
 
         self.executable = "$K4GenBuildDir/bin/pythiaRunner -f"
 
@@ -94,8 +92,6 @@ class Pythia(GeneratorBase):
             pass
         for key, value in selectors.items():
             self.add_Selector(value)
-        # PYTHIA special: write the selectors to the file proc.selectors
-        self.add2OptionalFile(self.cuts)
 
     def add_Selector(self, value):
         key = value.name.lower()
@@ -137,16 +133,14 @@ class Pythia(GeneratorBase):
                 or str(f2) not in self.procinfo.get_final_pdg()
             ):
                 return
-            sname = "2 "
-            sname += f" {name} {f1} {f2} > {Min}"
-            if f" {name} {f1} {f2} >" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
-            sname = "2 "
-            sname += f" {f1} {f2} {name} < {Max}"
-            if f"  {f1} {f2} {name} <" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+
+            sname = f"2 {name} {f1} {f2} > {Min}"
+            if f" {name} {f1} {f2} >" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
+
+            sname = f"2 {f1} {f2} {name} < {Max}"
+            if f"  {f1} {f2} {name} <" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
         else:
             for fl in flavs:
                 f1 = fl[0]
@@ -156,31 +150,27 @@ class Pythia(GeneratorBase):
                     or str(f2) not in self.procinfo.get_final_pdg()
                 ):
                     continue
-            sname = "2 "
-            sname += f" {name} {f1} {f2} > {Min}"
-            if f" {name} {f1} {f2} >" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
-            sname = "2 "
-            sname += f" {f1} {f2} {name} < {Max}"
+                
+            sname = f"2 {name} {f1} {f2} > {Min}"
+            if f" {name} {f1} {f2} >" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
+                
+            sname = f"2 {f1} {f2} {name} < {Max}"
             if f"  {f1} {f2} {name} <" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+                self.cuts += f"{sname}\n"
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
+
         for f in f1:
-            sname = "1 "
-            sname += f"{f} {name} > {Min}"
-            if f"{f} {name} >" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
-            sname = "1 "
-            sname += f"{f} {name} < {Max}"
-            if f"{f} {name} <" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+            sname = f"1 {f} {name} > {Min}"
+            if f"{f} {name} >" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
+
+            sname = f"1 {f} {name} < {Max}"
+            if f"{f} {name} <" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
 
     def add_decay(self):
         # Simple check first that parents are

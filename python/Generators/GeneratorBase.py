@@ -13,7 +13,6 @@ class GeneratorBase(abc.ABC):
         self.name = name
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
-        self.__optionalFileExtension = ""
 
         # define the output directory as function of the OutDir spec + generator name + process name
         self.outdir = (
@@ -49,7 +48,12 @@ class GeneratorBase(abc.ABC):
         self.__key4hepContent  = ""
         self.__analysisContent = "" 
         self.__optfileContent  = "" 
-        
+
+        self.__optionalFileExtension = ""
+        self.__optionalFileName      = ""
+        self.__optionalFile          = ""
+        self.__optionalFileUsed      = False
+
         # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
         self.prepareKey4hepScript()
         
@@ -157,9 +161,11 @@ class GeneratorBase(abc.ABC):
         
     def add2OptionalFile(self,content):
         # data encapsulation: add to the content in the base class
+        if not self.__optionalFileUsed:
+            self.__optionalFileUsed = True
         self.__optfileContent += content
        
-    def getOptionalFile(self):
+    def getOptionalFileContent(self):
         # return content
         return self.__optfileContent
        
@@ -172,6 +178,8 @@ class GeneratorBase(abc.ABC):
         self.__optionalFileExtension = extension
         self.__optionalFileName      = f"{filename}.{self.__optionalFileExtension}"
         self.__optionalFile          = f"{self.outdir}/{filename}.{self.__optionalFileExtension}"
+        if not self.__optionalFileUsed:
+            self.__optionalFileUsed = True
        
     def getOptionalFileName(self):
         return self.__optionalFileName
@@ -228,7 +236,7 @@ class GeneratorBase(abc.ABC):
         os.chmod(self.key4hepScript, os.stat(self.key4hepScript).st_mode | stat.S_IEXEC)
 
     def writeOptionalFile(self):
-        if len(self.__optionalFileExtension) > 0:
+        if self.__optionalFileUsed:
             with open(self.__optionalFile, "w+") as file:
                 file.write(self.__optfileContent)
 
