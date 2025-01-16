@@ -49,7 +49,11 @@ class Babayaga(GeneratorBase):
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
         self.add_process_option("store", "yes")
         self.add_process_option("path", ".")
-        self.process += self.procDB.get_run_out()
+
+        # procDB
+        for key in self.procDB.getDict():
+            self.add_process_option(key,self.procDB.getDict()[key])
+        
         if self.procinfo.eventmode == "unweighted":
             self.add_process_option("mode", "unweighted")
         else:

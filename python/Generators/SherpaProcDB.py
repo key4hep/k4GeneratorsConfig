@@ -20,10 +20,10 @@ class SherpaProcDB(ProcDBBase):
             self.write_Difermion()
         if label == "11_11_5_5":
             self.write_Difermion()
-            self.runout += " MASSIVE[5] 1\n"
+            self.rundict['MASSIVE[5]'] = 1
         if label == "11_11_6_6":
             self.write_Difermion()
-            self.runout += " MASSIVE[6] 1\n"
+            self.rundict['MASSIVE[6]'] = 1
         if label == "11_11_12_12":
             self.write_Difermion()
         if label == "11_11_13_13":
@@ -32,7 +32,7 @@ class SherpaProcDB(ProcDBBase):
             self.write_Difermion()
         if label == "11_11_15_15":
             self.write_Difermion()
-            self.runout += " MASSIVE[15] 1\n"
+            self.rundict['MASSIVE[15]'] = 1
         if label == "11_11_16_16":
             self.write_Difermion()
         if label=="11_11_23_23":
@@ -46,37 +46,34 @@ class SherpaProcDB(ProcDBBase):
         if label=="11_11_23_25_25":
             self.write_ZH()
         # the electroweak scheme is common to all implemented processes so far
-        self.runout += " EW_SCHEME 3;\n"
+        self.rundict['EW_SCHEME'] = 3
         
             
     def write_Difermion(self):
-        self.runout = ""
         # Use Gmu scheme as default
-        self.runout += " MASS[24] 80.419;\n"
-        self.runout += " WIDTH[24] 2.0476;\n"
+        self.rundict['MASS[24]']  = 80.419
+        self.rundict['WIDTH[24]'] = 2.0476
 
     def write_ZZ(self):
-        self.runout = ""
         # Use Gmu scheme as default
-        self.runout += " MASS[24] 80.419;\n"
-        self.runout += " WIDTH[24] 2.0476;\n"
+        self.rundict['MASS[24]']  = 80.419
+        self.rundict['WIDTH[24]'] = 2.0476
 
     def write_WW(self):
-        self.runout = ""
         # Use Gmu scheme as default
-        self.runout += " MASS[24] 80.419;\n"
-        self.runout += " WIDTH[24] 2.0476;\n"
+        self.rundict['MASS[24]']  = 80.419
+        self.rundict['WIDTH[24]'] = 2.0476
 
     def write_ZH(self):
-        self.runout = " WIDTH[25] 0\n"
-        self.runout += " WIDTH[23] 0\n"
+        self.rundict['WIDTH[25]'] = 0
+        self.rundict['WIDTH[23]'] = 0
 
     def write_Hnunu(self):
-        self.runout = " WIDTH[25] 0\n"
-        self.runout += " MASS[24] 80.419;\n"
-        self.runout += " WIDTH[24] 2.0476;\n"
+        self.rundict['WIDTH[25]'] = 0
+        self.rundict['MASS[24]']  = 80.419
+        self.rundict['WIDTH[24]'] = 2.0476
 
     def write_ZHH(self):
-        self.runout = " WIDTH[25] 0\n"
-        self.runout += " WIDTH[23] 0\n"
+        self.rundict['WIDTH[25]'] = 0
+        self.rundict['WIDTH[23]'] = 0
 

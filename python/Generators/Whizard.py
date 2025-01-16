@@ -82,7 +82,10 @@ class Whizard(GeneratorBase):
         )
         self.add_option("?hepmc_output_cross_section", "true")
         self.add_option("?write_raw", "false")
-        self.process += self.procDB.get_run_out()
+
+        for key in self.procDB.getDict():
+            self.add_option(key,self.procDB.getDict()[key])
+            
         if self.procinfo.eventmode == "unweighted":
             self.add_option("?unweighted", "true")
         else:

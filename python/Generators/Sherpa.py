@@ -59,7 +59,11 @@ class Sherpa(GeneratorBase):
         elif self.procinfo.get("output_format") == "hepmc3":
             eoutname = "HepMC3_GenEvent[{0}.hepmc3]".format(self.GeneratorDatacardBase)
             self.add_option("EVENT_OUTPUT", eoutname)
-        self.run += self.procDB.get_run_out()
+
+        # run settings
+        for key in self.procDB.getDict():
+            self.add_option(key,self.procDB.getDict()[key])
+        
         self.add_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():

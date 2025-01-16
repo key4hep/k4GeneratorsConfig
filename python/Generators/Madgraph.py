@@ -64,7 +64,9 @@ class Madgraph(GeneratorBase):
         if self.procinfo.get_ElectronPolarisation() != 0 or self.procinfo.get_PositronPolarisation()!= 0:
             self.add_option("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
             self.add_option("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
-        self.run += self.procDB.get_run_out()
+
+        for key in self.procDB.getDict():
+            self.add_option(key, self.procDB.getDict()[key])
         # if self.settings.get_block("selectors"):
         self.write_selectors()
         # else:

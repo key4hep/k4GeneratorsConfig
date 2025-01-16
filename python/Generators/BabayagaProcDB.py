@@ -10,16 +10,3 @@ class BabayagaProcDB(ProcDBBase):
     def write_DBInfo(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
-        if label == "11_11_11_11":
-            self.write_Difermion()
-        if label == "11_11_13_13":
-            self.write_Difermion()
-        if label == "11_11_22_22":
-            self.write_Diphoton()
-
-    def write_Difermion(self):
-        self.runout = ""
-
-    def write_Diphoton(self):
-        self.runout = ""
-
