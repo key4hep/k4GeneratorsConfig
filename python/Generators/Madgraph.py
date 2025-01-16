@@ -298,6 +298,9 @@ class Madgraph(GeneratorBase):
     def pdg_to_madgraph(self, particle):
         return particle.get("name")
 
+    def formatLine(self,key,value):
+        return f"{key} {value}"
+
     def is_particle_data(self, d):
         if d == "mass":
             return "M"

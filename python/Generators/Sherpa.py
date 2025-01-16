@@ -231,6 +231,9 @@ class Sherpa(GeneratorBase):
             return
         self.ptext += f" {key} {value};\n"
 
+    def formatLine(self,key,value):
+        return f" {key} {value};"
+
     def is_particle_data(self, d):
         name = None
         if d == "mass":

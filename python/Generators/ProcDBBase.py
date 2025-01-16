@@ -7,6 +7,9 @@ class ProcDBBase(abc.ABC):
 
         # general settings of the class
         self.procinfo = procinfo
+        self.rundict  = dict()
+        self.procdict = dict()
+
         self.runout = ""
         self.procout = ""
 
@@ -18,6 +21,18 @@ class ProcDBBase(abc.ABC):
 
     def get_proc_out(self):
         return self.procout
+
+    def getDict(self):
+        fulldict = dict()
+        fulldict.update(self.rundict)
+        fulldict.update(self.procdict)
+        return fulldict
+
+    def getDictRun(self):
+        return self.rundict
+
+    def getDictProc(self):
+        return self.procdict
 
     def remove_option(self, opt):
         lines = self.runout.split("\n")

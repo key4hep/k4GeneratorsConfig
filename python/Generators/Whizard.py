@@ -219,6 +219,9 @@ class Whizard(GeneratorBase):
         )
         self.add2Key4hepScript(key4hepRun)
 
+    def formatLine(self,key,value):
+        return f"{key} = {value}"
+
     def is_particle_data(self, d):
         name = None
         if d == "mass":

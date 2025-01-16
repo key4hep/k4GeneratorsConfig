@@ -62,8 +62,12 @@ class Pythia(GeneratorBase):
             )
             self.addOption2GeneratorDatacard("Main:HepMCFile", outputFile)
 
-        self.add2GeneratorDatacard(self.procDB_settings)
+        # add the procDB settings
+        for key in self.procDB.getDict():
+            value = self.procDB.getDict()[key]
+            self.addOption2GeneratorDatacard(key,value)
 
+        # the generator settings from yaml are set last as they superseed all previous settings
         if self.gen_settings is not None:
             for key, value in self.gen_settings.items():
                 self.addOption2GeneratorDatacard(key, value)

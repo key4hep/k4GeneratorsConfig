@@ -27,8 +27,9 @@ class Generators:
 
             except ModuleNotFoundError:
                 print(f"{generatorName} python module not found for {self.proc_info.get('_proclabel')}")
-            except AttributeError:
-                print(f"{generatorName} class could not be loaded with getattr for {self.proc_info.get('_proclabel')} or class initialization did not work")
+            except AttributeError as e:
+                print(f"{generatorName} class could not be loaded with getattr for {self.proc_info.get('_proclabel')} or class initialization did not work with message:")
+                print(e)
             except NotImplementedError as e:
                 print(f"class {generatorName} does not implement the {e} method")
             except:

@@ -119,11 +119,6 @@ class GeneratorBase(abc.ABC):
         # check if the key is already defined in the datacard, then we take the last one (TBC):
         if key in self.__datacardContent:
             self.removeOptionGeneratorDatacard(key)
-        # check if the key is defined in the inputYaml file
-        if self.gen_settings is not None:
-            if key in self.gen_settings.items():
-                # key found we superseed the value with the input yaml
-                value = self.gen_settings.items()[key]
         # format the line through in the generator specific format
         line = self.formatLine(key,value)
         # add the linebreak
