@@ -242,11 +242,11 @@ class Madgraph(GeneratorBase):
 
     def add_min_max_cut(self, flav, name, Min, Max):
         sname = f"{name}_min_pdg"
-        mincut = f"{flav}: {Min}"
+        mincut = f"{{{flav}: {Min}}}"
         self.run += f"set {sname} {mincut}\n"
 
         sname = f"{name}_max_pdg"
-        maxcut = f"{flav}: {Max}"
+        maxcut = f"{{{flav}: {Max}}}"
         self.run += f"set {sname} {maxcut}\n"
 
     def write_file(self):
