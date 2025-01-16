@@ -109,9 +109,6 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: reset the datacard content to ""
         self.__datacardContent = ""
        
-    def add_option(self,key,value):
-        raise NotImplementedError("add_option")
-
     def formatLine(self,key,value):
         raise NotImplementedError("formatLine")
 
