@@ -120,7 +120,10 @@ class GeneratorBase(abc.ABC):
         if key in self.__datacardContent:
             self.removeOptionGeneratorDatacard(key)
         # format the line through in the generator specific format
-        line = self.formatLine(key,value)
+        if value is None:
+            line = self.formatLine(key,"")
+        else:
+            line = self.formatLine(key,value)
         # add the linebreak
         line += "\n"
         # push to the datacard
