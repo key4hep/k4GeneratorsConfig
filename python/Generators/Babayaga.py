@@ -8,7 +8,6 @@ class Babayaga(GeneratorBase):
 
         self.version = "x.y.z"
 
-        self.process = ""
         self.cuts = ""
 
         self.executable = "babayaga-fcc.exe"
@@ -31,33 +30,33 @@ class Babayaga(GeneratorBase):
 
         finalstate = self.procinfo.get_final_pdg().split(" ")
         self.finalstate = "".join(map(self.pdg_to_babayaga, finalstate))
-        self.process = f"fs {self.finalstate}\n"
+        self.add2GeneratorDatacard(f"fs {self.finalstate}\n")
 
-        self.add_process_option("seed", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("seed", self.procinfo.get_rndmSeed())
 
         # overwrite if the variable nlo requests qed:
         if self.procinfo.get_nlo().lower() == "lo":
-            self.add_process_option("ord", "born")
-            self.add_process_option("EWKc", "off")
+            self.addOption2GeneratorDatacard("ord", "born")
+            self.addOption2GeneratorDatacard("EWKc", "off")
         elif self.procinfo.get_nlo().lower() == "qed":
-            self.add_process_option("ord", "alpha")
-            self.add_process_option("EWKc", "on")
+            self.addOption2GeneratorDatacard("ord", "alpha")
+            self.addOption2GeneratorDatacard("EWKc", "on")
 
-        self.add_process_option("nev", self.procinfo.get("events"))
-        self.add_process_option("ecms", self.procinfo.get("sqrts"))
+        self.addOption2GeneratorDatacard("nev", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("ecms", self.procinfo.get("sqrts"))
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
-        self.add_process_option("store", "yes")
-        self.add_process_option("path", ".")
+        self.addOption2GeneratorDatacard("store", "yes")
+        self.addOption2GeneratorDatacard("path", ".")
 
         # procDB
         for key in self.procDB.getDict():
-            self.add_process_option(key,self.procDB.getDict()[key])
+            self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
         
         if self.procinfo.eventmode == "unweighted":
-            self.add_process_option("mode", "unweighted")
+            self.addOption2GeneratorDatacard("mode", "unweighted")
         else:
-            self.add_process_option("mode", "weighted")
+            self.addOption2GeneratorDatacard("mode", "weighted")
 
         if self.settings.get_block("selectors"):
             self.write_selectors()
@@ -95,20 +94,11 @@ class Babayaga(GeneratorBase):
             self.cuts += f"thmin {Min}\n"
             self.cuts += f"thmax {Max}\n"
 
-    def add_process_option(self, key, value):
-        if key in self.process:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        if key in self.procDB_settings:
-            self.procDB.removeOption(key)
-        self.process += f"{key} {value}\n"
-
     def fill_datacard(self):
         self.write_process()
-        datacard = self.process + self.cuts
+        self.add2GeneratorDatacard(self.cuts)
         # last command is run
-        datacard += "run\n"
-        self.add2GeneratorDatacard(datacard)
+        self.add2GeneratorDatacard("run\n")
 
     def fill_key4hepScript(self):
         key4hepRun = ""
@@ -122,6 +112,9 @@ class Babayaga(GeneratorBase):
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
+
+    def formatLine(self,key,value):
+        return f" {key} {value}"
 
     def pdg_to_babayaga(self, pdg):
         apdg = abs(int(pdg))
