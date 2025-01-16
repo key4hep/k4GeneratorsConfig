@@ -8,9 +8,6 @@ class Whizard(GeneratorBase):
 
         self.version = "x.y.z"
 
-        self.cuts = ""
-        self.integrate = ""
-
         self.executable = "whizard"
 
         self.procs = []
@@ -31,45 +28,45 @@ class Whizard(GeneratorBase):
 
         try:
             if "model" in self.gen_settings:
-                self.process = f'model = {self.gen_settings["model"]}\n'
+                self.add2GeneratorDatacard(f'model = {self.gen_settings["model"]}\n')
         except:
-            self.process = f"model = {self.procinfo.get('model')}\n"
+            self.add2GeneratorDatacard(f"model = {self.procinfo.get('model')}\n")
 
-        self.add_option("seed", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("seed", self.procinfo.get_rndmSeed())
 
         if self.procinfo.get("isrmode"):
-            self.add_option("?isr_handler", "true")
-            self.process += f"beams = {self.whiz_beam1}, {self.whiz_beam2}"
+            self.addOption2GeneratorDatacard("?isr_handler", "true")
+            self.add2GeneratorDatacard(f"beams = {self.whiz_beam1}, {self.whiz_beam2}")
             # insert circe
             if self.procinfo.get("beamstrahlung") is not None:
-                self.process += f" => circe2 "
-            self.process += f" => isr,isr\n"
+                self.add2GeneratorDatacard(f" => circe2 ")
+            self.add2GeneratorDatacard(f" => isr,isr\n")
             isrmass = 0.000511
-            self.add_option("isr_mass", isrmass)
+            self.addOption2GeneratorDatacard("isr_mass", isrmass)
             # insert the circe file and turn off polarization if necessary
             if self.procinfo.get("beamstrahlung") is not None:
-                self.process += (
+                self.add2GeneratorDatacard(
                     f'$circe2_file= "{self.procinfo.get_BeamstrahlungFile()}"\n'
                 )
                 if (
                     self.procinfo.get_ElectronPolarisation() == 0
                     and self.procinfo.get_PositronPolarisation() == 0
                 ):
-                    self.process += f"?circe2_polarized= false\n"
+                    self.add2GeneratorDatacard(f"?circe2_polarized= false\n")
         else:
-            self.add_option("?isr_handler", "false")
+            self.addOption2GeneratorDatacard("?isr_handler", "false")
 
         if (
             self.procinfo.get_ElectronPolarisation() != 0
             or self.procinfo.get_PositronPolarisation() != 0
         ):
-            self.process += f"beams_pol_density = @({self.procinfo.get_PolDensity()[0]}), @({self.procinfo.get_PolDensity()[1]})\n"
-            self.process += f"beams_pol_fraction = {self.procinfo.get_ElectronPolarisation()}, {self.procinfo.get_PositronPolarisation()}\n"
+            self.add2GeneratorDatacard(f"beams_pol_density = @({self.procinfo.get_PolDensity()[0]}), @({self.procinfo.get_PolDensity()[1]})\n")
+            self.add2GeneratorDatacard(f"beams_pol_fraction = {self.procinfo.get_ElectronPolarisation()}, {self.procinfo.get_PositronPolarisation()}\n")
 
-        self.process += f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n"
+        self.add2GeneratorDatacard(f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n")
 
-        self.add_option("n_events", self.procinfo.get("events"))
-        self.add_option("sqrts", self.procinfo.get("sqrts"))
+        self.addOption2GeneratorDatacard("n_events", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("sqrts", self.procinfo.get("sqrts"))
         if self.procinfo.get("decay"):
             self.add_decay()
 
@@ -77,19 +74,20 @@ class Whizard(GeneratorBase):
         self.prepareParticles()
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
-        self.add_option(
+        self.addOption2GeneratorDatacard(
             "sample_format", str(self.procinfo.get("output_format")).rstrip("23")
         )
-        self.add_option("?hepmc_output_cross_section", "true")
-        self.add_option("?write_raw", "false")
+        self.addOption2GeneratorDatacard("?hepmc_output_cross_section", "true")
+        self.addOption2GeneratorDatacard("?write_raw", "false")
 
         for key in self.procDB.getDict():
-            self.add_option(key,self.procDB.getDict()[key])
+            self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
             
         if self.procinfo.eventmode == "unweighted":
-            self.add_option("?unweighted", "true")
+            self.addOption2GeneratorDatacard("?unweighted", "true")
         else:
-            self.add_option("?unweighted", "false")
+            self.addOption2GeneratorDatacard("?unweighted", "false")
+
         if self.settings.get_block("selectors"):
             self.cutsadded = False
             self.write_selectors()
@@ -111,10 +109,10 @@ class Whizard(GeneratorBase):
             # decays +=f"integrate (decay{parent})\n"
             self.procs.append(f"decay{parent}")
 
-        self.process += decays
+        self.add2GeneratorDatacard(decays)
 
     def write_selectors(self):
-        self.cuts = "cuts = "
+        self.add2GeneratorDatacard("cuts = ")
         selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
@@ -158,10 +156,10 @@ class Whizard(GeneratorBase):
             if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                 return
             if self.cutsadded is False:
-                self.cuts += f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                self.add2GeneratorDatacard(" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
                 self.cutsadded = True
             else:
-                self.cuts += f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                self.add2GeneratorDatacard(f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
         else:
             for fl in flavs:
@@ -170,10 +168,10 @@ class Whizard(GeneratorBase):
                 if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                     continue
                 if self.cutsadded is False:
-                    self.cuts += f" all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                    self.add2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
                     self.cutsadded = True
                 else:
-                    self.cuts += f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n"
+                    self.add2GeneratorDatacard(f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)
@@ -181,33 +179,20 @@ class Whizard(GeneratorBase):
         for f in f1:
             f = self.pdg_to_whizard(f)
             if self.cutsadded is False:
-                self.cuts += f" all {Min} < {name} <= {Max} [{f}] \n"
+                self.add2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f}] \n")
                 self.cutsadded = True
             else:
-                self.cuts += f" and all {Min} < {name} <= {Max} [{f}] \n"
+                self.add2GeneratorDatacard(f" and all {Min} < {name} <= {Max} [{f}] \n")
 
     def write_integrate(self):
         for p in self.procs:
-            self.integrate += f"integrate ({p})\n"
-        self.integrate += "simulate (proc) { iterations = 5:5000}\n"
-
-    def add_option(self, key, value):
-        if key in self.process:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        if key in self.procDB_settings:
-            self.procDB.removeOption(key)
-        self.process += f"{key} = {value}\n"
+            self.add2GeneratorDatacard(f"integrate ({p})\n")
+        self.add2GeneratorDatacard("simulate (proc) { iterations = 5:5000}\n")
 
     def fill_datacard(self):
         self.write_process()
-        if self.cuts != "cuts = ":
-            self.process += self.cuts
-        self.process += "compile\n"
+        self.add2GeneratorDatacard("compile\n")
         self.write_integrate()
-        datacard = f"{self.process}{self.integrate}"
-        
-        self.add2GeneratorDatacard(datacard)
 
     def fill_key4hepScript(self):
         key4hepRun = ""
