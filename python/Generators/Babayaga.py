@@ -99,8 +99,8 @@ class Babayaga(GeneratorBase):
         if key in self.process:
             print(f"{key} has already been defined in {self.name}.")
             return
-        if f"{key}" in self.procDB.get_run_out():
-            self.procDB.remove_option(key)
+        if key in self.procDB_settings:
+            self.procDB.removeOption(key)
         self.process += f"{key} {value}\n"
 
     def fill_datacard(self):

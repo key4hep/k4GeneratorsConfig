@@ -73,8 +73,8 @@ class KKMC(GeneratorBase):
         if key in self.process:
             print(f"{key} has already been defined in {self.name}.")
             return
-        if f"{key}" in self.procDB.get_run_out():
-            self.procDB.remove_option(key)
+        if key in self.procDB_settings:
+            self.procDB.removeOption(key)
         if key in self.defaults:
             self.defaults = self.defaults.replace(key, value)
         else:

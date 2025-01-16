@@ -10,18 +10,9 @@ class ProcDBBase(abc.ABC):
         self.rundict  = dict()
         self.procdict = dict()
 
-        self.runout = ""
-        self.procout = ""
-
     def write_DBInfo(self):
         return
         
-    def get_run_out(self):
-        return self.runout
-
-    def get_proc_out(self):
-        return self.procout
-
     def getDict(self):
         fulldict = dict()
         fulldict.update(self.rundict)
@@ -34,7 +25,9 @@ class ProcDBBase(abc.ABC):
     def getDictProc(self):
         return self.procdict
 
-    def remove_option(self, opt):
-        lines = self.runout.split("\n")
-        filter_lines = [line for line in lines if opt not in line]
-        self.runout = "\n".join(filter_lines)
+    def removeOption(self, opt):
+        for myDict in self.rundict,self.procdict:
+            try:
+                del myDict[opt]
+            except KeyError:
+                pass

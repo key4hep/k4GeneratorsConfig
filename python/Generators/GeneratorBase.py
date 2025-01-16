@@ -89,10 +89,10 @@ class GeneratorBase(abc.ABC):
             print("Datacard files and execution scripts not written for this generator")
             raise
         
-        self.procDB_settings = ""
+        self.procDB_settings = dict()
         if self.settings.get("usedefaults", True):
             self.procDB.write_DBInfo()
-            self.procDB_settings = self.procDB.get_run_out()+self.procDB.get_proc_out()
+            self.procDB_settings = self.procDB.getDict()
         
     def execute(self):
         raise NotImplementedError("execute")
@@ -143,8 +143,8 @@ class GeneratorBase(abc.ABC):
                     if prop is not None:
                         op_name = self.get_particle_operator(part,prop)
                         # remove from the Standard=ProcDB settings if necessary
-                        if op_name in self.procDB.get_run_out():
-                            self.procDB.remove_option(op_name)
+                        if op_name in self.procDB_settings:
+                            self.procDB.removeOption(op_name)
                         value = getattr(part, attr)
                         self.addOption2GeneratorDatacard(op_name, value)
 

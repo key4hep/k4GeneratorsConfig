@@ -22,9 +22,9 @@ class Madgraph(GeneratorBase):
     def fill_datacard(self):
         try:
             if "model" in self.gen_settings:
-                self.add_option("import model", self.gen_settings["model"].lower())
+                self.addOption2GeneratorDatacard("import model", self.gen_settings["model"].lower())
         except:
-            self.add_option("import model", self.procinfo.get("model").lower())
+            self.addOption2GeneratorDatacard("import model", self.procinfo.get("model").lower())
         self.mg_particles = list(
             map(self.pdg_to_madgraph, self.procinfo.get_particles())
         )
@@ -35,17 +35,17 @@ class Madgraph(GeneratorBase):
                 self.proc += "> "
         if self.procinfo.get("decay"):
             self.add_decay()
-        self.add_option("generate", self.proc)
-        # self.add_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
-        self.add_option("output", "Output")
-        self.add_option("launch", None)
-        self.add_option("set iseed", self.procinfo.get_rndmSeed())
-        self.add_option("set EBEAM", self.procinfo.get("sqrts") / 2.0)
+        self.addOption2GeneratorDatacard("generate", self.proc)
+        # self.addOption2GeneratorDatacard("output", self.outdir+f"/{self.procinfo.get('procname')}")
+        self.addOption2GeneratorDatacard("output", "Output")
+        self.addOption2GeneratorDatacard("launch", None)
+        self.addOption2GeneratorDatacard("set iseed", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("set EBEAM", self.procinfo.get("sqrts") / 2.0)
 
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
 
-        self.add_option("set nevents", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("set nevents", self.procinfo.get("events"))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -54,25 +54,24 @@ class Madgraph(GeneratorBase):
                 #       See arxiv 2108.10261 for more details.")
                 #   raise(ValueError)
                 # else:
-                self.add_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
+                self.addOption2GeneratorDatacard("set pdlabel", self.get_BeamstrahlungPDLABEL())
                 # self.GeneratorDatacard += f"_{self.get_BeamstrahlungPDLABEL()}"
                 # self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
-                self.add_option("set pdlabel", "isronlyll")
-            self.add_option("set lpp1", "3")
-            self.add_option("set lpp2", "-3")
+                self.addOption2GeneratorDatacard("set pdlabel", "isronlyll")
+            self.addOption2GeneratorDatacard("set lpp1", "3")
+            self.addOption2GeneratorDatacard("set lpp2", "-3")
         if self.procinfo.get_ElectronPolarisation() != 0 or self.procinfo.get_PositronPolarisation()!= 0:
-            self.add_option("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
-            self.add_option("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
+            self.addOption2GeneratorDatacard("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
+            self.addOption2GeneratorDatacard("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
 
         for key in self.procDB.getDict():
-            self.add_option(key, self.procDB.getDict()[key])
+            self.addOption2GeneratorDatacard(key, self.procDB.getDict()[key])
         # if self.settings.get_block("selectors"):
         self.write_selectors()
         # else:
         #     self.add_default_Selectors()
         # now the structure is filled, transfer it to the baseclass
-        self.add2GeneratorDatacard(self.run)
 
     def get_BeamstrahlungPDLABEL(self):
         ecm = self.procinfo.sqrts
@@ -222,7 +221,7 @@ class Madgraph(GeneratorBase):
                 # maxcut = f"{f1}: {Max}"
                 # self.run+=f"set {sname} {maxcut}\n"
 
-                # self.add_option(sname, maxcut)
+                # self.addOption2GeneratorDatacard(sname, maxcut)
 
     def add_one_ParticleSelector(self, sel, name, unit="", f1=None):
         Min, Max = sel.get_MinMax(unit)
@@ -243,11 +242,11 @@ class Madgraph(GeneratorBase):
     def add_min_max_cut(self, flav, name, Min, Max):
         sname = f"{name}_min_pdg"
         mincut = f"{{{flav}: {Min}}}"
-        self.run += f"set {sname} {mincut}\n"
+        self.add2GeneratorDatacard(f"set {sname} {mincut}\n")
 
         sname = f"{name}_max_pdg"
         maxcut = f"{{{flav}: {Max}}}"
-        self.run += f"set {sname} {maxcut}\n"
+        self.add2GeneratorDatacard(f"set {sname} {maxcut}\n")
 
     def write_file(self):
         self.fill_run()
@@ -288,15 +287,6 @@ class Madgraph(GeneratorBase):
             # the generator specific part
             file.write(content)
 
-    def add_option(self, key, value):
-        if key in self.run:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        if value is not None:
-            self.run += f"{key} {value}\n"
-        else:
-            self.run += f"{key}\n"
-
     def pdg_to_madgraph(self, particle):
         return particle.get("name")
 
@@ -315,7 +305,7 @@ class Madgraph(GeneratorBase):
         return f"set {prop}{particleName}"
 
     def add_header(self):
-        self.run = """#************************************************************
+        self.add2GeneratorDatacard("""#************************************************************
 #*                        MadGraph 5                        *
 #*                                                          *
 #*                *                       *                 *
@@ -332,6 +322,6 @@ class Madgraph(GeneratorBase):
 #*                                                          *
 #*               Command File for MadGraph 5                *
 #*                                                          *
-#*     run as ./bin/mg5  filename                           *
+#*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
-#************************************************************"\n"""
+#************************************************************"\n""")
