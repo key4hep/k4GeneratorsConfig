@@ -10,15 +10,12 @@ class KKMC(GeneratorBase):
 
         self.version = "x.y.z"
 
-        self.process = ""
-        self.cuts = ""
-
         self.executable = "KKMC-fcc.exe"
-        self.procs = []
+
         # Load default settigns
         defaultfile = os.path.dirname(__file__) + "/.KKMCDefaults"
         with open(defaultfile, "r") as file:
-            self.defaults = file.read()
+            self.add2GeneratorDatacard(file.read())
 
     def execute(self):
         # prepare the datacard
@@ -26,7 +23,7 @@ class KKMC(GeneratorBase):
         # prepare the key4hep script
         self.fill_key4hepScript()
         
-    def write_process(self):
+    def fill_datacard(self):
         if (
             abs(self.procinfo.get_beam_flavour(1)) != 11
             or abs(self.procinfo.get_beam_flavour(1)) != 11
@@ -44,45 +41,24 @@ class KKMC(GeneratorBase):
             print(f"WARNING: Final states {finalstate} not allowed in KKMC")
             sys.exit()
         self.finalstate = self.pdg_to_KKMC(finalstate[0])
-        self.add_process_option("_seed", self.procinfo.get_rndmSeed())
-        self.add_process_option("_energy", self.procinfo.get("sqrts"))
-        self.add_process_option("_besdelta", 0)
+        self.replaceOptionInGeneratorDatacard("_seed", self.procinfo.get_rndmSeed())
+        self.replaceOptionInGeneratorDatacard("_energy", self.procinfo.get("sqrts"))
+        self.replaceOptionInGeneratorDatacard("_besdelta", 0)
         # TODO add bes
-        self.add_process_option("_besmode", 0)
-        self.add_process_option("_ewmode", self.procinfo.get("ewmode"))
-        self.add_process_option("_isrmode", self.procinfo.get("isrmode"))
-        self.add_process_option("_fsrmode", self.settings.get("fsrmode", 0))
-        self.add_final_State()
+        self.replaceOptionInGeneratorDatacard("_besmode", 0)
+        self.replaceOptionInGeneratorDatacard("_ewmode", self.procinfo.get("ewmode"))
+        self.replaceOptionInGeneratorDatacard("_isrmode", self.procinfo.get("isrmode"))
+        self.replaceOptionInGeneratorDatacard("_fsrmode", self.settings.get("fsrmode", 0))
+        self.replaceOptionInGeneratorDatacard("_FINALSTATES", f"  {self.finalstate}              1")
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
         if self.procinfo.eventmode == "unweighted":
-            self.add_process_option("_wgtmode", "0")
+            self.replaceOptionInGeneratorDatacard("_wgtmode", "0")
         else:
-            self.add_process_option("_wgtmode", "1")
+            self.replaceOptionInGeneratorDatacard("_wgtmode", "1")
 
     def add_decay(self):
         print("DECAY specified, cannot be implmented in KKMC")
-
-    def add_final_State(self):
-        fs = f"  {self.finalstate}              1"
-        self.add_process_option("_FINALSTATES", fs)
-
-    def add_process_option(self, key, value):
-        if not isinstance(value, str):
-            value = str(value)
-        if key in self.process:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        if key in self.procDB_settings:
-            self.procDB.removeOption(key)
-        if key in self.defaults:
-            self.defaults = self.defaults.replace(key, value)
-        else:
-            print(f"Warning: {key} not set as defaults in KKCM. Ignoring")
-
-    def fill_datacard(self):
-        self.write_process()
-        self.add2GeneratorDatacard(self.defaults)
 
     def fill_key4hepScript(self):
         key4hepRun = ""

@@ -126,6 +126,15 @@ class GeneratorBase(abc.ABC):
         # push to the datacard
         self.add2GeneratorDatacard(line)
 
+    def replaceOptionInGeneratorDatacard(self,key,value):
+        # check if the key is already defined in the datacard:
+        if key in self.__datacardContent:
+            if not isinstance(value, str):
+                value = str(value)
+            self.__datacardContent = self.__datacardContent.replace(key,value)
+        else:
+            print(f"Warning: {key} not set as defaults in {self.name}. Ignoring")
+
     def removeOptionGeneratorDatacard(self, opt):
         lines = self.__datacardContent.split("\n")
         filter_lines = [line for line in lines if opt not in line]
