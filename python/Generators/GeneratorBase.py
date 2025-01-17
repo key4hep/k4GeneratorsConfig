@@ -91,7 +91,7 @@ class GeneratorBase(abc.ABC):
         
         self.procDB_settings = dict()
         if self.settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
+            self.procDB.execute()
             self.procDB_settings = self.procDB.getDict()
         
     def execute(self):

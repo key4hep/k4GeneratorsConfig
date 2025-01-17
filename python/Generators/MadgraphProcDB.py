@@ -7,7 +7,7 @@ class MadgraphProcDB(ProcDBBase):
         super().__init__(process)
         self.process = process
 
-    def write_DBInfo(self):
+    def execute(self):
         # choose as function of generatorDBLabel
         if self.process.get_generatorDBLabel().startswith("11_11") and len(self.process.final) == 2 :
             if abs(self.process.final[0]) <= 16:

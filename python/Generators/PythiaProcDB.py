@@ -7,7 +7,7 @@ class PythiaProcDB(ProcDBBase):
         super().__init__(process)
         self.process = process
 
-    def write_DBInfo(self):
+    def execute(self):
         # general stuff
         self.rundict['Main:timesAllowErrors'] = 5
         # ! 2) Settings related to output in init(), next() and stat().

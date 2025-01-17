@@ -7,6 +7,6 @@ class KKMCProcDB(ProcDBBase):
         super().__init__(process)
         self.process = process
 
-    def write_DBInfo(self):
+    def execute(self):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()

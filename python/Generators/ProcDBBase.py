@@ -10,7 +10,7 @@ class ProcDBBase(abc.ABC):
         self.rundict  = dict()
         self.procdict = dict()
 
-    def write_DBInfo(self):
+    def execute(self):
         return
         
     def getDict(self):
