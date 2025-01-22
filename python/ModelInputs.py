@@ -1,5 +1,5 @@
 class ModelInputs:
-    """A Stsndard Model Input"""
+    """A Standard Model Input"""
 
     def __init__(self):
 
@@ -42,6 +42,7 @@ class ModelInputs:
         else:
             print("ModelInputs unequal vector sizes for widths")
             print("Standard widths not used")
+
 
     def getParticleData(self,userParticleData):
 
