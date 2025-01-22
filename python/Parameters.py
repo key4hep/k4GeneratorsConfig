@@ -9,6 +9,20 @@ class Parameter:
         for i, name in enumerate(self.require_args):
             setattr(self, name, args[i])
 
+    @staticmethod
+    def set_info(name, value):
+        for _, v in globals().items():
+            if isinstance(v, Parameter) and v.name == name:
+                v.value = value
+
+    @staticmethod
+    def get_info(name):
+        for _, v in globals().items():
+            if isinstance(v, Parameter) and v.name == name:
+                return v
+        raise ValueError(f"Could not find Parameter with name {name}")
+
+
 #default parameter and mass values
 
 alphaEMMZM1 = Parameter(

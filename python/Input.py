@@ -1,7 +1,7 @@
 import yaml
 import os
 import Selectors
-
+from Parameters import Parameter as Param
 
 class Input:
     """Class for loading YAML files"""
@@ -238,14 +238,21 @@ class ParameterSets:
             settings = yaml.safe_load(file)
 
         # now we can safe the requested tag to the settings:
-        self.settings = settings.get(tag, None)
-        if self.settings is None:
+        settings = settings.get(tag, None)
+        if settings is None:
             raise FileNotFoundError(f"Error: tag {tag} not found in {self.file}")
 
-        # check the validity of the keys:
-        allowed_keys = [ 'alphaS', 'Gf', 'MT', 'MW' ]
-        for key in self.settings.keys():
+        # check the validity of the keys and store in the global dictionary
+        allowed_keys = [ 'alphaEMMZM1', 'alphaEMMZ', 'GFermi', 'sin2theta', 'sin2thetaEff', 'alphaSMZ', 'VEV', 'MU_R' ]
+        for key in settings.keys():
             if key not in allowed_keys:
-                print(f"Warning: tag {tag} unknown key {key} ignored")
-        
-        
+                print(f"Warning! parameterTag: {tag} unknown key: {key} ignored")
+            else:
+                try:
+                    param = Param.get_info(key)
+                    param.value = settings[key]
+                except ValueError as e:
+                    print("Error setting ParameterSet parameter: parameter not coded in Parameters.py")
+                    print(e)
+                    exit()
+

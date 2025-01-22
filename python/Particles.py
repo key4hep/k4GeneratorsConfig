@@ -24,7 +24,7 @@ class Particle:
             setattr(self, name, args[i])
 
         for option, value in options.items():
-            setattr(self, option, value)            
+            setattr(self, option, value)
 
     def get(self, name):
         return getattr(self, name)
