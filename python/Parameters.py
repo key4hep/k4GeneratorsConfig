@@ -29,10 +29,28 @@ GFermi = Parameter(
     texname="G_f"
 )
 
+sin2theta = Parameter(
+    name="sin2theta",
+    value=0.22339,
+    texname="sin ^{2}\\theta"
+)
+
+sin2thetaEff = Parameter(
+    name="sin2thetaEff",
+    value=0.23155,
+    texname="sin ^{2}\\theta"
+)
+
 alphaSMZ = Parameter(
     name="alphaSMZ",
     value=0.1184,
     texname="\\alpha _s"
+)
+
+VEV = Parameter(
+    name="VEV",
+    value=246,
+    texname="\\text{vev}"
 )
 
 MZ = Parameter(
@@ -67,7 +85,7 @@ MB = Parameter(
 
 ymb = Parameter(
     name="ymb",
-    value=4.7,
+    value=MB.value/VEV.value,
     texname="\\text{ymb}"
 )
 
@@ -85,7 +103,7 @@ WT = Parameter(
 
 ymt = Parameter(
     name="ymt",
-    value=172,
+    value=MT.value/VEV.value,
     texname="\\text{ymt}"
 )
 
