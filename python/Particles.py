@@ -24,7 +24,7 @@ class Particle:
             setattr(self, name, args[i])
 
         for option, value in options.items():
-            setattr(self, option, value)
+            setattr(self, option, value)            
 
     def get(self, name):
         return getattr(self, name)
@@ -218,8 +218,8 @@ t = Particle(
     pdg_code=6,
     name="t",
     antiname="t~",
-    mass=Param.MT,
-    width=Param.WT,
+    mass=Param.MT.value,
+    width=Param.WT.value,
     texname="t",
     antitexname="t~",
 )

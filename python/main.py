@@ -85,12 +85,19 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         default=-1,
         help="Number of events to be generated",
     )
-    args = parser.parse_args()
-    files = args.inputfiles
-    energies = args.ecms
+    parser.add_argument(
+        "--parameterTag",
+        type=str,
+        default="latest",
+        help="parameter tag in Parameters.yaml default is: latest",
+    )
+    args      = parser.parse_args()
+    files     = args.inputfiles
+    energies  = args.ecms
     ecmsfiles = args.ecmsFiles
-    rndmSeed = args.seed
-    events = args.nevts
+    rndmSeed  = args.seed
+    events    = args.nevts
+    paramTag  = args.parameterTag
 
     # so additionallt we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
@@ -98,6 +105,14 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         ecmSettings = Settings.ECMSInput(ecmsfile)
         energies.extend(ecmSettings.energies())
 
+    # now we read the global settings
+    try:
+        parameterSetsFile = os.path.dirname(__file__)+"/ParameterSets.yaml"
+        parameterSet = Settings.ParameterSets(parameterSetsFile, paramTag)
+    except FileNotFoundError as e:
+        print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
+        exit()
+    
     # now execut file processes
     if len(energies) == 0:
         executeFiles(files, 0, rndmSeed, events)

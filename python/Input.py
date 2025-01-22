@@ -222,3 +222,30 @@ class ECMSInput:
         for key, value in self.settings.items():
             ecmsList.extend(value)
         return ecmsList
+
+class ParameterSets:
+    """Class for loading YAML files with the parameter settings"""
+
+    def __init__(self, file, tag):
+        self.file = file
+        if not os.path.isfile(self.file):
+            raise FileNotFoundError(self.file)
+        else:
+            self.load_file(tag)
+
+    def load_file(self, tag):
+        with open(self.file, "r") as file:
+            settings = yaml.safe_load(file)
+
+        # now we can safe the requested tag to the settings:
+        self.settings = settings.get(tag, None)
+        if self.settings is None:
+            raise FileNotFoundError(f"Error: tag {tag} not found in {self.file}")
+
+        # check the validity of the keys:
+        allowed_keys = [ 'alphaS', 'Gf', 'MT', 'MW' ]
+        for key in self.settings.keys():
+            if key not in allowed_keys:
+                print(f"Warning: tag {tag} unknown key {key} ignored")
+        
+        
