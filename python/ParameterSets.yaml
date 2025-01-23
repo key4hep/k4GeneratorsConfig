@@ -1,6 +1,6 @@
 latest : 
-    alphaSMZ : 4711
-    GFermi : 4712
+    alphaSMZ : 0.1184
+    GFermi   : 0.0000116637 
 
 oldest : 
     alphaSMZ : 4714

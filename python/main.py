@@ -9,8 +9,6 @@ import Input as Settings
 import Process as process_module
 import Generators as generators_module
 
-import ModelInputs as modelInit
-
 def make_output_directory(generators, output_directory, procname):
     # Overwrite directory if it exists
     if not os.path.exists(output_directory):
@@ -137,8 +135,6 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         print("Generating and writing configuration files for ECM= ", sqrts)
 
     for yaml_file in files:
-        # initalize couplings
-        model = modelInit.ModelInputs()
         # read the input file
         settings = Settings.Input(yaml_file, sqrts)
         # ana = analysis.Analysis(settings)
@@ -147,11 +143,9 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         if events != -1:
             settings.set("events", events)
         settings.gens()
-        processes = settings.get_processes(sqrts)
+        processes     = settings.get_processes(sqrts)
         particle_data = settings.get_particle_data()
-        # uncomment the next line to add the standard settings, the particle_dtaa will take precedent
-        # particle_data = model.getParticleData(particle_data)
-        generators = generators_module.Generators(settings)
+        generators    = generators_module.Generators(settings)
         try:
             output_dir = getattr(settings, "outdir", "Run-Cards")
         except KeyError:

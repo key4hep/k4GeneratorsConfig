@@ -1,6 +1,8 @@
 import abc
 import importlib
 import os, stat
+import Parameters as ParameterModule
+from Parameters import Parameter as ParameterClass
 
 class GeneratorBase(abc.ABC):
     """GeneratorBase class"""
@@ -14,6 +16,9 @@ class GeneratorBase(abc.ABC):
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
 
+        # physics definition of the EW Scheme:
+        self.setModelParameters()
+        
         # define the output directory as function of the OutDir spec + generator name + process name
         self.outdir = (
             f"{procinfo.get('OutDir')}/{self.name}/{self.procinfo.get('procname')}"
@@ -93,6 +98,9 @@ class GeneratorBase(abc.ABC):
         if self.settings.get("usedefaults", True):
             self.procDB.execute()
             self.procDB_settings = self.procDB.getDict()
+
+    def setModelParameters(self):
+        self.ModelParameters = ['alphaEMMZ', 'GFermi', 'alphaSMZ', 'MZ', 'WZ', 'MW', 'WW']
         
     def execute(self):
         raise NotImplementedError("execute")
@@ -100,7 +108,7 @@ class GeneratorBase(abc.ABC):
     def add2GeneratorDatacard(self,content):
         # data encapsulation: add to the content in the base class
         self.__datacardContent += content
-       
+
     def getGeneratorDatacard(self):
         # return content
         return self.__datacardContent
@@ -141,23 +149,28 @@ class GeneratorBase(abc.ABC):
         self.__datacardContent = "\n".join(filter_lines)
 
     def prepareParameters(self):
-        # 3 sources: global (paramatersets), procDB and inputyaml
-        # hierarchy: inputyaml superseeds global superseeds procDB 
-        # retrieve the particles from the input
-        for part in self.procinfo.get_data_particles():
-            # loop over all attributes
-            for attr in dir(part):
-                # make sure it's not a special attribute
-                if not callable(getattr(part, attr)) and not attr.startswith("__"):
-                    # now we know it's just a field name:
-                    prop = self.is_particle_data(attr)
-                    if prop is not None:
-                        op_name = self.get_particle_operator(part,prop)
-                        # remove from the Standard=ProcDB settings if necessary
-                        if op_name in self.procDB_settings:
-                            self.procDB.removeOption(op_name)
-                        value = getattr(part, attr)
-                        self.addOption2GeneratorDatacard(op_name, value)
+        # 2 sources: global and procDB
+        # hierarchy: global superseeds procDB
+        for param in self.ModelParameters:
+            # make sure that the parameters are in the global scope:
+            if param in ParameterModule.ParametersList:
+                if not ParameterClass.get_info(param).isParticleProperty:
+                    globalParam = ParameterClass.get_info(param)
+                    key         = self.getParameterLabel(param)
+                    op_name     = self.getParameterOperator(key)
+                    # write to datacard
+                    self.addOption2GeneratorDatacard(op_name, globalParam.value)
+                    # now check and remove operators in procDB if present:
+                    if op_name in self.procDB_settings:
+                        self.procDB.removeOption(op_name)
+            else:
+                print(f"Warning::GeneratorBase::prepareParameters: {param} not found")
+
+    def getParameterLabel(self, name):
+        raise NotImplementedError()
+
+    def getParameterOperator(self, name):
+        raise NotImplementedError()
 
     def prepareParticles(self):
         # retrieve the particles from the input

@@ -58,7 +58,7 @@ GFermi = Parameter(
 
 sin2theta = Parameter(
     name="sin2theta",
-    value=0.22339,
+    value=0.23155,
     isParticleProperty=False,
     texname="sin ^{2}\\theta"
 )

@@ -242,7 +242,6 @@ class ParameterSets:
         settings = settings.get(tag, None)
         if settings is None:
             raise FileNotFoundError(f"Error: tag {tag} not found in {self.file}")
-
         # check the validity of the keys and store in the global dictionary
         for key in settings.keys():
             if key not in ParameterModule.ParametersList:

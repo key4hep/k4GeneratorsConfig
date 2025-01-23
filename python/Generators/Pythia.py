@@ -14,6 +14,9 @@ class Pythia(GeneratorBase):
         if settings.get_block("selectors"):
             self.fill_selectors()
 
+    def setModelParameters(self):
+        self.ModelParameters = ['alphaEMMZ', 'GFermi', 'sin2theta', 'sin2thetaEff', 'alphaSMZ', 'MZ', 'WZ', 'MW', 'WW']
+
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -49,6 +52,9 @@ class Pythia(GeneratorBase):
 
         self.addOption2GeneratorDatacard("Main:numberOfEvents", self.procinfo.get("events"))
         self.add2GeneratorDatacard("\n")
+
+        # now add the model parameters
+        self.prepareParameters()
 
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
@@ -210,6 +216,24 @@ class Pythia(GeneratorBase):
 
     def formatLine(self,key,value):
         return f"{key} = {value}"
+
+    def getParameterLabel(self, param):
+        parameterDict = { 'alphaEMMZ' : 'alphaEMmZ', 'GFermi' : 'GF', 'sin2theta' : 'sin2thetaW', 'sin2thetaEff': 'sin2thetaWbar', 'alphaSMZ' : 'alphaSvalueMRun',
+                          'MZ' : 'mass', 'WZ' : 'width', 'MW' : 'mass', 'WW' : 'width',
+                          'MB' : 'mass', 'MT' : 'mass', 'WT' : 'width', 'MH': 'mass', 'WH' : 'width'}
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Pythia: parameter {param} has no transation in Pythia Parameter Dictionary")
+            return ""
+        return parameterDict[param]
+
+    def getParameterOperator(self, name):
+        if "alphaS" not in name:
+            return f"StandardModel:{name}"
+        else:
+            return f"ParticleData:{name}"
+        # return f"SigmaProcess:{name}" 
+    
 
     def is_particle_data(self, d):
         name = None
