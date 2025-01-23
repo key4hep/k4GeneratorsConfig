@@ -15,7 +15,16 @@ class Pythia(GeneratorBase):
             self.fill_selectors()
 
     def setModelParameters(self):
-        self.ModelParameters = ['alphaEMMZ', 'GFermi', 'sin2theta', 'sin2thetaEff', 'alphaSMZ', 'MZ', 'WZ', 'MW', 'WW']
+        # change only the model parameters, the default particles are ok
+        self.ModelInputParams = [{'type' : 'Parameter', 'name' : 'alphaEMMZ'},
+                                 {'type' : 'Parameter', 'name' : 'GFermi'},
+                                 {'type' : 'Parameter', 'name' : 'sin2theta'},
+                                 {'type' : 'Parameter', 'name' : 'sin2thetaEff'},
+                                 {'type' : 'Parameter', 'name' : 'alphaSMZ'},
+                                 {'type' : 'Particle', 'pdg' : 23, 'prop' : 'mass'},
+                                 {'type' : 'Particle', 'pdg' : 23, 'prop' : 'width'},
+                                 {'type' : 'Particle', 'pdg' : 24, 'prop' : 'mass'},
+                                 {'type' : 'Particle', 'pdg' : 24, 'prop' : 'width'}]
 
     def execute(self):
         # prepare the datacard

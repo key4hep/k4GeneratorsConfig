@@ -3,6 +3,7 @@ import importlib
 import os, stat
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
+from Particles import Particle as ParticleClass
 
 class GeneratorBase(abc.ABC):
     """GeneratorBase class"""
@@ -17,6 +18,7 @@ class GeneratorBase(abc.ABC):
         self.inputFileExtension    = inputFileExtension
 
         # physics definition of the EW Scheme:
+        self.ModelInputParams = []
         self.setModelParameters()
         
         # define the output directory as function of the OutDir spec + generator name + process name
@@ -100,7 +102,13 @@ class GeneratorBase(abc.ABC):
             self.procDB_settings = self.procDB.getDict()
 
     def setModelParameters(self):
-        self.ModelParameters = ['alphaEMMZ', 'GFermi', 'alphaSMZ', 'MZ', 'WZ', 'MW', 'WW']
+        self.ModelInputParams = [{'type' : 'Parameter', 'name': 'alphaEMMZ'},
+                                 {'type' : 'Parameter', 'name': 'GFermi'},
+                                 {'type' : 'Parameter', 'name': 'alphaSMZ'},
+                                 {'type' : 'Particle', 'pdg': 23, 'prop' : 'mass'},
+                                 {'type' : 'Particle', 'pdg': 23, 'prop' : 'width'},
+                                 {'type' : 'Particle', 'pdg': 24, 'prop' : 'mass'},
+                                 {'type' : 'Particle', 'pdg': 24, 'prop' : 'width'}]
         
     def execute(self):
         raise NotImplementedError("execute")
@@ -151,7 +159,12 @@ class GeneratorBase(abc.ABC):
     def prepareParameters(self):
         # 2 sources: global and procDB
         # hierarchy: global superseeds procDB
-        for param in self.ModelParameters:
+        # extract the Parameters:
+        paramList = []
+        for item in self.ModelInputParams:
+            if item['type'] == 'Parameter':
+                paramList.append(item['name'])
+        for param in paramList:
             # make sure that the parameters are in the global scope:
             if param in ParameterModule.ParametersList:
                 if not ParameterClass.get_info(param).isParticleProperty:
@@ -173,6 +186,12 @@ class GeneratorBase(abc.ABC):
         raise NotImplementedError()
 
     def prepareParticles(self):
+        # three sources for the particles: YAML input, global and ProcDB
+        # hierarchy: YAML superseeds global superseeds ProcDB
+        particleParameterList = []
+        for item in self.ModelInputParams:
+            if item['type'] == 'Particle':
+                particleParameterList.append([item['pdg'], item['prop']])
         # retrieve the particles from the input
         for part in self.procinfo.get_data_particles():
             # loop over all attributes
@@ -186,13 +205,26 @@ class GeneratorBase(abc.ABC):
                         # remove from the Standard=ProcDB settings if necessary
                         if op_name in self.procDB_settings:
                             self.procDB.removeOption(op_name)
+                        #remove from the ModelInputParams List:
+                        if [part.get('pdg_code'), attr] in particleParameterList:
+                            particleParameterList.remove([part.get('pdg_code'), attr])
                         value = getattr(part, attr)
                         self.addOption2GeneratorDatacard(op_name, value)
+        # now either the global list is empty or we have to add the remaining particles
+        for item in particleParameterList:
+            part     = item[0]
+            particle = ParticleClass.get_info(part)
+            op_name = self.get_particle_operator(particle,self.is_particle_data(item[1]))
+            if item[1] == "mass":
+                value = particle.mass
+            elif item[1] == "width":
+                value = particle.width
+            self.addOption2GeneratorDatacard(op_name, value)
 
     def is_particle_data(self, attr):
         raise NotImplementedError()
 
-    def get_particle_operator(self, part, name):
+    def get_particle_operator(self, part, prop):
         raise NotImplementedError()
 
     def add2Key4hepScript(self,content):
