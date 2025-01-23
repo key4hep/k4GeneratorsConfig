@@ -91,13 +91,20 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         default="latest",
         help="parameter tag in Parameters.yaml default is: latest",
     )
-    args      = parser.parse_args()
-    files     = args.inputfiles
-    energies  = args.ecms
-    ecmsfiles = args.ecmsFiles
-    rndmSeed  = args.seed
-    events    = args.nevts
-    paramTag  = args.parameterTag
+    parser.add_argument(
+        "--parameterTagFile",
+        type=str,
+        default="ParameterSets.yaml",
+        help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in  directory: python",
+    )
+    args           = parser.parse_args()
+    files          = args.inputfiles
+    energies       = args.ecms
+    ecmsfiles      = args.ecmsFiles
+    rndmSeed       = args.seed
+    events         = args.nevts
+    paramTag       = args.parameterTag
+    paramFileName  = args.parameterTagFile
 
     # so additionallt we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
@@ -107,7 +114,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
     # now we read the global settings
     try:
-        parameterSetsFile = os.path.dirname(__file__)+"/ParameterSets.yaml"
+        parameterSetsFile = os.path.dirname(__file__)+"/"+paramFileName
         parameterSet = Settings.ParameterSets(parameterSetsFile, paramTag)
     except FileNotFoundError as e:
         print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
