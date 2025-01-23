@@ -1,7 +1,8 @@
 import yaml
 import os
 import Selectors
-from Parameters import Parameter as Param
+import Parameters as ParameterModule
+from Parameters import Parameter as ParameterClass
 
 class Input:
     """Class for loading YAML files"""
@@ -243,13 +244,12 @@ class ParameterSets:
             raise FileNotFoundError(f"Error: tag {tag} not found in {self.file}")
 
         # check the validity of the keys and store in the global dictionary
-        allowed_keys = [ 'alphaEMMZM1', 'alphaEMMZ', 'GFermi', 'sin2theta', 'sin2thetaEff', 'alphaSMZ', 'VEV', 'MU_R' ]
         for key in settings.keys():
-            if key not in allowed_keys:
+            if key not in ParameterModule.ParametersList:
                 print(f"Warning! parameterTag: {tag} unknown key: {key} ignored")
             else:
                 try:
-                    param = Param.get_info(key)
+                    param = ParameterClass.get_info(key)
                     param.value = settings[key]
                 except ValueError as e:
                     print("Error setting ParameterSet parameter: parameter not coded in Parameters.py")

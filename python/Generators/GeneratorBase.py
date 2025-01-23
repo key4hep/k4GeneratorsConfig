@@ -140,6 +140,25 @@ class GeneratorBase(abc.ABC):
         filter_lines = [line for line in lines if opt not in line]
         self.__datacardContent = "\n".join(filter_lines)
 
+    def prepareParameters(self):
+        # 3 sources: global (paramatersets), procDB and inputyaml
+        # hierarchy: inputyaml superseeds global superseeds procDB 
+        # retrieve the particles from the input
+        for part in self.procinfo.get_data_particles():
+            # loop over all attributes
+            for attr in dir(part):
+                # make sure it's not a special attribute
+                if not callable(getattr(part, attr)) and not attr.startswith("__"):
+                    # now we know it's just a field name:
+                    prop = self.is_particle_data(attr)
+                    if prop is not None:
+                        op_name = self.get_particle_operator(part,prop)
+                        # remove from the Standard=ProcDB settings if necessary
+                        if op_name in self.procDB_settings:
+                            self.procDB.removeOption(op_name)
+                        value = getattr(part, attr)
+                        self.addOption2GeneratorDatacard(op_name, value)
+
     def prepareParticles(self):
         # retrieve the particles from the input
         for part in self.procinfo.get_data_particles():
