@@ -12,6 +12,14 @@ class Whizard(GeneratorBase):
 
         self.procs = []
 
+    def setModelParameters(self):
+        self.addModelParameter('GFermi')
+        self.addModelParameter('alphaSMZ')
+        self.addModelParticle(pdg_code=23, property_type='mass')
+        self.addModelParticle(pdg_code=23, property_type='width')
+        self.addModelParticle(pdg_code=24, property_type='mass')
+        self.addModelParticle(pdg_code=24, property_type='width')
+        
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -70,6 +78,9 @@ class Whizard(GeneratorBase):
         if self.procinfo.get("decay"):
             self.add_decay()
 
+        # now add the model checking for overlap
+        self.prepareParameters()
+
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
 
@@ -89,7 +100,8 @@ class Whizard(GeneratorBase):
             self.addOption2GeneratorDatacard("?unweighted", "false")
 
         if self.settings.get_block("selectors"):
-            self.cutsadded = False
+            self.CutKeyWdPresent = False
+            self.aCutIsPresent   = False
             self.write_selectors()
 
     def add_decay(self):
@@ -112,7 +124,6 @@ class Whizard(GeneratorBase):
         self.add2GeneratorDatacard(decays)
 
     def write_selectors(self):
-        self.add2GeneratorDatacard("cuts = ")
         selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
@@ -155,34 +166,33 @@ class Whizard(GeneratorBase):
             f2 = self.pdg_to_whizard(flavs[1])
             if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                 return
-            if self.cutsadded is False:
-                self.add2GeneratorDatacard(" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
-                self.cutsadded = True
-            else:
-                self.add2GeneratorDatacard(f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n")
-
+            self.addCut2GeneratorDatacard(" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
         else:
             for fl in flavs:
                 f1 = self.pdg_to_whizard(fl[0])
                 f2 = self.pdg_to_whizard(fl[1])
                 if str(f1) not in self.finalstate or str(f2) not in self.finalstate:
                     continue
-                if self.cutsadded is False:
-                    self.add2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
-                    self.cutsadded = True
-                else:
-                    self.add2GeneratorDatacard(f" and all {Min} < {name} <= {Max} [{f1},{f2}] \n")
+                self.addCut2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             f = self.pdg_to_whizard(f)
-            if self.cutsadded is False:
-                self.add2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f}] \n")
-                self.cutsadded = True
-            else:
-                self.add2GeneratorDatacard(f" and all {Min} < {name} <= {Max} [{f}] \n")
+            self.addCut2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f}] \n")
+
+    def addCut2GeneratorDatacard(self,cut):
+        # the keyword for cuts: add once
+        if self.CutKeyWdPresent is False:
+            self.add2GeneratorDatacard("cuts = ")
+            self.CutKeyWdPresent = True
+        # the actual cuts
+        if self.aCutIsPresent is False:
+            self.add2GeneratorDatacard(f"{cut}")
+            self.aCutIsPresent = True
+        else:
+            self.add2GeneratorDatacard(f" and {cut}")
 
     def write_integrate(self):
         for p in self.procs:
@@ -206,6 +216,19 @@ class Whizard(GeneratorBase):
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
+
+    def getParameterLabel(self, param):
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'alphas',
+                          'MZ' : 'mass', 'WZ' : 'width', 'MW' : 'mass', 'WW' : 'width',
+                          'MB' : 'mass', 'MT' : 'mass', 'WT' : 'width', 'MH': 'mass', 'WH' : 'width'}
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Whizard: parameter {param} has no translation in Whizard Parameter Dictionary")
+            return ""
+        return parameterDict[param]
+
+    def getParameterOperator(self, name):
+        return f"{name}"
 
     def formatLine(self,key,value):
         return f"{key} = {value}"

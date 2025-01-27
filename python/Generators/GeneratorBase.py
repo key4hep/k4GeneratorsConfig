@@ -196,11 +196,11 @@ class GeneratorBase(abc.ABC):
             else:
                 print(f"Warning::GeneratorBase::prepareParameters: {param} not found")
 
-    def getParameterLabel(self, name):
-        raise NotImplementedError()
+    def getParameterLabel(self, param):
+        raise NotImplementedError("getParameterLabel")
 
     def getParameterOperator(self, name):
-        raise NotImplementedError()
+        raise NotImplementedError("getParameterOperator")
 
     def prepareParticles(self):
         # three sources for the particles: YAML input, global and ProcDB

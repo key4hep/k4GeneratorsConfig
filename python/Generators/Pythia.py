@@ -16,15 +16,15 @@ class Pythia(GeneratorBase):
 
     def setModelParameters(self):
         # change only the model parameters, the default particles are ok
-        self.ModelInputParams = [{'type' : 'Parameter', 'name' : 'alphaEMMZ'},
-                                 {'type' : 'Parameter', 'name' : 'GFermi'},
-                                 {'type' : 'Parameter', 'name' : 'sin2theta'},
-                                 {'type' : 'Parameter', 'name' : 'sin2thetaEff'},
-                                 {'type' : 'Parameter', 'name' : 'alphaSMZ'},
-                                 {'type' : 'Particle', 'pdg' : 23, 'prop' : 'mass'},
-                                 {'type' : 'Particle', 'pdg' : 23, 'prop' : 'width'},
-                                 {'type' : 'Particle', 'pdg' : 24, 'prop' : 'mass'},
-                                 {'type' : 'Particle', 'pdg' : 24, 'prop' : 'width'}]
+        self.addModelParameter('alphaEMMZ')
+        self.addModelParameter('GFermi')
+        self.addModelParameter('sin2theta')
+        self.addModelParameter('sin2thetaEff')
+        self.addModelParameter('alphaSMZ')
+        self.addModelParticle(pdg_code=23, property_type='mass')
+        self.addModelParticle(pdg_code=23, property_type='width')
+        self.addModelParticle(pdg_code=24, property_type='mass')
+        self.addModelParticle(pdg_code=24, property_type='width')
 
     def execute(self):
         # prepare the datacard
@@ -232,7 +232,7 @@ class Pythia(GeneratorBase):
                           'MB' : 'mass', 'MT' : 'mass', 'WT' : 'width', 'MH': 'mass', 'WH' : 'width'}
         # alphas could be SigmaProcess:alphaSvalue 
         if param not in parameterDict.keys():
-            print(f"Warning::Pythia: parameter {param} has no transation in Pythia Parameter Dictionary")
+            print(f"Warning::Pythia: parameter {param} has no translation in Pythia Parameter Dictionary")
             return ""
         return parameterDict[param]
 
@@ -241,8 +241,7 @@ class Pythia(GeneratorBase):
             return f"StandardModel:{name}"
         else:
             return f"ParticleData:{name}"
-        # return f"SigmaProcess:{name}" 
-    
+        # return f"SigmaProcess:{name}"     
 
     def is_particle_data(self, d):
         name = None
