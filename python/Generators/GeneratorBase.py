@@ -102,14 +102,34 @@ class GeneratorBase(abc.ABC):
             self.procDB_settings = self.procDB.getDict()
 
     def setModelParameters(self):
-        self.ModelInputParams = [{'type' : 'Parameter', 'name': 'alphaEMMZ'},
-                                 {'type' : 'Parameter', 'name': 'GFermi'},
-                                 {'type' : 'Parameter', 'name': 'alphaSMZ'},
-                                 {'type' : 'Particle', 'pdg': 23, 'prop' : 'mass'},
-                                 {'type' : 'Particle', 'pdg': 23, 'prop' : 'width'},
-                                 {'type' : 'Particle', 'pdg': 24, 'prop' : 'mass'},
-                                 {'type' : 'Particle', 'pdg': 24, 'prop' : 'width'}]
+        self.addModelParameter('alphaEMMZ')
+        self.addModelParameter('GFermi')
+        self.addModelParameter('alphaSMZ')
+        self.addModelParticle(pdg_code=23, property_type='mass')
+        self.addModelParticle(pdg_code=23, property_type='width')
+        self.addModelParticle(pdg_code=24, property_type='mass')
+        self.addModelParticle(24, property_type='width')
         
+    def addModelParameter(self, item):
+        self.ModelInputParams.append({'type' : 'Parameter', 'name' : item})
+
+    def getModelParameterList(self):
+        paramList = []
+        for item in self.ModelInputParams:
+            if item['type'] == 'Parameter':
+                paramList.append(item['name'])
+        return paramList
+
+    def addModelParticle(self, pdg_code, property_type):
+        self.ModelInputParams.append({'type' : 'Particle', 'pdg' : pdg_code, 'prop' : property_type})
+
+    def getModelParticleList(self):
+        particleList = []
+        for item in self.ModelInputParams:
+            if item['type'] == 'Particle':
+                particleList.append([item['pdg'], item['prop']])
+        return particleList
+
     def execute(self):
         raise NotImplementedError("execute")
 
@@ -160,10 +180,7 @@ class GeneratorBase(abc.ABC):
         # 2 sources: global and procDB
         # hierarchy: global superseeds procDB
         # extract the Parameters:
-        paramList = []
-        for item in self.ModelInputParams:
-            if item['type'] == 'Parameter':
-                paramList.append(item['name'])
+        paramList = self.getModelParameterList()
         for param in paramList:
             # make sure that the parameters are in the global scope:
             if param in ParameterModule.ParametersList:
@@ -188,10 +205,7 @@ class GeneratorBase(abc.ABC):
     def prepareParticles(self):
         # three sources for the particles: YAML input, global and ProcDB
         # hierarchy: YAML superseeds global superseeds ProcDB
-        particleParameterList = []
-        for item in self.ModelInputParams:
-            if item['type'] == 'Particle':
-                particleParameterList.append([item['pdg'], item['prop']])
+        particleParameterList = self.getModelParticleList()
         # retrieve the particles from the input
         for part in self.procinfo.get_data_particles():
             # loop over all attributes
