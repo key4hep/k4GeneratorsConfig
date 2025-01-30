@@ -13,12 +13,11 @@ class Whizard(GeneratorBase):
         self.procs = []
 
     def setModelParameters(self):
+        # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
-        self.addModelParameter('alphaSMZ')
-        self.addModelParticle(pdg_code=23, property_type='mass')
-        self.addModelParticle(pdg_code=23, property_type='width')
-        self.addModelParticle(pdg_code=24, property_type='mass')
-        self.addModelParticle(pdg_code=24, property_type='width')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
         
     def execute(self):
         # prepare the datacard
@@ -233,7 +232,7 @@ class Whizard(GeneratorBase):
     def formatLine(self,key,value):
         return f"{key} = {value}"
 
-    def is_particle_data(self, d):
+    def getParticleProperty(self, d):
         name = None
         if d == "mass":
             name = "MASS"
@@ -241,7 +240,7 @@ class Whizard(GeneratorBase):
             name = "WIDTH"
         return name
 
-    def get_particle_operator(self, part, prop):
+    def getParticleOperator(self, part, prop):
         pname = self.whizard_MW_name(part.get("pdg_code"))
         if prop == "MASS":
             return f"m{pname}"

@@ -15,16 +15,14 @@ class Pythia(GeneratorBase):
             self.fill_selectors()
 
     def setModelParameters(self):
-        # change only the model parameters, the default particles are ok
+        # no alphaS and MZ, these are default
         self.addModelParameter('alphaEMMZ')
         self.addModelParameter('GFermi')
         self.addModelParameter('sin2theta')
         self.addModelParameter('sin2thetaEff')
-        self.addModelParameter('alphaSMZ')
-        self.addModelParticle(pdg_code=23, property_type='mass')
-        self.addModelParticle(pdg_code=23, property_type='width')
-        self.addModelParticle(pdg_code=24, property_type='mass')
-        self.addModelParticle(pdg_code=24, property_type='width')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
 
     def execute(self):
         # prepare the datacard
@@ -243,7 +241,7 @@ class Pythia(GeneratorBase):
             return f"ParticleData:{name}"
         # return f"SigmaProcess:{name}"     
 
-    def is_particle_data(self, d):
+    def getParticleProperty(self, d):
         name = None
         if d == "mass":
             name = "m0"
@@ -251,6 +249,6 @@ class Pythia(GeneratorBase):
             name = "mWidth"
         return name
 
-    def get_particle_operator(self, part, prop):
+    def getParticleOperator(self, part, prop):
         return f"{part.get('pdg_code')}:{prop}"
 

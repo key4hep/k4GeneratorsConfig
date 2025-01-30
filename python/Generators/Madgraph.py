@@ -290,14 +290,14 @@ class Madgraph(GeneratorBase):
     def formatLine(self,key,value):
         return f"{key} {value}"
 
-    def is_particle_data(self, d):
+    def getParticleProperty(self, d):
         if d == "mass":
             return "M"
         if d == "width":
             return "W"
         return None
 
-    def get_particle_operator(self, part, prop):
+    def getParticleOperator(self, part, prop):
         particleName = part.get("name").replace("+", "").replace("-", "")
         return f"set {prop}{particleName}"
 

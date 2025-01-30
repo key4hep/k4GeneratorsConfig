@@ -212,7 +212,7 @@ class Sherpa(GeneratorBase):
     def formatLine(self,key,value):
         return f" {key} {value};"
 
-    def is_particle_data(self, d):
+    def getParticleProperty(self, d):
         name = None
         if d == "mass":
             name = "MASS"
@@ -220,6 +220,6 @@ class Sherpa(GeneratorBase):
             name = "WIDTH"
         return name
 
-    def get_particle_operator(self, part, prop):
+    def getParticleOperator(self, part, prop):
         return f"{prop}[{part.get('pdg_code')}]"
 

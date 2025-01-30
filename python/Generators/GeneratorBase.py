@@ -17,8 +17,9 @@ class GeneratorBase(abc.ABC):
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
 
-        # physics definition of the EW Scheme:
-        self.ModelInputParams = []
+        # set the default model parameters:
+        self.setDefaultModelParameters()
+        # set the Generator specific parameters 
         self.setModelParameters()
         
         # define the output directory as function of the OutDir spec + generator name + process name
@@ -101,17 +102,26 @@ class GeneratorBase(abc.ABC):
             self.procDB.execute()
             self.procDB_settings = self.procDB.getDict()
 
-    def setModelParameters(self):
-        self.addModelParameter('alphaEMMZ')
-        self.addModelParameter('GFermi')
+    def setDefaultModelParameters(self):
+        self.ModelInputParams = []
         self.addModelParameter('alphaSMZ')
-        self.addModelParticle(pdg_code=23, property_type='mass')
-        self.addModelParticle(pdg_code=23, property_type='width')
-        self.addModelParticle(pdg_code=24, property_type='mass')
-        self.addModelParticle(24, property_type='width')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
         
+    def setModelParameters(self):
+        raise NotImplementedError("setModelParameters")
+
     def addModelParameter(self, item):
-        self.ModelInputParams.append({'type' : 'Parameter', 'name' : item})
+        if not self.hasModelParameter(item):
+            self.ModelInputParams.append({'type' : 'Parameter', 'name' : item})
+
+    def removeModelParameter(self, item):
+        if self.hasModelParameter(item):
+            self.ModelInputParams.remove({'type' : 'Parameter', 'name' : item})
+
+    def hasModelParameter(self, item):
+        if item in self.getModelParameterList():
+            return True
+        return False
 
     def getModelParameterList(self):
         paramList = []
@@ -120,10 +130,20 @@ class GeneratorBase(abc.ABC):
                 paramList.append(item['name'])
         return paramList
 
-    def addModelParticle(self, pdg_code, property_type):
-        self.ModelInputParams.append({'type' : 'Particle', 'pdg' : pdg_code, 'prop' : property_type})
+    def addModelParticleProperty(self, pdg_code, property_type):
+        if not self.hasModelParticleProperty(pdg_code, property_type):
+            self.ModelInputParams.append({'type' : 'Particle', 'pdg' : pdg_code, 'prop' : property_type})
 
-    def getModelParticleList(self):
+    def removeModelParticleProperty(self, pdg_code, property_type):
+        if self.hasModelParticleProperty(pdg_code, property_type):
+            self.ModelInputParams.remove({'type' : 'Particle', 'pdg' : pdg_code, 'prop' : property_type})
+
+    def hasModelParticleProperty(self, pdg_code, property_type):
+        if [pdg_code, property_type] in self.getModelParticlePropertyList():
+            return True
+        return False
+
+    def getModelParticlePropertyList(self):
         particleList = []
         for item in self.ModelInputParams:
             if item['type'] == 'Particle':
@@ -205,7 +225,7 @@ class GeneratorBase(abc.ABC):
     def prepareParticles(self):
         # three sources for the particles: YAML input, global and ProcDB
         # hierarchy: YAML superseeds global superseeds ProcDB
-        particleParameterList = self.getModelParticleList()
+        particleParameterList = self.getModelParticlePropertyList()
         # retrieve the particles from the input
         for part in self.procinfo.get_data_particles():
             # loop over all attributes
@@ -213,9 +233,9 @@ class GeneratorBase(abc.ABC):
                 # make sure it's not a special attribute
                 if not callable(getattr(part, attr)) and not attr.startswith("__"):
                     # now we know it's just a field name:
-                    prop = self.is_particle_data(attr)
+                    prop = self.getParticleProperty(attr)
                     if prop is not None:
-                        op_name = self.get_particle_operator(part,prop)
+                        op_name = self.getParticleOperator(part,prop)
                         # remove from the Standard=ProcDB settings if necessary
                         if op_name in self.procDB_settings:
                             self.procDB.removeOption(op_name)
@@ -228,18 +248,18 @@ class GeneratorBase(abc.ABC):
         for item in particleParameterList:
             part     = item[0]
             particle = ParticleClass.get_info(part)
-            op_name = self.get_particle_operator(particle,self.is_particle_data(item[1]))
+            op_name = self.getParticleOperator(particle,self.getParticleProperty(item[1]))
             if item[1] == "mass":
                 value = particle.mass
             elif item[1] == "width":
                 value = particle.width
             self.addOption2GeneratorDatacard(op_name, value)
 
-    def is_particle_data(self, attr):
-        raise NotImplementedError()
+    def getParticleProperty(self, attr):
+        raise NotImplementedError("getParticleProperty")
 
-    def get_particle_operator(self, part, prop):
-        raise NotImplementedError()
+    def getParticleOperator(self, part, prop):
+        raise NotImplementedError("getParticleOperator")
 
     def add2Key4hepScript(self,content):
         # data encapsulation: add to the content in the base class
