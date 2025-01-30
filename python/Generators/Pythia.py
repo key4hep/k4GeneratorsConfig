@@ -225,9 +225,9 @@ class Pythia(GeneratorBase):
         return f"{key} = {value}"
 
     def getParameterLabel(self, param):
-        parameterDict = { 'alphaEMMZ' : 'alphaEMmZ', 'GFermi' : 'GF', 'sin2theta' : 'sin2thetaW', 'sin2thetaEff': 'sin2thetaWbar', 'alphaSMZ' : 'alphaSvalueMRun',
-                          'MZ' : 'mass', 'WZ' : 'width', 'MW' : 'mass', 'WW' : 'width',
-                          'MB' : 'mass', 'MT' : 'mass', 'WT' : 'width', 'MH': 'mass', 'WH' : 'width'}
+        parameterDict = { 'alphaEMMZ' : 'alphaEMmZ', 'GFermi' : 'GF',
+                          'sin2theta' : 'sin2thetaW', 'sin2thetaEff': 'sin2thetaWbar',
+                          'alphaSMZ' : 'alphaSvalueMRun'}
         # alphas could be SigmaProcess:alphaSvalue 
         if param not in parameterDict.keys():
             print(f"Warning::Pythia: parameter {param} has no translation in Pythia Parameter Dictionary")
