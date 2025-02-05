@@ -7,8 +7,9 @@ OutDir: Run-Cards
 Events: 100
 EventMode: unweighted
 
-PositronPolarisation: 0.3
-ElectronPolarisation: 0.8
+PolarisationDensity: [-1, 1]
+PolarisationFraction: [ 0.8, 0.3 ]
+
 Beamstrahlung: ILC
 
 SqrtS: 240
