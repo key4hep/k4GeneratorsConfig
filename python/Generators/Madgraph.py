@@ -64,9 +64,9 @@ class Madgraph(GeneratorBase):
                 self.addOption2GeneratorDatacard("set pdlabel", "isronlyll")
             self.addOption2GeneratorDatacard("set lpp1", "3")
             self.addOption2GeneratorDatacard("set lpp2", "-3")
-        if self.procinfo.get_ElectronPolarisation() != 0 or self.procinfo.get_PositronPolarisation()!= 0:
-            self.addOption2GeneratorDatacard("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
-            self.addOption2GeneratorDatacard("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
+        if any(item != 0. for item in self.procinfo.get_PolarisationFraction()):
+            self.addOption2GeneratorDatacard("set polbeam1", 100.*self.procinfo.get_PolarisationDensity()[0]*self.procinfo.get_PolarisationFraction()[0])
+            self.addOption2GeneratorDatacard("set polbeam2", 100.*self.procinfo.get_PolarisationDensity()[1]*self.procinfo.get_PolarisationFraction()[1])
 
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key, self.procDB.getDict()[key])

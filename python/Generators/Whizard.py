@@ -55,35 +55,14 @@ class Whizard(GeneratorBase):
                 self.add2GeneratorDatacard(
                     f'$circe2_file= "{self.procinfo.get_BeamstrahlungFile()}"\n'
                 )
-                if (
-                    self.procinfo.get_ElectronPolarisation() == 0
-                    and self.procinfo.get_PositronPolarisation() == 0
-                ):
+                if all(item == 0. for item in self.procinfo.get_PolarisationFraction()):
                     self.add2GeneratorDatacard(f"?circe2_polarized= false\n")
         else:
             self.addOption2GeneratorDatacard("?isr_handler", "false")
 
-        if (
-            self.procinfo.get_ElectronPolarisation() != 0
-            or self.procinfo.get_PositronPolarisation() != 0
-        ):
-            #self.add2GeneratorDatacard(f"beams_pol_density = @({self.procinfo.get_PolDensity()[0]}), @({self.procinfo.get_PolDensity()[1]})\n")
-            if self.procinfo.get_ElectronPolarisation() > 0:
-                electronPol = 1
-            else:
-                electronPol = -1
-            if self.procinfo.get_PositronPolarisation() > 0:
-                positronPol = 1
-            else:
-                positronPol = -1
-            if self.procinfo.get_beam_flavour(1) == 11 and self.procinfo.get_beam_flavour(2) == -11:
-                self.add2GeneratorDatacard(f"beams_pol_density = @({electronPol}), @({positronPol})\n")
-                self.add2GeneratorDatacard(f"beams_pol_fraction = {abs(self.procinfo.get_ElectronPolarisation())}, {abs(self.procinfo.get_PositronPolarisation())}\n")
-            elif  self.procinfo.get_beam_flavour(1) == -11 and self.procinfo.get_beam_flavour(2) == 11:
-                self.add2GeneratorDatacard(f"beams_pol_density = @({positronPol}), @({electronPol})\n")
-                self.add2GeneratorDatacard(f"beams_pol_fraction = {abs(self.procinfo.get_PositronPolarisation())}, {abs(self.procinfo.get_ElectronPolarisation())}\n")
-            else:
-                print("Whizard Warning: unknown polarization configuration")
+        if any(item != 0. for item in self.procinfo.get_PolarisationFraction()):
+            self.add2GeneratorDatacard(f"beams_pol_density = @({self.procinfo.get_PolarisationDensity()[0]}), @({self.procinfo.get_PolarisationDensity()[1]})\n")
+            self.add2GeneratorDatacard(f"beams_pol_fraction = {self.procinfo.get_PolarisationFraction()[0]}, {self.procinfo.get_PolarisationFraction()[1]}\n")
 
         self.add2GeneratorDatacard(f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n")
 

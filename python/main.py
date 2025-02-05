@@ -49,8 +49,8 @@ ParticleData : overwrite basic particle properties
             width: 0
 
 For MADGRAPH and Whizard only:
-ElectronPolarisation : float (between [-1.,1.])
-PositronPolarisation : float (between [-1.,1.])
+PolarisationDensity  : float ([-1 or 0 or 1,1 or 0 or -1])
+PolarisationFraction : float ([0...1.,0....1.])
 Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF) 
     """
         ),
