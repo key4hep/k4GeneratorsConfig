@@ -16,6 +16,14 @@ class Madgraph(GeneratorBase):
         self.setOptionalFileNameAndExtension(f"pythia{self.GeneratorDatacardBase}","cmnd")
         self.fill_PythiaCMND()
         
+    def setModelParameters(self):
+        # no alphaS and MZ, these are default
+        self.addModelParameter('GFermi')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
+        print("The Madgraph:setModelParameters file may be inconsistent, check the electroweak scheme used by MG")
+
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -44,6 +52,9 @@ class Madgraph(GeneratorBase):
         self.addOption2GeneratorDatacard("launch", None)
         self.addOption2GeneratorDatacard("set iseed", self.procinfo.get_rndmSeed())
         self.addOption2GeneratorDatacard("set EBEAM", self.procinfo.get("sqrts") / 2.0)
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParameters()
 
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
@@ -286,6 +297,17 @@ class Madgraph(GeneratorBase):
 
     def pdg_to_madgraph(self, particle):
         return particle.get("name")
+
+    def getParameterLabel(self, param):
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS'}
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Madgraph: parameter {param} has no translation in Madgraph Parameter Dictionary")
+            return ""
+        return parameterDict[param]
+
+    def getParameterOperator(self, name):
+        return f"set {name}"
 
     def formatLine(self,key,value):
         return f"{key} {value}"

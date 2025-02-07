@@ -18,6 +18,10 @@ class Babayaga(GeneratorBase):
         # prepare the key4hep script
         self.fill_key4hepScript()
 
+    def setModelParameters(self):
+        # nothing to be set?
+        print("setModelParameters to be implemented in Babayaga")
+
     def write_process(self):
         if (
             abs(self.procinfo.get_beam_flavour(1)) != 11
