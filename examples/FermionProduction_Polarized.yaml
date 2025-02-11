@@ -12,7 +12,7 @@ PolarisationFraction: [ 0.8, 0.3 ]
 
 Beamstrahlung: ILC
 
-SqrtS: 240
+SqrtS: 250
 Model: SM
 ISRMode: 1
 

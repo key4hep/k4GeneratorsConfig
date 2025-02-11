@@ -55,7 +55,10 @@ class Whizard(GeneratorBase):
                 self.add2GeneratorDatacard(
                     f'$circe2_file= "{self.procinfo.get_BeamstrahlungFile()}"\n'
                 )
+                # guinea pig cannot do polarization, so we have to set it to false, but we should be prepared....
                 if all(item == 0. for item in self.procinfo.get_PolarisationFraction()):
+                    self.add2GeneratorDatacard(f"?circe2_polarized= false\n")
+                else:
                     self.add2GeneratorDatacard(f"?circe2_polarized= false\n")
         else:
             self.addOption2GeneratorDatacard("?isr_handler", "false")
@@ -202,7 +205,8 @@ class Whizard(GeneratorBase):
         # temporary fix for circe until we know where the files are stored in KEY4HEP
         if self.procinfo.get("beamstrahlung") is not None:
             accel = self.procinfo.get("beamstrahlung")
-            key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
+            #key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
+            key4hepRun += f"https://gitlab.tp.nt.uni-siegen.de/whizard/public/-/tree/master/circe2/share/data/{self.procinfo.get_BeamstrahlungFile()}\n"
         # back to normal
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(

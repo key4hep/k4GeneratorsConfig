@@ -6,7 +6,7 @@ class CirceHelper:
         self.circeData = [
             ("cepc", 240),
             ("cepc", 250),
-            ("ilc", 240),
+            ("ilc", 230),
             ("ilc", 250),
             ("ilc", 350),
             ("ilc", 500),
