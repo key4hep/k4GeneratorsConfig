@@ -163,8 +163,8 @@ class Input:
                     pselectors[proc + key] = Selectors.Selectors(proc, key, sel)
                 self.procselectors[proc] = pselectors
         except Exception as e:
-            print("Failed to find process specific cuts. Using global.")
-            print(e)
+            #print("Failed to find process specific cuts. Using global.")
+            #print(e)
             pass
         if self.get_block("selectors"):
             for name in self.get_block("selectors"):
