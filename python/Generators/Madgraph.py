@@ -69,8 +69,6 @@ class Madgraph(GeneratorBase):
                 #   raise(ValueError)
                 # else:
                 self.addOption2GeneratorDatacard("set pdlabel", self.get_BeamstrahlungPDLABEL())
-                # self.GeneratorDatacard += f"_{self.get_BeamstrahlungPDLABEL()}"
-                # self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
             else:
                 self.addOption2GeneratorDatacard("set pdlabel", "isronlyll")
             self.addOption2GeneratorDatacard("set lpp1", "3")

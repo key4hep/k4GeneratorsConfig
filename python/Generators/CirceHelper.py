@@ -56,7 +56,4 @@ class CirceHelper:
         return self.File
 
     def printErrorExit(self, accel, sqrts, message):
-        print(f"Error::CirceHelper: Cannot find settings for accelerator {accel} at sqrts= {sqrts}")
-        print(f"Error::CirceHelper: {message}")
-        print(f"Error::CirceHelper: Stopping execution")
-        exit()
+        raise RuntimeError(f"CirceHelper::Cannot find settings for accelerator {accel} at sqrts= {sqrts} with message: {message}")
