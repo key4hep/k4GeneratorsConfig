@@ -87,7 +87,7 @@ class Madgraph(GeneratorBase):
 
     def get_BeamstrahlungPDLABEL(self):
         ecm = self.procinfo.sqrts
-        accel = self.procinfo.beamstrahlung
+        accel = self.procinfo.beamstrahlung.lower()
         if abs(ecm - 240) < 10:
             if accel.lower() == "cepc":
                 return f"{accel.lower()}240ll"

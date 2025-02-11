@@ -48,9 +48,9 @@ class CirceHelper:
     def addFile2DB(self, accel, sqrts, filename):
         # check for presence of accelerator
         if accel in self.circeData.keys():
-            self.circeData[accel].append({sqrts : filename})
+            self.circeData[accel.lower()].append({sqrts : filename})
         else:
-            self.circeData[accel] = [ {sqrts : filename}]
+            self.circeData[accel.lower()] = [ {sqrts : filename}]
 
     def getFile(self):
         return self.File
