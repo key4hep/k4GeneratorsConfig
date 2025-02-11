@@ -32,13 +32,14 @@ class Whizard(GeneratorBase):
         self.finalstate = ", ".join(
             map(self.pdg_to_whizard, fsParticles)
         )
-
+        theModel = ""
         try:
             if "model" in self.gen_settings:
-                self.add2GeneratorDatacard(f'model = {self.gen_settings["model"]}\n')
+                theModel = self.getModelName(self.gen_settings["model"])
         except:
-            self.add2GeneratorDatacard(f"model = {self.procinfo.get('model')}\n")
+            theModel = self.getModelName(self.procinfo.get('model'))
 
+        self.addOption2GeneratorDatacard("model", theModel)
         self.addOption2GeneratorDatacard("seed", self.procinfo.get_rndmSeed())
 
         if self.procinfo.get("isrmode"):
@@ -212,6 +213,13 @@ class Whizard(GeneratorBase):
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
+
+    def getModelName(self, model):
+        modelDict = { 'sm' : 'SM_CKM'}
+        if model not in modelDict.keys():
+            print(f"Warning::Whizard: model {model} has no translation in Whizard Model Dictionary, using SM_CKM")
+            return "SM_CKM"
+        return modelDict[model]
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'alphas',
