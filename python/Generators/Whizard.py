@@ -204,9 +204,8 @@ class Whizard(GeneratorBase):
         key4hepRun = ""
         # temporary fix for circe until we know where the files are stored in KEY4HEP
         if self.procinfo.get("beamstrahlung") is not None:
-            accel = self.procinfo.get("beamstrahlung")
-            #key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
-            key4hepRun += f"https://gitlab.tp.nt.uni-siegen.de/whizard/public/-/tree/master/circe2/share/data/{self.procinfo.get_BeamstrahlungFile()}\n"
+            accel = self.procinfo.get("beamstrahlung").upper()
+            key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
         # back to normal
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep proc.hepmc {1}.edm4hep\n".format(
