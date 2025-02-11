@@ -215,11 +215,11 @@ class Whizard(GeneratorBase):
         self.add2Key4hepScript(key4hepRun)
 
     def getModelName(self, model):
-        modelDict = { 'sm' : 'SM_CKM'}
-        if model not in modelDict.keys():
+        modelDict = { 'SM' : 'SM_CKM'}
+        if model.upper() not in modelDict.keys():
             print(f"Warning::Whizard: model {model} has no translation in Whizard Model Dictionary, using SM_CKM")
             return "SM_CKM"
-        return modelDict[model]
+        return modelDict[model.upper()]
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'alphas',
