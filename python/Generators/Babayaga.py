@@ -19,8 +19,8 @@ class Babayaga(GeneratorBase):
         self.fill_key4hepScript()
 
     def setModelParameters(self):
-        # nothing to be set?
-        print("setModelParameters to be implemented in Babayaga")
+        # nothing to be set
+        return
 
     def write_process(self):
         if (
