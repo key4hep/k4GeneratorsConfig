@@ -51,12 +51,13 @@ class GeneratorBase(abc.ABC):
         # composition of file+directory
         self.GeneratorDatacard = f"{self.outdir}/{self.GeneratorDatacardName}"
 
-        # three types of global variables for the file content
+        # four types of global variables for the file content
         self.__datacardContent = ""
         self.__key4hepContent  = ""
         self.__analysisContent = "" 
         self.__optfileContent  = "" 
 
+        # optional file configuration
         self.__optionalFileExtension = ""
         self.__optionalFileName      = ""
         self.__optionalFile          = ""
@@ -309,6 +310,18 @@ class GeneratorBase(abc.ABC):
        
     def getOptionalFileName(self):
         return self.__optionalFileName
+       
+    def readTemplateFile(self):
+        # Load default settigns
+        try:
+            with open(self.getTemplateFile(), "r") as file:
+                return file.read()
+        except FileNotFoundError as e:
+            print("Cannot configure KKMC: Template file not found with error:\n"+str(e))
+        return ""
+       
+    def getTemplateFile(self):
+        return f"{os.path.dirname(__file__)}/{self.name}.template"
        
     def prepareKey4hepScript(self):
         # set up for key4hep run of event generation

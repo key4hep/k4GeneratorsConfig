@@ -9,13 +9,13 @@ class KKMC(GeneratorBase):
         super().__init__(procinfo, settings, "KKMC", "dat")
 
         self.version = "x.y.z"
-
         self.executable = "KKMC-fcc.exe"
 
-        # Load default settigns
-        defaultfile = os.path.dirname(__file__) + "/.KKMCDefaults"
-        with open(defaultfile, "r") as file:
-            self.add2GeneratorDatacard(file.read())
+        self.add2GeneratorDatacard(self.readTemplateFile())
+
+    def setModelParameters(self):
+        # nothing to be set?
+        print("setModelParameters to be implemented in KKMC")
 
     def execute(self):
         # prepare the datacard
