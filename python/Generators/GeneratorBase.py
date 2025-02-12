@@ -223,7 +223,7 @@ class GeneratorBase(abc.ABC):
     def getParameterOperator(self, name):
         raise NotImplementedError("getParameterOperator")
 
-    def prepareParticles(self):
+    def prepareParticles(self,add2Datacard=True):
         # three sources for the particles: YAML input, global and ProcDB
         # hierarchy: YAML superseeds global superseeds ProcDB
         particleParameterList = self.getModelParticlePropertyList()
@@ -244,7 +244,10 @@ class GeneratorBase(abc.ABC):
                         if [part.get('pdg_code'), attr] in particleParameterList:
                             particleParameterList.remove([part.get('pdg_code'), attr])
                         value = getattr(part, attr)
-                        self.addOption2GeneratorDatacard(op_name, value)
+                        if add2Datacard is True:
+                            self.addOption2GeneratorDatacard(op_name, value)
+                        else:
+                            self.replaceOptionInGeneratorDatacard(op_name,value)
         # now either the global list is empty or we have to add the remaining particles
         for item in particleParameterList:
             part     = item[0]
@@ -254,8 +257,11 @@ class GeneratorBase(abc.ABC):
                 value = particle.mass
             elif item[1] == "width":
                 value = particle.width
-            self.addOption2GeneratorDatacard(op_name, value)
-
+            if add2Datacard is True:
+                self.addOption2GeneratorDatacard(op_name, value)
+            else:
+                self.replaceOptionInGeneratorDatacard(op_name,value)
+                
     def getParticleProperty(self, attr):
         raise NotImplementedError("getParticleProperty")
 

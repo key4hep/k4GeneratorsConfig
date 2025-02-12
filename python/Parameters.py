@@ -49,6 +49,20 @@ alphaEMMZ = Parameter(
     texname="\\alpha _{\\text{EW}}"
 )
 
+alphaEMM1 = Parameter(
+    name="alphaEMM1",
+    value=137.035999139,
+    isParticleProperty=False,
+    texname="\\text{aEW,Q=0,M1}"
+)
+
+alphaEM = Parameter(
+    name="alphaEM",
+    value=1/alphaEMM1.value,
+    isParticleProperty=False,
+    texname="\\alpha _{\\text{EW,Q=0}}"
+)
+
 GFermi = Parameter(
     name="GFermi",
     value=0.0000116637,

@@ -1,6 +1,7 @@
-from .GeneratorBase import GeneratorBase
 import os, sys
-
+from .GeneratorBase import GeneratorBase
+import Parameters as ParameterModule
+from Parameters import Parameter as ParameterClass
 
 class KKMC(GeneratorBase):
     """KKMC class"""
@@ -15,7 +16,12 @@ class KKMC(GeneratorBase):
 
     def setModelParameters(self):
         # nothing to be set?
-        print("setModelParameters to be implemented in KKMC")
+        self.addModelParameter('GFermi')
+        self.addModelParameter('alphaEMM1')
+        # need to ensure MZ, Mtop are set:
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=6,  property_type='mass')
 
     def execute(self):
         # prepare the datacard
@@ -57,6 +63,18 @@ class KKMC(GeneratorBase):
         else:
             self.replaceOptionInGeneratorDatacard("_wgtmode", "1")
 
+        # now take care of the EW parameters
+        for param in self.getModelParameterList():
+            # make sure that the parameters are in the global scope:
+            if param in ParameterModule.ParametersList:
+                globalParam = ParameterClass.get_info(param)
+                key         = self.getParameterLabel(param)
+                self.replaceOptionInGeneratorDatacard(key, globalParam.value)
+            else:
+                raise RuntimeError(f"ERROR:{self.name}: {param} not found in global parameter list")
+        # now take care of the particles
+        self.prepareParticles(add2Datacard=False)
+
     def add_decay(self):
         print("DECAY specified, cannot be implmented in KKMC")
 
@@ -72,6 +90,29 @@ class KKMC(GeneratorBase):
             self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
+
+    def getParameterLabel(self, param):
+        parameterDict = { 'GFermi' : '_GFermi', 'alphaSMZ' : '_alphaSMZ', 'alphaEMM1': '_alphaEMM1'}
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::KKMC: parameter {param} has no translation in KKMC Parameter Dictionary")
+            return ""
+        return parameterDict[param]
+
+    def getParticleProperty(self, d):
+        name = None
+        if d == "mass":
+            name = "MASS"
+        if d == "width":
+            name = "WIDTH"
+        return name
+
+    def getParticleOperator(self, part, prop):
+        pdg = part.get("pdg_code")
+        if prop == "MASS":
+            return f"_mass{pdg}"
+        elif prop == "WIDTH":
+            return f"_width{pdg}"
 
     def pdg_to_KKMC(self, pdg):
         apdg = abs(400 + int(pdg))
