@@ -36,7 +36,7 @@ class Process:
         for key, value in args.items():
             setattr(self, key, value)
 
-    def process_info(self):
+    def prepareProcess(self, yamlParticleData):
         self._beam1 = Particle.get_info(self.initial[0])
         self._beam2 = Particle.get_info(self.initial[1])
         self._finfo = {}
@@ -48,6 +48,8 @@ class Process:
             self._fpdg.append(str(p))
             self._proclabel += f"{self._finfo[p].name} "
             self._parts.append(self._finfo[p])
+        # set the global particle data properties
+        self.set_particle_data(yamlParticleData)
         # generate the label for the generatorDB
         # first the initial state
         initialstate = [abs(self.initial[0]), abs(self.initial[1])]

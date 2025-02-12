@@ -168,10 +168,8 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
             )
             # increment counter for randomseed
         for process_instance in process_instances.values():
-            process_instance.process_info()
-            process_instance.set_particle_data(particle_data)
-            generators.set_process_info(process_instance)
-            generators.initialize_generators()
+            process_instance.prepareProcess(particle_data)
+            generators.runGeneratorConfiguration(process_instance)
 
     return rndmIncrement
 

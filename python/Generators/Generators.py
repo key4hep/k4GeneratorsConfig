@@ -10,8 +10,12 @@ class Generators:
     def set_process_info(self, proc_info):
         self.proc_info = proc_info
 
-    def initialize_generators(self):
+    def runGeneratorConfiguration(self, proc_info):
 
+        # first set process info
+        self.set_process_info(proc_info)
+
+        # second import and run the configuration of the generators
         for generatorName in self.generator_list:
             # get the module
             try:
