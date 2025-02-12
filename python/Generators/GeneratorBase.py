@@ -107,6 +107,10 @@ class GeneratorBase(abc.ABC):
         self.ModelInputParams = []
         self.addModelParameter('alphaSMZ')
         self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=6, property_type='mass')
+        self.addModelParticleProperty(pdg_code=6, property_type='width')
+        self.addModelParticleProperty(pdg_code=25, property_type='mass')
+        self.addModelParticleProperty(pdg_code=25, property_type='width')
         
     def setModelParameters(self):
         raise NotImplementedError("setModelParameters")

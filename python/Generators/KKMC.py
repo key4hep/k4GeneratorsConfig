@@ -15,7 +15,11 @@ class KKMC(GeneratorBase):
         self.add2GeneratorDatacard(self.readTemplateFile())
 
     def setModelParameters(self):
-        # nothing to be set?
+        # there are some parameters we cannot set
+        self.removeModelParticleProperty(pdg_code=6, property_type='width')
+        self.removeModelParticleProperty(pdg_code=25, property_type='mass')
+        self.removeModelParticleProperty(pdg_code=25, property_type='width')
+        # parameters to be set
         self.addModelParameter('GFermi')
         self.addModelParameter('alphaEMM1')
         # need to ensure MZ, Mtop are set:
