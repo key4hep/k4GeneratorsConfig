@@ -43,6 +43,9 @@ class Sherpa(GeneratorBase):
         self.addOption2GeneratorDatacard("EVENTS", self.procinfo.get("events"))
         self.add2GeneratorDatacard("\n\n")
 
+        # now add the model checking for overlap
+        self.prepareParameters()
+
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
 
