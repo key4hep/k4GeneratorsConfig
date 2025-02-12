@@ -8,8 +8,8 @@ Events: 10000
 EventMode: unweighted
 
 
-PositronPolarisation: 0.3
-ElectronPolarisation: 0.8
+PolarisationDensity: [1,-1]
+PolarisationFraction: [0.8,0.3]
 
 SqrtS: 250.
 Model: SM
@@ -23,11 +23,8 @@ Processes:
 ParticleData:
   25:
     mass: 125
-    width: 0
   23:
     mass: 91.1876
-    width: 0
   24:
     mass: 80.419
-    width: 0
 

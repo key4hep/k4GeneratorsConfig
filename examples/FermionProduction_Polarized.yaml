@@ -25,10 +25,8 @@ Processes:
 ParticleData:
   25:
     mass: 125
-    # width: 0
   23:
     mass: 91.1876
-    # width: 2.4952
   24:
     mass: 80.379
     width: 2.085
