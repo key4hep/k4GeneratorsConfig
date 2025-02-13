@@ -81,7 +81,7 @@ sin2thetaEff = Parameter(
     name="sin2thetaEff",
     value=0.23155,
     isParticleProperty=False,
-    texname="sin ^{2}\\theta"
+    texname="sin ^{2}\\theta _{Eff}"
 )
 
 alphaSMZ = Parameter(
