@@ -1,6 +1,7 @@
 import abc
 import importlib
 import os, stat
+import ReleaseSpecs
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
 from Particles import Particle as ParticleClass
@@ -337,8 +338,17 @@ class GeneratorBase(abc.ABC):
         # set up for key4hep run of event generation
         key4hep_config = "#!/usr/bin/env bash\n"
         key4hep_config += 'if [ -z "${KEY4HEP_STACK}" ]; then\n'
+        # add the server extension for nightlies
+        nightlies =""
+        if ReleaseSpecs.key4hepUseNightlies.value:
+            nightlies = "-nightlies"
+        # add the explicite release date if requested
+        releaseDate = ""
+        if ReleaseSpecs.key4hepReleaseDate.value is not None:
+            releaseDate = f" -r {ReleaseSpecs.key4hepReleaseDate.value}"
+        # now we can configure the stuff correctly
         key4hep_config += (
-            "    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh\n"
+            f"    source /cvmfs/sw{nightlies}.hsf.org/key4hep/setup.sh{releaseDate}\n"
         )
         key4hep_config += "fi\n\n"
         # store it

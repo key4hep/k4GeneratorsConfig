@@ -6,6 +6,8 @@ import argparse
 import textwrap
 from datetime import datetime
 
+import ReleaseSpecs
+from ReleaseSpecs import ReleaseSpec
 import Input as Settings
 import Process as process_module
 import Generators as generators_module
@@ -115,9 +117,9 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     paramTag       = args.parameterTag
     paramFileName  = args.parameterTagFile
     releaseDate    = args.key4hepVersion
-    nightlies      = args.key4hepUseNightlies
-    
-    if nightlies:
+
+    ReleaseSpec.set_info("key4hepUseNightlies",args.key4hepUseNightlies)
+    if ReleaseSpecs.key4hepUseNightlies:
         print(f"key4HEP configuration: using nightlies")
     else:
         print(f"key4HEP configuration: using release")
@@ -136,6 +138,8 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
             exit()
     else:
         print(f"key4HEP configuration date: latest")
+    # store for future use:
+    ReleaseSpec.set_info("key4hepReleaseDate",releaseDate)
 
     # so additionally we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
