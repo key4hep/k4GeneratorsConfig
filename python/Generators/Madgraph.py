@@ -19,7 +19,8 @@ class Madgraph(GeneratorBase):
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
-        self.addModelParameter('alphaEMMZM1')
+        #self.addModelParameter('alphaEMMZM1')
+        self.addModelParameter('alphaEMM1')
         #self.addModelParticleProperty(pdg_code=23, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
@@ -278,7 +279,7 @@ class Madgraph(GeneratorBase):
         return particle.get("name")
 
     def getParameterLabel(self, param):
-        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMMZM1' : 'aEWM1' }
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' }
         # alphas could be SigmaProcess:alphaSvalue 
         if param not in parameterDict.keys():
             print(f"Warning::Madgraph: parameter {param} has no translation in Madgraph Parameter Dictionary")
