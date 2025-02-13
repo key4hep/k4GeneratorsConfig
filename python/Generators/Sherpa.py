@@ -10,6 +10,13 @@ class Sherpa(GeneratorBase):
 
         self.executable = "Sherpa -f"
 
+    def setModelParameters(self):
+        # no alphaS and MZ, these are default
+        self.addModelParameter('GFermi')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
+
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -211,6 +218,17 @@ class Sherpa(GeneratorBase):
         )
 
         self.add2Key4hepScript(key4hepRun)
+
+    def getParameterLabel(self, param):
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'ALPHAS(MZ)' }
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Sherpa: parameter {param} has no translation in Sherpa Parameter Dictionary")
+            return ""
+        return parameterDict[param]
+
+    def getParameterOperator(self, name):
+        return f"{name}"
 
     def formatLine(self,key,value):
         return f" {key} {value};"
