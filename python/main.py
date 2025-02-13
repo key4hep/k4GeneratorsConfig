@@ -4,6 +4,7 @@ import os
 import sys
 import argparse
 import textwrap
+from datetime import datetime
 
 import Input as Settings
 import Process as process_module
@@ -22,7 +23,7 @@ def make_output_directory(generators, output_directory, procname):
 def main():
     # parser = argparse.ArgumentParser(prog='k4gen',description='Process input YAML files.')
     parser = argparse.ArgumentParser(
-        prog="k4gen",
+        prog="k4GeneratorsConfig",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent(
             """\
@@ -95,6 +96,16 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         default="ParameterSets.yaml",
         help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in  directory: python",
     )
+    parser.add_argument(
+        "--key4hepUseNightlies",
+        action='store_true',
+        help="configures the key4hepscripts to use nightlies instead of releases",
+    )
+    parser.add_argument(
+        "--key4hepVersion",
+        default=None,
+        help="force the use of the version in default is latest, format: YYYY-MM-DD",
+    )
     args           = parser.parse_args()
     files          = args.inputfiles
     energies       = args.ecms
@@ -103,8 +114,30 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     events         = args.nevts
     paramTag       = args.parameterTag
     paramFileName  = args.parameterTagFile
+    releaseDate    = args.key4hepVersion
+    nightlies      = args.key4hepUseNightlies
+    
+    if nightlies:
+        print(f"key4HEP configuration: using nightlies")
+    else:
+        print(f"key4HEP configuration: using release")
 
-    # so additionallt we read the argument ecmsFile
+    # make sure it's a valid date
+    if releaseDate is not None:
+        try:
+            relDate = datetime.strptime(releaseDate,'%Y-%m-%d')
+            if (datetime.today() - relDate).days < 0:
+                raise ValueError()
+            print(f"key4HEP configuration date: {releaseDate}")
+        except ValueError:
+            print(f"Invalid KEY4HEP release argument, YYYY-MM-DD expected, latest possible date {datetime.today().strftime('%Y-%m-%d')}")
+            print(f"Requested: {releaseDate}")
+            print("Cannot configure scripts correctly, exiting")
+            exit()
+    else:
+        print(f"key4HEP configuration date: latest")
+
+    # so additionally we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
         # open and read ecms file and append the energies to the command line arguments
         ecmSettings = Settings.ECMSInput(ecmsfile)
@@ -118,7 +151,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
         exit()
     
-    # now execut file processes
+    # now execute file processes
     if len(energies) == 0:
         executeFiles(files, 0, rndmSeed, events)
     else:
