@@ -4,12 +4,13 @@ import os
 import sys
 import argparse
 import textwrap
+from datetime import datetime
 
+import ReleaseSpecs
+from ReleaseSpecs import ReleaseSpec
 import Input as Settings
 import Process as process_module
 import Generators as generators_module
-
-import ModelInputs as modelInit
 
 def make_output_directory(generators, output_directory, procname):
     # Overwrite directory if it exists
@@ -24,7 +25,7 @@ def make_output_directory(generators, output_directory, procname):
 def main():
     # parser = argparse.ArgumentParser(prog='k4gen',description='Process input YAML files.')
     parser = argparse.ArgumentParser(
-        prog="k4gen",
+        prog="k4GeneratorsConfig",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         description=textwrap.dedent(
             """\
@@ -51,8 +52,8 @@ ParticleData : overwrite basic particle properties
             width: 0
 
 For MADGRAPH and Whizard only:
-ElectronPolarisation : float (between [-1.,1.])
-PositronPolarisation : float (between [-1.,1.])
+PolarisationDensity  : float ([-1 or 0 or 1,1 or 0 or -1]) default: [-1, 1]
+PolarisationFraction : float ([0...1.,0....1.]), default [0,0]
 Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF) 
     """
         ),
@@ -85,20 +86,76 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         default=-1,
         help="Number of events to be generated",
     )
-    args = parser.parse_args()
-    files = args.inputfiles
-    energies = args.ecms
-    ecmsfiles = args.ecmsFiles
-    rndmSeed = args.seed
-    events = args.nevts
+    parser.add_argument(
+        "--parameterTag",
+        type=str,
+        default="latest",
+        help="parameter tag in Parameters.yaml default is: latest",
+    )
+    parser.add_argument(
+        "--parameterTagFile",
+        type=str,
+        default="ParameterSets.yaml",
+        help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in  directory: python",
+    )
+    parser.add_argument(
+        "--key4hepUseNightlies",
+        action='store_true',
+        help="configures the key4hepscripts to use nightlies instead of releases",
+    )
+    parser.add_argument(
+        "--key4hepVersion",
+        default=None,
+        help="force the use of the version in default is latest, format: YYYY-MM-DD",
+    )
+    args           = parser.parse_args()
+    files          = args.inputfiles
+    energies       = args.ecms
+    ecmsfiles      = args.ecmsFiles
+    rndmSeed       = args.seed
+    events         = args.nevts
+    paramTag       = args.parameterTag
+    paramFileName  = args.parameterTagFile
+    releaseDate    = args.key4hepVersion
 
-    # so additionallt we read the argument ecmsFile
+    ReleaseSpec.set_info("key4hepUseNightlies",args.key4hepUseNightlies)
+    if ReleaseSpecs.key4hepUseNightlies:
+        print(f"key4HEP configuration: using nightlies")
+    else:
+        print(f"key4HEP configuration: using release")
+
+    # make sure it's a valid date
+    if releaseDate is not None:
+        try:
+            relDate = datetime.strptime(releaseDate,'%Y-%m-%d')
+            if (datetime.today() - relDate).days < 0:
+                raise ValueError()
+            print(f"key4HEP configuration date: {releaseDate}")
+        except ValueError:
+            print(f"Invalid KEY4HEP release argument, YYYY-MM-DD expected, latest possible date {datetime.today().strftime('%Y-%m-%d')}")
+            print(f"Requested: {releaseDate}")
+            print("Cannot configure scripts correctly, exiting")
+            exit()
+    else:
+        print(f"key4HEP configuration date: latest")
+    # store for future use:
+    ReleaseSpec.set_info("key4hepReleaseDate",releaseDate)
+
+    # so additionally we read the argument ecmsFile
     for ecmsfile in ecmsfiles:
         # open and read ecms file and append the energies to the command line arguments
         ecmSettings = Settings.ECMSInput(ecmsfile)
         energies.extend(ecmSettings.energies())
 
-    # now execut file processes
+    # now we read the global settings
+    try:
+        parameterSetsFile = os.path.dirname(__file__)+"/"+paramFileName
+        parameterSet = Settings.ParameterSets(parameterSetsFile, paramTag)
+    except FileNotFoundError as e:
+        print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
+        exit()
+    
+    # now execute file processes
     if len(energies) == 0:
         executeFiles(files, 0, rndmSeed, events)
     else:
@@ -115,8 +172,6 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         print("Generating and writing configuration files for ECM= ", sqrts)
 
     for yaml_file in files:
-        # initalize couplings
-        model = modelInit.ModelInputs()
         # read the input file
         settings = Settings.Input(yaml_file, sqrts)
         # ana = analysis.Analysis(settings)
@@ -125,11 +180,9 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         if events != -1:
             settings.set("events", events)
         settings.gens()
-        processes = settings.get_processes(sqrts)
+        processes     = settings.get_processes(sqrts)
         particle_data = settings.get_particle_data()
-        # uncomment the next line to add the standard settings, the particle_dtaa will take precedent
-        # particle_data = model.getParticleData(particle_data)
-        generators = generators_module.Generators(settings)
+        generators    = generators_module.Generators(settings)
         try:
             output_dir = getattr(settings, "outdir", "Run-Cards")
         except KeyError:
@@ -152,10 +205,8 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
             )
             # increment counter for randomseed
         for process_instance in process_instances.values():
-            process_instance.process_info()
-            process_instance.set_particle_data(particle_data)
-            generators.set_process_info(process_instance)
-            generators.initialize_generators()
+            process_instance.prepareProcess(particle_data)
+            generators.runGeneratorConfiguration(process_instance)
 
     return rndmIncrement
 

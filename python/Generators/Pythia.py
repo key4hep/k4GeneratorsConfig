@@ -1,6 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .PythiaProcDB import PythiaProcDB
-
 
 class Pythia(GeneratorBase):
     """Pythia class"""
@@ -9,83 +7,90 @@ class Pythia(GeneratorBase):
         super().__init__(procinfo, settings, "Pythia", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
-        self.cuts = ""
-        self.PythiaSelectorFileExtension = "selectors"
-
-        self.procDB = PythiaProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "$K4GenBuildDir/bin/pythiaRunner -f"
-        self.gen_settings = settings.get_block("pythia")
-        if self.gen_settings is not None:
-            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
-        self.selectorsFile = (
-            self.GeneratorDatacardBase + "." + self.PythiaSelectorFileExtension
-        )
-        self.selectorsFileWithPath = self.outdir + "/" + self.selectorsFile
+        self.setOptionalFileNameAndExtension(self.GeneratorDatacardBase,"selectors")
         if settings.get_block("selectors"):
-            self.write_selectors()
+            self.fill_selectors()
 
-    def write_run(self):
-        self.run = ""
-        self.add_option("Random:setSeed", "on")
-        self.add_option("Random:seed", self.procinfo.get_rndmSeed())
+    def setModelParameters(self):
+        # no alphaS and MZ, these are default
+        self.addModelParameter('alphaEMMZ')
+        self.addModelParameter('GFermi')
+        self.addModelParameter('sin2theta')
+        self.addModelParameter('sin2thetaEff')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
 
-        self.add_option("Beams:eCM", self.procinfo.get("sqrts"))
+    def execute(self):
+        # prepare the datacard
+        self.fill_datacard()
+        # prepare the key4hep script
+        self.fill_key4hepScript()
+
+    def fill_datacard(self):
+        # prepare the datacard
+        self.fill_run()
+        self.fill_decay()
+
+    def fill_run(self):
+        self.addOption2GeneratorDatacard("Random:setSeed", "on")
+        self.addOption2GeneratorDatacard("Random:seed", self.procinfo.get_rndmSeed())
+
+        self.addOption2GeneratorDatacard("Beams:eCM", self.procinfo.get("sqrts"))
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
-        self.add_option("Beams:idA", beam1_pdg)
-        self.add_option("Beams:idB", beam2_pdg)
+        self.addOption2GeneratorDatacard("Beams:idA", beam1_pdg)
+        self.addOption2GeneratorDatacard("Beams:idB", beam2_pdg)
 
         if self.procinfo.get("isrmode"):
-            self.add_option("PartonLevel:ISR", "on")
-            self.add_option("PDF:lepton", "on")
+            self.addOption2GeneratorDatacard("PartonLevel:ISR", "on")
+            self.addOption2GeneratorDatacard("PDF:lepton", "on")
         else:
-            self.add_option("PartonLevel:ISR", "off")
-            self.add_option("PDF:lepton", "off")
+            self.addOption2GeneratorDatacard("PartonLevel:ISR", "off")
+            self.addOption2GeneratorDatacard("PDF:lepton", "off")
         if self.procinfo.get("fsrmode"):
-            self.add_option("PartonLevel:FSR", "on")
+            self.addOption2GeneratorDatacard("PartonLevel:FSR", "on")
         else:
-            self.add_option("PartonLevel:FSR", "off")
+            self.addOption2GeneratorDatacard("PartonLevel:FSR", "off")
 
-        self.add_option("Main:numberOfEvents", self.procinfo.get("events"))
-        self.run += "\n"
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = self.is_pythia_particle_data(attr)
-                    if name is not None:
-                        value = getattr(p, attr)
-                        op_name = f"{p.get('pdg_code')}:{name}"
-                        if op_name in self.procDB.get_run_out():
-                            self.procDB.remove_option(op_name)
-                        self.add_option(op_name, value)
+        self.addOption2GeneratorDatacard("Main:numberOfEvents", self.procinfo.get("events"))
+        self.add2GeneratorDatacard("\n")
 
-        self.add_option("Main:SelectorsFile", self.selectorsFile)
+        # now add the model parameters
+        self.prepareParameters()
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
+
+        self.addOption2GeneratorDatacard("Main:SelectorsFile", self.getOptionalFileName())
 
         if "hepmc" in self.procinfo.get("output_format"):
-            self.add_option("Main:WriteHepMC", "on")
+            self.addOption2GeneratorDatacard("Main:WriteHepMC", "on")
             outputFile = "{0}.{1}".format(
                 self.GeneratorDatacardBase, self.procinfo.get("output_format")
             )
-            self.add_option("Main:HepMCFile", outputFile)
+            self.addOption2GeneratorDatacard("Main:HepMCFile", outputFile)
 
-        self.run += self.procDB.get_run_out()
-        self.run += self.procDB.get_proc_out()
+        # add the procDB settings
+        for key in self.procDB.getDict():
+            value = self.procDB.getDict()[key]
+            self.addOption2GeneratorDatacard(key,value)
 
+        # the generator settings from yaml are set last as they superseed all previous settings
         if self.gen_settings is not None:
             for key, value in self.gen_settings.items():
-                self.add_option(key, value)
+                self.addOption2GeneratorDatacard(key, value)
 
-    def write_decay(self):
+
+    def fill_decay(self):
         if self.procinfo.get("decay"):
             self.add_decay()
 
-    def write_selectors(self):
+    def fill_selectors(self):
         selectors = getattr(self.settings, "selectors")
         try:
             procselectors = getattr(self.settings, "procselectors")
@@ -101,9 +106,6 @@ class Pythia(GeneratorBase):
             pass
         for key, value in selectors.items():
             self.add_Selector(value)
-        # PYTHIA special: write the selectors to the file proc.selectors
-        with open(self.selectorsFileWithPath, "w+") as file:
-            file.write(self.cuts)
 
     def add_Selector(self, value):
         key = value.name.lower()
@@ -145,16 +147,14 @@ class Pythia(GeneratorBase):
                 or str(f2) not in self.procinfo.get_final_pdg()
             ):
                 return
-            sname = "2 "
-            sname += f" {name} {f1} {f2} > {Min}"
-            if f" {name} {f1} {f2} >" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
-            sname = "2 "
-            sname += f" {f1} {f2} {name} < {Max}"
-            if f"  {f1} {f2} {name} <" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+
+            sname = f"2 {name} {f1} {f2} > {Min}"
+            if f" {name} {f1} {f2} >" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
+
+            sname = f"2 {f1} {f2} {name} < {Max}"
+            if f"  {f1} {f2} {name} <" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
         else:
             for fl in flavs:
                 f1 = fl[0]
@@ -164,31 +164,27 @@ class Pythia(GeneratorBase):
                     or str(f2) not in self.procinfo.get_final_pdg()
                 ):
                     continue
-            sname = "2 "
-            sname += f" {name} {f1} {f2} > {Min}"
-            if f" {name} {f1} {f2} >" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
-            sname = "2 "
-            sname += f" {f1} {f2} {name} < {Max}"
+                
+            sname = f"2 {name} {f1} {f2} > {Min}"
+            if f" {name} {f1} {f2} >" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
+                
+            sname = f"2 {f1} {f2} {name} < {Max}"
             if f"  {f1} {f2} {name} <" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+                self.cuts += f"{sname}\n"
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
+
         for f in f1:
-            sname = "1 "
-            sname += f"{f} {name} > {Min}"
-            if f"{f} {name} >" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
-            sname = "1 "
-            sname += f"{f} {name} < {Max}"
-            if f"{f} {name} <" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+            sname = f"1 {f} {name} > {Min}"
+            if f"{f} {name} >" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
+
+            sname = f"1 {f} {name} < {Max}"
+            if f"{f} {name} <" not in self.getOptionalFileContent():
+                self.add2OptionalFile(f"{sname}\n")
 
     def add_decay(self):
         # Simple check first that parents are
@@ -204,24 +200,18 @@ class Pythia(GeneratorBase):
         # Pythia turn off parent, then turn on
         decays = ""
         for parent in self.procinfo.get_final_pdg_list():
-            self.remove_option(f"{parent}:onMode")
-            self.remove_option(f"{parent}:onIfAny")
+            self.removeOptionGeneratorDatacard(f"{parent}:onMode")
+            self.removeOptionGeneratorDatacard(f"{parent}:onIfAny")
             decays += f"{parent}:onMode off\n"
             child = decay_opt[parent]
             decays += f"{parent}:onIfAny "
             for c in child:
                 decays += f"{c} "
             decays += "\n"
-        self.run += "\n"
-        self.run += decays
+        self.add2Datacard("\n")
+        self.add2Datacard(decays)
 
-    def write_file(self):
-        self.write_run()
-        self.write_decay()
-        self.file = self.run
-        self.write_GeneratorDatacard(self.file)
-
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
@@ -229,28 +219,36 @@ class Pythia(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
+        self.add2Key4hepScript(key4hepRun)
 
-        self.write_Key4hepScript(key4hepRun)
+    def getGeneratorCommand(self,key,value):
+        return f"{key} = {value}"
 
-    def add_option(self, key, value):
-        if self.gen_settings is not None:
-            if key in self.gen_settings.items():
-                value = self.gen_settings.items()[key]
-        if key in self.run:
-            if str(value) in self.run:
-                self.remove_option(key)
-            return
-        self.run += f"{key} = {value}\n"
+    def getParameterLabel(self, param):
+        parameterDict = { 'alphaEMMZ' : 'alphaEMmZ', 'GFermi' : 'GF',
+                          'sin2theta' : 'sin2thetaW', 'sin2thetaEff': 'sin2thetaWbar',
+                          'alphaSMZ' : 'alphaSvalueMRun'}
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Pythia: parameter {param} has no translation in Pythia Parameter Dictionary")
+            return ""
+        return parameterDict[param]
 
-    def remove_option(self, opt):
-        lines = self.run.split("\n")
-        filter_lines = [line for line in lines if opt not in line]
-        self.run = "\n".join(filter_lines)
+    def getParameterOperator(self, name):
+        if "alphaS" not in name:
+            return f"StandardModel:{name}"
+        else:
+            return f"ParticleData:{name}"
+        # return f"SigmaProcess:{name}"     
 
-    def is_pythia_particle_data(self, d):
+    def getParticleProperty(self, d):
         name = None
         if d == "mass":
             name = "m0"
         if d == "width":
             name = "mWidth"
         return name
+
+    def getParticleOperator(self, part, prop):
+        return f"{part.get('pdg_code')}:{prop}"
+

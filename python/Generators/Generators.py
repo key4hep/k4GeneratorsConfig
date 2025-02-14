@@ -10,8 +10,12 @@ class Generators:
     def set_process_info(self, proc_info):
         self.proc_info = proc_info
 
-    def initialize_generators(self):
+    def runGeneratorConfiguration(self, proc_info):
 
+        # first set process info
+        self.set_process_info(proc_info)
+
+        # second import and run the configuration of the generators
         for generatorName in self.generator_list:
             # get the module
             try:
@@ -20,15 +24,21 @@ class Generators:
                 generatorClass = getattr(generator,generatorName)
                 # execute the object
                 generatorObj = generatorClass(self.proc_info, self.settings)
-                #writing file
-                generatorObj.write_file()
-                #writing key4hep file 
-                generatorObj.write_key4hepfile()
+                # execute the generator
+                generatorObj.execute()
+                # finalize the generator
+                generatorObj.finalize()
 
             except ModuleNotFoundError:
                 print(f"{generatorName} python module not found for {self.proc_info.get('_proclabel')}")
-            except AttributeError:
-                print(f"{generatorName} class could not be loaded with getattr for {self.proc_info.get('_proclabel')}")
+            except AttributeError as e:
+                print(f"{generatorName} class could not be loaded with getattr for {self.proc_info.get('_proclabel')} or class initialization did not work with message:")
+                print(e)
+            except NotImplementedError as e:
+                print(f"class {generatorName} does not implement the {e} method")
+            except RuntimeError as e:
+                print(f"Error during runtime: {e}")
+                print(f"Datacard files and execution scripts not written for generator {generatorName}")
             except:
                 # all that remains is an excption from the execution of the modules
                 print(f"Execution of {generatorName} for {self.proc_info.get('_proclabel')} resulted in an exception, check the module for problems with loading doownstream modules like the corresponding ProcDB etc")

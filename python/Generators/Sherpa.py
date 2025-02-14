@@ -1,6 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .SherpaProcDB import SherpaProcDB
-
 
 class Sherpa(GeneratorBase):
     """Sherpa class"""
@@ -9,79 +7,81 @@ class Sherpa(GeneratorBase):
         super().__init__(procinfo, settings, "Sherpa", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
-        self.cuts = ""
-
-        self.procDB = SherpaProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
         self.executable = "Sherpa -f"
-        self.gen_settings = settings.get_block("sherpa")
-        if self.gen_settings is not None:
-            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
-        if settings.get_block("selectors"):
-            self.cuts = "(selector){\n"
-            self.write_selectors()
 
+    def setModelParameters(self):
+        # no alphaS and MZ, these are default
+        self.addModelParameter('GFermi')
+        self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
+
+    def execute(self):
+        # prepare the datacard
+        self.fill_datacard()
+        # prepare the key4hep script
+        self.fill_key4hepScript()
+        
     def write_run(self):
-        self.run = "(run){\n"
+        self.add2GeneratorDatacard("(run){\n")
 
-        self.add_run_option("RANDOM_SEED", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("RANDOM_SEED", self.procinfo.get_rndmSeed())
 
         ENG = self.procinfo.get("sqrts") / 2.0
         beam1_pdg = self.procinfo.get_beam_flavour(1)
         beam2_pdg = self.procinfo.get_beam_flavour(2)
 
-        self.add_run_option("BEAM_1", beam1_pdg)
-        self.add_run_option("BEAM_2", beam2_pdg)
+        self.addOption2GeneratorDatacard("BEAM_1", beam1_pdg)
+        self.addOption2GeneratorDatacard("BEAM_2", beam2_pdg)
 
-        self.add_run_option("BEAM_ENERGY_1", ENG)
-        self.add_run_option("BEAM_ENERGY_2", ENG)
-        self.add_run_option("MODEL", self.procinfo.get("model"))
+        self.addOption2GeneratorDatacard("BEAM_ENERGY_1", ENG)
+        self.addOption2GeneratorDatacard("BEAM_ENERGY_2", ENG)
+        self.addOption2GeneratorDatacard("MODEL", self.procinfo.get("model"))
 
         if self.procinfo.get("isrmode"):
-            self.add_run_option("PDF_LIBRARY", "PDFESherpa")
+            self.addOption2GeneratorDatacard("PDF_LIBRARY", "PDFESherpa")
         else:
-            self.add_run_option("PDF_LIBRARY", "None")
+            self.addOption2GeneratorDatacard("PDF_LIBRARY", "None")
         if self.procinfo.get("fsrmode"):
-            self.add_run_option("YFS_MODE", "FULL")
+            self.addOption2GeneratorDatacard("YFS_MODE", "FULL")
         else:
-            self.add_run_option("YFS_MODE", "None")
-        self.add_run_option("EVENTS", self.procinfo.get("events"))
-        self.run += "\n\n"
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = self.is_sherpa_particle_data(attr)
-                    if name is not None:
-                        value = getattr(p, attr)
-                        op_name = f"{name}[{p.get('pdg_code')}]"
-                        if op_name in self.procDB.get_run_out():
-                            self.procDB.remove_option(op_name)
-                        self.add_run_option(op_name, value)
+            self.addOption2GeneratorDatacard("YFS_MODE", "None")
+        self.addOption2GeneratorDatacard("EVENTS", self.procinfo.get("events"))
+        self.add2GeneratorDatacard("\n\n")
+
+        # now add the model checking for overlap
+        self.prepareParameters()
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
+
         if self.procinfo.get("output_format") == "hepmc2":
             eoutname = "HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
-            self.add_run_option("EVENT_OUTPUT", eoutname)
+            self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         elif self.procinfo.get("output_format") == "hepmc3":
             eoutname = "HepMC3_GenEvent[{0}.hepmc3]".format(self.GeneratorDatacardBase)
-            self.add_run_option("EVENT_OUTPUT", eoutname)
-        self.run += self.procDB.get_run_out()
-        self.add_run_option("EVENT_GENERATION_MODE", self.procinfo.eventmode)
+            self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
+
+        # run settings
+        for key in self.procDB.getDict():
+            self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
+        
+        self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.eventmode)
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
                 for key, value in self.gen_settings["run"].items():
-                    self.add_run_option(key, value)
+                    self.addOption2GeneratorDatacard(key, value)
 
     def write_process(self):
-        self.ptext = "(processes){\n"
+        self.add2GeneratorDatacard("(processes){\n")
         if self.procinfo.get("decay"):
             self.add_decay()
         else:
-            self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n"
-        self.ptext += f"  Order ({self.procinfo.get_qcd_order()},{self.procinfo.get_qed_order()});\n"
-        self.ptext += "  End process;\n"
+            self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n")
+        self.add2GeneratorDatacard(f"  Order ({self.procinfo.get_qcd_order()},{self.procinfo.get_qed_order()});\n")
+        self.add2GeneratorDatacard("  End process;\n")
 
     def write_selectors(self):
         selectors = getattr(self.settings, "selectors")
@@ -99,7 +99,7 @@ class Sherpa(GeneratorBase):
             pass
         for key, value in selectors.items():
             self.add_Selector(value)
-        self.cuts += "}(selector)\n"
+        self.add2GeneratorDatacard("}(selector)\n")
 
     def add_Selector(self, value):
         key = value.name.lower()
@@ -142,9 +142,8 @@ class Sherpa(GeneratorBase):
             ):
                 return
             sname = f" {name} {f1} {f2} {Min} {Max}"
-            if f" {name} {f1} {f2}" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+            if f" {name} {f1} {f2}" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
         else:
             for fl in flavs:
                 f1 = fl[0]
@@ -155,18 +154,16 @@ class Sherpa(GeneratorBase):
                 ):
                     continue
                 sname = f" {name} {f1} {f2} {Min} {Max}"
-                if f" {name} {f1} {f2}" not in self.cuts:
-                    self.cuts += sname
-                    self.cuts += "\n"
+                if f" {name} {f1} {f2}" not in self.getGeneratorDatacard():
+                    self.add2GeneratorDatacard(f"{sname}\n")
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
             sname = f" {name} {f} {Min} {Max}"
-            if f" {name} {f}" not in self.cuts:
-                self.cuts += sname
-                self.cuts += "\n"
+            if f" {name} {f}" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
 
     def add_decay(self):
         # Simple check first that parents are
@@ -193,20 +190,21 @@ class Sherpa(GeneratorBase):
                 decays += f"{c} "
             decays += "\n"
             i += 1
-        self.ptext += f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n"
-        self.ptext += decays
+        self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n")
+        self.add2GeneratorDatacard(decays)
 
-    def write_file(self):
+    def fill_datacard(self):
         self.write_run()
+        self.add2GeneratorDatacard("}(run)\n\n")
         self.write_process()
-        self.ptext += "}(processes)\n\n"
-        self.run += "}(run)\n\n"
-        self.file = self.run + self.ptext + self.cuts
-        self.write_GeneratorDatacard(self.file)
+        self.add2GeneratorDatacard("}(processes)\n\n")
+        if self.settings.get_block("selectors"):
+            self.add2GeneratorDatacard("(selector){\n")
+            self.write_selectors()
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
-        if "Amegic" in self.file:
+        if "Amegic" in self.getGeneratorDatacard():
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
             key4hepRun += "./makelibs \n"
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
@@ -219,30 +217,30 @@ class Sherpa(GeneratorBase):
             hepmcformat, self.GeneratorDatacardBase, hepmcversion
         )
 
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
-    def add_run_option(self, key, value):
-        if self.gen_settings is not None:
-            if "run" in self.gen_settings.keys():
-                if key in self.gen_settings["run"]:
-                    value = self.gen_settings["run"][key]
-        if key in self.run:
-            if str(value) in self.run:
-                return
-            print(f"{key} has already been defined in {self.name} with value.")
-            return
-        self.run += f" {key} {value};\n"
+    def getParameterLabel(self, param):
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'ALPHAS(MZ)' }
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Sherpa: parameter {param} has no translation in Sherpa Parameter Dictionary")
+            return ""
+        return parameterDict[param]
 
-    def add_process_option(self, key, value):
-        if key in self.ptext:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        self.ptext += f" {key} {value};\n"
+    def getParameterOperator(self, name):
+        return f"{name}"
 
-    def is_sherpa_particle_data(self, d):
+    def getGeneratorCommand(self,key,value):
+        return f" {key} {value};"
+
+    def getParticleProperty(self, d):
         name = None
         if d == "mass":
             name = "MASS"
         if d == "width":
             name = "WIDTH"
         return name
+
+    def getParticleOperator(self, part, prop):
+        return f"{prop}[{part.get('pdg_code')}]"
+

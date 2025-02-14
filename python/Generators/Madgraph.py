@@ -1,5 +1,4 @@
 from .GeneratorBase import GeneratorBase
-from .MadgraphProcDB import MadgraphProcDB
 from Particles import Particle as part
 
 
@@ -10,24 +9,37 @@ class Madgraph(GeneratorBase):
         super().__init__(procinfo, settings, "Madgraph", "dat")
 
         self.version = "x.y.z"
-        self.file = ""
 
         self.add_header()
         self.executable = "mg5_aMC"
-        self.procDB = MadgraphProcDB(self.procinfo)
-        if settings.get("usedefaults", True):
-            self.procDB.write_DBInfo()
 
-        self.gen_settings = settings.get_block("madgraph")
-        if self.gen_settings is not None:
-            self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
+        self.setOptionalFileNameAndExtension(f"pythia{self.GeneratorDatacardBase}","cmnd")
+        self.fill_PythiaCMND()
+        
+    def setModelParameters(self):
+        # no alphaS and MZ, these are default
+        self.addModelParameter('GFermi')
+        #self.addModelParameter('alphaEMMZM1')
+        self.addModelParameter('alphaEMM1')
+        #self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        self.addModelParticleProperty(pdg_code=23, property_type='width')
+        self.addModelParticleProperty(pdg_code=24, property_type='width')
 
-    def write_run(self):
+    def execute(self):
+        # prepare the datacard
+        self.fill_datacard()
+        # prepare the key4hep script
+        self.fill_key4hepScript()
+
+    def fill_datacard(self):
+        theModel = ""
         try:
             if "model" in self.gen_settings:
-                self.add_run_option("import model", self.gen_settings["model"].lower())
+                theModel = self.getModelName(self.gen_settings["model"])
         except:
-            self.add_run_option("import model", self.procinfo.get("model").lower())
+            theModel = self.getModelName(self.procinfo.get("model"))
+        self.addOption2GeneratorDatacard("import model",theModel)
+        # particles
         self.mg_particles = list(
             map(self.pdg_to_madgraph, self.procinfo.get_particles())
         )
@@ -38,14 +50,20 @@ class Madgraph(GeneratorBase):
                 self.proc += "> "
         if self.procinfo.get("decay"):
             self.add_decay()
-        self.add_run_option("generate", self.proc)
-        # self.add_run_option("output", self.outdir+f"/{self.procinfo.get('procname')}")
-        self.add_run_option("output", "Output")
-        self.add_run_option("launch", None)
-        self.add_run_option("set iseed", self.procinfo.get_rndmSeed())
-        self.add_run_option("set EBEAM", self.procinfo.get("sqrts") / 2.0)
-        self.set_particle_data()
-        self.add_run_option("set nevents", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("generate", self.proc)
+        # self.addOption2GeneratorDatacard("output", self.outdir+f"/{self.procinfo.get('procname')}")
+        self.addOption2GeneratorDatacard("output", "Output")
+        self.addOption2GeneratorDatacard("launch", None)
+        self.addOption2GeneratorDatacard("set iseed", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("set EBEAM", self.procinfo.get("sqrts") / 2.0)
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParameters()
+
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles()
+
+        self.addOption2GeneratorDatacard("set nevents", self.procinfo.get("events"))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -54,76 +72,47 @@ class Madgraph(GeneratorBase):
                 #       See arxiv 2108.10261 for more details.")
                 #   raise(ValueError)
                 # else:
-                self.add_run_option("set pdlabel", self.get_BeamstrahlungPDLABEL())
-                # self.GeneratorDatacard += f"_{self.get_BeamstrahlungPDLABEL()}"
-                # self.key4hepfile += f"{self.get_BeamstrahlungPDLABEL()}"
+                self.addOption2GeneratorDatacard("set pdlabel", self.get_BeamstrahlungPDLABEL())
             else:
-                self.add_run_option("set pdlabel", "isronlyll")
-            self.add_run_option("set lpp1", "3")
-            self.add_run_option("set lpp2", "-3")
-        if self.procinfo.get_ElectronPolarisation() != 0 or self.procinfo.get_PositronPolarisation()!= 0:
-            self.add_run_option("set polbeam1", self.procinfo.get_ElectronPolarisation()*100.)
-            self.add_run_option("set polbeam2", self.procinfo.get_PositronPolarisation()*100.)
-        self.run += self.procDB.get_run_out()
+                self.addOption2GeneratorDatacard("set pdlabel", "isronlyll")
+            self.addOption2GeneratorDatacard("set lpp1", "3")
+            self.addOption2GeneratorDatacard("set lpp2", "-3")
+        if any(item != 0. for item in self.procinfo.get_PolarisationFraction()):
+            self.addOption2GeneratorDatacard("set polbeam1", 100.*self.procinfo.get_PolarisationDensity()[0]*self.procinfo.get_PolarisationFraction()[0])
+            self.addOption2GeneratorDatacard("set polbeam2", 100.*self.procinfo.get_PolarisationDensity()[1]*self.procinfo.get_PolarisationFraction()[1])
+
+        for key in self.procDB.getDict():
+            self.addOption2GeneratorDatacard(key, self.procDB.getDict()[key])
         # if self.settings.get_block("selectors"):
         self.write_selectors()
         # else:
         #     self.add_default_Selectors()
+        # now the structure is filled, transfer it to the baseclass
 
     def get_BeamstrahlungPDLABEL(self):
         ecm = self.procinfo.sqrts
-        accel = self.procinfo.beamstrahlung
-        if abs(ecm - 240) < 10:
-            if accel.lower() == "cepc":
-                return f"{accel.lower()}240ll"
-            elif accel.lower() == "fcc":
-                return f"{accel.lower()}e240ll"
+        accel = self.procinfo.beamstrahlung.lower()
+        # accelerator type is more important than the energy to first order
+        if accel == "cepc" or accel == "fcc":
+            #
+            if ecm < 300:
+                 return f"{accel}240ll"
             else:
-                print(
-                    "No setting found for requested accelerator " + accel + "using FCCE"
-                )
-                return "fcce240ll"
-        elif abs(ecm - 365) < 10:
-            if accel.lower() == "fcc":
-                return f"{accel.lower()}365ll"
-            else:
-                print(
-                    "No setting found for requested accelerator " + accel + "using FCCE"
-                )
-                return "fcc365ll"
-        elif abs(ecm - 500) < 10:
-            if accel.lower() == "ilc":
-                return f"{accel.lower()}500ll"
-            else:
-                print(
-                    "No setting found for requested accelerator " + accel + "using ILC"
-                )
-                return "ilc500ll"
-        elif abs(ecm - 3000) < 10:
-            if accel.lower() == "clic":
-                return f"{accel.lower()}3000ll"
-            else:
-                print(
-                    "No setting found for requested accelerator " + accel + "using CLIC"
-                )
-                return "clic3000ll"
+                 return f"fcc365ll"
+             
+        elif accel == "ilc":
+            # only one option implemented
+            return f"{accel}500ll"
+        
+        elif accel == "clic":
+            # only one option implemented
+            return f"{accel}3000ll"
         else:
             print(
                 f"No Beamstrahlung setting available for MADGRAPH at this energy {ecm}"
             )
             print("Using ILC at 500GeV")
             return "ilc500ll"
-
-    def set_particle_data(self):
-        for p in self.procinfo.get_data_particles():
-            for attr in dir(p):
-                if not callable(getattr(p, attr)) and not attr.startswith("__"):
-                    name = p.get("name").replace("+", "").replace("-", "")
-                    _prop = self.is_mg_particle_data(attr)
-                    if _prop is not None:
-                        value = getattr(p, attr)
-                        op_name = f"set {_prop}{name}"
-                        self.add_run_option(op_name, value)
 
     def add_decay(self):
         # Simple check first that parents are
@@ -229,7 +218,7 @@ class Madgraph(GeneratorBase):
                 # maxcut = f"{f1}: {Max}"
                 # self.run+=f"set {sname} {maxcut}\n"
 
-                # self.add_run_option(sname, maxcut)
+                # self.addOption2GeneratorDatacard(sname, maxcut)
 
     def add_one_ParticleSelector(self, sel, name, unit="", f1=None):
         Min, Max = sel.get_MinMax(unit)
@@ -249,19 +238,18 @@ class Madgraph(GeneratorBase):
 
     def add_min_max_cut(self, flav, name, Min, Max):
         sname = f"{name}_min_pdg"
-        mincut = f"{flav}: {Min}"
-        self.run += f"set {sname} {mincut}\n"
+        mincut = f"{{{flav}: {Min}}}"
+        self.add2GeneratorDatacard(f"set {sname} {mincut}\n")
 
         sname = f"{name}_max_pdg"
-        maxcut = f"{flav}: {Max}"
-        self.run += f"set {sname} {maxcut}\n"
+        maxcut = f"{{{flav}: {Max}}}"
+        self.add2GeneratorDatacard(f"set {sname} {maxcut}\n")
 
     def write_file(self):
-        self.write_run()
-        self.file = self.run
-        self.write_GeneratorDatacard(self.file)
+        self.fill_run()
+        self.write_GeneratorDatacard(self.run)
 
-    def write_key4hepfile(self):
+    def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         # now the running part temporarily on LHE
@@ -270,10 +258,8 @@ class Madgraph(GeneratorBase):
             f"ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         )
         # adding the Pythia step a poetriori
-        pythiaFile = "pythia"+self.GeneratorDatacardBase+".cmnd"
-        self.write_PythiaCMND(pythiaFile)
         key4hepRun += "$K4GenBuildDir/bin/pythiaLHERunner -f {0} -l unweighted_events.lhe -o {1}.hepmc\n".format(
-            pythiaFile,self.GeneratorDatacardBase
+            self.getOptionalFileName(),self.GeneratorDatacardBase
         )
         # temporarily kick out the header since the
         #key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
@@ -282,41 +268,55 @@ class Madgraph(GeneratorBase):
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase
         )
-        self.write_Key4hepScript(key4hepRun)
+        self.add2Key4hepScript(key4hepRun)
 
-    def write_PythiaCMND(self, pythiaFile):
+    def fill_PythiaCMND(self):
         # append the analysis to the content
         content  = "Main:timesAllowErrors = 5\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
         content += "Main:numberOfEvents = {0}\n".format(self.procinfo.get("events"))
+        self.add2OptionalFile(content)
 
-        # open the file for the evgen generation in EDM4HEP format
-        with open(self.outdir + "/"+pythiaFile, "w+") as file:
-            # the generator specific part
-            file.write(content)
-
-    def add_run_option(self, key, value):
-        if key in self.run:
-            print(f"{key} has already been defined in {self.name}.")
-            return
-        if value is not None:
-            self.run += f"{key} {value}\n"
-        else:
-            self.run += f"{key}\n"
+    def getModelName(self, model):
+        # sm or loop_qcd_qed_sm alphaQED, or loop_qcd_qed_sm_Gmu Gmu,MZ,MW
+        modelDict = { 'sm' : 'sm'}
+        model = model.lower()
+        if model not in modelDict.keys():
+            print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using sm")
+            return "sm"
+        return modelDict[model]
 
     def pdg_to_madgraph(self, particle):
         return particle.get("name")
 
-    def is_mg_particle_data(self, d):
+    def getParameterLabel(self, param):
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' }
+        # alphas could be SigmaProcess:alphaSvalue 
+        if param not in parameterDict.keys():
+            print(f"Warning::Madgraph: parameter {param} has no translation in Madgraph Parameter Dictionary")
+            return ""
+        return parameterDict[param]
+
+    def getParameterOperator(self, name):
+        return f"set {name}"
+
+    def getGeneratorCommand(self,key,value):
+        return f"{key} {value}"
+
+    def getParticleProperty(self, d):
         if d == "mass":
             return "M"
         if d == "width":
             return "W"
         return None
 
+    def getParticleOperator(self, part, prop):
+        particleName = part.get("name").replace("+", "").replace("-", "")
+        return f"set {prop}{particleName}"
+
     def add_header(self):
-        self.run = """#************************************************************
+        self.add2GeneratorDatacard("""#************************************************************
 #*                        MadGraph 5                        *
 #*                                                          *
 #*                *                       *                 *
@@ -333,6 +333,6 @@ class Madgraph(GeneratorBase):
 #*                                                          *
 #*               Command File for MadGraph 5                *
 #*                                                          *
-#*     run as ./bin/mg5  filename                           *
+#*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
-#************************************************************"\n"""
+#************************************************************"\n""")

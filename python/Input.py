@@ -1,7 +1,8 @@
 import yaml
 import os
 import Selectors
-
+import Parameters as ParameterModule
+from Parameters import Parameter as ParameterClass
 
 class Input:
     """Class for loading YAML files"""
@@ -101,14 +102,21 @@ class Input:
     def get_PythiaTune(self):
         return self.settings.get("pythiatune", None)
 
-    def get_ElectronPolarisation(self):
-        return self.settings.get("electronpolarisation", 0)
+    def get_PolarisationDensity(self):
+        # value check:
+        if self.settings.get("polarisationdensity") is not None:
+            if any(item != 1 and item != -1 for item in self.settings.get("polarisationdensity")):
+                print(f"{self.file}: PolarisationDensity invalid: only 1 and -1 are valid settings, list set to [1, -1]")
+                return [1, -1]
+        return self.settings.get("polarisationdensity", [1, -1])
 
-    def get_PositronPolarisation(self):
-        return self.settings.get("positronpolarisation", 0)
-
-    def get_PolDensity(self):
-        return self.settings.get("poldensity", [1, -1])
+    def get_PolarisationFraction(self):
+        # value check:
+        if self.settings.get("polarisationfraction") is not None:
+            if any(item > 1 or item < 0 for item in self.settings.get("polarisationfraction")):
+                print(f"{self.file} PolarisationFraction out of bounds: minimum 0, maximum 1, values set to 0")
+                return [0, 0]
+        return self.settings.get("polarisationfraction", [0, 0])
 
     def get_sqrt_s(self):
         return self.get("sqrts", None)
@@ -155,8 +163,8 @@ class Input:
                     pselectors[proc + key] = Selectors.Selectors(proc, key, sel)
                 self.procselectors[proc] = pselectors
         except Exception as e:
-            print("Failed to find process specific cuts. Using global.")
-            print(e)
+            #print("Failed to find process specific cuts. Using global.")
+            #print(e)
             pass
         if self.get_block("selectors"):
             for name in self.get_block("selectors"):
@@ -222,3 +230,35 @@ class ECMSInput:
         for key, value in self.settings.items():
             ecmsList.extend(value)
         return ecmsList
+
+class ParameterSets:
+    """Class for loading YAML files with the parameter settings"""
+
+    def __init__(self, file, tag):
+        self.file = file
+        if not os.path.isfile(self.file):
+            raise FileNotFoundError(self.file)
+        else:
+            self.load_file(tag)
+
+    def load_file(self, tag):
+        with open(self.file, "r") as file:
+            settings = yaml.safe_load(file)
+
+        # now we can safe the requested tag to the settings:
+        settings = settings.get(tag, None)
+        if settings is None:
+            raise FileNotFoundError(f"Error: tag {tag} not found in {self.file}")
+        # check the validity of the keys and store in the global dictionary
+        for key in settings.keys():
+            if key not in ParameterModule.ParametersList:
+                print(f"Warning! parameterTag: {tag} unknown key: {key} ignored")
+            else:
+                try:
+                    param = ParameterClass.get_info(key)
+                    param.value = settings[key]
+                except ValueError as e:
+                    print("Error setting ParameterSet parameter: parameter not coded in Parameters.py")
+                    print(e)
+                    exit()
+

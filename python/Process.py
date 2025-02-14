@@ -36,7 +36,7 @@ class Process:
         for key, value in args.items():
             setattr(self, key, value)
 
-    def process_info(self):
+    def prepareProcess(self, yamlParticleData):
         self._beam1 = Particle.get_info(self.initial[0])
         self._beam2 = Particle.get_info(self.initial[1])
         self._finfo = {}
@@ -48,6 +48,8 @@ class Process:
             self._fpdg.append(str(p))
             self._proclabel += f"{self._finfo[p].name} "
             self._parts.append(self._finfo[p])
+        # set the global particle data properties
+        self.set_particle_data(yamlParticleData)
         # generate the label for the generatorDB
         # first the initial state
         initialstate = [abs(self.initial[0]), abs(self.initial[1])]
@@ -120,14 +122,11 @@ class Process:
     def get_PythiaTune(self):
         return self.PythiaTune
 
-    def get_ElectronPolarisation(self):
-        return self.ElectronPolarisation
+    def get_PolarisationDensity(self):
+        return self.PolarisationDensity
 
-    def get_PositronPolarisation(self):
-        return self.PositronPolarisation
-
-    def get_PolDensity(self):
-        return self.PolDensity
+    def get_PolarisationFraction(self):
+        return self.PolarisationFraction
 
     def get_rndmSeed(self):
         return self.get("randomseed")
@@ -150,13 +149,12 @@ class Process:
 
 class ProcessParameters:
     def __init__(self, settings):
-        self.settings = settings
-        self.model = settings.get_model()
-        self.events = settings.get_event_number()
+        self.settings      = settings
+        self.model         = settings.get_model()
+        self.events        = settings.get_event_number()
         self.output_format = settings.get_output_format()
-        self.PythiaTune = settings.get_PythiaTune()
-        self.ElectronPolarisation = settings.get_ElectronPolarisation()
-        self.PositronPolarisation = settings.get_PositronPolarisation()
-        self.PolDensity = settings.get_PolDensity()
-        self.eventmode = settings.get_weighted_mode()
-        self.ewmode = settings.get_ew_mode()
+        self.PythiaTune    = settings.get_PythiaTune()
+        self.PolarisationDensity    = settings.get_PolarisationDensity()
+        self.PolarisationFraction   = settings.get_PolarisationFraction()
+        self.eventmode     = settings.get_weighted_mode()
+        self.ewmode        = settings.get_ew_mode()

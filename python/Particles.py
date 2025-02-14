@@ -78,7 +78,7 @@ class Particle:
         print(f"{pdg} code not found")
 
 
-a = Particle(
+Photon = Particle(
     pdg_code=22, name="a", antiname="a", mass=0, width=0, texname="a", antitexname="a"
 )
 
@@ -218,8 +218,8 @@ t = Particle(
     pdg_code=6,
     name="t",
     antiname="t~",
-    mass=Param.MT,
-    width=Param.WT,
+    mass=Param.MT.value,
+    width=Param.WT.value,
     texname="t",
     antitexname="t~",
 )

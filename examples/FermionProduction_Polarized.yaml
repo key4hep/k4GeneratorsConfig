@@ -7,11 +7,12 @@ OutDir: Run-Cards
 Events: 100
 EventMode: unweighted
 
-PositronPolarisation: 0.3
-ElectronPolarisation: 0.8
+PolarisationDensity: [-1, 1]
+PolarisationFraction: [ 0.8, 0.3 ]
+
 Beamstrahlung: ILC
 
-SqrtS: 240
+SqrtS: 250
 Model: SM
 ISRMode: 1
 
@@ -24,10 +25,8 @@ Processes:
 ParticleData:
   25:
     mass: 125
-    # width: 0
   23:
     mass: 91.1876
-    # width: 2.4952
   24:
     mass: 80.379
     width: 2.085

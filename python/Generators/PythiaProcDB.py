@@ -1,37 +1,27 @@
-class PythiaProcDB:
+from .ProcDBBase import ProcDBBase
+
+class PythiaProcDB(ProcDBBase):
     """PythiaProcDB class"""
 
     def __init__(self, process):
+        super().__init__(process)
         self.process = process
-        self.runout = ""
-        self.procout = ""
 
-    def write_DBInfo(self):
+    def execute(self):
         # general stuff
-        self.runout += "Main:timesAllowErrors = 5          ! allow a few failures before quitting\n"
+        self.rundict['Main:timesAllowErrors'] = 5
         # ! 2) Settings related to output in init(), next() and stat().
-        self.runout += "Init:showChangedSettings = on      ! list changed settings\n"
-        self.runout += (
-            "Init:showChangedParticleData = on  ! list changed particle data\n"
-        )
-        self.runout += (
-            "Next:numberCount = 1000            ! print message every n events\n"
-        )
-        self.runout += (
-            "Next:numberShowInfo = 1            ! print event information n times\n"
-        )
-        self.runout += (
-            "Next:numberShowProcess = 1         ! print process record n times\n"
-        )
-        self.runout += (
-            "Next:numberShowEvent = 1           ! print event record n times\n"
-        )
+        self.rundict['Init:showChangedSettings'] = "on"
+        self.rundict['Init:showChangedParticleData'] = "on"
+        self.rundict['Next:numberCount'] = 1000
+        self.rundict['Next:numberShowInfo'] = 1
+        self.rundict['Next:numberShowProcess'] = 1
+        self.rundict['Next:numberShowEvent'] = 1
         # !4) Tell that also long-lived should decay.
         # 13:mayDecay   = true                 ! mu+-
-        self.runout += "211:mayDecay  = true                 ! pi+-\n"
-        self.runout += "321:mayDecay  = true                 ! K+-\n"
-        self.runout += "130:mayDecay  = true                 ! K0_L\n"
-        # self.runout +="2112:mayDecay = true                 ! n\n"
+        self.rundict['211:mayDecay']  = "true"
+        self.rundict['321:mayDecay']  = "true"
+        self.rundict['130:mayDecay']  = "true"
 
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
@@ -69,46 +59,36 @@ class PythiaProcDB:
             self.write_run_Hnunu()
             
     def write_Difermion(self, pdg):
-        self.procout = "WeakSingleBoson:ffbar2gmZ = on\n"
-        self.procout += "22:onMode = off\n"
-        self.procout += f"22:onIfAny = {pdg}\n"
-        self.procout += "23:onMode = off\n"
-        self.procout += f"23:onIfAny = {pdg}\n"
+        self.procdict['WeakSingleBoson:ffbar2gmZ'] = "on"
+        self.procdict['22:onMode']  = "off"
+        self.procdict['22:onIfAny'] = f"{pdg}"
+        self.procdict['23:onMode']  = "off"
+        self.procdict['23:onIfAny'] = f"{pdg}"
 
     def write_Diphoton(self):
-        self.procout = "PromptPhoton:ffbar2gammagamma = on\n"
+        self.procdict['PromptPhoton:ffbar2gammagamma'] = "on"
 
     def write_ZZ(self):
-        self.procout = "WeakDoubleBoson:ffbar2gmZgmZ = on\n"
-        self.procout += "23:onMode = on\n"
+        self.procdict['WeakDoubleBoson:ffbar2gmZgmZ'] = "on"
+        self.procdict['23:onMode'] = "on"
         
     def write_WW(self):
-        self.procout = "WeakDoubleBoson:ffbar2WW = on\n"
-        self.procout += "24:onMode = on\n"
+        self.procdict['WeakDoubleBoson:ffbar2WW'] = "on"
+        self.procdict['24:onMode'] = "on"
     
     def write_run_ZH(self):
-        self.procout = "HiggsSM:ffbar2HZ = on\n"
-        self.procout += "25:onMode = on\n"
-        self.procout += "23:onMode = on\n"
+        self.procdict['HiggsSM:ffbar2HZ'] = "on"
+        self.procdict['25:onMode'] = "on"
+        self.procdict['23:onMode'] = "on"
 
     def write_run_Hnunu(self):
-        self.procout =  "HiggsSM:ff2Hff(t:WW) = on\n"
-        self.procout += "HiggsSM:ffbar2HZ = on\n"
-        self.procout += "25:onMode = on\n"
-        self.procout += "23:onMode = off\n"
-        self.procout += "23:onIfAny = 12\n"
+        self.procdict['HiggsSM:ff2Hff(t:WW)'] = "on"
+        self.procdict['HiggsSM:ffbar2HZ'] = "on"
+        self.procdict['25:onMode'] = "on"
+        self.procdict['23:onMode'] = "off"
+        self.procdict['23:onIfAny'] = "12"
 
     def write_Ditop(self):
-        self.procout = "Top:ffbar2ttbar(s:gmZ) = on\n"
-        self.procout += "6:onMode = on\n"
+        self.procdict['Top:ffbar2ttbar(s:gmZ)'] = "on"
+        self.procdict['6:onMode'] = "on"
 
-    def get_run_out(self):
-        return self.runout
-
-    def get_proc_out(self):
-        return self.procout
-
-    def remove_option(self, opt):
-        lines = self.runout.split("\n")
-        filter_lines = [line for line in lines if opt not in line]
-        self.runout = "\n".join(filter_lines)
