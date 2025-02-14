@@ -221,7 +221,7 @@ class Pythia(GeneratorBase):
         )
         self.add2Key4hepScript(key4hepRun)
 
-    def formatLine(self,key,value):
+    def getGeneratorCommand(self,key,value):
         return f"{key} = {value}"
 
     def getParameterLabel(self, param):

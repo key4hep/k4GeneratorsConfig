@@ -171,8 +171,8 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: reset the datacard content to ""
         self.__datacardContent = ""
        
-    def formatLine(self,key,value):
-        raise NotImplementedError("formatLine")
+    def getGeneratorCommand(self,key,value):
+        raise NotImplementedError("getGeneratorCommand")
 
     def addOption2GeneratorDatacard(self,key,value):
         # check if the key is already defined in the datacard, then we take the last one (TBC):
@@ -180,9 +180,9 @@ class GeneratorBase(abc.ABC):
             self.removeOptionGeneratorDatacard(key)
         # format the line through in the generator specific format
         if value is None:
-            line = self.formatLine(key,"")
+            line = self.getGeneratorCommand(key,"")
         else:
-            line = self.formatLine(key,value)
+            line = self.getGeneratorCommand(key,value)
         # add the linebreak
         line += "\n"
         # push to the datacard

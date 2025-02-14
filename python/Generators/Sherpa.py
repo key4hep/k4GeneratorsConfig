@@ -230,7 +230,7 @@ class Sherpa(GeneratorBase):
     def getParameterOperator(self, name):
         return f"{name}"
 
-    def formatLine(self,key,value):
+    def getGeneratorCommand(self,key,value):
         return f" {key} {value};"
 
     def getParticleProperty(self, d):
