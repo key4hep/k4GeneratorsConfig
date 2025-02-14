@@ -69,11 +69,10 @@ class Sherpa(GeneratorBase):
         self.add2GeneratorDatacard("\n")
 
     def write_process(self):
-        self.add2GeneratorDatacard("\nPROCESSES:\n")
         if self.procinfo.get("decay"):
             self.add_decay()
-        else:
-            self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
+        self.add2GeneratorDatacard("\nPROCESSES:\n")
+        self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
         self.add2GeneratorDatacard(f"    Order: {{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}\n")
 
     def write_selectors(self):
@@ -158,6 +157,8 @@ class Sherpa(GeneratorBase):
                 self.add2GeneratorDatacard(f"{sname}\n")
 
     def add_decay(self):
+        # add the header:
+        self.add2GeneratorDatacard("\nHARD_DECAYS:\n")
         # Simple check first that parents are
         # in the main process
         decay_opt = self.procinfo.get("decay")
@@ -168,22 +169,15 @@ class Sherpa(GeneratorBase):
                         key
                     )
                 )
-        # Sherpa requires the decaying particles get an additional label 25-> 25[a]
-        # so parse letters to the process definition
-        i = 97
-        fs = ""
-        decays = ""
+        # add the channels
+        self.add2GeneratorDatacard("  Channels:\n")
         for p in self.procinfo.get_final_pdg_list():
-            parent = str(p) + f"[{chr(i)}] "
+            parent = str(p)
             child = decay_opt[p]
-            fs += parent
-            decays += f"  Decay {parent} -> "
+            decays = f"    {parent} -> "
             for c in child:
                 decays += f"{c} "
-            decays += "\n"
-            i += 1
-        self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {fs}\n")
-        self.add2GeneratorDatacard(decays)
+            self.addOption2GeneratorDatacard(decays,"{Status: 2}")
 
     def fill_datacard(self):
         self.write_run()
