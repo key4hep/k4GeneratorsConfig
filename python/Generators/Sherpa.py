@@ -203,6 +203,15 @@ class Sherpa(GeneratorBase):
 
         self.add2Key4hepScript(key4hepRun)
 
+    def getModelName(self, model):
+        # the model names are from sherpa, so wave through for now
+        modelDict = { 'sm' : 'sm'}
+        model = model.lower()
+        if model not in modelDict.keys():
+            print(f"Warning::Sherpa: model {model} has no translation in Sherpa Model Dictionary, using {model}")
+            return model
+        return modelDict[model]
+
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'ALPHAS(MZ)' }
         # alphas could be SigmaProcess:alphaSvalue 
