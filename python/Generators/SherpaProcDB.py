@@ -16,6 +16,10 @@ class SherpaProcDB(ProcDBBase):
             self.particlesdict['6'] = {'Massive' : 1}
         if label == "11_11_15_15":
             self.particlesdict['15'] = {'Massive' : 1}
+        if label == "11_11_23_25":
+            self.particlesdict['5']  = {'Massive' : 1}
+            self.particlesdict['13'] = {'Massive' : 1}
+            self.particlesdict['15'] = {'Massive' : 1}
         # the electroweak scheme is common to all implemented processes so far
         self.rundict['EW_SCHEME'] = 3
         

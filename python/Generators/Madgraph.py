@@ -32,13 +32,7 @@ class Madgraph(GeneratorBase):
         self.fill_key4hepScript()
 
     def fill_datacard(self):
-        theModel = ""
-        try:
-            if "model" in self.gen_settings:
-                theModel = self.getModelName(self.gen_settings["model"])
-        except:
-            theModel = self.getModelName(self.procinfo.get("model"))
-        self.addOption2GeneratorDatacard("import model",theModel)
+        self.addOption2GeneratorDatacard("import model",self.getModel())
         # particles
         self.mg_particles = list(
             map(self.pdg_to_madgraph, self.procinfo.get_particles())
@@ -283,8 +277,8 @@ class Madgraph(GeneratorBase):
         modelDict = { 'sm' : 'sm'}
         model = model.lower()
         if model not in modelDict.keys():
-            print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using sm")
-            return "sm"
+            print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using {model}")
+            return model
         return modelDict[model]
 
     def pdg_to_madgraph(self, particle):

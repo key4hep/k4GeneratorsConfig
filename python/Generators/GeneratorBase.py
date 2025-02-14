@@ -106,6 +106,15 @@ class GeneratorBase(abc.ABC):
             self.procDBparameters  = self.procDB.getDictParameters()
             self.procDBparticles   = self.procDB.getDictParticles()
 
+    def getModel(self):
+        theModel = ""
+        try:
+            if "model" in self.gen_settings:
+                theModel = self.getModelName(self.gen_settings["model"])
+        except:
+            theModel = self.getModelName(self.procinfo.get('model'))
+        return theModel
+            
     def setDefaultModelParameters(self):
         self.ModelInputParams = []
         self.addModelParameter('alphaSMZ')

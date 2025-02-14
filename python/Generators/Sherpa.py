@@ -28,7 +28,7 @@ class Sherpa(GeneratorBase):
         self.addOption2GeneratorDatacard("BEAMS", [self.procinfo.get_beam_flavour(1),self.procinfo.get_beam_flavour(2)])
         self.addOption2GeneratorDatacard("BEAM_ENERGIES", self.procinfo.get("sqrts")/2.)
 
-        self.addOption2GeneratorDatacard("MODEL", self.procinfo.get("model"))
+        self.addOption2GeneratorDatacard("MODEL", self.getModel())
 
         if self.procinfo.get("isrmode"):
             self.addOption2GeneratorDatacard("PDF_LIBRARY", "PDFESherpa")
@@ -190,8 +190,8 @@ class Sherpa(GeneratorBase):
         key4hepRun = ""
         if "Amegic" in self.getGeneratorDatacard():
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
-            key4hepRun += "./makelibs \n"
-            key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
+            #key4hepRun += "./makelibs \n"
+            #key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         else:
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
