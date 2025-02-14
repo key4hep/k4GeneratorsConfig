@@ -49,10 +49,9 @@ Whizard:
 
 Sherpa:
   # THESE settings key must match Sherpa!!
-  Run:
-    MODEL: HEFT
-    #MASSIVE[13]: 1
-    ME_SIGNAL_GENERATOR: Amegic
+  MODEL: HEFT
+  #MASSIVE[13]: 1
+  ME_SIGNAL_GENERATOR: Amegic
 
 ParticleData:
   25:
