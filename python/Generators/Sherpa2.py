@@ -6,8 +6,7 @@ class Sherpa2(GeneratorBase):
     def __init__(self, procinfo, settings):
         super().__init__(procinfo, settings, "Sherpa2", "dat")
 
-        self.version = "x.y.z"
-
+        self.version = "2"
         self.executable = "Sherpa -f"
 
     def setModelParameters(self):
