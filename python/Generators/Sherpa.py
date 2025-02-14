@@ -26,7 +26,7 @@ class Sherpa(GeneratorBase):
         self.addOption2GeneratorDatacard("RANDOM_SEED", self.procinfo.get_rndmSeed())
 
         self.addOption2GeneratorDatacard("BEAMS", [self.procinfo.get_beam_flavour(1),self.procinfo.get_beam_flavour(2)])
-        self.addOption2GeneratorDatacard("BEAM_ENERGIES", self.procinfo.get("sqrts"))
+        self.addOption2GeneratorDatacard("BEAM_ENERGIES", self.procinfo.get("sqrts")/2.)
 
         self.addOption2GeneratorDatacard("MODEL", self.procinfo.get("model"))
 
