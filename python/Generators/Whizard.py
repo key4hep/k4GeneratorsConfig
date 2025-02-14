@@ -246,8 +246,8 @@ class Whizard(GeneratorBase):
             name = "WIDTH"
         return name
 
-    def getParticleOperator(self, part, prop):
-        pname = self.whizard_MW_name(part.get("pdg_code"))
+    def getParticleOperator(self, pdg, prop):
+        pname = self.whizard_MW_name(int(pdg))
         if prop == "MASS":
             return f"m{pname}"
         elif prop == "WIDTH":

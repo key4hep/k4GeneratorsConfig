@@ -11,11 +11,11 @@ class SherpaProcDB(ProcDBBase):
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
         if label == "11_11_5_5":
-            self.rundict['MASSIVE[5]'] = 1
+            self.particlesdict['5'] = {'Massive' : 1}
         if label == "11_11_6_6":
-            self.rundict['MASSIVE[6]'] = 1
+            self.particlesdict['6'] = {'Massive' : 1}
         if label == "11_11_15_15":
-            self.rundict['MASSIVE[15]'] = 1
+            self.particlesdict['15'] = {'Massive' : 1}
         # the electroweak scheme is common to all implemented processes so far
         self.rundict['EW_SCHEME'] = 3
         

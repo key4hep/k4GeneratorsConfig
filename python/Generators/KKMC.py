@@ -111,8 +111,7 @@ class KKMC(GeneratorBase):
             name = "WIDTH"
         return name
 
-    def getParticleOperator(self, part, prop):
-        pdg = part.get("pdg_code")
+    def getParticleOperator(self, pdg, prop):
         if prop == "MASS":
             return f"_mass{pdg}"
         elif prop == "WIDTH":

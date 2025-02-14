@@ -249,6 +249,6 @@ class Pythia(GeneratorBase):
             name = "mWidth"
         return name
 
-    def getParticleOperator(self, part, prop):
-        return f"{part.get('pdg_code')}:{prop}"
+    def getParticleOperator(self, pdg, prop):
+        return f"{pdg}:{prop}"
 

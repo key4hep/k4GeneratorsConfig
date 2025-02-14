@@ -311,8 +311,8 @@ class Madgraph(GeneratorBase):
             return "W"
         return None
 
-    def getParticleOperator(self, part, prop):
-        particleName = part.get("name").replace("+", "").replace("-", "")
+    def getParticleOperator(self, pdg, prop):
+        particleName = part.name_from_pdg(int(pdg)).replace("+", "").replace("-", "")
         return f"set {prop}{particleName}"
 
     def add_header(self):

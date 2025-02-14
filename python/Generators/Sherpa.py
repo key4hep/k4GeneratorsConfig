@@ -6,8 +6,7 @@ class Sherpa(GeneratorBase):
     def __init__(self, procinfo, settings):
         super().__init__(procinfo, settings, "Sherpa", "dat")
 
-        self.version = "x.y.z"
-
+        self.version = "3"
         self.executable = "Sherpa -f"
 
     def setModelParameters(self):
@@ -24,19 +23,11 @@ class Sherpa(GeneratorBase):
         self.fill_key4hepScript()
         
     def write_run(self):
-        self.add2GeneratorDatacard("(run){\n")
-
         self.addOption2GeneratorDatacard("RANDOM_SEED", self.procinfo.get_rndmSeed())
 
-        ENG = self.procinfo.get("sqrts") / 2.0
-        beam1_pdg = self.procinfo.get_beam_flavour(1)
-        beam2_pdg = self.procinfo.get_beam_flavour(2)
+        self.addOption2GeneratorDatacard("BEAMS", [self.procinfo.get_beam_flavour(1),self.procinfo.get_beam_flavour(2)])
+        self.addOption2GeneratorDatacard("BEAM_ENERGIES", self.procinfo.get("sqrts"))
 
-        self.addOption2GeneratorDatacard("BEAM_1", beam1_pdg)
-        self.addOption2GeneratorDatacard("BEAM_2", beam2_pdg)
-
-        self.addOption2GeneratorDatacard("BEAM_ENERGY_1", ENG)
-        self.addOption2GeneratorDatacard("BEAM_ENERGY_2", ENG)
         self.addOption2GeneratorDatacard("MODEL", self.procinfo.get("model"))
 
         if self.procinfo.get("isrmode"):
@@ -48,13 +39,10 @@ class Sherpa(GeneratorBase):
         else:
             self.addOption2GeneratorDatacard("YFS_MODE", "None")
         self.addOption2GeneratorDatacard("EVENTS", self.procinfo.get("events"))
-        self.add2GeneratorDatacard("\n\n")
+        self.add2GeneratorDatacard("\n")
 
         # now add the model checking for overlap
         self.prepareParameters()
-
-        # now add the particles checking for overlap with ProcDB
-        self.prepareParticles()
 
         if self.procinfo.get("output_format") == "hepmc2":
             eoutname = "HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
@@ -65,7 +53,7 @@ class Sherpa(GeneratorBase):
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         # run settings
-        for key in self.procDB.getDict():
+        for key in self.procDB.getDictParameters():
             self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
         
         self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.eventmode)
@@ -74,14 +62,19 @@ class Sherpa(GeneratorBase):
                 for key, value in self.gen_settings["run"].items():
                     self.addOption2GeneratorDatacard(key, value)
 
+        # insert the keyword:
+        self.add2GeneratorDatacard("\nPARTICLE_DATA:\n")
+        # now add the particles checking for overlap with ProcDB
+        self.prepareParticles(writeParticleHeader=True)
+        self.add2GeneratorDatacard("\n")
+
     def write_process(self):
-        self.add2GeneratorDatacard("(processes){\n")
+        self.add2GeneratorDatacard("\nPROCESSES:\n")
         if self.procinfo.get("decay"):
             self.add_decay()
         else:
-            self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n")
-        self.add2GeneratorDatacard(f"  Order ({self.procinfo.get_qcd_order()},{self.procinfo.get_qed_order()});\n")
-        self.add2GeneratorDatacard("  End process;\n")
+            self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
+        self.add2GeneratorDatacard(f"    Order: {{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}\n")
 
     def write_selectors(self):
         selectors = getattr(self.settings, "selectors")
@@ -99,7 +92,6 @@ class Sherpa(GeneratorBase):
             pass
         for key, value in selectors.items():
             self.add_Selector(value)
-        self.add2GeneratorDatacard("}(selector)\n")
 
     def add_Selector(self, value):
         key = value.name.lower()
@@ -110,9 +102,9 @@ class Sherpa(GeneratorBase):
         elif key == "rap":
             self.add_one_ParticleSelector(value, "Rapidity")
         elif key == "eta":
-            self.add_one_ParticleSelector(value, "PseudoRapidity")
+            self.add_one_ParticleSelector(value, "Eta")
         elif key == "theta":
-            self.add_one_ParticleSelector(value, "PseudoRapidity", "eta")
+            self.add_one_ParticleSelector(value, "Eta", "eta")
 
             # Two particle selectors
         elif key == "mass":
@@ -141,8 +133,8 @@ class Sherpa(GeneratorBase):
                 or str(f2) not in self.procinfo.get_final_pdg()
             ):
                 return
-            sname = f" {name} {f1} {f2} {Min} {Max}"
-            if f" {name} {f1} {f2}" not in self.getGeneratorDatacard():
+            sname = f"  - [{name}, {f1}, {f2}, {Min}, {Max}]"
+            if f"  - [{name}, {f1}, {f2}" not in self.getGeneratorDatacard():
                 self.add2GeneratorDatacard(f"{sname}\n")
         else:
             for fl in flavs:
@@ -153,16 +145,16 @@ class Sherpa(GeneratorBase):
                     or str(f2) not in self.procinfo.get_final_pdg()
                 ):
                     continue
-                sname = f" {name} {f1} {f2} {Min} {Max}"
-                if f" {name} {f1} {f2}" not in self.getGeneratorDatacard():
+                sname = f"  - [{name}, {f1}, {f2}, {Min}, {Max}]"
+                if f"  - [{name}, {f1}, {f2}" not in self.getGeneratorDatacard():
                     self.add2GeneratorDatacard(f"{sname}\n")
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
-            sname = f" {name} {f} {Min} {Max}"
-            if f" {name} {f}" not in self.getGeneratorDatacard():
+            sname = f"  - [{name}, {f}, {Min}, {Max}]"
+            if f"  - [{name}, {f}" not in self.getGeneratorDatacard():
                 self.add2GeneratorDatacard(f"{sname}\n")
 
     def add_decay(self):
@@ -190,16 +182,14 @@ class Sherpa(GeneratorBase):
                 decays += f"{c} "
             decays += "\n"
             i += 1
-        self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n")
+        self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {fs}\n")
         self.add2GeneratorDatacard(decays)
 
     def fill_datacard(self):
         self.write_run()
-        self.add2GeneratorDatacard("}(run)\n\n")
         self.write_process()
-        self.add2GeneratorDatacard("}(processes)\n\n")
         if self.settings.get_block("selectors"):
-            self.add2GeneratorDatacard("(selector){\n")
+            self.add2GeneratorDatacard("\nSELECTORS:\n")
             self.write_selectors()
 
     def fill_key4hepScript(self):
@@ -231,16 +221,21 @@ class Sherpa(GeneratorBase):
         return f"{name}"
 
     def getGeneratorCommand(self,key,value):
-        return f" {key} {value};"
+        return f"{key}: {value}"
 
     def getParticleProperty(self, d):
         name = None
+        d = d.lower()
         if d == "mass":
-            name = "MASS"
+            name = "Mass"
         if d == "width":
-            name = "WIDTH"
+            name = "Width"
+        if d == "massive":
+            name = "Massive"
         return name
 
-    def getParticleOperator(self, part, prop):
-        return f"{prop}[{part.get('pdg_code')}]"
+    def getParticleOperator(self, pdg, prop):
+        if prop is None:
+            return f"  {pdg}"
+        return f"    {prop}"
 
