@@ -248,8 +248,13 @@ class GeneratorBase(abc.ABC):
         # create a local dictionary then deal with the writing:
         particleCollection = dict()
         # load the procDB first
-        for key in self.procDB.getDictParticles().keys():
-            particleCollection[key] = self.procDB.getDictParticles()[key]
+        for pdg in self.procDB.getDictParticles():
+            # create an empty entry
+            particleCollection[pdg] = dict()
+            particle =  self.procDB.getDictParticles()[pdg]
+            for prop in particle.keys():
+                particleCollection[pdg].update({prop.lower(): particle[prop]})
+                #particleCollection[pdg].update(particle[prop.lower()])
 
         # now we overwrite with global
         particleParameterList = self.getModelParticlePropertyList()
