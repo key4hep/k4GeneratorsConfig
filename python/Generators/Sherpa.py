@@ -170,6 +170,7 @@ class Sherpa(GeneratorBase):
                     )
                 )
         # add the channels
+        self.add2GeneratorDatacard("  Enabled: true\n")
         self.add2GeneratorDatacard("  Channels:\n")
         for p in self.procinfo.get_final_pdg_list():
             parent = str(p)
@@ -190,8 +191,8 @@ class Sherpa(GeneratorBase):
         key4hepRun = ""
         if "Amegic" in self.getGeneratorDatacard():
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
-            #key4hepRun += "./makelibs \n"
-            #key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
+            key4hepRun += "./makelibs \n"
+            key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         else:
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
