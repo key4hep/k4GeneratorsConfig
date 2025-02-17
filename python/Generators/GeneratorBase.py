@@ -109,12 +109,14 @@ class GeneratorBase(abc.ABC):
     def getModel(self):
         theModel = ""
         try:
-            if "model" in self.gen_settings:
-                theModel = self.getModelName(self.gen_settings["model"])
+            theModel = self.getModelName(self.gen_settings['model'])
         except:
             theModel = self.getModelName(self.procinfo.get('model'))
         return theModel
             
+    def getModelName(self):
+        raise NotImplementedError("getModelName")
+
     def setDefaultModelParameters(self):
         self.ModelInputParams = []
         self.addModelParameter('alphaSMZ')
