@@ -69,8 +69,6 @@ class Sherpa(GeneratorBase):
         self.add2GeneratorDatacard("\n")
 
     def write_process(self):
-        if self.procinfo.get("decay"):
-            self.add_decay()
         self.add2GeneratorDatacard("\nPROCESSES:\n")
         self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
         self.add2GeneratorDatacard(f"    Order: {{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}\n")
@@ -156,7 +154,33 @@ class Sherpa(GeneratorBase):
             if f"  - [{name}, {f}" not in self.getGeneratorDatacard():
                 self.add2GeneratorDatacard(f"{sname}\n")
 
-    def add_decay(self):
+    def tempFixParticles(self):
+        # get the current content
+        lines = self.getGeneratorDatacard().split("\n")
+        particlesSection = False
+        dc = []
+        for line in lines:
+            # start of particle data
+            if line == "PARTICLE_DATA:":
+                particlesSection = True
+            # processes are written after particle data
+            if line == "PROCESSES:":
+                particlesSection = False
+            if not particlesSection:
+                dc.append(line)
+        # so we cleaned up, but we need to add the particles section for the finalstate particles
+        dc.append("PARTICLE_DATA:")
+        for pdg in self.procinfo.get_final_pdg_list():
+            dc.append(f"  {pdg}:")
+            dc.append(f"    Width: 0.")
+        dc.append("\n")
+        self.resetGeneratorDatacard()
+        self.add2GeneratorDatacard("\n".join(dc))
+
+    def write_decay(self):
+        # temporary fix: reset the particles
+        print("SHERPA::Warning: Particle properties modified from setting, TB corrected")
+        self.tempFixParticles()
         # add the header:
         self.add2GeneratorDatacard("\nHARD_DECAYS:\n")
         # Simple check first that parents are
@@ -183,6 +207,10 @@ class Sherpa(GeneratorBase):
     def fill_datacard(self):
         self.write_run()
         self.write_process()
+        # the decay must be written after particles and process, only if the block is set
+        if self.procinfo.get("decay"):
+            self.write_decay()
+        # writing selectors depends on the presence of the block
         if self.settings.get_block("selectors"):
             self.add2GeneratorDatacard("\nSELECTORS:\n")
             self.write_selectors()
