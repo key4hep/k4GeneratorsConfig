@@ -16,6 +16,6 @@ $K4GENERATORSCONFIG/xsectionSummary -f ${CWD}/xsectionSummary.dat
 cat ${CWD}/xsectionSummary.dat
 
 # cleanup at the end
-rm -r ${CWD}/ci-setups
+#rm -r ${CWD}/ci-setups
 
 exit 0
