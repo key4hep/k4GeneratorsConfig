@@ -20,7 +20,9 @@ class Madgraph(GeneratorBase):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
         #self.addModelParameter('alphaEMMZM1')
-        self.addModelParameter('alphaEMM1')
+        #self.addModelParameter('alphaEMM1')
+        # for a coherent setting we need to use a derived value for alphaQED
+        self.addModelParameter('alphaEMEWSchemeM1')
         #self.addModelParticleProperty(pdg_code=23, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
