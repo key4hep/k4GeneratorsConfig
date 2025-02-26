@@ -24,7 +24,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: Cross_section_report_${{ matrix.build_type }}_${{ matrix.image }}
-        paths:
-        - test/xsectionSummary.dat
-        - test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Muon350_ISR.hepmc3
-        - test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Results.zip
+        path: test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Muon350_ISR.hepmc3, test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Results.zip
