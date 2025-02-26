@@ -15,26 +15,31 @@
 #*                                                          *
 #*               Command File for MadGraph 5                *
 #*                                                          *
-#*     run as ./bin/mg5  filename                           *
+#*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
 #************************************************************"
 import model sm
 generate e- e+ > Z H 
 output Output
-launch
+launch 
 set iseed 4711
 set EBEAM 125.0
-set MH 125
-set WH 0
+set aS 0.1184
+set GF 1.16637e-05
+set aEWM1 132.507
 set MZ 91.1876
 set WZ 2.4952
-set MW 80.379
+set Mt 172
+set Wt 1.50833649
+set MH 125
+set WH 0.00407
 set WW 2.085
-set nevents 1000
+set MW 80.379
+set nevents 100
 set pdlabel isronlyll
 set lpp1 3
 set lpp2 -3
-set pt_min_pdg 23: 20
-set pt_max_pdg 23: 125
-set pt_min_pdg 25: 20
-set pt_max_pdg 25: 125
+set pt_min_pdg {23: 20}
+set pt_max_pdg {23: 125}
+set pt_min_pdg {25: 20}
+set pt_max_pdg {25: 125}

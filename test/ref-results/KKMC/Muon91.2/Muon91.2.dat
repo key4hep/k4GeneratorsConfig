@@ -18,7 +18,7 @@ BeginX
 *     Generalities of the Monte-Carlo (low level)
 *indx_____data______ccccccccc0ccccccccc0ccccccccc0ccccccccc0ccccccccc0ccccccccc0
 *     Center-of-mass energy [GeV]
-    1           91.2      cmsene =xpar( 1)  Average Center of mass energy [GeV]
+    1            91.2      cmsene =xpar( 1)  Average Center of mass energy [GeV]
     2              0      DelEne =xpar( 2)  Beam energy spread [GeV]
     3              5      ninp   =xpar( 5)  Input  unit number (not used)
     4             16      nout   =xpar( 6)  Output unit number
@@ -74,7 +74,7 @@ BeginX
 **    Coupling constants etc.
    30  137.035999139      alfinv=xpar(30)  Inverse of alpha_QED at q^2=0
    31    389.37966e3      gnanob=xpar(31)  GeV^(-2)  --> NanoBarn conversion
-   32   1.1663787e-5      Gfermi=xpar(32)  Fermi coupling ( 1.16639e-5  [GeV^(-2)])
+   32    1.16637e-05      Gfermi=xpar(32)  Fermi coupling ( 1.16639e-5  [GeV^(-2)])
 **    PHOTOS++ adding photons in tau decays in HEPMC3 event record
    35            1.0   KeyPhts =0 for off; =1 in non-leptonic; =2 in all decays
 ********************************************************************************
@@ -91,7 +91,7 @@ BeginX
 **     Minimum mass [GeV] for hadronization/showering
    51        0.200e0      HadMin=xpar(51)
 **
-   52        0.118e0      alfQCD=xpar(52)  alpha_QCD
+   52         0.1184      alfQCD=xpar(52)  alpha_QCD
 **
    53            1e0      KeyQCD=xpar(53)  Final state QCD factor ON/OFF, Default=1
 ********************************************************************************
@@ -145,10 +145,10 @@ BeginX
   501              1\\\\\\KeyZet=xpar(501)  default is 1\\\\\\\\\\\\\\\\\\\\\\\\
 *indx_______________ccccccccc0ccccccccc0ccccccccc0ccccccccc0ccccccccc0ccccccccc0
 ** Mass and width of Z-boson [GeV]
-  502      91.1876e0      MZ  =xpar(502)  PDG 1996
+  502        91.1876      MZ  =xpar(502)  PDG 1996
 **     sin(thetaW)**2 where thetaW is electroweak mixing angle
   503    .22276773e0      SwSq  =xpar(503) sin_squared of EW angle, from Dizet
-  504   2.50072032e0      GammZ =xpar(504) Z width, from Dizet
+  504         2.4952      GammZ =xpar(504) Z width, from Dizet
   505    80.358935e0      MW    =xpar(505) W mass,  from Dizet
   506   2.08825837e0      GammW =xpar(506) W width, from Dizet
   510          1e-60      MasPhot=xpar(510) photon mass, IR regulator 
@@ -215,7 +215,7 @@ BeginX
   563              2      3*Q   =3*charge
   564              1      2*T3L =2*Isospin for Left component
   565              0      2*helicity, 0 for unpolarized
-  566        175.0e0      mass [GeV] (170-190GeV in PDG)
+  566        172      mass [GeV] (170-190GeV in PDG)
   567          5.0e0      WtMax Maximum weight for rejection t-quark
 **568         0.99e0      auxiliary parameter vmaxGPS t-quark
   568          0.0e0      auxiliary parameter, MinMassCEEX = min. mass for CEEX
@@ -291,7 +291,7 @@ BeginX
 *indx_____data______ccccccccc0ccccccccc0ccccccccc0ccccccccc0ccccccccc0ccccccccc0
   801              1     Ibox=0,1, EW boxes off,on,    input for Dizet
   805        125.1e0      amh   =xpar(805) Higgs mass, input for Dizet
-  806        173.0e0      amtop =xpar(806) Top mass,   input for Dizet
+  806        172      amtop =xpar(806) Top mass,   input for Dizet
   808 128.86674175e0   alfinvMZ =xpar(808) alfQED(MZ), input for Dizet
   809    0.1201789e0   alfQCDMZ =xpar(809) alfQCD(MZ), input for Dizet
 *      DIZET flags NPAR(i)=NPAR(900+i)

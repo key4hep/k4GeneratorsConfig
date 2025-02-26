@@ -1,27 +1,34 @@
-(run){
- RANDOM_SEED 4711;
- BEAM_1 11;
- BEAM_2 -11;
- BEAM_ENERGY_1 45.5;
- BEAM_ENERGY_2 45.5;
- MODEL SM;
- PDF_LIBRARY None;
- EVENTS 10000;
+RANDOM_SEED: 4711
+BEAMS: [11, -11]
+BEAM_ENERGIES: 45.5
+MODEL: SM
+PDF_LIBRARY: None
+YFS_MODE: None
+EVENTS: 100
+
+ALPHAS(MZ): 0.1184
+GF: 1.16637e-05
+EVENT_OUTPUT: HepMC3_GenEvent[Photon91.0.hepmc3]
+EVENT_GENERATION_MODE: weighted
+EW_SCHEME: 3
+
+PARTICLE_DATA:
+  23: 
+    Mass: 91.1876
+    Width: 2.4952
+  6: 
+    Mass: 172
+    Width: 1.50833649
+  25: 
+    Mass: 125
+    Width: 0.00407
+  24: 
+    Width: 2.085
 
 
- MASS[23] 91.1876;
- WIDTH[23] 2.4952;
- EVENT_OUTPUT HepMC3_GenEvent[Photon91.0.hepmc3g];
- EVENT_GENERATION_MODE weighted;
- EW_SCHEME 3;
-}(run)
+PROCESSES:
+- 11 -11 -> 22 22:
+    Order: {QCD: 0, EW: 2}
 
-(processes){
-  Process 11 -11 -> 22 22;
-  Order (0,2);
-  End process;
-}(processes)
-
-(selector){
- PseudoRapidity 22 -2.02758942 2.02758942
-}(selector)
+SELECTORS:
+  - [Eta, 22, -2.02758942, 2.02758942]

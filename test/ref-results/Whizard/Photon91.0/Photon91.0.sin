@@ -1,11 +1,18 @@
-model = SM
+model = SM_CKM
 seed = 4711
 ?isr_handler = false
-process proc = e1, E1 => gamma
-n_events = 10000
+process proc = e1, E1 => gamma, gamma
+n_events = 100
 sqrts = 91.0
+alphas = 0.1184
+GF = 1.16637e-05
 mZ = 91.1876
 wZ = 2.4952
+mtop = 172
+wtop = 1.50833649
+mH = 125
+wH = 0.00407
+wW = 2.085
 sample_format = hepmc
 ?hepmc_output_cross_section = true
 ?write_raw = false
