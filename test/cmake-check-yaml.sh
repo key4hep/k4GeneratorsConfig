@@ -5,6 +5,7 @@ shopt -s expand_aliases
 source ../setup.sh
 
 EXAMPLEDIR="${PWD}/../examples"
+REFDIR="${PWD}/ref-results"
 
 OPTSTRING="d:h"
 while getopts ${OPTSTRING} opt; do
@@ -76,15 +77,15 @@ function processYAML() {
 }
 
 function checkOutputs() {
-    # for generator in */*; do
-    # if [[ -d "$generator" ]] || continue
-    echo "Checking $generator"
-    for outFile in "$PWD/$generator"/*/*; do
-        [[ -f "$outFile" ]] || continue
-    local fullpath="$(dirname "$outFile")"
-    local procname="$(basename "$fullpath")"
-        checkFile "$generator" "$procname" "$(basename "$outFile")"
-        # done
+    for generator in */*; do
+	[[ -d "$generator" ]] || continue
+	echo "Checking $generator"
+	for outFile in "$PWD/$generator"/*/*; do
+            [[ -f "$outFile" ]] || continue
+	    local fullpath="$(dirname "$outFile")"
+	    local procname="$(basename "$fullpath")"
+            checkFile "$generator" "$procname" "$(basename "$outFile")"
+	done
     done
 }
 
