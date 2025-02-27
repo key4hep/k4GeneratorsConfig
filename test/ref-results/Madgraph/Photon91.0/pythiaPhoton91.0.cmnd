@@ -1,4 +1,4 @@
 Main:timesAllowErrors = 5
 Main:WriteHepMC = on
 Beams:frameType = 4
-Main:numberOfEvents = 100
+Main:numberOfEvents = 10000
