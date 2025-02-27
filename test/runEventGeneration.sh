@@ -34,12 +34,11 @@ while getopts ${OPTSTRING} opt; do
   esac
 done
 
+# if the generator is not requested explicitely, we define a wildcard (=all)
 if [ -z $GENERATOR ]; then
-    echo $0 must be run with the argument -g GENERATORNAME
-    echo EXITING
-    exit 1
+    GENERATOR=*
+    echo DIRK MADE IT
 fi
-
 
 CWD=${PWD}
 REFDIR="${PWD}/ref-results"
