@@ -148,7 +148,11 @@ void WriterEDM4HEP::write_event(const GenEvent &evt)
   // add the weights
   for (auto weight: evt.weights()){
     evtHeader.addToWeights(weight);
-  }  
+  }
+  // the eventheader weight has to be set separately
+  if ( evt.weights().size() > 0 ) {
+    evtHeader.setWeight(evt.weights()[0]);
+  }
 
   // push to collection
   evtHeaderCollection.push_back(evtHeader);
