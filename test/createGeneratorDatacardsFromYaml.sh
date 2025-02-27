@@ -40,6 +40,13 @@ else
     # clean up the content if necessary
     rm -Rf ci-setups/*
 fi
+# only create the directory if it does not exist yet
+if [[ ! -d ${CWD}/output ]]; then
+   mkdir -p ${CWD}/output
+else
+    # clean up the content if necessary
+    rm -Rf ci-setups/*
+fi
 
 
 # only copy if the file does not exist yet:

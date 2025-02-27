@@ -7,19 +7,11 @@ source ../setup.sh
 
 # decode command line options
 
-OPTSTRING=":bhr"
-runEvgen="true"
+OPTSTRING=":hr"
 runReducedEvgen="false"
 generator="${1}"
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
-#    x)
-#      echo "Option -x was triggered, Argument: ${OPTARG}"
-#      ;;
-    b)
-      echo "Option -b was triggered, event generation step will not be run"
-      runEvgen="false"
-      ;;
     r)
       echo "Option -r was triggered, event generation step will be run only for one process per yaml file"
       runReducedEvgen="true"
@@ -67,14 +59,13 @@ function processRun() {
 }
 
 # STEP 3 now we can go through the .sh and run them
-if [[ $runEvgen = "true" ]]; then
-    counter=0
-    counterRan=0
-    for yamlDir in test-*; do
-	cd $yamlDir
-	echo $PWD is the current directory
-	firstProcessRead="false"
-	lastGenerator="murks"
+counter=0
+counterRan=0
+for yamlDir in test-*; do
+    cd $yamlDir
+    echo $PWD is the current directory
+    firstProcessRead="false"
+    lastGenerator="murks"
     file_pattern="*/${generator}/*/*.sh"
     if ls $file_pattern 1> /dev/null 2>&1; then
     	for aRunScript in ${file_pattern}; do
@@ -96,12 +87,10 @@ if [[ $runEvgen = "true" ]]; then
         counter=$((counter+1))    
         counterRan=$((counterRan+1))
     fi
-	cd ..
-    done
-    echo k4GeneratorsConfig::EvGen Summary
-    echo tried $counter generator runs
-    echo with  $counterRan successful executions
-
-fi
+    cd ..
+done
+echo k4GeneratorsConfig::EvGen Summary
+echo tried $counter generator runs
+echo with  $counterRan successful executions
 
 exit 0
