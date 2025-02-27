@@ -4,15 +4,20 @@ set -e
 shopt -s expand_aliases
 source ../setup.sh
 
-EXAMPLEDIR="${PWD}/../examples"
+YAMLDIR="${PWD}/../examples"
 
 OPTSTRING="d:h"
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
     d)
       echo "Option -d was triggered, Argument: ${OPTARG}"
-      EXAMPLEDIR="${OPTARG}"
-      echo Searching for yaml files in directory $EXAMPLEDIR
+      YAMLDIR="${OPTARG}"
+      echo Searching for yaml files in directory $YAMLDIR
+      ;;
+    f)
+      echo "Option -f was triggered, Argument: ${OPTARG}"
+      YAMLFILE="${OPTARG}"
+      echo only $YAMLFILE will be processed
       ;;
     h)
       echo "Arguments are:" 
@@ -35,10 +40,17 @@ else
     # clean up the content if necessary
     rm -Rf ci-setups/*
 fi
+# only create the directory if it does not exist yet
+if [[ ! -d ${CWD}/output ]]; then
+   mkdir -p ${CWD}/output
+else
+    # clean up the content if necessary
+    rm -Rf ci-setups/*
+fi
 
 
 # only copy if the file does not exist yet:
-for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
+for yamlFileWithPath in "$YAMLDIR"/*.yaml; do
     yamlFile="$(basename "$yamlFileWithPath")"
     if [[ ! -f ci-setups/"$yamlFile" ]]; then
 	echo copying $yamlFileWithPath to ci-setups
@@ -47,7 +59,7 @@ for yamlFileWithPath in "$EXAMPLEDIR"/*.yaml; do
 done
 
 # check whether ecms.dat files are available:
-for ecmsFileWithPath in "$EXAMPLEDIR"/"ecms"*.dat; do
+for ecmsFileWithPath in "$YAMLDIR"/"ecms"*.dat; do
     ecmsFile="$(basename "$ecmsFileWithPath")"
     if [[ -f "$ecmsFileWithPath" && ! -f ci-setups/"$ecmsFile" && "$ecmsFile" != "ecms.dat" ]]; then
 	echo copying $ecmsFileWithPath to ci-setups
@@ -67,44 +79,13 @@ function processYAML() {
     cd "test-$filename"
     echo "Processing file: $yamlFile"
     if [[ ! -f ../ecms"$filename".dat ]]; then
-	k4GeneratorsConfig "../$yamlFile" --nevts 100
+	k4GeneratorsConfig "../$yamlFile"
     else
 	k4GeneratorsConfig "../$yamlFile" --ecmsFile ../ecms"$filename".dat
     fi
-    checkOutputs
     cd ..
 }
 
-function checkOutputs() {
-    # for generator in */*; do
-    # if [[ -d "$generator" ]] || continue
-    echo "Checking $generator"
-    for outFile in "$PWD/$generator"/*/*; do
-        [[ -f "$outFile" ]] || continue
-    local fullpath="$(dirname "$outFile")"
-    local procname="$(basename "$fullpath")"
-        checkFile "$generator" "$procname" "$(basename "$outFile")"
-        # done
-    done
-}
-
-function checkFile() {
-    local generator="$1"
-    local refgenerator="$(basename "$generator")"
-    local procname="$2"
-    local outFile="$3"
-    if [[ -e "$REFDIR/$refgenerator/$procname/$outFile" ]]; then
-        if diff "$REFDIR/$refgenerator/$procname/$outFile" "$PWD/$generator/$procname/$outFile" &> /dev/null; then
-            echo "Process " $procname : "Files are identical for file" $outFile 
-        else
-            echo "Process " $procname "Files are different for file" $outFile 
-            diff "$REFDIR/$refgenerator/$procname/$outFile" "$PWD/$generator/$procname/$outFile"
-            exit 1
-        fi
-    else
-        echo "Did not find $outFile. Not checking!"
-    fi
-}
 
 for yamlFile in *.yaml; do
     processYAML "$yamlFile"

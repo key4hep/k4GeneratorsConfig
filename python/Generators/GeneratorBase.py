@@ -99,10 +99,23 @@ class GeneratorBase(abc.ABC):
             print("Datacard files and execution scripts not written for this generator")
             raise
         
-        self.procDB_settings = dict()
+        self.procDBparameters  = dict()
+        self.procDBparticles  = dict()
         if self.settings.get("usedefaults", True):
             self.procDB.execute()
-            self.procDB_settings = self.procDB.getDict()
+            self.procDBparameters  = self.procDB.getDictParameters()
+            self.procDBparticles   = self.procDB.getDictParticles()
+
+    def getModel(self):
+        theModel = ""
+        try:
+            theModel = self.getModelName(self.gen_settings['model'])
+        except:
+            theModel = self.getModelName(self.procinfo.get('model'))
+        return theModel
+            
+    def getModelName(self):
+        raise NotImplementedError("getModelName")
 
     def setDefaultModelParameters(self):
         self.ModelInputParams = []
@@ -174,10 +187,11 @@ class GeneratorBase(abc.ABC):
     def getGeneratorCommand(self,key,value):
         raise NotImplementedError("getGeneratorCommand")
 
-    def addOption2GeneratorDatacard(self,key,value):
+    def addOption2GeneratorDatacard(self,key,value,replace=True):
         # check if the key is already defined in the datacard, then we take the last one (TBC):
-        if key in self.__datacardContent:
-            self.removeOptionGeneratorDatacard(key)
+        if replace is True:
+            if key in self.__datacardContent:
+                self.removeOptionGeneratorDatacard(key)
         # format the line through in the generator specific format
         if value is None:
             line = self.getGeneratorCommand(key,"")
@@ -217,7 +231,7 @@ class GeneratorBase(abc.ABC):
                     # write to datacard
                     self.addOption2GeneratorDatacard(op_name, globalParam.value)
                     # now check and remove operators in procDB if present:
-                    if op_name in self.procDB_settings:
+                    if op_name in self.procDBparameters:
                         self.procDB.removeOption(op_name)
             else:
                 print(f"Warning::GeneratorBase::prepareParameters: {param} not found")
@@ -228,49 +242,78 @@ class GeneratorBase(abc.ABC):
     def getParameterOperator(self, name):
         raise NotImplementedError("getParameterOperator")
 
-    def prepareParticles(self,add2Datacard=True):
+    def prepareParticles(self,add2Datacard=True, writeParticleHeader=False):
         # three sources for the particles: YAML input, global and ProcDB
         # hierarchy: YAML superseeds global superseeds ProcDB
+        # create a local dictionary then deal with the writing:
+        particleCollection = dict()
+        # load the procDB first
+        for pdg in self.procDB.getDictParticles():
+            # create an empty entry
+            particleCollection[pdg] = dict()
+            particle =  self.procDB.getDictParticles()[pdg]
+            for prop in particle.keys():
+                particleCollection[pdg].update({prop.lower(): particle[prop]})
+                #particleCollection[pdg].update(particle[prop.lower()])
+
+        # now we overwrite with global
         particleParameterList = self.getModelParticlePropertyList()
-        # retrieve the particles from the input
-        for part in self.procinfo.get_data_particles():
-            # loop over all attributes
-            for attr in dir(part):
-                # make sure it's not a special attribute
-                if not callable(getattr(part, attr)) and not attr.startswith("__"):
-                    # now we know it's just a field name:
-                    prop = self.getParticleProperty(attr)
-                    if prop is not None:
-                        op_name = self.getParticleOperator(part,prop)
-                        # remove from the Standard=ProcDB settings if necessary
-                        if op_name in self.procDB_settings:
-                            self.procDB.removeOption(op_name)
-                        #remove from the ModelInputParams List:
-                        if [part.get('pdg_code'), attr] in particleParameterList:
-                            particleParameterList.remove([part.get('pdg_code'), attr])
-                        value = getattr(part, attr)
-                        if add2Datacard is True:
-                            self.addOption2GeneratorDatacard(op_name, value)
-                        else:
-                            self.replaceOptionInGeneratorDatacard(op_name,value)
-        # now either the global list is empty or we have to add the remaining particles
         for item in particleParameterList:
-            part     = item[0]
-            particle = ParticleClass.get_info(part)
-            op_name = self.getParticleOperator(particle,self.getParticleProperty(item[1]))
-            if item[1] == "mass":
+            pdg      = item[0]
+            prop     = item[1]
+            value    = 0
+            particle = ParticleClass.get_info(pdg)
+            if prop == "mass":
                 value = particle.mass
-            elif item[1] == "width":
+            elif prop == "width":
                 value = particle.width
-            if add2Datacard is True:
-                self.addOption2GeneratorDatacard(op_name, value)
-            else:
-                self.replaceOptionInGeneratorDatacard(op_name,value)
+            # need to convert to string for the keys
+            pdgstr = str(pdg)
+            # add/overwrite
+            try:
+                particle = particleCollection[pdgstr]
+                particle[prop] = value
+            except:
+                particleCollection[pdgstr] = { prop : value }
+
+        # now as last step we overwrite with the yaml if present:
+        # retrieve the particles from the input
+        for yamlParticle in self.procinfo.get_data_particles():
+            # loop over all attributes
+            for attr in dir(yamlParticle):
+                # make sure it's not a special attribute
+                if not callable(getattr(yamlParticle, attr)) and not attr.startswith("__"):
+                    # now we know it's a field name allowed by the generator:
+                    if self.getParticleProperty(attr) is not None:
+                        value  = getattr(yamlParticle, attr)
+                        pdgstr = str(getattr(yamlParticle, 'pdg_code'))
+                        # add/overwrite
+                        try:
+                            particle = particleCollection[pdgstr]
+                            particle[attr] = value
+                        except:
+                            particleCollection[pdgstr] = { attr : value }
+
+        # the list is complete, so we can loop over it to add it to the datacard
+        for pdg in particleCollection.keys():
+            particle = particleCollection[pdg]
+            if writeParticleHeader is True and add2Datacard is True:
+                self.addOption2GeneratorDatacard(self.getParticleOperator(pdg,None), None,replace=False)
+            for attr in particle:
+                value = particle[attr]
+                prop  = self.getParticleProperty(attr)
+                # writing out
+                if prop is not None:
+                    command = self.getParticleOperator(pdg,prop)
+                    if add2Datacard is True:
+                        self.addOption2GeneratorDatacard(command, value,replace=False)
+                    else:
+                        self.replaceOptionInGeneratorDatacard(command,value)
                 
     def getParticleProperty(self, attr):
         raise NotImplementedError("getParticleProperty")
 
-    def getParticleOperator(self, part, prop):
+    def getParticleOperator(self, pdg, prop):
         raise NotImplementedError("getParticleOperator")
 
     def add2Key4hepScript(self,content):

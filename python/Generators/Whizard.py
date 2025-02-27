@@ -32,14 +32,8 @@ class Whizard(GeneratorBase):
         self.finalstate = ", ".join(
             map(self.pdg_to_whizard, fsParticles)
         )
-        theModel = ""
-        try:
-            if "model" in self.gen_settings:
-                theModel = self.getModelName(self.gen_settings["model"])
-        except:
-            theModel = self.getModelName(self.procinfo.get('model'))
 
-        self.addOption2GeneratorDatacard("model", theModel)
+        self.addOption2GeneratorDatacard("model", self.getModel())
         self.addOption2GeneratorDatacard("seed", self.procinfo.get_rndmSeed())
 
         if self.procinfo.get("isrmode"):
@@ -218,8 +212,8 @@ class Whizard(GeneratorBase):
         modelDict = { 'sm' : 'SM_CKM'}
         model = model.lower()
         if model not in modelDict.keys():
-            print(f"Warning::Whizard: model {model} has no translation in Whizard Model Dictionary, using SM_CKM")
-            return "SM_CKM"
+            print(f"Warning::Whizard: model {model} has no translation in Whizard Model Dictionary, using {model}")
+            return model
         return modelDict[model]
 
     def getParameterLabel(self, param):
@@ -246,8 +240,8 @@ class Whizard(GeneratorBase):
             name = "WIDTH"
         return name
 
-    def getParticleOperator(self, part, prop):
-        pname = self.whizard_MW_name(part.get("pdg_code"))
+    def getParticleOperator(self, pdg, prop):
+        pname = self.whizard_MW_name(int(pdg))
         if prop == "MASS":
             return f"m{pname}"
         elif prop == "WIDTH":

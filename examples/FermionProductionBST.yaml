@@ -7,7 +7,7 @@ OutDir: Run-Cards
 Events: 10000
 EventMode: unweighted
 
-SqrtS: 240.
+SqrtS: 250.
 Model: SM
 ISRMode: 1
 

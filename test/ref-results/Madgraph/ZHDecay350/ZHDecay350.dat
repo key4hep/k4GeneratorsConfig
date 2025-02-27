@@ -15,25 +15,30 @@
 #*                                                          *
 #*               Command File for MadGraph 5                *
 #*                                                          *
-#*     run as ./bin/mg5  filename                           *
+#*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
 #************************************************************"
 import model sm-lepton_masses
 generate e- e+ > Z H  , Z > ta- ta+ , H > mu- mu+ 
 output Output
-launch
+launch 
 set iseed 42
 set EBEAM 175.0
-set MH 125
-set WH 0.00407
+set aS 0.1184
+set GF 1.16637e-05
+set aEWM1 132.507
 set MZ 91.1876
 set WZ 2.4952
-set MW 80.379
+set Mt 172
+set Wt 1.50833649
+set MH 125
+set WH 0.00407
 set WW 2.085
+set MW 80.379
 set nevents 10000
-set pt_min_pdg 15: 40
-set pt_max_pdg 15: 175
-set pt_min_pdg 15: 40
-set pt_max_pdg 15: 175
-set pt_min_pdg 13: 40
-set pt_max_pdg 13: 175
+set pt_min_pdg {15: 40}
+set pt_max_pdg {15: 175}
+set pt_min_pdg {15: 40}
+set pt_max_pdg {15: 175}
+set pt_min_pdg {13: 40}
+set pt_max_pdg {13: 175}

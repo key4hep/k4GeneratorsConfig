@@ -17,7 +17,7 @@ ISRMode: 0
 Processes:
   ZHDecay250:
      Final: [23, 25]
-     Order: [4,0]
+     Order: [2,0]
      RandomSeed: 42
      SqrtS: 250 
      Decay: 
@@ -29,7 +29,7 @@ Processes:
         - -13
   ZHDecay350:
      Final: [23, 25]
-     Order: [4,0]
+     Order: [2,0]
      RandomSeed: 42
      SqrtS: 350 
      Decay: 
@@ -49,10 +49,9 @@ Whizard:
 
 Sherpa:
   # THESE settings key must match Sherpa!!
-  Run:
-    MODEL: HEFT
-    MASSIVE[13]: 1
-    ME_SIGNAL_GENERATOR: Amegic
+  MODEL: HEFT
+  #MASSIVE[13]: 1
+  ME_SIGNAL_GENERATOR: Amegic
 
 ParticleData:
   25:

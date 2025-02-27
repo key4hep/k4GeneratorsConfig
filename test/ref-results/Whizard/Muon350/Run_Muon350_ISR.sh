@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 if [ -z "${KEY4HEP_STACK}" ]; then
-    source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
+    source /cvmfs/sw.hsf.org/key4hep/setup.sh
 fi
 
 whizard Muon350_ISR.sin

@@ -2,7 +2,7 @@ model = SM
 seed = 4714
 ?isr_handler = false
 process proc = e1, E1 => S, s
-n_events = 100000
+n_events = 10000
 sqrts = 91.2
 mZ = 91.1876
 wZ = 2.4952

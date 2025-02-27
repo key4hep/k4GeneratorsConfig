@@ -15,20 +15,27 @@
 #*                                                          *
 #*               Command File for MadGraph 5                *
 #*                                                          *
-#*     run as ./bin/mg5  filename                           *
+#*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
 #************************************************************"
 import model sm
 generate e- e+ > mu- mu+ 
 output Output
-launch
+launch 
 set iseed 4711
-set EBEAM 120.0
+set EBEAM 125.0
+set aS 0.1184
+set GF 1.16637e-05
+set aEWM1 132.507
 set MZ 91.1876
 set WZ 2.4952
+set Mt 172
+set Wt 1.50833649
+set MH 125
+set WH 0.00407
+set WW 2.085
 set nevents 10000
 set pdlabel cepc240ll
 set lpp1 3
 set lpp2 -3
-
 set pt_min_pdg {13: 0 }

@@ -20,7 +20,9 @@ class Madgraph(GeneratorBase):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
         #self.addModelParameter('alphaEMMZM1')
-        self.addModelParameter('alphaEMM1')
+        #self.addModelParameter('alphaEMM1')
+        # for a coherent setting we need to use a derived value for alphaQED
+        self.addModelParameter('alphaEMEWSchemeM1')
         #self.addModelParticleProperty(pdg_code=23, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
@@ -32,13 +34,7 @@ class Madgraph(GeneratorBase):
         self.fill_key4hepScript()
 
     def fill_datacard(self):
-        theModel = ""
-        try:
-            if "model" in self.gen_settings:
-                theModel = self.getModelName(self.gen_settings["model"])
-        except:
-            theModel = self.getModelName(self.procinfo.get("model"))
-        self.addOption2GeneratorDatacard("import model",theModel)
+        self.addOption2GeneratorDatacard("import model",self.getModel())
         # particles
         self.mg_particles = list(
             map(self.pdg_to_madgraph, self.procinfo.get_particles())
@@ -283,15 +279,15 @@ class Madgraph(GeneratorBase):
         modelDict = { 'sm' : 'sm'}
         model = model.lower()
         if model not in modelDict.keys():
-            print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using sm")
-            return "sm"
+            print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using {model}")
+            return model
         return modelDict[model]
 
     def pdg_to_madgraph(self, particle):
         return particle.get("name")
 
     def getParameterLabel(self, param):
-        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' }
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' , 'alphaEMEWSchemeM1' : 'aEWM1'}
         # alphas could be SigmaProcess:alphaSvalue 
         if param not in parameterDict.keys():
             print(f"Warning::Madgraph: parameter {param} has no translation in Madgraph Parameter Dictionary")
@@ -311,8 +307,8 @@ class Madgraph(GeneratorBase):
             return "W"
         return None
 
-    def getParticleOperator(self, part, prop):
-        particleName = part.get("name").replace("+", "").replace("-", "")
+    def getParticleOperator(self, pdg, prop):
+        particleName = part.name_from_pdg(int(pdg)).replace("+", "").replace("-", "")
         return f"set {prop}{particleName}"
 
     def add_header(self):

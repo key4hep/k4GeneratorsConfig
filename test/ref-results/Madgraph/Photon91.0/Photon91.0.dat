@@ -15,17 +15,25 @@
 #*                                                          *
 #*               Command File for MadGraph 5                *
 #*                                                          *
-#*     run as ./bin/mg5  filename                           *
+#*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
 #************************************************************"
 import model sm
 generate e- e+ > a a 
 output Output
-launch
+launch 
 set iseed 4711
 set EBEAM 45.5
+set aS 0.1184
+set GF 1.16637e-05
+set aEWM1 132.507
 set MZ 91.1876
 set WZ 2.4952
+set Mt 172
+set Wt 1.50833649
+set MH 125
+set WH 0.00407
+set WW 2.085
 set nevents 10000
-set eta_min_pdg 22: -2.02758942
-set eta_max_pdg 22: 2.02758942
+set eta_min_pdg {22: -2.02758942}
+set eta_max_pdg {22: 2.02758942}

@@ -1,36 +1,35 @@
-(run){
- RANDOM_SEED 42;
- BEAM_1 11;
- BEAM_2 -11;
- BEAM_ENERGY_1 175.0;
- BEAM_ENERGY_2 175.0;
- MODEL HEFT;
- PDF_LIBRARY None;
- EVENTS 10000;
+RANDOM_SEED: 42
+BEAMS: [11, -11]
+BEAM_ENERGIES: 175.0
+MODEL: SM
+PDF_LIBRARY: None
+YFS_MODE: None
+EVENTS: 10000
+
+ALPHAS(MZ): 0.1184
+GF: 1.16637e-05
+EVENT_OUTPUT: HepMC3_GenEvent[ZHDecay350.hepmc3]
+EW_SCHEME: 3
+EVENT_GENERATION_MODE: unweighted
+
+PROCESSES:
+- 11 -11 -> 23 25:
+    Order: {QCD: 0, EW: 2}
+
+PARTICLE_DATA:
+  23:
+    Width: 0.
+  25:
+    Width: 0.
 
 
- MASS[25] 125;
- WIDTH[25] 0.00407;
- MASS[23] 91.1876;
- WIDTH[23] 2.4952;
- MASS[24] 80.379;
- WIDTH[24] 2.085;
- EVENT_OUTPUT HepMC3_GenEvent[ZHDecay350.hepmc3g];
- EVENT_GENERATION_MODE unweighted;
- MASSIVE[13] 1;
- ME_SIGNAL_GENERATOR Amegic;
-}(run)
+HARD_DECAYS:
+  Enabled: true
+  Channels:
+    23 -> 15 -15 : {Status: 2}
+    25 -> 13 -13 : {Status: 2}
 
-(processes){
-  Process 11 -11 -> 23[a] 25[b] ;
-  Decay 23[a]  -> 15 -15 
-  Decay 25[b]  -> 13 -13 
-  Order (0,4);
-  End process;
-}(processes)
-
-(selector){
- PT 15 40 175
- PT 13 40 175
- PT -13 40 175
-}(selector)
+SELECTORS:
+  - [PT, 15, 40, 175]
+  - [PT, 13, 40, 175]
+  - [PT, -13, 40, 175]

@@ -208,8 +208,8 @@ class Pythia(GeneratorBase):
             for c in child:
                 decays += f"{c} "
             decays += "\n"
-        self.add2Datacard("\n")
-        self.add2Datacard(decays)
+        self.add2GeneratorDatacard("\n")
+        self.add2GeneratorDatacard(decays)
 
     def fill_key4hepScript(self):
         key4hepRun = ""
@@ -249,6 +249,6 @@ class Pythia(GeneratorBase):
             name = "mWidth"
         return name
 
-    def getParticleOperator(self, part, prop):
-        return f"{part.get('pdg_code')}:{prop}"
+    def getParticleOperator(self, pdg, prop):
+        return f"{pdg}:{prop}"
 
