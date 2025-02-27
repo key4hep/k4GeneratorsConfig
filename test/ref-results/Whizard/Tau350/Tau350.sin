@@ -2,7 +2,7 @@ model = SM_CKM
 seed = 4716
 ?isr_handler = false
 process proc = e1, E1 => e3, E3
-n_events = 100
+n_events = 10000
 sqrts = 350
 alphas = 0.1184
 GF = 1.16637e-05

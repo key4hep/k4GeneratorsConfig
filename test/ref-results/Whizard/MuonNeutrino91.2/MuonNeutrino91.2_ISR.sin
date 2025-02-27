@@ -4,7 +4,7 @@ seed = 4712
 beams = e1, E1 => isr,isr
 isr_mass = 0.000511
 process proc = e1, E1 => n2, N2
-n_events = 100
+n_events = 10000
 sqrts = 91.2
 alphas = 0.1184
 GF = 1.16637e-05

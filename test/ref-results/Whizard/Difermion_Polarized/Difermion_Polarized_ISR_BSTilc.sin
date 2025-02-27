@@ -8,7 +8,7 @@ $circe2_file= "250_SetA_ee024.circe"
 beams_pol_density = @(-1), @(1)
 beams_pol_fraction = 0.8, 0.3
 process proc = e1, E1 => e2, E2
-n_events = 100
+n_events = 10000
 sqrts = 250
 alphas = 0.1184
 GF = 1.16637e-05

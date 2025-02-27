@@ -2,7 +2,7 @@ fs gg
 seed 4711
 ord born
 EWKc off
-nev 100
+nev 10000
 ecms 91.0
 store yes
 path .

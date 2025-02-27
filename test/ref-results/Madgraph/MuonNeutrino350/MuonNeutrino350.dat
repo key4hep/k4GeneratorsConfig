@@ -34,5 +34,5 @@ set Wt 1.50833649
 set MH 125
 set WH 0.00407
 set WW 2.085
-set nevents 100
+set nevents 10000
 set pt_min_pdg {14: 0 }

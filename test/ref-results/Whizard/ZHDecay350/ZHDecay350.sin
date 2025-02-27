@@ -2,7 +2,7 @@ model = sm_higgs
 seed = 42
 ?isr_handler = false
 process proc = e1, E1 => Z, H
-n_events = 100
+n_events = 10000
 sqrts = 350
 process decayZ = Z => e3, E3
 unstable Z (decayZ)

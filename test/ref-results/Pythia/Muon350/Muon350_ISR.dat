@@ -6,7 +6,7 @@ Beams:idB = -11
 PartonLevel:ISR = on
 PDF:lepton = on
 PartonLevel:FSR = off
-Main:numberOfEvents = 100
+Main:numberOfEvents = 10000
 
 ParticleData:alphaSvalueMRun = 0.1184
 StandardModel:alphaEMmZ = 0.007818608287724784
