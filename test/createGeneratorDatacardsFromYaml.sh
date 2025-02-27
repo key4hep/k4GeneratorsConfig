@@ -79,7 +79,7 @@ function processYAML() {
     cd "test-$filename"
     echo "Processing file: $yamlFile"
     if [[ ! -f ../ecms"$filename".dat ]]; then
-	k4GeneratorsConfig "../$yamlFile" --nevts 100
+	k4GeneratorsConfig "../$yamlFile"
     else
 	k4GeneratorsConfig "../$yamlFile" --ecmsFile ../ecms"$filename".dat
     fi

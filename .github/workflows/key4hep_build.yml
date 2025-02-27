@@ -26,7 +26,4 @@ jobs:
         name: Cross_section_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
           test/xsectionSummary.dat
-          test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Muon350_ISR.dat
-          test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Run_Muon350_ISR.sh
-          test/ci-setups/test-FermionProduction/Run-Cards/Sherpa/Muon350/Muon350_ISR.hepmc3
           test/output/*
