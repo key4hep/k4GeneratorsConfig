@@ -7,14 +7,18 @@ source ../setup.sh
 
 # decode command line options
 
-OPTSTRING=":hr"
+OPTSTRING="g:hr"
 runReducedEvgen="false"
-generator="${1}"
+GENERATOR=""
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
     r)
       echo "Option -r was triggered, event generation step will be run only for one process per yaml file"
       runReducedEvgen="true"
+      ;;
+    g)
+      echo "Option -g was triggered, event generation step will be run only ${optarg}"
+      GENERATOR="$optarg"
       ;;
     h)
       echo "Arguments are:" 
@@ -66,7 +70,7 @@ for yamlDir in test-*; do
     echo $PWD is the current directory
     firstProcessRead="false"
     lastGenerator="murks"
-    file_pattern="*/${generator}/*/*.sh"
+    file_pattern="*/${GENERATOR}/*/*.sh"
     if ls $file_pattern 1> /dev/null 2>&1; then
     	for aRunScript in ${file_pattern}; do
     	    proc="$(dirname "$aRunScript")"
