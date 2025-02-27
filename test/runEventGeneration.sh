@@ -17,13 +17,13 @@ while getopts ${OPTSTRING} opt; do
       runReducedEvgen="true"
       ;;
     g)
-      echo "Option -g was triggered, event generation step will be run only ${optarg}"
-      GENERATOR="$optarg"
+      echo "Option -g was triggered, event generation step will be run only for ${OPTARG}"
+      GENERATOR="$OPTARG"
       ;;
     h)
       echo "Arguments are:" 
       echo "-h for help"
-      echo "-b to block the event generation step fully"
+      echo "-g GENERATORNAME only run this generator"
       echo "-r to reduce the number of event generation steps to 1 per yaml file"
       exit 0
       ;;
@@ -33,6 +33,12 @@ while getopts ${OPTSTRING} opt; do
       ;;
   esac
 done
+
+if [ -z $GENERATOR ]; then
+    echo $0 must be run with the argument -g GENERATORNAME
+    echo EXITING
+    exit 1
+fi
 
 
 CWD=${PWD}
