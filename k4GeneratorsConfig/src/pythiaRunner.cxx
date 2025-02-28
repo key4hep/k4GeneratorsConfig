@@ -88,6 +88,7 @@ int main(int argc, char** argv) {
 
     // Generate events. Quit if many failures.
     if (!pythia.next()) {
+
       if (++iAbort < nAbort) continue;
       cout << " Event generation aborted prematurely, owing to error!\n";
       break;
