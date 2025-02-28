@@ -7,15 +7,10 @@ source ../setup.sh
 
 # decode command line options
 
-OPTSTRING="g:hr"
-runReducedEvgen="false"
+OPTSTRING="g:h"
 GENERATOR=""
 while getopts ${OPTSTRING} opt; do
   case ${opt} in
-    r)
-      echo "Option -r was triggered, event generation step will be run only for one process per yaml file"
-      runReducedEvgen="true"
-      ;;
     g)
       echo "Option -g was triggered, event generation step will be run only for ${OPTARG}"
       GENERATOR="$OPTARG"
@@ -24,7 +19,6 @@ while getopts ${OPTSTRING} opt; do
       echo "Arguments are:" 
       echo "-h for help"
       echo "-g GENERATORNAME only run this generator"
-      echo "-r to reduce the number of event generation steps to 1 per yaml file"
       exit 0
       ;;
     ?)
@@ -37,7 +31,6 @@ done
 # if the generator is not requested explicitely, we define a wildcard (=all)
 if [ -z $GENERATOR ]; then
     GENERATOR=*
-    echo DIRK MADE IT
 fi
 
 CWD=${PWD}
@@ -59,7 +52,7 @@ function processRun() {
     k4ConfigRanGen=0
     ./$runfile
     if [[ $? -eq 0 ]]; then
-	echo k4GeneratorsConfig::Event generation succssful for $runfile in directory $thepath
+	echo k4GeneratorsConfig::Event generation successful for $runfile in directory $thepath
 	k4ConfigRanGen=1
     else
 	k4ConfigRanGen=0
@@ -73,18 +66,11 @@ counterRan=0
 for yamlDir in test-*; do
     cd $yamlDir
     echo $PWD is the current directory
-    firstProcessRead="false"
-    lastGenerator="murks"
     file_pattern="*/${GENERATOR}/*/*.sh"
     if ls $file_pattern 1> /dev/null 2>&1; then
     	for aRunScript in ${file_pattern}; do
     	    proc="$(dirname "$aRunScript")"
     	    generatorWithPath="$(dirname "$proc")"
-    	    if [[ $runReducedEvgen = "true" && $firstProcessRead = "true" && $generatorWithPath = "$lastGenerator" ]]; then
-    		continue
-    	    fi
-    	    firstProcessRead="true"
-    	    lastGenerator=$generatorWithPath
     	    if [[ $k4ConfigRanGen -eq 1 ]]; then
     		counterRan=$((counterRan+1))
     	    fi
