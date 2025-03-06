@@ -43,7 +43,7 @@ int main(int argc, char** argv)
   xsecColl->Write2Root(fileRoot);
   // if there is a failure:
   if ( xsecColl->NbOfFailures() != 0 ){
-    std::cout << xsecColl->NbOfFailures() << "Runs failed out of " << xsecColl->NbOfFailures() + xsecColl->NbOfSuccesses()<< std::endl;
+    std::cout << xsecColl->NbOfFailures() << "/" << xsecColl->NbOfFailures() + xsecColl->NbOfSuccesses() << " Runs failed" << std::endl;
     exit(1);
   }
   // delete the pointer
