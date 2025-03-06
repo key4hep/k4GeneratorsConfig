@@ -24,7 +24,8 @@ class xsectionCollection {
 
  private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;
-
+  unsigned int m_invalidCounter;
+  
 };
 }
 

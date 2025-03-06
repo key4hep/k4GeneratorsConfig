@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sys/stat.h>
 
-k4GeneratorsConfig::xsectionCollection::xsectionCollection()
+k4GeneratorsConfig::xsectionCollection::xsectionCollection():m_invalidCounter(0)
 {
 
 }
@@ -13,12 +13,14 @@ k4GeneratorsConfig::xsectionCollection::xsectionCollection(const xsectionCollect
 {
   if ( this != &theOriginal ){
     m_xsectionCollection = theOriginal.m_xsectionCollection;
+    m_invalidCounter     = theOriginal.m_invalidCounter;
   }
 }
 k4GeneratorsConfig::xsectionCollection& k4GeneratorsConfig::xsectionCollection::operator=(const xsectionCollection& theOriginal)
 {
   if ( this != &theOriginal ){
     m_xsectionCollection = theOriginal.m_xsectionCollection;
+    m_invalidCounter     = theOriginal.m_invalidCounter;
   }
 
   return *this;
@@ -64,6 +66,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 	      xsec->setGenerator(generatorsPath.filename().string());
 	    std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
 	    m_xsectionCollection.push_back(*xsec);
+	    if ( !xsec->isValid() ) m_invalidCounter++;
 	    delete xsec;
 	  }
 	}
@@ -158,5 +161,7 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
 	   << std::setw(8)  << std::left << xsec.XsectionError() << " pb" << std::endl;
   }
   output << std::endl;
+  // last thing the invalids
+  output << "Number of invalid runs: " << m_invalidCounter << std::endl;
 
 }

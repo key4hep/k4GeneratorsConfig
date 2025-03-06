@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
       }
 
       if (++iAbort < nAbort) continue;
-      cout << " Event generation aborted prematurely, owing to error!\n";
+      cout << " Event generation aborted prematurely at event " << iEvent << " owing to error!\n";
       break;
     }
     // event was ok, write to hepmc file
