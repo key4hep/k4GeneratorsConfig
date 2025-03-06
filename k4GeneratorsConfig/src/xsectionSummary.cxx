@@ -42,7 +42,7 @@ int main(int argc, char** argv)
   // write to root
   xsecColl->Write2Root(fileRoot);
   // if there is a failure:
-  if ( xsecColl->NbOfFailures() == 0 ){
+  if ( xsecColl->NbOfFailures() != 0 ){
     std::cout << xsecColl->NbOfFailures() << "Runs failed out of " << xsecColl->NbOfFailures() + xsecColl->NbOfSuccesses()<< std::endl;
     exit(1);
   }
