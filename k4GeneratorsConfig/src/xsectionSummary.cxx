@@ -40,7 +40,10 @@ int main(int argc, char** argv)
   std::ostream &output = outFile;
   xsecColl->PrintSummary(output);
   // write to root
-  xsecColl->Write2Root(fileRoot);  
+  xsecColl->Write2Root(fileRoot);
+  // if there is a failure:
+  if ( xsecColl->NbOfFailures() == 0 )
+    exit(1);
   // delete the pointer
   delete xsecColl; xsecColl=0;
 }
