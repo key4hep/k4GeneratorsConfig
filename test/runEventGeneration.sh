@@ -34,14 +34,10 @@ if [ -z $GENERATOR ]; then
 fi
 
 CWD=${PWD}
-REFDIR="${PWD}/ref-results"
-EXAMPLEDIR="${PWD}/../examples"
 cd ci-setups
 
-# STEP 2: run the generators
-
+# run a generator: argument is a pathname
 function processRun() {
-    isOK=0
     topDir=${PWD} 
     thepath="$(dirname "$1")"
     runfile="$(basename "$1")"
@@ -49,43 +45,23 @@ function processRun() {
     # move to the directory where the script is located
     cd $thepath
     # run the script
-    k4ConfigRanGen=0
     ./$runfile
     if [[ $? -eq 0 ]]; then
 	echo k4GeneratorsConfig::Event generation successful for $runfile in directory $thepath
-	k4ConfigRanGen=1
-    else
-	k4ConfigRanGen=0
     fi
     cd $topDir
 }
 
-# STEP 3 now we can go through the .sh and run them
-counter=0
-counterRan=0
+# loop through all directors to run all files
 for yamlDir in test-*; do
     cd $yamlDir
-    echo $PWD is the current directory
     file_pattern="*/${GENERATOR}/*/*.sh"
     if ls $file_pattern 1> /dev/null 2>&1; then
     	for aRunScript in ${file_pattern}; do
-    	    proc="$(dirname "$aRunScript")"
-    	    generatorWithPath="$(dirname "$proc")"
-    	    if [[ $k4ConfigRanGen -eq 1 ]]; then
-    		counterRan=$((counterRan+1))
-    	    fi
-    	    counter=$((counter+1))
     	    processRun "$aRunScript"
     	done
-    else
-        echo "No executables for this generator, continuing"
-        counter=$((counter+1))    
-        counterRan=$((counterRan+1))
     fi
     cd ..
 done
-echo k4GeneratorsConfig::EvGen Summary
-echo tried $counter generator runs
-echo with  $counterRan successful executions
 
 exit 0
