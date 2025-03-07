@@ -19,7 +19,7 @@
 #*                                                          *
 #************************************************************"
 import model sm-lepton_masses
-generate e- e+ > Z H  , Z > ta- ta+ , H > mu- mu+ 
+generate e- e+ > Z H  , Z > mu- mu+ , H > b b~ 
 output Output
 launch 
 set iseed 42

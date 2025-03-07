@@ -1,12 +1,12 @@
-model = sm_higgs
+model = SM_CKM
 seed = 42
 ?isr_handler = false
 process proc = e1, E1 => Z, H
 n_events = 10000
 sqrts = 350
-process decayZ = Z => e3, E3
+process decayZ = Z => e2, E2
 unstable Z (decayZ)
-process decayH = H => e2, E2
+process decayH = H => B, b
 unstable H (decayH)
 alphas = 0.1184
 GF = 1.16637e-05
