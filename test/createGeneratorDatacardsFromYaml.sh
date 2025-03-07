@@ -45,7 +45,7 @@ if [[ ! -d ${CWD}/output ]]; then
    mkdir -p ${CWD}/output
 else
     # clean up the content if necessary
-    rm -Rf ci-setups/*
+    rm -Rf output/*
 fi
 
 
