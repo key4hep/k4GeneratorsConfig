@@ -12,11 +12,11 @@ Model: SM
 ISRMode: 1
 
 Processes:
-  Muon240:
+  Muon250:
      Final: [13, -13]
      Order: [2,0]
      ISRmode: 1
-     Beamstrahlung: CEPC
+     Beamstrahlung: ILC
 
 
 ParticleData:
