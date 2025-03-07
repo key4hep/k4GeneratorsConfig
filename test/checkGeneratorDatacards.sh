@@ -44,6 +44,9 @@ function checkOutputs() {
 	    local procname="$(basename "$fullpath")"
             checkFile "$generator" "$procname" "$(basename "$outFile")"
 	    # copy the files to the output
+     	    echo File to be copied: $outFile
+	echo Destination of copy: "${CWD}"/output/"$generator"/"$procname"/"$(basename "$outFile")"
+        echo CWD is: ${CWD}
   	    cp "$outFile" "${CWD}"/output/"$generator"/"$procname"/"$(basename "$outFile")"
 	done
     done
