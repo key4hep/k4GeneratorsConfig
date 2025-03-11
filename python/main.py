@@ -149,7 +149,8 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
     # now we read the global settings
     try:
-        parameterSetsFile = os.path.dirname(__file__)+"/"+paramFileName
+        # make sure that we follow a symlink to the real location of the parametersets should replace that by share?
+        parameterSetsFile = os.path.dirname(os.path.realpath(__file__))+"/"+paramFileName
         parameterSet = Settings.ParameterSets(parameterSetsFile, paramTag)
     except FileNotFoundError as e:
         print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
