@@ -401,11 +401,11 @@ class GeneratorBase(abc.ABC):
         key4hep_config += (
             '        echo "variable K4GenBuildDir was not defined using directory ${K4GenBuildDir} for the executables"\n'
         )
-        key4hep_config += "    else\n\n"
+        key4hep_config += "    else\n"
         key4hep_config += (
-            '        echo "using directory ${K4GenBuildDir} for the executables"\n'
+            '        echo "k4GeneratorsConfig:: using directory ${K4GenBuildDir} for the executables"\n'
         )
-        key4hep_config += "    fi\n\n"
+        key4hep_config += "    fi\n"
         key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)
