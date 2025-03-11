@@ -393,6 +393,19 @@ class GeneratorBase(abc.ABC):
         key4hep_config += (
             f"    source /cvmfs/sw{nightlies}.hsf.org/key4hep/setup.sh{releaseDate}\n"
         )
+        # if KEY4HEP was not setup, we need to point the scripts to the release
+        key4hep_config += '    if [ -z "${K4GenBuildDir}" ]; then\n'
+        key4hep_config += (
+            '        export K4GenBuildDir=${K4GENERATORSCONFIG}/../../\n'
+        )
+        key4hep_config += (
+            '        echo "variable K4GenBuildDir was not defined using directory ${K4GenBuildDir} for the executables"\n'
+        )
+        key4hep_config += "    else\n\n"
+        key4hep_config += (
+            '        echo "using directory ${K4GenBuildDir} for the executables"\n'
+        )
+        key4hep_config += "    fi\n\n"
         key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)

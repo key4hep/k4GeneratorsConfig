@@ -269,6 +269,7 @@ class Madgraph(GeneratorBase):
     def fill_PythiaCMND(self):
         # append the analysis to the content
         content  = "Main:timesAllowErrors = 5\n"
+        content += "Check:epTolErr = 0.01\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
         content += "Main:numberOfEvents = {0}\n".format(self.procinfo.get("events"))
