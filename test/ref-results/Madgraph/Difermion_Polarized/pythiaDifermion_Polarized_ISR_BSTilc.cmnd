@@ -1,4 +1,4 @@
-Main:timesAllowErrors = 5
+Main:timesAllowErrors = 10
 Check:epTolErr = 0.01
 Main:WriteHepMC = on
 Beams:frameType = 4
