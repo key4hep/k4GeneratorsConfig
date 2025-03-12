@@ -236,6 +236,9 @@ class ParameterSets:
 
     def __init__(self, file, tag):
         self.file = file
+        # if it's the default, overwrite the choice
+        if self.file is None:
+            self.file = os.path.dirname(os.path.realpath(__file__))+"/ParameterSets.yaml"
         if not os.path.isfile(self.file):
             raise FileNotFoundError(self.file)
         else:
