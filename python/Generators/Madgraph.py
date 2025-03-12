@@ -59,7 +59,7 @@ class Madgraph(GeneratorBase):
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
 
-        self.addOption2GeneratorDatacard("set nevents", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.get("events")*1.01))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -268,7 +268,9 @@ class Madgraph(GeneratorBase):
 
     def fill_PythiaCMND(self):
         # append the analysis to the content
-        content  = "Main:timesAllowErrors = 5\n"
+        # for the errors allow 1 permil failures
+        allowedErrors = int(self.procinfo.get("events")*0.001)
+        content  = f"Main:timesAllowErrors = {allowedErrors}\n"
         content += "Check:epTolErr = 0.01\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
