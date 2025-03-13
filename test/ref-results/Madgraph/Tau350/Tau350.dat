@@ -18,7 +18,7 @@
 #*     run as ./bin/mg5_aMC  filename                       *
 #*                                                          *
 #************************************************************"
-import model sm
+import model sm-full
 generate e- e+ > ta- ta+ 
 output Output
 launch 
