@@ -34,7 +34,7 @@ set Wt 1.50833649
 set MH 125
 set WH 0.00407
 set WW 2.085
-set nevents 10100
+set nevents 20000
 set pdlabel ilc500ll
 set lpp1 3
 set lpp2 -3
