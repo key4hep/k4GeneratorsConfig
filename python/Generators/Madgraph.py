@@ -59,7 +59,7 @@ class Madgraph(GeneratorBase):
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
         # temporary fix: increase LHE event size
-        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.get("events")*2))
+        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.get("events")*1.002))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
