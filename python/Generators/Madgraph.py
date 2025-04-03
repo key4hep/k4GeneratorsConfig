@@ -22,8 +22,8 @@ class Madgraph(GeneratorBase):
         #self.addModelParameter('alphaEMMZM1')
         #self.addModelParameter('alphaEMM1')
         # for a coherent setting we need to use a derived value for alphaQED
-        self.addModelParameter('alphaEMEWSchemeM1')
-        #self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        #self.addModelParameter('alphaEMEWSchemeM1')
+        self.addModelParticleProperty(pdg_code=24, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
 
@@ -279,7 +279,8 @@ class Madgraph(GeneratorBase):
 
     def getModelName(self, model):
         # sm or loop_qcd_qed_sm alphaQED, or loop_qcd_qed_sm_Gmu Gmu,MZ,MW
-        modelDict = { 'sm' : 'sm-full'}
+        # modelDict = { 'sm' : 'sm-full'}
+        modelDict = { 'sm' : 'loop_qcd_qed_sm_Gmu-full'}
         model = model.lower()
         if model not in modelDict.keys():
             print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using {model}")
