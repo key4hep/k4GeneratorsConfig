@@ -32,8 +32,8 @@ set Mt 172
 set Wt 1.50833649
 set MH 125
 set WH 0.00407
-set WW 2.085
 set MW 80.379
+set WW 2.085
 set nevents 20000
 set pdlabel isronlyll
 set lpp1 3
