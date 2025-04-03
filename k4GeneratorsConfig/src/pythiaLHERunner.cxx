@@ -86,9 +86,10 @@ int main(int argc, char** argv) {
   // Begin infinite event loop - to be exited at end of file.
   int iAbort = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
-    
     // Generate event.
     if (pythia.next()) {
+      //if (iEvent < 100) pythia.process.list();
+      //if (iEvent < 100) pythia.event.list();
       // event was ok, write to hepmc file
       if (hepmc) {
 	// do it in one step:
@@ -132,8 +133,6 @@ int main(int argc, char** argv) {
   // Final statistics.
   pythia.stat();
 
-  std::cout << "PYTHIA SIGMA is " << pythia.info.sigmaGen() << " corrected to "  << pythia.info.sigmaGen() *pythia.info.nTried()/pythia.info.nAccepted()<< std::endl;
-  
   // Done.
   return 0;
 }
