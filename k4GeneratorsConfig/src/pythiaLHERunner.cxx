@@ -93,24 +93,24 @@ int main(int argc, char** argv) {
       // event was ok, write to hepmc file
       if (hepmc) {
 	// do it in one step:
-	//ToHepMC.writeNextEvent(pythia);
+	ToHepMC.writeNextEvent(pythia);
 	// temporary correction:
-	ToHepMC.fillNextEvent(pythia);
+	//ToHepMC.fillNextEvent(pythia);
 	// now retrieve the cross section
-	auto xsecptr = ToHepMC.getEventPtr()->cross_section();
-	if ( !xsecptr ) {
-	  xsecptr = make_shared<HepMC3::GenCrossSection>();
-	  ToHepMC.getEventPtr()->set_cross_section(xsecptr);
-	}
+	//auto xsecptr = ToHepMC.getEventPtr()->cross_section();
+	//if ( !xsecptr ) {
+	//  xsecptr = make_shared<HepMC3::GenCrossSection>();
+	//  ToHepMC.getEventPtr()->set_cross_section(xsecptr);
+	//}
 	// correction the cross section by trial and attempts (temporary fix)
-	double xsec    = pythia.info.sigmaGen() *pythia.info.nTried()/pythia.info.nAccepted() *1e9;
-	double xsecerr = 0.;
-	if ( xsecptr->xsec_errs().size() ){
-	  xsecerr = xsecptr->xsec_errs()[0];
-	}
-	xsecptr->set_cross_section(xsec, xsecerr);
+	//double xsec    = pythia.info.sigmaGen() *pythia.info.nTried()/pythia.info.nAccepted() *1e9;
+	//double xsecerr = 0.;
+	//if ( xsecptr->xsec_errs().size() ){
+	//  xsecerr = xsecptr->xsec_errs()[0];
+	//}
+	//xsecptr->set_cross_section(xsec, xsecerr);
 	//now write the event:
-	ToHepMC.writeEvent();
+	//ToHepMC.writeEvent();
       }
 
     }
