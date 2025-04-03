@@ -18,7 +18,7 @@
 #*     run as ./bin/mg5  filename                           *
 #*                                                          *
 #************************************************************"
-import model sm-full
+import model loop_qcd_qed_sm_Gmu-full
 generate e- e+ > c c~ 
 output Output
 launch
