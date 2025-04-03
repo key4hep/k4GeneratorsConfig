@@ -34,6 +34,6 @@ set MH 125
 set WH 0.00407
 set MW 80.379
 set WW 2.085
-set nevents 20000
+set nevents 10020
 set eta_min_pdg {22: -2.02758942}
 set eta_max_pdg {22: 2.02758942}
