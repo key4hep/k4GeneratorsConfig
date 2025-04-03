@@ -26,15 +26,14 @@ set iseed 42
 set EBEAM 175.0
 set aS 0.1184
 set GF 1.16637e-05
-set aEWM1 132.507
 set MZ 91.1876
 set WZ 2.4952
 set Mt 172
 set Wt 1.50833649
 set MH 125
 set WH 0.00407
-set WW 2.085
 set MW 80.379
+set WW 2.085
 set nevents 20000
 set pt_min_pdg {15: 40}
 set pt_max_pdg {15: 175}
