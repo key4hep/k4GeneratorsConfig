@@ -31,3 +31,6 @@ ParticleData:
     mass: 80.379
     width: 2.085
 
+Analysis:
+  Tools: [key4HEP]
+

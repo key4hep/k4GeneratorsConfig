@@ -40,6 +40,8 @@ Processes:
         - 5
         - -5
 
+Analysis:
+  Tools: [key4HEP]
 
 Madgraph:
   Model: sm-lepton_masses

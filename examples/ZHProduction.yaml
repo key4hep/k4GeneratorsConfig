@@ -49,3 +49,6 @@ Selectors:
         Max: 175
         Min: 40
         Flavour: [23,25]
+
+Analysis:
+  Tools: [key4HEP]
