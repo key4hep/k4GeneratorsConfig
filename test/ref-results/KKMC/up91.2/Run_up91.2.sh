@@ -12,4 +12,4 @@ fi
 KKMCee -c  up91.2.dat -o up91.2.hepmc3
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep up91.2.hepmc3 up91.2.edm4hep
 
-$K4GENERATORSCONFIG/key4HEPAnalysis -i up91.2.edm4hep -o up91.2.root -p 2,-2 
+$K4GENERATORSCONFIG/key4HEPAnalysis -i up91.2.edm4hep -o up91.2.root -p 2,-2

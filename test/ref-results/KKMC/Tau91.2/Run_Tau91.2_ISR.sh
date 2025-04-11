@@ -12,4 +12,4 @@ fi
 KKMCee -c  Tau91.2_ISR.dat --nevts 10000 -o Tau91.2_ISR.hepmc3
 $K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau91.2_ISR.hepmc3 Tau91.2_ISR.edm4hep
 
-$K4GenBuildDir/bin/key4HEPAnalysis -i Tau91.2_ISR.edm4hep -o Tau91.2_ISR.root -p 15,-15 
+$K4GenBuildDir/bin/key4HEPAnalysis -i Tau91.2_ISR.edm4hep -o Tau91.2_ISR.root -p 15,-15
