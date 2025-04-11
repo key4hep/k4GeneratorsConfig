@@ -15,4 +15,4 @@ ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
 $K4GenBuildDir/bin/pythiaLHERunner -f pythiaZHDecay350.cmnd -l unweighted_events.lhe -o ZHDecay350.hepmc
 $K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc ZHDecay350.edm4hep
 
-$K4GenBuildDir/bin/analyze2f -a 23 -b 25 -i ZHDecay350.edm4hep -o ZHDecay350.root
+$K4GenBuildDir/bin/key4HEPAnalysis -i ZHDecay350.edm4hep -o ZHDecay350.root -p 23,25 

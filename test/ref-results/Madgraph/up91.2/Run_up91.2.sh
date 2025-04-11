@@ -16,4 +16,4 @@ sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe up91.2.hepmc
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep up91.2.hepmc up91.2.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 2 -b -2 -i up91.2.edm4hep -o up91.2.root
+$K4GENERATORSCONFIG/key4HEPAnalysis -i up91.2.edm4hep -o up91.2.root -p 2,-2 

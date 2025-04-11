@@ -175,8 +175,10 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         # read the input file
         settings = Settings.Input(yaml_file, sqrts)
         # ana = analysis.Analysis(settings)
-        if settings.IsRivet():
-            print("Rivet enabled")
+        if settings.rivetON():
+            print("Rivet is enabled")
+        if settings.key4HEPAnalysisON():
+            print("key4HEPAnalysis is enabled")
         if events != -1:
             settings.set("events", events)
         settings.gens()

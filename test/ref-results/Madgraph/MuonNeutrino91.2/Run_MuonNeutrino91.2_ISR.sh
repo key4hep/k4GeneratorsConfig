@@ -15,4 +15,4 @@ ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
 $K4GenBuildDir/bin/pythiaLHERunner -f pythiaMuonNeutrino91.2_ISR.cmnd -l unweighted_events.lhe -o MuonNeutrino91.2_ISR.hepmc
 $K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonNeutrino91.2_ISR.hepmc MuonNeutrino91.2_ISR.edm4hep
 
-$K4GenBuildDir/bin/analyze2f -a 14 -b -14 -i MuonNeutrino91.2_ISR.edm4hep -o MuonNeutrino91.2_ISR.root
+$K4GenBuildDir/bin/key4HEPAnalysis -i MuonNeutrino91.2_ISR.edm4hep -o MuonNeutrino91.2_ISR.root -p 14,-14

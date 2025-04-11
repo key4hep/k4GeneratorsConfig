@@ -12,4 +12,4 @@ fi
 $K4GenBuildDir/bin/pythiaRunner -f Tau350.dat
 $K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau350.hepmc3 Tau350.edm4hep
 
-$K4GenBuildDir/bin/analyze2f -a 15 -b -15 -i Tau350.edm4hep -o Tau350.root
+$K4GenBuildDir/bin/key4HEPAnalysis -i Tau350.edm4hep -o Tau350.root -p 15,-15

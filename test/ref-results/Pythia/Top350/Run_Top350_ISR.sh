@@ -12,4 +12,4 @@ fi
 $K4GenBuildDir/bin/pythiaRunner -f Top350_ISR.dat
 $K4GenBuildDir/bin/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Top350_ISR.hepmc3 Top350_ISR.edm4hep
 
-$K4GenBuildDir/bin/analyze2f -a 6 -b -6 -i Top350_ISR.edm4hep -o Top350_ISR.root
+$K4GenBuildDir/bin/key4HEPAnalysis -i Top350_ISR.edm4hep -o Top350_ISR.root -p 6,-6

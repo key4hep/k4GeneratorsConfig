@@ -12,4 +12,4 @@ fi
 Sherpa -f bottom91.2.dat
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep bottom91.2.hepmc3g bottom91.2.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 2 -b -2 -i bottom91.2.edm4hep -o bottom91.2.root
+$K4GENERATORSCONFIG/key4HEPAnalysis -i bottom91.2.edm4hep -o bottom91.2.root -p 2,-2

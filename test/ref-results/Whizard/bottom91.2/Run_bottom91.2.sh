@@ -12,4 +12,4 @@ fi
 whizard bottom91.2.sin
 $K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc bottom91.2.edm4hep
 
-$K4GENERATORSCONFIG/analyze2f -a 2 -b -2 -i bottom91.2.edm4hep -o bottom91.2.root
+$K4GENERATORSCONFIG/key4HEPAnalysis -i bottom91.2.edm4hep -o bottom91.2.root -p 2,-2
