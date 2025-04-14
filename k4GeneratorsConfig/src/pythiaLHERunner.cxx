@@ -1,89 +1,110 @@
-// main07.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2024 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
-// Please respect the MCnet Guidelines, see GUIDELINES for details.
-
-// Keywords: two-body decay; astroparticle; python; matplotlib
-
+// Pythia8
 #include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/HepMC3.h"
+
+// std
+#include <string>
+
+// *nix
 #include <unistd.h>
 
-using namespace Pythia8;
-
-//==========================================================================
-
 int main(int argc, char** argv) {
+  // Default values for the command-line arguments
+  std::string pythiaCmdFilePath = "Pythia.dat";
+  std::string lheFilePath = "Pythia.lhe";
+  std::string hepmcFilePath = "Pythia.hepmc";
+  bool verbose = false;
 
-  // read the options
-  std::string filename = "Pythia.dat";
-  std::string lhefilename = "Pythia.lhe";
-  std::string hepmcFile = "Pythia.hepmc";
-  int c;
-  while ((c = getopt(argc, argv, "f:l:o:")) != -1)
-    switch (c) {
+  // Read the command-line arguments
+  int opt;
+  while ((opt = getopt(argc, argv, "f:l:o:vh")) != -1) {
+    switch (opt) {
     case 'f':
-      filename = optarg;
+      pythiaCmdFilePath = std::string(optarg);
       break;
     case 'l':
-      lhefilename = optarg;
+      lheFilePath = std::string(optarg);
       break;
     case 'o':
-      hepmcFile = optarg;
+      hepmcFilePath = std::string(optarg);
+      break;
+    case 'v':
+      verbose = true;
       break;
     case 'h':
-      std::cout << "Usage: pythiaLHERunner -h -f filename -l filename" << std::endl;
-      std::cout << "-h: print this help" << std::endl;
-      std::cout << "-f filename: input file containing the pythia commands" << std::endl;
-      std::cout << "-l filename: input file containing the LHE events" << std::endl;
-      std::cout << "-o filename: output file containing the hepmc events" << std::endl;
-      exit(0);
     default:
+      std::cout << "Usage: pythiaLHERunner [-h, -v] " << "-f FILEPATH -l FILEPATH [-o FILEPATH]\n"
+                << "  -h: print this help and exit\n"
+                << "  -v: more verbose output\n"
+                << "  -f FILEPATH: input file containing the Pythia " << "commands\n"
+                << "  -l FILEPATH: input file containing the LHE events\n"
+                << "  -o FILEPATH: output file containing the HepMC events" << std::endl;
+
       exit(0);
     }
-  // check existence of the file:
-  std::ifstream infile(filename);
-  if (infile.fail()) {
-    std::cout << "pythiaLHERunner:: input file with name " << filename << " not found. Exiting" << std::endl;
-    exit(0);
   }
 
-  // check existence of the file:
-  std::ifstream inLHEfile(filename);
-  if (inLHEfile.fail()) {
-    std::cout << "pythiaLHERunner:: input file with name " << lhefilename << " not found. Exiting" << std::endl;
-    exit(0);
+  // Print input/output filepaths
+  if (verbose) {
+    std::cout << "pythiaLHErunner::INFO: Input Pythia commands file: " << pythiaCmdFilePath << "\n"
+              << "      Input LHE events file: " << lheFilePath << "\n"
+              << "      HepMC3 output filepath: " << hepmcFilePath << std::endl;
   }
-  // Pythia generator.
-  Pythia pythia;
-  // add the write hepmc flag to the settings
+
+  // Check if the Pythia file can be read
+  {
+    std::ifstream infile(pythiaCmdFilePath);
+    if (!infile.good()) {
+      std::cout << "pythiaLHErunner::ERROR: Input Pythia command file with " << "name \"" << pythiaCmdFilePath
+                << "\" cannot be read!\n"
+                << "                        Aborting..." << std::endl;
+      exit(1);
+    }
+    infile.close();
+  }
+
+  // Check if the input LHE file can be read
+  {
+    std::ifstream inLHEfile(lheFilePath);
+    if (!inLHEfile.good()) {
+      std::cout << "pythiaLHErunner::ERROR: Input LHE file with name \"" << lheFilePath << "\" cannot be read!.\n"
+                << "                        Aborting..." << std::endl;
+      exit(1);
+    }
+    inLHEfile.close();
+  }
+
+  // Pythia generator
+  Pythia8::Pythia pythia;
+  // Add the write hepmc flag to the settings
   pythia.settings.addFlag("Main:writeHepMC", false);
   // Read in the rest of the settings and data from a separate file.
-  pythia.readFile(filename);
+  pythia.readFile(pythiaCmdFilePath);
 
-  // check for hepmc
+  // Check for HepMC
   const bool hepmc = pythia.flag("Main:writeHepMC");
-  std::cout << "HEPMC file name is " << hepmcFile << std::endl;
+  const std::string hepmcFilePathFromCmdFile = pythia.word("Main:HepMCFile");
   Pythia8::Pythia8ToHepMC ToHepMC;
-  if (hepmc)
-    ToHepMC.setNewFile(hepmcFile);
+  if (hepmc) {
+    ToHepMC.setNewFile(hepmcFilePath);
+  }
 
-  // this is the command to tell PYTHIA where to find the lhe file
-  std::stringstream ss;
-  ss << "Beams:LHEF = " << lhefilename;
-  std::cout << "pythiaLHERunner:: LHE file is " << ss.str() << std::endl;
-  pythia.readString(ss.str());
+  // Adding the command to tell PYTHIA where to find the LHE file
+  const std::string lheFilePathFromCmdFile = pythia.word("Beams:LHEF");
+  std::string lheCmd = "Beams:LHEF = " + lheFilePath;
+  pythia.readString(lheCmd);
 
   // If Pythia fails to initialize, exit with error.
   if (!pythia.init()) {
-    std::cout << "pythiaLHERunner:: failed to initialize Pythia after reading event" << std::endl;
-    exit(0);
+    std::cout << "pythiaLHErunner::ERROR: Failed to initialize Pythia8!\n"
+              << "                        Aborting..." << std::endl;
+    exit(1);
   }
 
   int nEvent = pythia.mode("Main:numberOfEvents");
   int nAbort = pythia.mode("Main:timesAllowErrors");
 
-  // Begin infinite event loop - to be exited at end of file.
+  // Begin event loop --- to be exited at end of file.
   int iAbort = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
     // Generate event.
@@ -99,10 +120,6 @@ int main(int argc, char** argv) {
         // now retrieve the cross section
         // auto xsecptr = ToHepMC.getEventPtr()->cross_section();
         // if ( !xsecptr ) {
-        //  xsecptr = make_shared<HepMC3::GenCrossSection>();
-        //  ToHepMC.getEventPtr()->set_cross_section(xsecptr);
-        //}
-        // correction the cross section by trial and attempts (temporary fix)
         // double xsec    = pythia.info.sigmaGen() *pythia.info.nTried()/pythia.info.nAccepted() *1e9;
         // double xsecerr = 0.;
         // if ( xsecptr->xsec_errs().size() ){
@@ -121,14 +138,14 @@ int main(int argc, char** argv) {
       if (pythia.info.atEndOfFile()) {
         std::cout << "pythiaLHERunner:: reached EOF at event " << iEvent << " when " << nEvent << " were expected"
                   << std::endl;
-        break;
+        exit(1);
       }
 
       if (++iAbort >= nAbort) {
         std::cout << " Event generation aborted prematurely at event " << iEvent << std::endl;
         std::cout << " LHA input:" << std::endl;
         pythia.LHAeventList();
-        break;
+        exit(1);
       }
     }
     // End of event loop.
@@ -137,5 +154,22 @@ int main(int argc, char** argv) {
   pythia.stat();
 
   // Done.
+  if (!hepmc) {
+    std::cout << "pythiaLHErunner::WARNING: HepMC output not allowed.\n"
+              << "         To allow HepMC output make sure you have this line " << "in your Pythia command file:\n"
+              << "           Main:writeHepMC = on" << std::endl;
+  }
+
+  if (lheFilePathFromCmdFile != lheFilePath) {
+    std::cout << "Provided Pythia command file already specifies input LHE " << "file path \"" << lheFilePathFromCmdFile
+              << "\"!";
+  }
+
+  if (hepmcFilePathFromCmdFile != hepmcFilePath) {
+    std::cout << "Provided Pythia command file already specifies output HepMC " << "file path \""
+              << hepmcFilePathFromCmdFile << "\"!";
+  }
+
+  // Done
   return 0;
 }

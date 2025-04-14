@@ -126,10 +126,10 @@ int main(int argc, char** argv) {
   for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
     if (i)
       event = podio::Frame(reader->readNextEntry(podio::Category::Event));
-    auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
+    const auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
     // do more stuff with this event
-    edm4hep::LorentzVectorM* particleA;
-    edm4hep::LorentzVectorM* particleB;
+    edm4hep::LorentzVectorM* particleA = nullptr;
+    edm4hep::LorentzVectorM* particleB = nullptr;
     for (auto part : mcParticles) {
       if (part.getPDG() == particlesList[0] && !particleA) {
         auto momentumA = part.getMomentum();
@@ -150,15 +150,12 @@ int main(int argc, char** argv) {
         pzpdgapdgb->Fill(pp.pz());
       }
     }
+
     // release memory after an event
-    if (particleA) {
-      delete particleA;
-      particleA = 0;
-    }
-    if (particleB) {
-      delete particleB;
-      particleB = 0;
-    }
+    delete particleA;
+    particleA = nullptr;
+    delete particleB;
+    particleB = nullptr;
   }
 
   // now analyze the event
