@@ -154,33 +154,7 @@ class Sherpa(GeneratorBase):
             if f"  - [{name}, {f}" not in self.getGeneratorDatacard():
                 self.add2GeneratorDatacard(f"{sname}\n")
 
-    def tempFixParticles(self):
-        # get the current content
-        lines = self.getGeneratorDatacard().split("\n")
-        particlesSection = False
-        dc = []
-        for line in lines:
-            # start of particle data
-            if line == "PARTICLE_DATA:":
-                particlesSection = True
-            # processes are written after particle data
-            if line == "PROCESSES:":
-                particlesSection = False
-            if not particlesSection:
-                dc.append(line)
-        # so we cleaned up, but we need to add the particles section for the finalstate particles
-        dc.append("PARTICLE_DATA:")
-        for pdg in self.procinfo.get_final_pdg_list():
-            dc.append(f"  {pdg}:")
-            dc.append(f"    Width: 0.")
-        dc.append("\n")
-        self.resetGeneratorDatacard()
-        self.add2GeneratorDatacard("\n".join(dc))
-
     def write_decay(self):
-        # temporary fix: reset the particles
-        print("SHERPA::Warning: Particle properties modified from setting, TB corrected")
-        #self.tempFixParticles()
         # add the header:
         self.add2GeneratorDatacard("\nHARD_DECAYS:\n")
         # Simple check first that parents are

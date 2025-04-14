@@ -18,7 +18,7 @@ PARTICLE_DATA:
     Mass: 91.1876
   25: 
     Width: 0.00407
-    Mass: 125
+    Mass: 125.1
   15: 
     Massive: 1
   5: 
@@ -26,7 +26,7 @@ PARTICLE_DATA:
   4: 
     Massive: 1
   6: 
-    Mass: 172
+    Mass: 172.5
     Width: 1.50833649
   24: 
     Width: 2.085

@@ -57,11 +57,10 @@ Sherpa:
   ME_SIGNAL_GENERATOR: Amegic
 
 ParticleData:
+  6:
+    mass: 172.5
   25:
-    mass: 125
-    width: 0.00407
-  25:
-    mass: 125
+    mass: 125.1
     width: 0.00407
   23:
     mass: 91.1876
