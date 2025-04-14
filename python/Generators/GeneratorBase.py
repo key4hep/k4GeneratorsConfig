@@ -275,7 +275,7 @@ class GeneratorBase(abc.ABC):
                 particle[prop] = value
             except:
                 particleCollection[pdgstr] = { prop : value }
-
+                
         # now as last step we overwrite with the yaml if present:
         # retrieve the particles from the input
         for yamlParticle in self.procinfo.get_data_particles():
