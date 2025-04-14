@@ -237,8 +237,8 @@ class Sherpa(GeneratorBase):
         modelDict = { 'sm' : 'SM'}
         model = model.lower()
         if model not in modelDict.keys():
-            print(f"Warning::Sherpa: model {model} has no translation in Sherpa Model Dictionary, using SM")
-            return "SM"
+            print(f"Warning::Sherpa: model {model} has no translation in Sherpa Model Dictionary, using {model}")
+            return model
         return modelDict[model]
 
     def getParameterLabel(self, param):
