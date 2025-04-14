@@ -12,22 +12,36 @@ EVENT_OUTPUT: HepMC3_GenEvent[ZHDecay350.hepmc3]
 EW_SCHEME: 3
 EVENT_GENERATION_MODE: unweighted
 
+PARTICLE_DATA:
+  23: 
+    Width: 2.4952
+    Mass: 91.1876
+  25: 
+    Width: 0.00407
+    Mass: 125
+  15: 
+    Massive: 1
+  5: 
+    Massive: 1
+  4: 
+    Massive: 1
+  6: 
+    Mass: 172
+    Width: 1.50833649
+  24: 
+    Width: 2.085
+    Mass: 80.379
+
+
 PROCESSES:
 - 11 -11 -> 23 25:
     Order: {QCD: 0, EW: 2}
 
-PARTICLE_DATA:
-  23:
-    Width: 0.
-  25:
-    Width: 0.
-
-
 HARD_DECAYS:
   Enabled: true
   Channels:
-    23,13,-13 : {Status: 2}
-    25,5,-5 : {Status: 2}
+    23,13,-13: {Status: 2}
+    25,5,-5: {Status: 2}
 
 SELECTORS:
   - [PT, 15, 40, 175]
