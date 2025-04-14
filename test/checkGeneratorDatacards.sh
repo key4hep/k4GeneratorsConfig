@@ -43,6 +43,9 @@ function checkOutputs() {
 	    local fullpath="$(dirname "$outFile")"
 	    local procname="$(basename "$fullpath")"
             checkFile "$generator" "$procname" "$(basename "$outFile")"
+	    # copy the files to the output
+            mkdir -p "${CWD}"/output/"$generator"/"$procname"/
+  	    cp "$outFile" "${CWD}"/output/"$generator"/"$procname"/"$(basename "$outFile")"
 	done
     done
 }

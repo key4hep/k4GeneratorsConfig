@@ -22,11 +22,11 @@ Processes:
      SqrtS: 250 
      Decay: 
       23:
-        - 15
-        - -15
-      25:
         - 13
         - -13
+      25:
+        - 5
+        - -5
   ZHDecay350:
      Final: [23, 25]
      Order: [2,0]
@@ -34,18 +34,21 @@ Processes:
      SqrtS: 350 
      Decay: 
       23:
-        - 15
-        - -15
-      25:
         - 13
         - -13
+      25:
+        - 5
+        - -5
 
+Analysis:
+  Tools: [key4HEP]
 
 Madgraph:
   Model: sm-lepton_masses
 
 Whizard:
-  Model: SM_Higgs
+  #Model: SM_Higgs
+  Model: SM
 
 Sherpa:
   # THESE settings key must match Sherpa!!
@@ -56,6 +59,10 @@ Sherpa:
 ParticleData:
   25:
     mass: 125
+    width: 0.00407
+  25:
+    mass: 125
+    width: 0.00407
   23:
     mass: 91.1876
     width: 2.4952

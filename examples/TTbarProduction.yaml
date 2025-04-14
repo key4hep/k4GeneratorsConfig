@@ -51,3 +51,6 @@ Selectors:
         Max: 175.
         Min: 20
         Flavour: [6,-6]
+
+Analysis:
+  Tools: [key4HEP]

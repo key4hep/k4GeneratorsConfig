@@ -86,30 +86,56 @@ int main(int argc, char** argv) {
   // Begin infinite event loop - to be exited at end of file.
   int iAbort = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
-    
     // Generate event.
-    if (!pythia.next()) {
-      
+    if (pythia.next()) {
+      //if (iEvent < 100) pythia.process.list();
+      //if (iEvent < 100) pythia.event.list();
+      // event was ok, write to hepmc file
+      if (hepmc) {
+	// do it in one step:
+	ToHepMC.writeNextEvent(pythia);
+	// temporary correction:
+	//ToHepMC.fillNextEvent(pythia);
+	// now retrieve the cross section
+	//auto xsecptr = ToHepMC.getEventPtr()->cross_section();
+	//if ( !xsecptr ) {
+	//  xsecptr = make_shared<HepMC3::GenCrossSection>();
+	//  ToHepMC.getEventPtr()->set_cross_section(xsecptr);
+	//}
+	// correction the cross section by trial and attempts (temporary fix)
+	//double xsec    = pythia.info.sigmaGen() *pythia.info.nTried()/pythia.info.nAccepted() *1e9;
+	//double xsecerr = 0.;
+	//if ( xsecptr->xsec_errs().size() ){
+	//  xsecerr = xsecptr->xsec_errs()[0];
+	//}
+	//xsecptr->set_cross_section(xsec, xsecerr);
+	//now write the event:
+	//ToHepMC.writeEvent();
+      }
+
+    }
+    else {
+      std::cout << "Event rejected " << std::endl;
+      pythia.LHAeventList();
+      std::cout << "End of rejected event" << std::endl;
       // Leave event loop if at end of file.
       if (pythia.info.atEndOfFile()) {
-	std::cout << "pythiaLHERunner:: reached EOF at event " << iEvent << " when " << nEvent << " were exopected" << std::endl;
+	std::cout << "pythiaLHERunner:: reached EOF at event " << iEvent << " when " << nEvent << " were expected" << std::endl;
 	break;
       }
 
-      if (++iAbort < nAbort) continue;
-      cout << " Event generation aborted prematurely, owing to error!\n";
-      break;
-    }
-    // event was ok, write to hepmc file
-    if (hepmc) {
-      ToHepMC.writeNextEvent(pythia);
+      if (++iAbort >= nAbort) {
+	std::cout << " Event generation aborted prematurely at event " << iEvent << std::endl;
+	std::cout << " LHA input:" << std::endl;
+	pythia.LHAeventList();
+	break;
+      }
     }
     // End of event loop.
   }
-  
   // Final statistics.
   pythia.stat();
-  
+
   // Done.
   return 0;
 }

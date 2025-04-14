@@ -10,7 +10,7 @@ class Input:
     def __init__(self, file, sqrts):
         self.file = file
         self.settings = None
-        self.anatool = None
+        self.anatools = None
         if not os.path.isfile(file):
             raise FileNotFoundError(file)
         else:
@@ -178,9 +178,9 @@ class Input:
         self.anasettings = self.get_block("analysis")
         if self.anasettings is not None:
             self.anasettings = {k.lower(): v for k, v in self.anasettings.items()}
-            self.anatool = self.anasettings["tool"]
-            self.anatool = self.anatool.lower()
-            if self.anatool=="rivet":
+            self.anatools = self.anasettings["tools"]
+            self.anatools = [k.lower() for k in self.anatools]
+            if "rivet" in self.anatools:
                 # check for rivet path
                 if "RIVET_ANALYSIS_PATH" in os.environ:
                     self.rivetpath = os.environ["RIVET_ANALYSIS_PATH"]
@@ -191,7 +191,7 @@ class Input:
                         self.rivetpath = self.anasettings["rivetpath"]
                     except:
                         print("Rivet Analysis path has not been found")
-                        self.anatool=None
+                        self.anatools.remove("rivet")
                 # Set the analysis name
                 try:
                     self.analysisname = self.anasettings["rivetanalysis"]
@@ -207,8 +207,14 @@ class Input:
                     if not os.path.isdir(self.yodaoutput):
                         os.mkdir(self.yodaoutput)
 
-    def IsRivet(self):
-        return self.anatool=="rivet"
+    def rivetON(self):
+        if self.anatools is not None:
+            return "rivet" in self.anatools
+        
+
+    def key4HEPAnalysisON(self):
+        if self.anatools is not None:
+            return "key4hep" in self.anatools
 
 class ECMSInput:
     """Class for loading YAML files with center of mass energies"""
@@ -236,6 +242,9 @@ class ParameterSets:
 
     def __init__(self, file, tag):
         self.file = file
+        # if it's the default, overwrite the choice
+        if self.file is None:
+            self.file = os.path.dirname(os.path.realpath(__file__))+"/ParameterSets.yaml"
         if not os.path.isfile(self.file):
             raise FileNotFoundError(self.file)
         else:

@@ -45,7 +45,7 @@ endforeach()
 
 # third test running the generators (define the function first then call it
 function(add_generator_run name generator)
-  add_test(NAME ${name}_${generator} COMMAND ${RUN_GENERATORS} ${generator} -r)
+  add_test(NAME ${name}_${generator} COMMAND ${RUN_GENERATORS} -g ${generator} )
   set_tests_properties(${name}_${generator}
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

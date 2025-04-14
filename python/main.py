@@ -95,7 +95,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     parser.add_argument(
         "--parameterTagFile",
         type=str,
-        default="ParameterSets.yaml",
+        default=None,
         help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in  directory: python",
     )
     parser.add_argument(
@@ -149,8 +149,8 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
     # now we read the global settings
     try:
-        parameterSetsFile = os.path.dirname(__file__)+"/"+paramFileName
-        parameterSet = Settings.ParameterSets(parameterSetsFile, paramTag)
+        # make sure that we follow a symlink to the real location of the parametersets should replace that by share?
+        parameterSet = Settings.ParameterSets(paramFileName, paramTag)
     except FileNotFoundError as e:
         print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
         exit()
@@ -175,8 +175,10 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
         # read the input file
         settings = Settings.Input(yaml_file, sqrts)
         # ana = analysis.Analysis(settings)
-        if settings.IsRivet():
-            print("Rivet enabled")
+        if settings.rivetON():
+            print("Rivet is enabled")
+        if settings.key4HEPAnalysisON():
+            print("key4HEPAnalysis is enabled")
         if events != -1:
             settings.set("events", events)
         settings.gens()

@@ -393,6 +393,19 @@ class GeneratorBase(abc.ABC):
         key4hep_config += (
             f"    source /cvmfs/sw{nightlies}.hsf.org/key4hep/setup.sh{releaseDate}\n"
         )
+        # if KEY4HEP was not setup, we need to point the scripts to the release
+        key4hep_config += '    if [ -z "${K4GenBuildDir}" ]; then\n'
+        key4hep_config += (
+            '        export K4GenBuildDir=${K4GENERATORSCONFIG}/../../\n'
+        )
+        key4hep_config += (
+            '        echo "variable K4GenBuildDir was not defined using directory ${K4GenBuildDir} for the executables"\n'
+        )
+        key4hep_config += "    else\n"
+        key4hep_config += (
+            '        echo "k4GeneratorsConfig:: using directory ${K4GenBuildDir} for the executables"\n'
+        )
+        key4hep_config += "    fi\n"
         key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)
@@ -400,14 +413,18 @@ class GeneratorBase(abc.ABC):
     def prepareAnalysisContent(self):
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
-        finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
-        if len(finalStateList) == 2:
-            analysis += "$K4GenBuildDir/bin/analyze2f -a {0} -b {1} -i {2}.edm4hep -o {2}.root\n".format(
-                finalStateList[0], finalStateList[1], self.GeneratorDatacardBase
+        if self.settings.key4HEPAnalysisON():
+            analysis += "$K4GenBuildDir/bin/key4HEPAnalysis -i {0}.edm4hep -o {0}.root -p ".format(
+                self.GeneratorDatacardBase
             )
+            finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
+            for pdg in finalStateList:
+                analysis += f"{pdg},"
+            analysis = analysis.rstrip(",")
+            analysis +="\n"
 
         # write the RIVET analysis
-        if self.settings.IsRivet():
+        if self.settings.rivetON():
             yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
             analysis += f"rivet" 
             for ana in self.settings.analysisname:

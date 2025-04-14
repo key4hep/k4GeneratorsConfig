@@ -22,8 +22,8 @@ class Madgraph(GeneratorBase):
         #self.addModelParameter('alphaEMMZM1')
         #self.addModelParameter('alphaEMM1')
         # for a coherent setting we need to use a derived value for alphaQED
-        self.addModelParameter('alphaEMEWSchemeM1')
-        #self.addModelParticleProperty(pdg_code=23, property_type='mass')
+        #self.addModelParameter('alphaEMEWSchemeM1')
+        self.addModelParticleProperty(pdg_code=24, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
 
@@ -58,8 +58,8 @@ class Madgraph(GeneratorBase):
 
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
-
-        self.addOption2GeneratorDatacard("set nevents", self.procinfo.get("events"))
+        # temporary fix: increase LHE event size
+        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.get("events")*1.002))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -268,7 +268,10 @@ class Madgraph(GeneratorBase):
 
     def fill_PythiaCMND(self):
         # append the analysis to the content
-        content  = "Main:timesAllowErrors = 5\n"
+        # for the errors allow 1 permil failures
+        allowedErrors = int(self.procinfo.get("events")*0.001)
+        content  = f"Main:timesAllowErrors = {allowedErrors}\n"
+        content += "Check:epTolErr = 0.01\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
         content += "Main:numberOfEvents = {0}\n".format(self.procinfo.get("events"))
@@ -276,7 +279,8 @@ class Madgraph(GeneratorBase):
 
     def getModelName(self, model):
         # sm or loop_qcd_qed_sm alphaQED, or loop_qcd_qed_sm_Gmu Gmu,MZ,MW
-        modelDict = { 'sm' : 'sm'}
+        # modelDict = { 'sm' : 'sm-full'}
+        modelDict = { 'sm' : 'loop_qcd_qed_sm_Gmu-full'}
         model = model.lower()
         if model not in modelDict.keys():
             print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using {model}")

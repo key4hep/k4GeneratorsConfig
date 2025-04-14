@@ -37,6 +37,6 @@ Next:numberShowEvent = 1
 HiggsSM:ffbar2HZ = on
 
 23:onMode off
-23:onIfAny 15 -15 
+23:onIfAny 13 -13 
 25:onMode off
-25:onIfAny 13 -13 
+25:onIfAny 5 -5 

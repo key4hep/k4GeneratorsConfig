@@ -5,7 +5,9 @@
 #include <iostream>
 #include <sys/stat.h>
 
-k4GeneratorsConfig::xsectionCollection::xsectionCollection()
+k4GeneratorsConfig::xsectionCollection::xsectionCollection():
+  m_validCounter(0),
+  m_invalidCounter(0)
 {
 
 }
@@ -13,12 +15,16 @@ k4GeneratorsConfig::xsectionCollection::xsectionCollection(const xsectionCollect
 {
   if ( this != &theOriginal ){
     m_xsectionCollection = theOriginal.m_xsectionCollection;
+    m_validCounter       = theOriginal.m_validCounter;
+    m_invalidCounter     = theOriginal.m_invalidCounter;
   }
 }
 k4GeneratorsConfig::xsectionCollection& k4GeneratorsConfig::xsectionCollection::operator=(const xsectionCollection& theOriginal)
 {
   if ( this != &theOriginal ){
     m_xsectionCollection = theOriginal.m_xsectionCollection;
+    m_validCounter       = theOriginal.m_validCounter;
+    m_invalidCounter     = theOriginal.m_invalidCounter;
   }
 
   return *this;
@@ -64,6 +70,8 @@ void k4GeneratorsConfig::xsectionCollection::makeCollection(){
 	      xsec->setGenerator(generatorsPath.filename().string());
 	    std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
 	    m_xsectionCollection.push_back(*xsec);
+	    if ( xsec->isValid()  ) m_validCounter++;
+	    if ( !xsec->isValid() ) m_invalidCounter++;
 	    delete xsec;
 	  }
 	}
@@ -104,6 +112,12 @@ bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection
   if ( processNgenA.compare(listOf2[0]) == 0 ) return true;
   
   return false;
+}
+unsigned int k4GeneratorsConfig::xsectionCollection::NbOfSuccesses(){
+  return m_validCounter;
+}
+unsigned int k4GeneratorsConfig::xsectionCollection::NbOfFailures(){
+  return m_invalidCounter;
 }
 void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename){
 
@@ -158,5 +172,9 @@ void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream &output) 
 	   << std::setw(8)  << std::left << xsec.XsectionError() << " pb" << std::endl;
   }
   output << std::endl;
+  // last thing the invalids
+  output << "Number of runs           : " << m_invalidCounter+m_validCounter << std::endl;
+  output << "Number of failed runs    : " << m_invalidCounter << std::endl;
+  output << "Number of successful runs: " << m_validCounter << std::endl;
 
 }
