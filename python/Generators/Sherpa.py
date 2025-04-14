@@ -199,9 +199,9 @@ class Sherpa(GeneratorBase):
         for p in self.procinfo.get_final_pdg_list():
             parent = str(p)
             child = decay_opt[p]
-            decays = f"    {parent} -> "
+            decays = f"    {parent}"
             for c in child:
-                decays += f"{c} "
+                decays += f",{c}"
             self.addOption2GeneratorDatacard(decays,"{Status: 2}")
 
     def fill_datacard(self):

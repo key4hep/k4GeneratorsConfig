@@ -55,12 +55,12 @@ void k4GeneratorsConfig::xsection2Root::add2Tree(xsection &xsec){
   
   m_generatorCode     = std::find(m_generatorsList.begin(),m_generatorsList.end(),m_generator) - m_generatorsList.begin();
 
-  // process needs to be processed to removeeveything form the subscript on:
+  // process needs to be processed to remove eveything from the subscript on:
   m_process           = xsec.Process();
   if ( m_process.find_last_of("_") != std::string::npos ){
     m_process.erase(m_process.find_last_of("_"));
   }
-  // assign a code for each generator
+  // assign a code for each process
   if ( std::find(m_processesList.begin(),m_processesList.end(),m_process)== m_processesList.end() ) {
     m_processesList.push_back(m_process);
   }
