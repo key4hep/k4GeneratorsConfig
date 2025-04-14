@@ -180,7 +180,7 @@ class Sherpa(GeneratorBase):
     def write_decay(self):
         # temporary fix: reset the particles
         print("SHERPA::Warning: Particle properties modified from setting, TB corrected")
-        self.tempFixParticles()
+        #self.tempFixParticles()
         # add the header:
         self.add2GeneratorDatacard("\nHARD_DECAYS:\n")
         # Simple check first that parents are
@@ -235,11 +235,10 @@ class Sherpa(GeneratorBase):
     def getModelName(self, model):
         # the model names are from sherpa, so wave through for now
         modelDict = { 'sm' : 'SM'}
-        model = model.lower()
-        if model not in modelDict.keys():
+        if model.lower() not in modelDict.keys():
             print(f"Warning::Sherpa: model {model} has no translation in Sherpa Model Dictionary, using {model}")
             return model
-        return modelDict[model]
+        return modelDict[model.lower()]
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'ALPHAS(MZ)' }

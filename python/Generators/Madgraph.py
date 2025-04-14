@@ -281,11 +281,10 @@ class Madgraph(GeneratorBase):
         # sm or loop_qcd_qed_sm alphaQED, or loop_qcd_qed_sm_Gmu Gmu,MZ,MW
         # modelDict = { 'sm' : 'sm-full'}
         modelDict = { 'sm' : 'loop_qcd_qed_sm_Gmu-full'}
-        model = model.lower()
-        if model not in modelDict.keys():
+        if model.lower() not in modelDict.keys():
             print(f"Warning::Madgraph: model {model} has no translation in Madgraph Model Dictionary, using {model}")
             return model
-        return modelDict[model]
+        return modelDict[model.lower()]
 
     def pdg_to_madgraph(self, particle):
         return particle.get("name")

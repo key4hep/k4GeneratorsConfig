@@ -210,11 +210,10 @@ class Whizard(GeneratorBase):
 
     def getModelName(self, model):
         modelDict = { 'sm' : 'SM_CKM'}
-        model = model.lower()
-        if model not in modelDict.keys():
+        if model.lower() not in modelDict.keys():
             print(f"Warning::Whizard: model {model} has no translation in Whizard Model Dictionary, using {model}")
             return model
-        return modelDict[model]
+        return modelDict[model.lower()]
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'alphas',
