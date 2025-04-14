@@ -1,4 +1,4 @@
-import os, sys
+import sys
 from .GeneratorBase import GeneratorBase
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
