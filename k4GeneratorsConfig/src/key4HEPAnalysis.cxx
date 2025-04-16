@@ -15,6 +15,8 @@
 
 #include "edm4hep/utils/kinematics.h"
 
+std::string translatePDG2Name(int);
+
 //
 int main(int argc, char** argv)
 {
@@ -47,10 +49,12 @@ int main(int argc, char** argv)
 
   // decode and store in the vector
   std::vector<int> particlesList;
+  std::vector<std::string> particlesNamesList;
   std::stringstream ss(particles);
   int pdg;
   while (ss >> pdg) {
     particlesList.push_back(pdg);
+    particlesNamesList.push_back(translatePDG2Name(pdg));
     ss.ignore(1);
   }
 
@@ -107,7 +111,7 @@ int main(int argc, char** argv)
   unsigned int i=0, j=0;
   for (auto part:particlesList){
     name.clear(); name.str(""); desc.clear(); desc.str("");
-    name << "pdgcostheta" << i;
+    name << "pdgcostheta" << particlesNamesList[i];
     desc << "Particle PDGID = " << part << " cos(theta)";
     costhetaHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),100, -1.,1.));
     i++;
@@ -117,17 +121,17 @@ int main(int argc, char** argv)
     for (unsigned int part2=part1+1; part2 < particlesList.size(); part2++){
 
       name.clear(); name.str(""); desc.clear(); desc.str("");
-      name << "mass" << part1 << part2;
+      name << "mass" << particlesNamesList[part1] << particlesNamesList[part2];
       desc << "Invariant Mass(" << particlesList[part1] << "," << particlesList[part2] << ")";
       massHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),1000, 0., sqrts));
       
       name.clear(); name.str(""); desc.clear(); desc.str("");
-      name << "pt" << part1 << part2;
+      name << "pt" << particlesNamesList[part1] << particlesNamesList[part2];
       desc << "pT(" << particlesList[part1] << "," << particlesList[part2] << ")";
       pTHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),1000, 0., sqrts));
 
       name.clear(); name.str(""); desc.clear(); desc.str("");
-      name << "pz" << part1 << part2;
+      name << "pz" << particlesNamesList[part1] << particlesNamesList[part2];
       desc << "pZ(" << particlesList[part1] << "," << particlesList[part2] << ")";
       pZHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),1000, 0., sqrts));
     }
@@ -200,4 +204,58 @@ int main(int argc, char** argv)
 
   outputFilePtr->Write();
   outputFilePtr->Close();
+}
+std::string translatePDG2Name(int pdg){
+
+  if (pdg == 1)
+    return "d";
+  else if (pdg == -1)
+    return "dbar";
+  else if (pdg == 2)
+    return "u";
+  else if (pdg == -2)
+    return "ubar";
+  else if (pdg == 3)
+    return "s";
+  else if (pdg == -3)
+    return "sbar";
+  else if (pdg == 4)
+    return "c";
+  else if (pdg == -4)
+    return "cbar";
+  else if (pdg == 5)
+    return "b";
+  else if (pdg == -5)
+    return "bbar";
+  else if (pdg == 6)
+    return "t";
+  else if (pdg == -6)
+    return "tbar";
+  else if (pdg == 11)
+    return "electron";
+  else if (pdg == -11)
+    return "positron";
+  else if (pdg == 12)
+    return "neutrinoe";
+  else if (pdg == -12)
+    return "antineutrinoe";
+  else if (pdg == 13)
+    return "muon";
+  else if (pdg == -13)
+    return "antimuon";
+  else if (pdg == 14)
+    return "neutrinomuon";
+  else if (pdg == -14)
+    return "antineutrinomuon";
+  else if (pdg == 15)
+    return "tau";
+  else if (pdg == -15)
+    return "antitau";
+  else if (pdg == 16)
+    return "neutrinotau";
+  else if (pdg == -16)
+    return "antineutrinotau";
+
+  // if it's not that:
+  return "unknown";
 }
