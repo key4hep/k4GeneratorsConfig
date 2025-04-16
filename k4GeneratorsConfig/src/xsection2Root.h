@@ -6,12 +6,15 @@
 #include "TProfile.h"
 #include "TH1D.h"
 #include "TH2D.h"
+#include "TGraph.h"
 #include "TGraphErrors.h"
+#include "TCanvas.h"
 
 #include <string>
 #include <unordered_map>
 
 #include "xsection.h"
+#include "differential.h"
 
 namespace k4GeneratorsConfig {
 class xsection2Root {
@@ -22,11 +25,13 @@ class xsection2Root {
 
   void Init();
   void Execute(xsection&);
+  void Execute(differential&);
   void Finalize();
   
   void add2Tree(xsection&);
   void writeTree();
   void writeHistos();
+  void writeDifferentialHistos();
 
 
  private:
@@ -37,6 +42,8 @@ class xsection2Root {
   std::vector<TH1D*>         m_rms;
   std::vector<TGraphErrors*> m_graphs;
   std::vector<TGraph*>       m_graphsDelta;
+  std::vector<std::vector<TCanvas*>>    m_canvas;
+  std::vector<std::vector<std::string>> m_canvasName;
 
   // data members
   std::string  m_process;
