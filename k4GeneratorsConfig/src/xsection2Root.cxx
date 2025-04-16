@@ -217,7 +217,7 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
     mg->GetYaxis()->SetTitle("#sigma [pb]");
 
     name << m_processesList[proc] << ".png";
-    c1->BuildLegend(0.55,0.55,0.9,0.9);
+    //    c1->BuildLegend(0.55,0.55,0.9,0.9);
     c1->Print(name.str().c_str());
 
     // clear and delete
