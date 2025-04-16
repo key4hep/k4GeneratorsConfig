@@ -20,7 +20,7 @@ while getopts ${OPTSTRING} opt; do
       echo only $YAMLFILE will be processed
       ;;
     h)
-      echo "Arguments are:" 
+      echo "Arguments are:"
       echo "-h for help"
       echo "-d YAMLDIRECTORY "
       exit 0

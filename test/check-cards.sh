@@ -25,7 +25,7 @@ while getopts ${OPTSTRING} opt; do
       runReducedEvgen="true"
       ;;
     h)
-      echo "Arguments are:" 
+      echo "Arguments are:"
       echo "-h for help"
       echo "-b to block the event generation step fully"
       echo "-r to reduce the number of event generation steps to 1 per yaml file"
@@ -56,9 +56,9 @@ function checkFile() {
     local outFile="$3"
     if [[ -e "$REFDIR/$refgenerator/$procname/$outFile" ]]; then
         if diff "$REFDIR/$refgenerator/$procname/$outFile" "$PWD/$generator/$procname/$outFile" &> /dev/null; then
-            echo "Process " $procname : "Files are identical for file" $outFile 
+            echo "Process " $procname : "Files are identical for file" $outFile
         else
-            echo "Process " $procname "Files are different for file" $outFile 
+            echo "Process " $procname "Files are different for file" $outFile
             diff "$REFDIR/$refgenerator/$procname/$outFile" "$PWD/$generator/$procname/$outFile"
             exit 1
         fi

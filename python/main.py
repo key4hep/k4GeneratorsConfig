@@ -54,7 +54,7 @@ ParticleData : overwrite basic particle properties
 For MADGRAPH and Whizard only:
 PolarisationDensity  : float ([-1 or 0 or 1,1 or 0 or -1]) default: [-1, 1]
 PolarisationFraction : float ([0...1.,0....1.]), default [0,0]
-Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF) 
+Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     """
         ),
     )
@@ -154,7 +154,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     except FileNotFoundError as e:
         print(f"ERROR: File {e} with parameters for tag {paramTag} not found")
         exit()
-    
+
     # now execute file processes
     if len(energies) == 0:
         executeFiles(files, 0, rndmSeed, events)

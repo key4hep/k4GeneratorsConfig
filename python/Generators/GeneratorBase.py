@@ -20,9 +20,9 @@ class GeneratorBase(abc.ABC):
 
         # set the default model parameters:
         self.setDefaultModelParameters()
-        # set the Generator specific parameters 
+        # set the Generator specific parameters
         self.setModelParameters()
-        
+
         # define the output directory as function of the OutDir spec + generator name + process name
         self.outdir = (
             f"{procinfo.get('OutDir')}/{self.name}/{self.procinfo.get('procname')}"
@@ -55,8 +55,8 @@ class GeneratorBase(abc.ABC):
         # four types of global variables for the file content
         self.__datacardContent = ""
         self.__key4hepContent  = ""
-        self.__analysisContent = "" 
-        self.__optfileContent  = "" 
+        self.__analysisContent = ""
+        self.__optfileContent  = ""
 
         # optional file configuration
         self.__optionalFileExtension = ""
@@ -66,7 +66,7 @@ class GeneratorBase(abc.ABC):
 
         # the KEY4HEP environment setup is independent of the generator, so we can prepare it at the initialization stage:
         self.prepareKey4hepScript()
-        
+
         # the analysis depends only on the process, not on the generator, so we can prepare it at the initialization stage:
         self.prepareAnalysisContent()
 
@@ -98,7 +98,7 @@ class GeneratorBase(abc.ABC):
             print(f"Execution of {self.procDBName} for {self.procinfo.get('_proclabel')} resulted in an exception")
             print("Datacard files and execution scripts not written for this generator")
             raise
-        
+
         self.procDBparameters  = dict()
         self.procDBparticles  = dict()
         if self.settings.get("usedefaults", True):
@@ -113,7 +113,7 @@ class GeneratorBase(abc.ABC):
         except:
             theModel = self.getModelName(self.procinfo.get('model'))
         return theModel
-            
+
     def getModelName(self):
         raise NotImplementedError("getModelName")
 
@@ -125,7 +125,7 @@ class GeneratorBase(abc.ABC):
         self.addModelParticleProperty(pdg_code=6, property_type='width')
         self.addModelParticleProperty(pdg_code=25, property_type='mass')
         self.addModelParticleProperty(pdg_code=25, property_type='width')
-        
+
     def setModelParameters(self):
         raise NotImplementedError("setModelParameters")
 
@@ -179,11 +179,11 @@ class GeneratorBase(abc.ABC):
     def getGeneratorDatacard(self):
         # return content
         return self.__datacardContent
-       
+
     def resetGeneratorDatacard(self):
         # data encapsulation: reset the datacard content to ""
         self.__datacardContent = ""
-       
+
     def getGeneratorCommand(self,key,value):
         raise NotImplementedError("getGeneratorCommand")
 
@@ -275,7 +275,7 @@ class GeneratorBase(abc.ABC):
                 particle[prop] = value
             except:
                 particleCollection[pdgstr] = { prop : value }
-                
+
         # now as last step we overwrite with the yaml if present:
         # retrieve the particles from the input
         for yamlParticle in self.procinfo.get_data_particles():
@@ -309,7 +309,7 @@ class GeneratorBase(abc.ABC):
                         self.addOption2GeneratorDatacard(command, value,replace=False)
                     else:
                         self.replaceOptionInGeneratorDatacard(command,value)
-                
+
     def getParticleProperty(self, attr):
         raise NotImplementedError("getParticleProperty")
 
@@ -319,41 +319,41 @@ class GeneratorBase(abc.ABC):
     def add2Key4hepScript(self,content):
         # data encapsulation: add to the content in the base class
         self.__key4hepContent += content
-        
+
     def getKey4hepScript(self):
         # return content
         return self.__key4hepContent
-        
+
     def resetKey4hepScript(self):
         # data encapsulation: reset the  KEY4HEP script content to ""
         self.__key4hepContent = ""
-        
+
     def add2Analysis(self,content):
         # data encapsulation: add to the content in the base class
         self.__analysisContent += content
-        
+
     def getAnalysis(self):
         # return content
         return self.__analysisContent
-        
+
     def resetAnalysis(self):
         # data encapsulation: reset analysis content to ""
         self.__analysisContent = ""
-        
+
     def add2OptionalFile(self,content):
         # data encapsulation: add to the content in the base class
         if not self.__optionalFileUsed:
             self.__optionalFileUsed = True
         self.__optfileContent += content
-       
+
     def getOptionalFileContent(self):
         # return content
         return self.__optfileContent
-       
+
     def resetOptionalFile(self):
         # data encapsulation: reset the optionalFile content to ""
         self.__optfileContent = ""
-       
+
     def setOptionalFileNameAndExtension(self,filename,extension):
         # data encapsulation: reset the optionalFile content to ""
         self.__optionalFileExtension = extension
@@ -361,10 +361,10 @@ class GeneratorBase(abc.ABC):
         self.__optionalFile          = f"{self.outdir}/{filename}.{self.__optionalFileExtension}"
         if not self.__optionalFileUsed:
             self.__optionalFileUsed = True
-       
+
     def getOptionalFileName(self):
         return self.__optionalFileName
-       
+
     def readTemplateFile(self):
         # Load default settigns
         try:
@@ -373,10 +373,10 @@ class GeneratorBase(abc.ABC):
         except FileNotFoundError as e:
             print("Cannot configure KKMC: Template file not found with error:\n"+str(e))
         return ""
-       
+
     def getTemplateFile(self):
         return f"{os.path.dirname(__file__)}/{self.name}.template"
-       
+
     def prepareKey4hepScript(self):
         # set up for key4hep run of event generation
         key4hep_config = "#!/usr/bin/env bash\n"
@@ -426,14 +426,14 @@ class GeneratorBase(abc.ABC):
         # write the RIVET analysis
         if self.settings.rivetON():
             yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
-            analysis += f"rivet" 
+            analysis += f"rivet"
             for ana in self.settings.analysisname:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
 
         # add to the text to the data member
         self.add2Analysis(analysis)
-    
+
     def finalize(self):
         # the content has been filled, now we write to disk
         self.writeGeneratorDatacard()
