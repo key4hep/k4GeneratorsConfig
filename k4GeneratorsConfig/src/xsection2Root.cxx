@@ -27,17 +27,25 @@ void k4GeneratorsConfig::xsection2Root::Init(){
 k4GeneratorsConfig::xsection2Root::~xsection2Root(){
 }
 void k4GeneratorsConfig::xsection2Root::Execute(xsection &xsec){
+
+  m_generator = xsec.Generator();
+  m_process   = xsec.Process();
+  decodeProcGen();
   add2Tree(xsec);
 }
 void k4GeneratorsConfig::xsection2Root::Execute(differential &diffHisto){
 
+  m_generator = diffHisto.Generator();
+  m_process   = diffHisto.Process();
+  // for safety decode the safe
+  decodeProcGen();
   // if it's the first occurrence of a set, need to prepare the canvas vector:
   m_canvas.resize(m_processesList.size());
   m_canvasName.resize(m_processesList.size());
   std::stringstream name, desc;
   for (unsigned int iProc=0; iProc < m_processesList.size(); iProc++){
     // check that it's the correct process
-    if ( ! m_processesList[iProc].compare(diffHisto.Process()) ) {
+    if ( ! m_processesList[iProc].compare(m_process) ) {
       // that there are histograms
       if ( diffHisto.NbOf1DHistos() > 0 ) {
 	// and so far no canvases have been prepared
@@ -58,23 +66,17 @@ void k4GeneratorsConfig::xsection2Root::Execute(differential &diffHisto){
   // the canvas vector is ready, so we can fill the canvas:
   for (unsigned int iProc=0; iProc < m_processesList.size(); iProc++){
     // check that it's the correct process
-    if ( ! m_processesList[iProc].compare(diffHisto.Process()) ) {
+    if ( ! m_processesList[iProc].compare(m_process) ) {
       if ( diffHisto.NbOf1DHistos() > 0 ) {
 	for (unsigned int iHisto=0; iHisto<diffHisto.NbOf1DHistos(); iHisto++){
 	  m_canvas[iProc][iHisto]->cd();
-	  diffHisto.TH1DHisto(iHisto)->Draw("S");
+	  diffHisto.TH1DHisto(iHisto)->Draw("SAME");
 	}
       }
     }
   }
 }
-void k4GeneratorsConfig::xsection2Root::add2Tree(xsection &xsec){
-
-  // do things
-  m_crossSection      = xsec.Xsection();
-  m_crossSectionError = xsec.XsectionError();
-  m_sqrts             = xsec.SQRTS();
-  m_generator         = xsec.Generator();
+void k4GeneratorsConfig::xsection2Root::decodeProcGen(){
 
   //need to remove - from the names
   if ( m_generator.find("-") != std::string::npos ){
@@ -95,7 +97,6 @@ void k4GeneratorsConfig::xsection2Root::add2Tree(xsection &xsec){
   m_generatorCode     = std::find(m_generatorsList.begin(),m_generatorsList.end(),m_generator) - m_generatorsList.begin();
 
   // process needs to be processed to remove everything from the subscript on:
-  m_process           = xsec.Process();
   if ( m_process.find_last_of("_") != std::string::npos ){
     m_process.erase(m_process.find_last_of("_"));
   }
@@ -105,6 +106,13 @@ void k4GeneratorsConfig::xsection2Root::add2Tree(xsection &xsec){
   }
   
   m_processCode     = std::find(m_processesList.begin(),m_processesList.end(),m_process) - m_processesList.begin();
+}
+void k4GeneratorsConfig::xsection2Root::add2Tree(xsection &xsec){
+
+  // do things
+  m_crossSection      = xsec.Xsection();
+  m_crossSectionError = xsec.XsectionError();
+  m_sqrts             = xsec.SQRTS();
 
   // write to the tree
   m_tree->Fill();
@@ -116,8 +124,10 @@ void k4GeneratorsConfig::xsection2Root::Finalize(){
   // the total cross section tree and comparison histos
   writeHistos();
   writeTree();
+  // write cross section images
+  writeCrossSectionFigures();
   // deal with the differential distributions
-  writeDifferentialHistos();
+  writeDifferentialFigures();
   // close the file
   m_file->Close();
   
@@ -198,7 +208,10 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
   for (auto prof: m_rms){
     prof->Write();
   }
+}  
+void k4GeneratorsConfig::xsection2Root::writeCrossSectionFigures(){
   
+  std::stringstream name, desc;
   // produce a png
   TCanvas *c1 = new TCanvas("c1","CrossSectionsCanvas");
   for (unsigned int proc=0; proc<m_processesList.size(); proc++){
@@ -217,7 +230,7 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
     mg->GetYaxis()->SetTitle("#sigma [pb]");
 
     name << m_processesList[proc] << ".png";
-    //    c1->BuildLegend(0.55,0.55,0.9,0.9);
+    c1->BuildLegend(0.55,0.55,0.9,0.9);
     c1->Print(name.str().c_str());
 
     // clear and delete
@@ -254,9 +267,12 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
 
     // clear and delete
     name.clear(); name.str("");
-
-    delete c1;
   }
+  delete c1;
+}
+void k4GeneratorsConfig::xsection2Root::writeDifferentialFigures(){
+  
+  std::stringstream name;
 
   // now write out the superposed histograms
   for (unsigned int proc=0; proc < m_processesList.size(); proc++){
@@ -264,6 +280,7 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
     for (unsigned int cnvs=0; cnvs < m_canvas[proc].size(); cnvs++ ){
       name << m_processesList[proc] << m_canvasName[proc][cnvs] << cnvs << ".png";
       m_canvas[proc][cnvs]->Print(name.str().c_str());
+      std::cout << "Printing " << name.str() << std::endl;
       name.clear(); name.str("");
     }
   }
@@ -271,7 +288,4 @@ void k4GeneratorsConfig::xsection2Root::writeHistos(){
 }
 void k4GeneratorsConfig::xsection2Root::writeTree(){
   m_tree->Write();
-}
-void k4GeneratorsConfig::xsection2Root::writeDifferentialHistos(){
-  
 }

@@ -28,10 +28,13 @@ class xsection2Root {
   void Execute(differential&);
   void Finalize();
   
+  void decodeProcGen();
   void add2Tree(xsection&);
   void writeTree();
   void writeHistos();
-  void writeDifferentialHistos();
+
+  void writeCrossSectionFigures();
+  void writeDifferentialFigures();
 
 
  private:
