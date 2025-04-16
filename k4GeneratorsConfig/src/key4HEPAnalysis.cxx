@@ -99,10 +99,10 @@ int main(int argc, char** argv)
   // prepare some histograms
   ss.clear(); ss.str("");
   ss << "Particle PDGID = " << particlesList[0] << " cos(theta)";
-  TH1D* pdgAcostheta = new TH1D("pdgacostheta",ss.str().c_str(),200, -1.,1.);
+  TH1D* pdgAcostheta = new TH1D("pdgacostheta",ss.str().c_str(),100, -1.,1.);
   ss.clear(); ss.str("");
   ss << "Particle PDGID = " << particlesList[1] << " cos(theta)";
-  TH1D* pdgBcostheta = new TH1D("pdgbcostheta",ss.str().c_str(),200, -1.,1.);
+  TH1D* pdgBcostheta = new TH1D("pdgbcostheta",ss.str().c_str(),100, -1.,1.);
 
   ss.clear(); ss.str("");
   ss << "Invariant Mass(" << particlesList[0] << "," << particlesList[1] << ")";

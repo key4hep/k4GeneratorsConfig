@@ -70,7 +70,10 @@ void k4GeneratorsConfig::xsection2Root::Execute(differential &diffHisto){
       if ( diffHisto.NbOf1DHistos() > 0 ) {
 	for (unsigned int iHisto=0; iHisto<diffHisto.NbOf1DHistos(); iHisto++){
 	  m_canvas[iProc][iHisto]->cd();
-	  diffHisto.TH1DHisto(iHisto)->Draw("SAME");
+	  TH1D* theHisto = diffHisto.TH1DHisto(iHisto);
+	  theHisto->SetStats(kFALSE);
+	  theHisto->SetLineColor(m_generatorCode+1);
+	  theHisto->Draw("SAME");
 	}
       }
     }
@@ -280,7 +283,6 @@ void k4GeneratorsConfig::xsection2Root::writeDifferentialFigures(){
     for (unsigned int cnvs=0; cnvs < m_canvas[proc].size(); cnvs++ ){
       name << m_processesList[proc] << m_canvasName[proc][cnvs] << cnvs << ".png";
       m_canvas[proc][cnvs]->Print(name.str().c_str());
-      std::cout << "Printing " << name.str() << std::endl;
       name.clear(); name.str("");
     }
   }
