@@ -164,11 +164,11 @@ class Pythia(GeneratorBase):
                     or str(f2) not in self.procinfo.get_final_pdg()
                 ):
                     continue
-                
+
             sname = f"2 {name} {f1} {f2} > {Min}"
             if f" {name} {f1} {f2} >" not in self.getOptionalFileContent():
                 self.add2OptionalFile(f"{sname}\n")
-                
+
             sname = f"2 {f1} {f2} {name} < {Max}"
             if f"  {f1} {f2} {name} <" not in self.cuts:
                 self.cuts += f"{sname}\n"
@@ -228,7 +228,7 @@ class Pythia(GeneratorBase):
         parameterDict = { 'alphaEMMZ' : 'alphaEMmZ', 'GFermi' : 'GF',
                           'sin2theta' : 'sin2thetaW', 'sin2thetaEff': 'sin2thetaWbar',
                           'alphaSMZ' : 'alphaSvalueMRun'}
-        # alphas could be SigmaProcess:alphaSvalue 
+        # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Pythia: parameter {param} has no translation in Pythia Parameter Dictionary")
             return ""
@@ -239,7 +239,7 @@ class Pythia(GeneratorBase):
             return f"StandardModel:{name}"
         else:
             return f"ParticleData:{name}"
-        # return f"SigmaProcess:{name}"     
+        # return f"SigmaProcess:{name}"
 
     def getParticleProperty(self, d):
         name = None

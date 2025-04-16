@@ -57,7 +57,7 @@ class PythiaProcDB(ProcDBBase):
             self.write_run_ZH()
         elif label == "11_11_12_12_25":
             self.write_run_Hnunu()
-            
+
     def write_Difermion(self, pdg):
         self.procdict['WeakSingleBoson:ffbar2gmZ'] = "on"
         self.procdict['22:onMode']  = "off"
@@ -71,11 +71,11 @@ class PythiaProcDB(ProcDBBase):
     def write_ZZ(self):
         self.procdict['WeakDoubleBoson:ffbar2gmZgmZ'] = "on"
         self.procdict['23:onMode'] = "on"
-        
+
     def write_WW(self):
         self.procdict['WeakDoubleBoson:ffbar2WW'] = "on"
         self.procdict['24:onMode'] = "on"
-    
+
     def write_run_ZH(self):
         self.procdict['HiggsSM:ffbar2HZ'] = "on"
         self.procdict['25:onMode'] = "on"

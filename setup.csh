@@ -26,7 +26,7 @@ set SrcDir=( Generators )
 foreach dir ( $SrcDir )
    if ( $?PYTHONPATH ) then
        setenv PYTHONPATH ${K4GenDir}/python/${dir}:$PYTHONPATH
-   else 
+   else
        setenv PYTHONPATH ${K4GenDir}/python/${dir}
    endif
 end

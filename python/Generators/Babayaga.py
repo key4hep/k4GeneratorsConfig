@@ -56,7 +56,7 @@ class Babayaga(GeneratorBase):
         # procDB
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
-        
+
         if self.procinfo.eventmode == "unweighted":
             self.addOption2GeneratorDatacard("mode", "unweighted")
         else:

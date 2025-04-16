@@ -16,7 +16,7 @@ while getopts ${OPTSTRING} opt; do
       GENERATOR="$OPTARG"
       ;;
     h)
-      echo "Arguments are:" 
+      echo "Arguments are:"
       echo "-h for help"
       echo "-g GENERATORNAME only run this generator"
       exit 0
@@ -38,7 +38,7 @@ cd ci-setups
 
 # run a generator: argument is a pathname
 function processRun() {
-    topDir=${PWD} 
+    topDir=${PWD}
     thepath="$(dirname "$1")"
     runfile="$(basename "$1")"
     echo Running $runfile in $thepath

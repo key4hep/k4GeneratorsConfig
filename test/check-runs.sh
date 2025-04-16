@@ -25,7 +25,7 @@ while getopts ${OPTSTRING} opt; do
       runReducedEvgen="true"
       ;;
     h)
-      echo "Arguments are:" 
+      echo "Arguments are:"
       echo "-h for help"
       echo "-b to block the event generation step fully"
       echo "-r to reduce the number of event generation steps to 1 per yaml file"
@@ -52,7 +52,7 @@ cd ci-setups
 
 function processRun() {
     isOK=0
-    topDir=${PWD} 
+    topDir=${PWD}
     thepath="$(dirname "$1")"
     runfile="$(basename "$1")"
     echo Running $runfile in $thepath
@@ -97,7 +97,7 @@ if [[ $runEvgen = "true" ]]; then
     	done
     else
         echo "No executables for this generator, continuing"
-        counter=$((counter+1))    
+        counter=$((counter+1))
         counterRan=$((counterRan+1))
     fi
 	cd ..

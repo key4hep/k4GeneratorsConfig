@@ -210,7 +210,7 @@ class Input:
     def rivetON(self):
         if self.anatools is not None:
             return "rivet" in self.anatools
-        
+
 
     def key4HEPAnalysisON(self):
         if self.anatools is not None:

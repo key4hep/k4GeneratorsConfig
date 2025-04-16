@@ -18,5 +18,5 @@ class Sherpa2ProcDB(ProcDBBase):
             self.rundict['MASSIVE[15]'] = 1
         # the electroweak scheme is common to all implemented processes so far
         self.rundict['EW_SCHEME'] = 3
-        
-            
+
+
