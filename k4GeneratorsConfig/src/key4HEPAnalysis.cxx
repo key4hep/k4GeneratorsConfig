@@ -255,6 +255,18 @@ std::string translatePDG2Name(int pdg){
     return "neutrinotau";
   else if (pdg == -16)
     return "antineutrinotau";
+  else if (pdg == 21)
+    return "gluon";
+  else if (pdg == 22)
+    return "photon";
+  else if (pdg == 23)
+    return "Z";
+  else if (pdg == 24)
+    return "wplus";
+  else if (pdg == -24)
+    return "wminus";
+  else if (pdg == 25)
+    return "higgs";
 
   // if it's not that:
   return "unknown";
