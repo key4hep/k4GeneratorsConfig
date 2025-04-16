@@ -281,7 +281,7 @@ void k4GeneratorsConfig::xsection2Root::writeDifferentialFigures(){
   for (unsigned int proc=0; proc < m_processesList.size(); proc++){
     // check that it's the correct process
     for (unsigned int cnvs=0; cnvs < m_canvas[proc].size(); cnvs++ ){
-      name << m_processesList[proc] << m_canvasName[proc][cnvs] << cnvs << ".png";
+      name << m_processesList[proc] << m_canvasName[proc][cnvs] << ".png";
       m_canvas[proc][cnvs]->Print(name.str().c_str());
       name.clear(); name.str("");
     }
