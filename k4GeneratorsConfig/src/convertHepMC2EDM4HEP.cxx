@@ -120,10 +120,10 @@ int main(int argc, char** argv) {
   format_map.insert(std::pair<std::string, formats>("proto", proto));
   std::map<std::string, std::string> options;
   for (size_t i = 0; i < ai.extensions_given; i++) {
-    std::string optarg(ai.extensions_arg[i]);
-    size_t pos = optarg.find_first_of('=');
-    if (pos < optarg.length()) {
-      options[std::string(optarg, 0, pos)] = std::string(optarg, pos + 1, optarg.length());
+    std::string optArg(ai.extensions_arg[i]);
+    size_t pos = optArg.find_first_of('=');
+    if (pos < optArg.length()) {
+      options[std::string(optArg, 0, pos)] = std::string(optArg, pos + 1, optArg.length());
     }
   }
   long int events_parsed = 0;

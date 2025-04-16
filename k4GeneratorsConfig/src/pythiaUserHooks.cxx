@@ -102,7 +102,7 @@ bool pythiaUserHooks::doVetoProcessLevel(Pythia8::Event& event) {
   if (!m_isValid)
     return false;
   // ensure that the veto is called
-  for (unsigned int i = 0; i < event.size(); i++) {
+  for (int i = 0; i < event.size(); i++) {
     Particle part1 = event[i];
     if (part1.status() > 0) {
       // if we see a veto reason do not waist time and return a veto, otherwirse continue
@@ -110,7 +110,7 @@ bool pythiaUserHooks::doVetoProcessLevel(Pythia8::Event& event) {
         return true;
       }
     }
-    for (unsigned int j = 0; j < event.size(); j++) {
+    for (int j = 0; j < event.size(); j++) {
       Particle part2 = event[j];
       if (i != j && part1.status() > 0 && part2.status() > 0) {
         if (Veto2ParticleSelector(part1.e(), part1.px(), part1.py(), part1.pz(), part1.id(), part2.e(), part2.px(),
