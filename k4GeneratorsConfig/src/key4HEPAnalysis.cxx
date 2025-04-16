@@ -80,12 +80,12 @@ int main(int argc, char** argv)
   else {
     std::cout << "k4GeneratorsConfig::Warning: ToolInfos not available" << std::endl;
   }
-
+  
   // retrieve the cross section for the last event if not possible it's not valid
   if ( reader->getEntries(podio::Category::Event) == 0 ){
     exit(0);
   }
-
+  
   // get the frame parameters
   auto event = podio::Frame(reader->readNextEntry(podio::Category::Event));
   const edm4hep::GeneratorEventParametersCollection &genParametersCollection = event.get<edm4hep::GeneratorEventParametersCollection>(edm4hep::labels::GeneratorEventParameters);
@@ -94,78 +94,109 @@ int main(int argc, char** argv)
   
   // decode sqrts
   double sqrts = genParameters.getSqrts();
-
+  
   // histogram reservations
   // prepare some histograms
-  ss.clear(); ss.str("");
-  ss << "Particle PDGID = " << particlesList[0] << " cos(theta)";
-  TH1D* pdgAcostheta = new TH1D("pdgacostheta",ss.str().c_str(),100, -1.,1.);
-  ss.clear(); ss.str("");
-  ss << "Particle PDGID = " << particlesList[1] << " cos(theta)";
-  TH1D* pdgBcostheta = new TH1D("pdgbcostheta",ss.str().c_str(),100, -1.,1.);
+  
+  std::stringstream name, desc;
+  std::vector<TH1D *> costhetaHistos;
+  std::vector<TH1D *> massHistos;
+  std::vector<TH1D *> pTHistos;
+  std::vector<TH1D *> pZHistos;
 
-  ss.clear(); ss.str("");
-  ss << "Invariant Mass(" << particlesList[0] << "," << particlesList[1] << ")";
-  TH1D* mpdgapdgb = new TH1D("mpdgapdgb",ss.str().c_str(),1000, 0., sqrts);
+  unsigned int i=0, j=0;
+  for (auto part:particlesList){
+    name.clear(); name.str(""); desc.clear(); desc.str("");
+    name << "pdgcostheta" << i;
+    desc << "Particle PDGID = " << part << " cos(theta)";
+    costhetaHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),100, -1.,1.));
+    i++;
+  }
 
-  ss.clear(); ss.str("");
-  ss << "PT(" << particlesList[0] << "," << particlesList[1] << ")";
-  TH1D* ptpdgapdgb = new TH1D("ptpdgapdgb",ss.str().c_str(),1000, 0., sqrts);
+  for (unsigned int part1=0; part1 < particlesList.size(); part1++){
+    for (unsigned int part2=part1+1; part2 < particlesList.size(); part2++){
 
-  ss.clear(); ss.str("");
-  ss << "PZ(" << particlesList[0] << "," << particlesList[1] << ")";
-  TH1D* pzpdgapdgb = new TH1D("pzpdgapdgb",ss.str().c_str(),1000, 0., sqrts);
+      name.clear(); name.str(""); desc.clear(); desc.str("");
+      name << "mass" << part1 << part2;
+      desc << "Invariant Mass(" << particlesList[part1] << "," << particlesList[part2] << ")";
+      massHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),1000, 0., sqrts));
+      
+      name.clear(); name.str(""); desc.clear(); desc.str("");
+      name << "pt" << part1 << part2;
+      desc << "pT(" << particlesList[part1] << "," << particlesList[part2] << ")";
+      pTHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),1000, 0., sqrts));
 
-  //  loop over the events
-  for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
-    if (i)
-      event = podio::Frame(reader->readNextEntry(podio::Category::Event));
-    auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
-    // do more stuff with this event
-    edm4hep::LorentzVectorM *particleA;
-    edm4hep::LorentzVectorM *particleB;
-    for (auto part: mcParticles){
-      if ( part.getPDG() == particlesList[0] && !particleA ){
-	auto momentumA = part.getMomentum();
-	particleA = new edm4hep::LorentzVectorM(momentumA.x, momentumA.y, momentumA.z, part.getMass());
-	double costheta = cos(particleA->Theta());
-	pdgAcostheta->Fill(costheta);
-      }
-      if ( part.getPDG() == particlesList[1] && !particleB ){
-	auto momentumB = part.getMomentum();
-	particleB = new edm4hep::LorentzVectorM(momentumB.x, momentumB.y, momentumB.z, part.getMass());
-	double costheta = cos(particleB->Theta());
-	pdgBcostheta->Fill(costheta);
-      }
-      if ( particleA && particleB ){
-	edm4hep::LorentzVectorM part = *particleA + *particleB;
-	mpdgapdgb->Fill(part.mass());
-	ptpdgapdgb->Fill(part.pt());
-	pzpdgapdgb->Fill(part.pz());
-      }
-    }
-    // release memory after an event
-    if ( particleA ) {
-      delete particleA;
-      particleA=0;
-    }
-    if ( particleB ) {
-      delete particleB;
-      particleB=0;
+      name.clear(); name.str(""); desc.clear(); desc.str("");
+      name << "pz" << part1 << part2;
+      desc << "pZ(" << particlesList[part1] << "," << particlesList[part2] << ")";
+      pZHistos.push_back(new TH1D(name.str().c_str(),desc.str().c_str(),1000, 0., sqrts));
     }
   }
 
-  // now analyze the event
-  
+  //  loop over the events
+  std::vector<edm4hep::LorentzVectorM *> selectedParticles;
+  selectedParticles.resize(particlesList.size());
+  for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
+    if (i)
+      event = podio::Frame(reader->readNextEntry(podio::Category::Event));
+    
+    // loop over the particles of the event:
+    auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
+    for (unsigned int ipart=0; ipart<particlesList.size(); ipart++){
+      for (auto part: mcParticles){
+	if ( part.getPDG() == particlesList[ipart]){
+	  if ( part.getGeneratorStatus() > 0 && !selectedParticles[ipart]){
+	    auto momentumA = part.getMomentum();
+	    selectedParticles[ipart] = new edm4hep::LorentzVectorM(momentumA.x, momentumA.y, momentumA.z, part.getMass());
+	  }
+	}
+      }
+    }
+    // fill the histograms:
+    for (unsigned int ipart=0; ipart<particlesList.size(); ipart++){
+      if (selectedParticles[ipart]){
+	double costheta = cos(selectedParticles[ipart]->Theta());
+	costhetaHistos[ipart]->Fill(costheta);
+      }
+    }
+
+    unsigned counter = 0;
+    for (unsigned int ipart1=0; ipart1<particlesList.size(); ipart1++){
+      for (unsigned int ipart2=ipart1+1; ipart2<particlesList.size(); ipart2++){
+	if (selectedParticles[ipart1] && selectedParticles[ipart2] ){
+	  edm4hep::LorentzVectorM combParticle = *selectedParticles[ipart1] + *selectedParticles[ipart2];
+	  massHistos[counter]->Fill(combParticle.mass());
+	  pTHistos[counter]->Fill(combParticle.pt());
+	  pZHistos[counter]->Fill(combParticle.pz());
+	}
+	counter++;
+      }
+    }
+
+    // release memory after an event
+    for (unsigned int ipart=0; ipart<selectedParticles.size(); ipart++){
+      if ( selectedParticles[ipart] ) {
+	delete selectedParticles[ipart];
+	selectedParticles[ipart]=0;
+      }
+    }
+  }
   // instantiate the collection as pointer
   std::unique_ptr<TFile> outputFilePtr(TFile::Open(outFileName.c_str(),"RECREATE"));
   outputFilePtr->cd();
 
-  pdgAcostheta->Write();
-  pdgBcostheta->Write();
-  mpdgapdgb->Write();
-  ptpdgapdgb->Write();
-  pzpdgapdgb->Write();
+  for (auto histo:costhetaHistos){
+    histo->Write();
+  }
+  for (auto histo:massHistos){
+    histo->Write();
+  }
+  for (auto histo:pTHistos){
+    histo->Write();
+  }
+  for (auto histo:pZHistos){
+    histo->Write();
+  }
 
   outputFilePtr->Write();
   outputFilePtr->Close();
