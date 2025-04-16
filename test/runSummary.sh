@@ -13,6 +13,8 @@ cd ci-setups
 echo Extracting the cross sections by reading EDM4HEP files
 $K4GENERATORSCONFIG/xsectionSummary -f ${CWD}/xsectionSummary.dat
 
+cp *.png ${CWD}/.
+
 cat ${CWD}/xsectionSummary.dat
 
 # cleanup at the end
