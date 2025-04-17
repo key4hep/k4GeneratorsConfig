@@ -144,10 +144,10 @@ int main(int argc, char** argv) {
         pdgBcostheta->Fill(costheta);
       }
       if (particleA && particleB) {
-        edm4hep::LorentzVectorM part = *particleA + *particleB;
-        mpdgapdgb->Fill(part.mass());
-        ptpdgapdgb->Fill(part.pt());
-        pzpdgapdgb->Fill(part.pz());
+        edm4hep::LorentzVectorM pp = *particleA + *particleB;
+        mpdgapdgb->Fill(pp.mass());
+        ptpdgapdgb->Fill(pp.pt());
+        pzpdgapdgb->Fill(pp.pz());
       }
     }
     // release memory after an event
