@@ -22,10 +22,10 @@ find_package(ZLIB)
 find_package(LibLZMA)
 find_package(BZip2)
 
-#--- Define basic build settings -----------------------------------------------
 # - Use GNU-style hierarchy for installing build products
 include(GNUInstallDirs)
 
+#--- Define basic build settings -----------------------------------------------
 include(cmake/Key4hepConfig.cmake)
 
 # Build the converter
