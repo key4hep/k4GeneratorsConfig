@@ -91,7 +91,7 @@ pythiaUserHooks::pythiaUserHooks(std::string filename) : m_isValid(true) {
   if (m_NbOfParticles.size() != m_PDGID1.size() || m_PDGID1.size() != m_PDGID2.size() ||
       m_PDGID1.size() != m_Value.size() || m_Value.size() != m_Type.size()) {
     m_isValid = false;
-    std::cout << "Inconsistent definition of 1 particle selector in " << "pythiaUserHooks" << std::endl;
+    std::cout << "Inconsistent definition of 1 particle selector in pythiaUserHooks" << std::endl;
   }
 
   print();
