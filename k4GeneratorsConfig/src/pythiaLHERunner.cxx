@@ -156,7 +156,7 @@ int main(int argc, char** argv) {
   // Done.
   if (!hepmc) {
     std::cout << "pythiaLHErunner::WARNING: HepMC output not allowed.\n"
-              << "         To allow HepMC output make sure you have this line " << "in your Pythia command file:\n"
+              << "         To allow HepMC output make sure you have this line in your Pythia command file:\n"
               << "           Main:writeHepMC = on" << std::endl;
   }
 
