@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
 
   //  loop over the events
   std::vector<edm4hep::LorentzVectorM *> selectedParticles;
-  selectedParticles.resize(particlesList.size());
+  selectedParticles.resize(particlesList.size(), nullptr);
   for (size_t iEntry = 0; iEntry < reader->getEntries(podio::Category::Event); ++iEntry) {
     if (iEntry)
       event = podio::Frame(reader->readNextEntry(podio::Category::Event));
