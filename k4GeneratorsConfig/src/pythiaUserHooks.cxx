@@ -195,7 +195,7 @@ bool pythiaUserHooks::Veto2ParticleSelector(double energy1, double px1, double p
         if (!(value < m_Value[i]))
           vetoed = true;
       } else {
-        std::cout << "pythiaUserHooks::Veto2Particles Comparator request " << "unknown " << m_Comparator[i]
+        std::cout << "pythiaUserHooks::Veto2Particles Comparator request unknown " << m_Comparator[i]
                   << std::endl;
       }
     }
