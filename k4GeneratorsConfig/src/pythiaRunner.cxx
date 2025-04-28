@@ -16,9 +16,9 @@
 // approach to the same problem.)
 // Also illustrated output to be plotted by Python/Matplotlib/pyplot.
 
-#include <unistd.h>
 #include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/HepMC3.h"
+#include <unistd.h>
 
 #include "pythiaUserHooks.h"
 
@@ -28,11 +28,11 @@ using namespace Pythia8;
 
 int main(int argc, char** argv) {
 
-  //read the options
-  std::string filename="Pythia.dat";
+  // read the options
+  std::string filename = "Pythia.dat";
   int c;
-  while ((c = getopt (argc, argv, "f:")) != -1)
-    switch (c){
+  while ((c = getopt(argc, argv, "f:")) != -1)
+    switch (c) {
     case 'f':
       filename = optarg;
       break;
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
     }
   // check existence of the file:
   std::ifstream infile(filename);
-  if ( infile.fail() ) {
+  if (infile.fail()) {
     std::cout << "pythiaRunner:: input file with name " << filename << " not found. Exiting" << std::endl;
     exit(0);
   }
@@ -54,17 +54,17 @@ int main(int argc, char** argv) {
   // Pythia generator.
   Pythia pythia;
   // add the write hepmc flag to the settings
-  pythia.settings.addFlag("Main:writeHepMC",false);
-  pythia.settings.addWord("Main:HepMCFile","pythia");
-  pythia.settings.addWord("Main:SelectorsFile","PythiaSelectors");
+  pythia.settings.addFlag("Main:writeHepMC", false);
+  pythia.settings.addWord("Main:HepMCFile", "pythia");
+  pythia.settings.addWord("Main:SelectorsFile", "PythiaSelectors");
   // Read in the rest of the settings and data from a separate file.
   pythia.readFile(filename);
 
   // setup the Userhooks for PYTHIA
   const std::string selectorFile = pythia.word("Main:SelectorsFile");
   auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>(selectorFile);
-  bool success = pythia.setUserHooksPtr( pythiaUserHooksPtr);
-  if ( !success ) 
+  bool success = pythia.setUserHooksPtr(pythiaUserHooksPtr);
+  if (!success)
     std::cout << "WARNING::pythiaRunner::setting of UserHooks was unsuccessful: " << std::endl;
 
   // Initialization.
@@ -77,10 +77,10 @@ int main(int argc, char** argv) {
   Pythia8::Pythia8ToHepMC ToHepMC;
   if (hepmc)
     ToHepMC.setNewFile(hepmcFile);
-  
+
   // Extract settings to be used in the main program.
-  int nEvent  = pythia.mode("Main:numberOfEvents");
-  int nAbort  = pythia.mode("Main:timesAllowErrors");
+  int nEvent = pythia.mode("Main:numberOfEvents");
+  int nAbort = pythia.mode("Main:timesAllowErrors");
 
   // Begin event loop.
   int iAbort = 0;
@@ -89,7 +89,8 @@ int main(int argc, char** argv) {
     // Generate events. Quit if many failures.
     if (!pythia.next()) {
 
-      if (++iAbort < nAbort) continue;
+      if (++iAbort < nAbort)
+        continue;
       cout << " Event generation aborted prematurely, owing to error!\n";
       break;
     }
@@ -97,7 +98,7 @@ int main(int argc, char** argv) {
     if (hepmc) {
       ToHepMC.writeNextEvent(pythia);
     }
-  // End of event loop.
+    // End of event loop.
   }
 
   // Final statistics.

@@ -19,8 +19,8 @@ Processes:
      Final: [23, 25]
      Order: [2,0]
      RandomSeed: 42
-     SqrtS: 250 
-     Decay: 
+     SqrtS: 250
+     Decay:
       23:
         - 13
         - -13
@@ -31,8 +31,8 @@ Processes:
      Final: [23, 25]
      Order: [2,0]
      RandomSeed: 42
-     SqrtS: 350 
-     Decay: 
+     SqrtS: 350
+     Decay:
       23:
         - 13
         - -13

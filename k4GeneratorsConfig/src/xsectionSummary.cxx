@@ -1,18 +1,17 @@
 // File to read EDM4HEP output and extract the cross sections
-#include <iostream>
-#include <fstream>
-#include <unistd.h>
 #include "xsectionCollection.h"
+#include <fstream>
+#include <iostream>
+#include <unistd.h>
 
 //
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 
-  std::string filename="XsectionSummary.dat";
-  std::string fileRoot="XsectionSummary.root";
+  std::string filename = "XsectionSummary.dat";
+  std::string fileRoot = "XsectionSummary.root";
   int c;
-  while ((c = getopt (argc, argv, "hf:r:")) != -1)
-    switch (c){
+  while ((c = getopt(argc, argv, "hf:r:")) != -1)
+    switch (c) {
     case 'f':
       filename = optarg;
       break;
@@ -30,22 +29,24 @@ int main(int argc, char** argv)
     }
 
   // instantiate the collection as pointer
-  k4GeneratorsConfig::xsectionCollection *xsecColl = new k4GeneratorsConfig::xsectionCollection();
+  k4GeneratorsConfig::xsectionCollection* xsecColl = new k4GeneratorsConfig::xsectionCollection();
   // execute the gathering of information including detailed output
   xsecColl->Execute();
   // print the summary on screen
   xsecColl->PrintSummary(std::cout);
   // save the summary in a file
   std::ofstream outFile(filename);
-  std::ostream &output = outFile;
+  std::ostream& output = outFile;
   xsecColl->PrintSummary(output);
   // write to root
   xsecColl->Write2Root(fileRoot);
   // if there is a failure:
-  if ( xsecColl->NbOfFailures() != 0 ){
-    std::cout << xsecColl->NbOfFailures() << "/" << xsecColl->NbOfFailures() + xsecColl->NbOfSuccesses() << " Runs failed" << std::endl;
+  if (xsecColl->NbOfFailures() != 0) {
+    std::cout << xsecColl->NbOfFailures() << "/" << xsecColl->NbOfFailures() + xsecColl->NbOfSuccesses()
+              << " Runs failed" << std::endl;
     exit(1);
   }
   // delete the pointer
-  delete xsecColl; xsecColl=0;
+  delete xsecColl;
+  xsecColl = 0;
 }

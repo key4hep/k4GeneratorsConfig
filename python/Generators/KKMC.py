@@ -32,7 +32,7 @@ class KKMC(GeneratorBase):
         self.fill_datacard()
         # prepare the key4hep script
         self.fill_key4hepScript()
-        
+
     def fill_datacard(self):
         if (
             abs(self.procinfo.get_beam_flavour(1)) != 11
@@ -97,7 +97,7 @@ class KKMC(GeneratorBase):
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : '_GFermi', 'alphaSMZ' : '_alphaSMZ', 'alphaEMM1': '_alphaEMM1'}
-        # alphas could be SigmaProcess:alphaSvalue 
+        # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::KKMC: parameter {param} has no translation in KKMC Parameter Dictionary")
             return ""

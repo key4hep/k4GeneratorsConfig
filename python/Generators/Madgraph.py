@@ -15,7 +15,7 @@ class Madgraph(GeneratorBase):
 
         self.setOptionalFileNameAndExtension(f"pythia{self.GeneratorDatacardBase}","cmnd")
         self.fill_PythiaCMND()
-        
+
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
@@ -95,11 +95,11 @@ class Madgraph(GeneratorBase):
                  return f"{accel}240ll"
             else:
                  return f"fcc365ll"
-             
+
         elif accel == "ilc":
             # only one option implemented
             return f"{accel}500ll"
-        
+
         elif accel == "clic":
             # only one option implemented
             return f"{accel}3000ll"
@@ -291,7 +291,7 @@ class Madgraph(GeneratorBase):
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' , 'alphaEMEWSchemeM1' : 'aEWM1'}
-        # alphas could be SigmaProcess:alphaSvalue 
+        # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Madgraph: parameter {param} has no translation in Madgraph Parameter Dictionary")
             return ""

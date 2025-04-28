@@ -2,13 +2,13 @@
 #define K4GENERATORSCONFIG_XSECTION2ROOT_H
 
 #include "TFile.h"
-#include "TTree.h"
-#include "TProfile.h"
+#include "TGraphErrors.h"
 #include "TH1D.h"
 #include "TH2D.h"
 #include "TGraph.h"
-#include "TGraphErrors.h"
 #include "TCanvas.h"
+#include "TProfile.h"
+#include "TTree.h"
 
 #include <string>
 #include <unordered_map>
@@ -18,7 +18,7 @@
 
 namespace k4GeneratorsConfig {
 class xsection2Root {
- public:
+public:
   xsection2Root();
   xsection2Root(std::string);
   ~xsection2Root();
@@ -32,10 +32,8 @@ class xsection2Root {
   void add2Tree(xsection&);
   void writeTree();
   void writeHistos();
-
   void writeCrossSectionFigures();
   void writeDifferentialFigures();
-
 
  private:
   TFile *m_file;
@@ -49,17 +47,17 @@ class xsection2Root {
   std::vector<std::vector<std::string>> m_canvasName;
 
   // data members
-  std::string  m_process;
-  int          m_processCode;
-  double       m_crossSection;
-  double       m_crossSectionError;
-  double       m_sqrts;
-  std::string  m_generator;
-  int m_generatorCode;  
+  std::string m_process;
+  int m_processCode;
+  double m_crossSection;
+  double m_crossSectionError;
+  double m_sqrts;
+  std::string m_generator;
+  int m_generatorCode;
 
   std::vector<std::string> m_generatorsList;
   std::vector<std::string> m_processesList;
 };
-}
+} // namespace k4GeneratorsConfig
 
 #endif

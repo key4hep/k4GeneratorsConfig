@@ -21,7 +21,7 @@ class Sherpa(GeneratorBase):
         self.fill_datacard()
         # prepare the key4hep script
         self.fill_key4hepScript()
-        
+
     def write_run(self):
         self.addOption2GeneratorDatacard("RANDOM_SEED", self.procinfo.get_rndmSeed())
 
@@ -55,7 +55,7 @@ class Sherpa(GeneratorBase):
         # run settings
         for key in self.procDB.getDictParameters():
             self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
-        
+
         self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.eventmode)
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
@@ -216,7 +216,7 @@ class Sherpa(GeneratorBase):
 
     def getParameterLabel(self, param):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'ALPHAS(MZ)' }
-        # alphas could be SigmaProcess:alphaSvalue 
+        # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Sherpa: parameter {param} has no translation in Sherpa Parameter Dictionary")
             return ""

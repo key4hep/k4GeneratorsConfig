@@ -1,32 +1,31 @@
 // File to read EDM4HEP output and extract the cross sections
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <unistd.h>
 
 #include "TFile.h"
 #include "TH1D.h"
 
-#include "podio/ROOTReader.h"
-#include "podio/Frame.h"
 #include "edm4hep/Constants.h"
 #include "edm4hep/GeneratorEventParametersCollection.h"
 #include "edm4hep/GeneratorToolInfo.h"
 #include "edm4hep/MCParticleCollection.h"
+#include "podio/Frame.h"
+#include "podio/ROOTReader.h"
 
 #include "edm4hep/utils/kinematics.h"
 
 std::string translatePDG2Name(int);
 
 //
-int main(int argc, char** argv)
-{
+int main(int argc, char** argv) {
 
-  std::string inFileName="events.edm4hep";
-  std::string outFileName="histograms.root";
-  std::string particles="11,-11";
+  std::string inFileName = "events.edm4hep";
+  std::string outFileName = "histograms.root";
+  std::string particles = "11,-11";
   int c;
-  while ((c = getopt (argc, argv, "hp:i:o:")) != -1)
-    switch (c){
+  while ((c = getopt(argc, argv, "hp:i:o:")) != -1)
+    switch (c) {
     case 'o':
       outFileName = optarg;
       break;
@@ -41,7 +40,8 @@ int main(int argc, char** argv)
       std::cout << "-h: print this help" << std::endl;
       std::cout << "-i filename: input filename" << std::endl;
       std::cout << "-o filename: output filename" << std::endl;
-      std::cout << "-p pdgID1,pddID2,....: comma separated list of the pdg ids in the finalstate to be analyzed" << std::endl;
+      std::cout << "-p pdgID1,pddID2,....: comma separated list of the pdg ids in the finalstate to be analyzed"
+                << std::endl;
       exit(0);
     default:
       exit(0);
@@ -59,56 +59,56 @@ int main(int argc, char** argv)
   }
 
   std::cout << "key4HEPAnalysis:" << std::endl
-	    << "Input  file         " << inFileName << std::endl
-	    << "Output file        : " << outFileName << std::endl;
-  for (unsigned int i=0; i<particlesList.size(); i++){
+            << "Input  file         " << inFileName << std::endl
+            << "Output file        : " << outFileName << std::endl;
+  for (unsigned int i = 0; i < particlesList.size(); i++) {
     std::cout << "pdg particle " << i << " : " << particlesList[i] << std::endl;
   }
 
   // open the edm4hep file
-  podio::ROOTReader *reader;
+  podio::ROOTReader* reader;
   reader = new podio::ROOTReader();
   reader->openFile(inFileName);
 
   // retrieve the RunInfo for the weight names, there should only be 1 entry per Run
-  if ( reader->getEntries(podio::Category::Run) == 0 ){
+  if (reader->getEntries(podio::Category::Run) == 0) {
     exit(0);
   }
 
   // decode the tool infor from Run
   auto runinfo = podio::Frame(reader->readNextEntry(podio::Category::Run));
   auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
-  if ( toolInfos.size() > 0 ){
+  if (toolInfos.size() > 0) {
     std::cout << "analyze2f the tool " << toolInfos[0].name << std::endl;
-  }
-  else {
+  } else {
     std::cout << "k4GeneratorsConfig::Warning: ToolInfos not available" << std::endl;
   }
   
   // retrieve the cross section for the last event if not possible it's not valid
-  if ( reader->getEntries(podio::Category::Event) == 0 ){
+  if (reader->getEntries(podio::Category::Event) == 0) {
     exit(0);
   }
   
   // get the frame parameters
   auto event = podio::Frame(reader->readNextEntry(podio::Category::Event));
-  const edm4hep::GeneratorEventParametersCollection &genParametersCollection = event.get<edm4hep::GeneratorEventParametersCollection>(edm4hep::labels::GeneratorEventParameters);
-  if ( genParametersCollection.size() == 0 ) exit(0);
+  const edm4hep::GeneratorEventParametersCollection& genParametersCollection =
+      event.get<edm4hep::GeneratorEventParametersCollection>(edm4hep::labels::GeneratorEventParameters);
+  if (genParametersCollection.size() == 0)
+    exit(0);
   edm4hep::GeneratorEventParameters genParameters = genParametersCollection[0];
-  
+
   // decode sqrts
   double sqrts = genParameters.getSqrts();
   
   // histogram reservations
   // prepare some histograms
-  
   std::stringstream name, desc;
   std::vector<TH1D *> costhetaHistos;
   std::vector<TH1D *> massHistos;
   std::vector<TH1D *> pTHistos;
   std::vector<TH1D *> pZHistos;
 
-  unsigned int i=0, j=0;
+  unsigned int i=0;
   for (auto part:particlesList){
     name.clear(); name.str(""); desc.clear(); desc.str("");
     name << "pdgcostheta" << particlesNamesList[i];
@@ -140,8 +140,8 @@ int main(int argc, char** argv)
   //  loop over the events
   std::vector<edm4hep::LorentzVectorM *> selectedParticles;
   selectedParticles.resize(particlesList.size());
-  for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
-    if (i)
+  for (size_t iEntry = 0; iEntry < reader->getEntries(podio::Category::Event); ++iEntry) {
+    if (iEntry)
       event = podio::Frame(reader->readNextEntry(podio::Category::Event));
     
     // loop over the particles of the event:
@@ -181,12 +181,12 @@ int main(int argc, char** argv)
     for (unsigned int ipart=0; ipart<selectedParticles.size(); ipart++){
       if ( selectedParticles[ipart] ) {
 	delete selectedParticles[ipart];
-	selectedParticles[ipart]=0;
+	selectedParticles[ipart]=nullptr;
       }
     }
   }
   // instantiate the collection as pointer
-  std::unique_ptr<TFile> outputFilePtr(TFile::Open(outFileName.c_str(),"RECREATE"));
+  std::unique_ptr<TFile> outputFilePtr(TFile::Open(outFileName.c_str(), "RECREATE"));
   outputFilePtr->cd();
 
   for (auto histo:costhetaHistos){

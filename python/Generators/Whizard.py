@@ -18,7 +18,7 @@ class Whizard(GeneratorBase):
         self.addModelParticleProperty(pdg_code=23, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
-        
+
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -84,7 +84,7 @@ class Whizard(GeneratorBase):
 
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
-            
+
         if self.procinfo.eventmode == "unweighted":
             self.addOption2GeneratorDatacard("?unweighted", "true")
         else:
@@ -219,7 +219,7 @@ class Whizard(GeneratorBase):
         parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'alphas',
                           'MZ' : 'mass', 'WZ' : 'width', 'MW' : 'mass', 'WW' : 'width',
                           'MB' : 'mass', 'MT' : 'mass', 'WT' : 'width', 'MH': 'mass', 'WH' : 'width'}
-        # alphas could be SigmaProcess:alphaSvalue 
+        # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Whizard: parameter {param} has no translation in Whizard Parameter Dictionary")
             return ""

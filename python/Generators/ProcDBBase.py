@@ -13,7 +13,7 @@ class ProcDBBase(abc.ABC):
 
     def execute(self):
         return
-        
+
     def getDict(self):
         fulldict = dict()
         fulldict.update(self.rundict)

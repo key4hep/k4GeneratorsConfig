@@ -26,40 +26,7 @@ find_package(BZip2)
 # - Use GNU-style hierarchy for installing build products
 include(GNUInstallDirs)
 
-# - Define a default build type when using a single-mode tool like make/ninja
-# If you're using a build tool that supports multiple modes (Visual Studio,
-# Xcode), this setting has no effect.
-# HSF recommend RelWithDebInfo (optimized with debugging symbols) as this is
-# generally the mode used by system packaging (rpm, deb, spack, macports).
-# However, it can be overriden by passing ``-DCMAKE_BUILD_TYPE=<type>`` when
-# invoking CMake
-if(NOT CMAKE_CONFIGURATION_TYPES)
-  if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE RelWithDebInfo
-      CACHE STRING "Choose the type of build, options are: None Release MinSizeRel Debug RelWithDebInfo"
-      FORCE
-      )
-  else()
-    set(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}"
-      CACHE STRING "Choose the type of build, options are: None Release MinSizeRel Debug RelWithDebInfo"
-      FORCE
-      )
-  endif()
-endif()
-
-# - Define the C++ Standard to use (Simplest Possible)
-set(CMAKE_CXX_STANDARD 17 CACHE STRING "")
-
-if(NOT CMAKE_CXX_STANDARD MATCHES "17|20")
-  message(FATAL_ERROR "Unsupported C++ standard: ${CMAKE_CXX_STANDARD}")
-endif()
-
-# Prevent CMake falls back to the latest standard the compiler does support
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Disables the use of compiler-specific extensions, hence makes sure the code
-# works for a wider range of compilers
-set(CMAKE_CXX_EXTENSIONS OFF)
+include(cmake/Key4hepConfig.cmake)
 
 # Build the converter
 add_subdirectory(k4GeneratorsConfig)

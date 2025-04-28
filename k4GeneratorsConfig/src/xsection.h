@@ -7,17 +7,17 @@
 
 namespace k4GeneratorsConfig {
 class xsection {
- public:
+public:
   xsection();
-  xsection(double,double,double,std::string,std::string,std::string);
-  xsection(const xsection &);
-  xsection& operator=(const xsection &);
+  xsection(double, double, double, std::string, std::string, std::string);
+  xsection(const xsection&);
+  xsection& operator=(const xsection&);
   ~xsection();
 
   bool processFile();
 
   void setXsection(double);
-  void setXsection(double,double);
+  void setXsection(double, double);
   void setXsectionError(double);
   void setSQRTS(double);
   void setGenerator(std::string);
@@ -34,17 +34,16 @@ class xsection {
 
   void Print();
 
- private:
-  double      m_xsection;
-  double      m_xsectionError;
-  double      m_sqrts;
+private:
+  double m_xsection;
+  double m_xsectionError;
+  double m_sqrts;
   std::string m_generator;
   std::string m_process;
   std::string m_file;
-  bool        m_isValid;
-  podio::ROOTReader *m_reader;
-
+  bool m_isValid;
+  podio::ROOTReader* m_reader;
 };
-}
+} // namespace k4GeneratorsConfig
 
 #endif

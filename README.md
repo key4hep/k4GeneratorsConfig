@@ -5,7 +5,7 @@ A python based module for the automatic generation of inputfiles for  Monte-Carl
 
 ## Requirements
 `Python >= 3.7`
-`PyYaml`  
+`PyYaml`
 
 Check your python version
 ```
@@ -18,7 +18,7 @@ pip3 install pyyaml --user
 ```
 
 ## Usage
-Before begining, you should setup the environment by: 
+Before begining, you should setup the environment by:
 ```
 source /path/to/k4GeneratorsConfig/setup.(tc)(z)sh
 ```
@@ -45,7 +45,7 @@ cd /path/to/out
 ```
 Warning: always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
 
-## Running tests: 
+## Running tests:
 You can test the creation of the input files and the event generation step:
 ```
 bash
@@ -70,7 +70,7 @@ The following are a list of user settings that are common to all event generator
 
 - **ISRMode**: Enable ISR via electron structure function:
 ```
-ISRMode: 1 
+ISRMode: 1
 ```
 default: 0 (turned off)
 
@@ -80,7 +80,7 @@ default: 0 (turned off)
 
 - **Events**: Number of Monte-Carlo events to be generated.
 
-- **Processes**: A list of processes which runcards should be generated. Each process should have its own unique name. Under these headings you can 
+- **Processes**: A list of processes which runcards should be generated. Each process should have its own unique name. Under these headings you can
 				 specify the final states to be generated and at what order e.g [EW,QCD].
 ```
 		Processes:
@@ -135,7 +135,7 @@ default: 0 (turned off)
 
   - **Two Particle Selectors**:
   	- **Mass**: Cut on the invariant mass of two particles
-  	- **Angle**: Cut on the angular separation in radians 
+  	- **Angle**: Cut on the angular separation in radians
   	- **DEta**: Cut on the pseudorapidity separation
   	- **DY**: Cut on the rapidity separation
   	- **DPhi**: Cut on the azimuthal separation in radians
