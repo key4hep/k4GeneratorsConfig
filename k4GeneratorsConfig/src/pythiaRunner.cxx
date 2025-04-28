@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
         continue;
       }
 
-      std::cout << "pythiaRunner::ERROR: Event generation aborted prematurely, " << "owing to error!\n"
+      std::cout << "pythiaRunner::ERROR: Event generation aborted prematurely, owing to error!\n"
                 << "                     Aborting..." << std::endl;
       exit(1);
     }
