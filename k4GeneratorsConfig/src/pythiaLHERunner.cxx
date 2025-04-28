@@ -14,7 +14,9 @@ using namespace Pythia8;
 //==========================================================================
 
 int main(int argc, char** argv) {
-
+  // usage: 
+  std::string usage = "Usage: pythiaLHERunner -h -f filename -l filename";
+    
   // read the options
   std::string filename = "Pythia.dat";
   std::string lhefilename = "Pythia.lhe";
@@ -32,14 +34,16 @@ int main(int argc, char** argv) {
       hepmcFile = optarg;
       break;
     case 'h':
-      std::cout << "Usage: pythiaLHERunner -h -f filename -l filename" << std::endl;
+      std::cout << usage << std::endl;
       std::cout << "-h: print this help" << std::endl;
       std::cout << "-f filename: input file containing the pythia commands" << std::endl;
       std::cout << "-l filename: input file containing the LHE events" << std::endl;
       std::cout << "-o filename: output file containing the hepmc events" << std::endl;
       exit(0);
     default:
-      exit(0);
+      std::cerr << "pythiaRunner::Error: unknown argument " << char(c) << std::endl;
+      std::cerr << usage << std::endl;
+      exit(1);
     }
   // check existence of the file:
   std::ifstream infile(filename);
