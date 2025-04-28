@@ -82,7 +82,7 @@ pythiaUserHooks::pythiaUserHooks(std::string filename) : m_isValid(true) {
       }
     }
   } else {
-    std::cout << "pythiaUserHooks::file could not be opened, not applying user " << "cuts!" << std::endl;
+    std::cout << "pythiaUserHooks::file could not be opened, not applying user cuts!" << std::endl;
     m_isValid = false;
   }
   theFile.close();
