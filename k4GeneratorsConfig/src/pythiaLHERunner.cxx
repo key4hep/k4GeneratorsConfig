@@ -135,10 +135,10 @@ int main(int argc, char** argv) {
       }
 
     } else {
-      if (verbose){
-	std::cout << "Event was rejected. LHA listing: " << std::endl;
-	pythia.LHAeventList();
-	std::cout << "End of rejected event" << std::endl;
+      if (verbose) {
+        std::cout << "Event was rejected. LHA listing: " << std::endl;
+        pythia.LHAeventList();
+        std::cout << "End of rejected event" << std::endl;
       }
       // Leave event loop if at end of file.
       if (pythia.info.atEndOfFile()) {
@@ -149,10 +149,10 @@ int main(int argc, char** argv) {
 
       if (++iAbort >= nAbort) {
         std::cout << " Event generation aborted prematurely at event " << iEvent << std::endl;
-	if (verbose){
-	  std::cout << " LHA input:" << std::endl;
-	  pythia.LHAeventList();
-	}
+        if (verbose) {
+          std::cout << " LHA input:" << std::endl;
+          pythia.LHAeventList();
+        }
         exit(1);
       }
     }
