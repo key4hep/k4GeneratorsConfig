@@ -15,7 +15,7 @@
 int main(int argc, char** argv) {
   // usage
   std::string usage = "Usage: pythiaRunner -h -f FILEPATH\n";
-  
+
   // Default values for the command-line arguments
   std::string pythiaCmdFilePath = "Pythia.dat";
   bool verbose = false;
@@ -31,15 +31,13 @@ int main(int argc, char** argv) {
       verbose = true;
       break;
     case 'h':
-      std::cout << usage
-                << "  -h: print this help and exit\n"
+      std::cout << usage << "  -h: print this help and exit\n"
                 << "  -v: more verbose output\n"
                 << "  -f FILEPATH: file containing the Pythia commands" << std::endl;
       exit(0);
     default:
       std::cerr << "pythiaRunner::Error: unknown argument " << char(c) << std::endl;
-      std::cerr << usage
-		<< "Exiting" << std::endl;
+      std::cerr << usage << "Exiting" << std::endl;
       exit(1);
     }
   }

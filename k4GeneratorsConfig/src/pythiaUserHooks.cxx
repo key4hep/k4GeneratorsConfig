@@ -156,8 +156,7 @@ bool pythiaUserHooks::Veto1ParticleSelector(double energy, double px, double py,
         if (!(value < m_Value[i]))
           vetoed = true;
       } else {
-        std::cout << "pythiaUserHooks::Vecto1Particle Comparator request unknown " << m_Comparator[i]
-                  << std::endl;
+        std::cout << "pythiaUserHooks::Vecto1Particle Comparator request unknown " << m_Comparator[i] << std::endl;
       }
     }
   }
@@ -195,8 +194,7 @@ bool pythiaUserHooks::Veto2ParticleSelector(double energy1, double px1, double p
         if (!(value < m_Value[i]))
           vetoed = true;
       } else {
-        std::cout << "pythiaUserHooks::Veto2Particles Comparator request unknown " << m_Comparator[i]
-                  << std::endl;
+        std::cout << "pythiaUserHooks::Veto2Particles Comparator request unknown " << m_Comparator[i] << std::endl;
       }
     }
   }

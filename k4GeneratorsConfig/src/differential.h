@@ -7,10 +7,10 @@
 
 namespace k4GeneratorsConfig {
 class differential {
- public:
+public:
   differential();
-  differential(const differential &);
-  differential& operator=(const differential &);
+  differential(const differential&);
+  differential& operator=(const differential&);
   ~differential();
 
   bool processFile();
@@ -30,15 +30,14 @@ class differential {
 
   void Print();
 
- private:
-  double      m_sqrts;
+private:
+  double m_sqrts;
   std::string m_generator;
   std::string m_process;
   std::string m_file;
-  bool        m_isValid;
+  bool m_isValid;
   std::vector<TH1D*> m_listOfHists;
-
 };
-}
+} // namespace k4GeneratorsConfig
 
 #endif
