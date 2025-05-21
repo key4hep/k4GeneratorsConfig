@@ -1,83 +1,94 @@
-// main07.cc is a part of the PYTHIA event generator.
-// Copyright (C) 2024 Torbjorn Sjostrand.
-// PYTHIA is licenced under the GNU GPL v2 or later, see COPYING for details.
-// Please respect the MCnet Guidelines, see GUIDELINES for details.
+// k4GeneratorsConfig
+#include "pythiaUserHooks.h"
 
-// Keywords: two-body decay; astroparticle; python; matplotlib
-
-// Illustration how to generate various two-body channels from
-// astroparticle processes, e.g. neutralino annihilation or decay.
-// To this end a "blob" of energy is created with unit cross section,
-// from the fictitious collision of two non-radiating incoming e+e-.
-// In the accompanying main29.cmnd file the decay channels of this
-// blob can be set up. Furthermore, only gamma, e+-, p/pbar and
-// neutrinos are stable, everything else is set to decay.
-// (The "single-particle gun" of main21.cc offers another possible
-// approach to the same problem.)
-// Also illustrated output to be plotted by Python/Matplotlib/pyplot.
-
+// Pythia8
 #include "Pythia8/Pythia.h"
 #include "Pythia8Plugins/HepMC3.h"
 #include <unistd.h>
 
-#include "pythiaUserHooks.h"
+// std
+#include <string>
 
-using namespace Pythia8;
-
-//==========================================================================
+// *nix
+#include <unistd.h>
 
 int main(int argc, char** argv) {
   // usage
-  std::string usage = "Usage: pythiaRunner -h -f filename";
+  std::string usage = "Usage: pythiaRunner -h -f FILEPATH\n";
   
-  // read the options
-  std::string filename = "Pythia.dat";
+  // Default values for the command-line arguments
+  std::string pythiaCmdFilePath = "Pythia.dat";
+  bool verbose = false;
+
+  // Read the command-line arguments
   int c;
-  while ((c = getopt(argc, argv, "f:")) != -1)
+  while ((c = getopt(argc, argv, "f:vh")) != -1) {
     switch (c) {
     case 'f':
-      filename = optarg;
+      pythiaCmdFilePath = std::string(optarg);
+      break;
+    case 'v':
+      verbose = true;
       break;
     case 'h':
-      std::cout << usage << std::endl;
-      std::cout << "-h: print this help" << std::endl;
-      std::cout << "-f filename: file containing the pythia commands" << std::endl;
+      std::cout << usage
+                << "  -h: print this help and exit\n"
+                << "  -v: more verbose output\n"
+                << "  -f FILEPATH: file containing the Pythia commands" << std::endl;
       exit(0);
     default:
       std::cerr << "pythiaRunner::Error: unknown argument " << char(c) << std::endl;
-      std::cerr << usage << std::endl;
+      std::cerr << usage
+		<< "Exiting" << std::endl;
       exit(1);
     }
-  // check existence of the file:
-  std::ifstream infile(filename);
-  if (infile.fail()) {
-    std::cout << "pythiaRunner:: input file with name " << filename << " not found. Exiting" << std::endl;
-    exit(0);
   }
 
-  // Pythia generator.
-  Pythia pythia;
-  // add the write hepmc flag to the settings
+  // Print input/output filepaths
+  if (verbose) {
+    std::cout << "pythiaRunner::INFO: Input Pythia command file: " << pythiaCmdFilePath << std::endl;
+  }
+
+  // Check if the Pythia file can be read
+  {
+    std::ifstream infile(pythiaCmdFilePath);
+    if (!infile.good()) {
+      std::cout << "pythiaRunner::ERROR: Input Pythia command file with name \"" << pythiaCmdFilePath
+                << "\" cannot be read!\n"
+                << "                     Exiting..." << std::endl;
+      exit(1);
+    }
+    infile.close();
+  }
+
+  // Pythia generator
+  Pythia8::Pythia pythia;
+
+  // Add the write HepMC flag to the settings
   pythia.settings.addFlag("Main:writeHepMC", false);
   pythia.settings.addWord("Main:HepMCFile", "pythia");
   pythia.settings.addWord("Main:SelectorsFile", "PythiaSelectors");
-  // Read in the rest of the settings and data from a separate file.
-  pythia.readFile(filename);
+
+  // Read in the rest of the settings and data from a separate file
+  pythia.readFile(pythiaCmdFilePath);
 
   // setup the Userhooks for PYTHIA
   const std::string selectorFile = pythia.word("Main:SelectorsFile");
   auto pythiaUserHooksPtr = make_shared<pythiaUserHooks>(selectorFile);
   bool success = pythia.setUserHooksPtr(pythiaUserHooksPtr);
-  if (!success)
-    std::cout << "WARNING::pythiaRunner::setting of UserHooks was unsuccessful: " << std::endl;
+  if (!success) {
+    std::cout << "WARNING::pythiaRunner::setting of UserHooks was unsuccessful!" << std::endl;
+  }
 
-  // Initialization.
+  // Initialization
   pythia.init();
 
-  // check for hepmc
+  // Check for HepMC output
   const bool hepmc = pythia.flag("Main:writeHepMC");
   const std::string hepmcFile = pythia.word("Main:HepMCFile");
-  std::cout << "HEPMC file name is " << hepmcFile << std::endl;
+  if (verbose) {
+    std::cout << "pythiaRunner::INFO: File path of the output HepMC file is \"" << hepmcFile << "\"" << std::endl;
+  }
   Pythia8::Pythia8ToHepMC ToHepMC;
   if (hepmc)
     ToHepMC.setNewFile(hepmcFile);
@@ -89,15 +100,17 @@ int main(int argc, char** argv) {
   // Begin event loop.
   int iAbort = 0;
   for (int iEvent = 0; iEvent < nEvent; ++iEvent) {
-
     // Generate events. Quit if many failures.
     if (!pythia.next()) {
-
-      if (++iAbort < nAbort)
+      if (++iAbort < nAbort) {
         continue;
-      cout << " Event generation aborted prematurely, owing to error!\n";
-      break;
+      }
+
+      std::cout << "pythiaRunner::ERROR: Event generation aborted prematurely, owing to error!\n"
+                << "                     Aborting..." << std::endl;
+      exit(1);
     }
+
     // event was ok, write to hepmc file
     if (hepmc) {
       ToHepMC.writeNextEvent(pythia);
@@ -112,7 +125,8 @@ int main(int argc, char** argv) {
   return 0;
 }
 
-/*! derived from main07.cmnd.
+/*
+! derived from main07.cmnd.
 ! This file contains commands to be read in for a Pythia8 run.
 ! Lines not beginning with a letter or digit are comments.
 
