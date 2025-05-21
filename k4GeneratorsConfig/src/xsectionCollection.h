@@ -3,6 +3,7 @@
 
 #include <vector>
 
+#include "differential.h"
 #include "xsection.h"
 
 namespace k4GeneratorsConfig {
@@ -14,10 +15,11 @@ public:
   ~xsectionCollection();
 
   void Execute();
-  void makeCollection();
-  void orderCollection();
+  void makeCollections();
+  void orderCollections();
   bool compareLength(xsection, xsection);
   bool compareLexical(xsection, xsection);
+  bool compareLexical(differential, differential);
 
   unsigned int NbOfSuccesses();
   unsigned int NbOfFailures();
@@ -29,6 +31,7 @@ public:
 
 private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;
+  std::vector<k4GeneratorsConfig::differential> m_differentialCollection;
   unsigned int m_validCounter;
   unsigned int m_invalidCounter;
 };

@@ -15,6 +15,8 @@
 
 #include "edm4hep/utils/kinematics.h"
 
+std::string translatePDG2Name(int);
+
 //
 int main(int argc, char** argv) {
 
@@ -47,10 +49,12 @@ int main(int argc, char** argv) {
 
   // decode and store in the vector
   std::vector<int> particlesList;
+  std::vector<std::string> particlesNamesList;
   std::stringstream ss(particles);
   int pdg;
   while (ss >> pdg) {
     particlesList.push_back(pdg);
+    particlesNamesList.push_back(translatePDG2Name(pdg));
     ss.ignore(1);
   }
 
@@ -98,78 +102,185 @@ int main(int argc, char** argv) {
 
   // histogram reservations
   // prepare some histograms
-  ss.clear();
-  ss.str("");
-  ss << "Particle PDGID = " << particlesList[0] << " cos(theta)";
-  TH1D* pdgAcostheta = new TH1D("pdgacostheta", ss.str().c_str(), 200, -1., 1.);
-  ss.clear();
-  ss.str("");
-  ss << "Particle PDGID = " << particlesList[1] << " cos(theta)";
-  TH1D* pdgBcostheta = new TH1D("pdgbcostheta", ss.str().c_str(), 200, -1., 1.);
+  std::stringstream name, desc;
+  std::vector<TH1D*> costhetaHistos;
+  std::vector<TH1D*> massHistos;
+  std::vector<TH1D*> pTHistos;
+  std::vector<TH1D*> pZHistos;
 
-  ss.clear();
-  ss.str("");
-  ss << "Invariant Mass(" << particlesList[0] << "," << particlesList[1] << ")";
-  TH1D* mpdgapdgb = new TH1D("mpdgapdgb", ss.str().c_str(), 1000, 0., sqrts);
+  unsigned int i = 0;
+  for (auto part : particlesList) {
+    name.clear();
+    name.str("");
+    desc.clear();
+    desc.str("");
+    name << "pdgcostheta" << particlesNamesList[i];
+    desc << "Particle PDGID = " << part << " cos(theta)";
+    costhetaHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, -1., 1.));
+    i++;
+  }
 
-  ss.clear();
-  ss.str("");
-  ss << "PT(" << particlesList[0] << "," << particlesList[1] << ")";
-  TH1D* ptpdgapdgb = new TH1D("ptpdgapdgb", ss.str().c_str(), 1000, 0., sqrts);
+  for (unsigned int part1 = 0; part1 < particlesList.size(); part1++) {
+    for (unsigned int part2 = part1 + 1; part2 < particlesList.size(); part2++) {
 
-  ss.clear();
-  ss.str("");
-  ss << "PZ(" << particlesList[0] << "," << particlesList[1] << ")";
-  TH1D* pzpdgapdgb = new TH1D("pzpdgapdgb", ss.str().c_str(), 1000, 0., sqrts);
+      name.clear();
+      name.str("");
+      desc.clear();
+      desc.str("");
+      name << "mass" << particlesNamesList[part1] << particlesNamesList[part2];
+      desc << "Invariant Mass(" << particlesList[part1] << "," << particlesList[part2] << ")";
+      massHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 1000, 0., sqrts));
+
+      name.clear();
+      name.str("");
+      desc.clear();
+      desc.str("");
+      name << "pt" << particlesNamesList[part1] << particlesNamesList[part2];
+      desc << "pT(" << particlesList[part1] << "," << particlesList[part2] << ")";
+      pTHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 1000, 0., sqrts));
+
+      name.clear();
+      name.str("");
+      desc.clear();
+      desc.str("");
+      name << "pz" << particlesNamesList[part1] << particlesNamesList[part2];
+      desc << "pZ(" << particlesList[part1] << "," << particlesList[part2] << ")";
+      pZHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 1000, 0., sqrts));
+    }
+  }
 
   //  loop over the events
-  for (size_t i = 0; i < reader->getEntries(podio::Category::Event); ++i) {
-    if (i)
+  std::vector<edm4hep::LorentzVectorM*> selectedParticles;
+  selectedParticles.resize(particlesList.size(), nullptr);
+  for (size_t iEntry = 0; iEntry < reader->getEntries(podio::Category::Event); ++iEntry) {
+    if (iEntry)
       event = podio::Frame(reader->readNextEntry(podio::Category::Event));
-    const auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
-    // do more stuff with this event
-    edm4hep::LorentzVectorM* particleA = nullptr;
-    edm4hep::LorentzVectorM* particleB = nullptr;
-    for (auto part : mcParticles) {
-      if (part.getPDG() == particlesList[0] && !particleA) {
-        auto momentumA = part.getMomentum();
-        particleA = new edm4hep::LorentzVectorM(momentumA.x, momentumA.y, momentumA.z, part.getMass());
-        double costheta = cos(particleA->Theta());
-        pdgAcostheta->Fill(costheta);
+
+    // loop over the particles of the event:
+    auto& mcParticles = event.get<edm4hep::MCParticleCollection>(edm4hep::labels::MCParticles);
+    for (unsigned int ipart = 0; ipart < particlesList.size(); ipart++) {
+      for (auto part : mcParticles) {
+        if (part.getPDG() == particlesList[ipart]) {
+          if (part.getGeneratorStatus() > 0 && !selectedParticles[ipart]) {
+            auto momentumA = part.getMomentum();
+            selectedParticles[ipart] =
+                new edm4hep::LorentzVectorM(momentumA.x, momentumA.y, momentumA.z, part.getMass());
+          }
+        }
       }
-      if (part.getPDG() == particlesList[1] && !particleB) {
-        auto momentumB = part.getMomentum();
-        particleB = new edm4hep::LorentzVectorM(momentumB.x, momentumB.y, momentumB.z, part.getMass());
-        double costheta = cos(particleB->Theta());
-        pdgBcostheta->Fill(costheta);
+    }
+    // fill the histograms:
+    for (unsigned int ipart = 0; ipart < particlesList.size(); ipart++) {
+      if (selectedParticles[ipart]) {
+        double costheta = cos(selectedParticles[ipart]->Theta());
+        costhetaHistos[ipart]->Fill(costheta);
       }
-      if (particleA && particleB) {
-        edm4hep::LorentzVectorM pp = *particleA + *particleB;
-        mpdgapdgb->Fill(pp.mass());
-        ptpdgapdgb->Fill(pp.pt());
-        pzpdgapdgb->Fill(pp.pz());
+    }
+
+    unsigned counter = 0;
+    for (unsigned int ipart1 = 0; ipart1 < particlesList.size(); ipart1++) {
+      for (unsigned int ipart2 = ipart1 + 1; ipart2 < particlesList.size(); ipart2++) {
+        if (selectedParticles[ipart1] && selectedParticles[ipart2]) {
+          edm4hep::LorentzVectorM combParticle = *selectedParticles[ipart1] + *selectedParticles[ipart2];
+          massHistos[counter]->Fill(combParticle.mass());
+          pTHistos[counter]->Fill(combParticle.pt());
+          pZHistos[counter]->Fill(combParticle.pz());
+        }
+        counter++;
       }
     }
 
     // release memory after an event
-    delete particleA;
-    particleA = nullptr;
-    delete particleB;
-    particleB = nullptr;
+    for (unsigned int ipart = 0; ipart < selectedParticles.size(); ipart++) {
+      if (selectedParticles[ipart]) {
+        delete selectedParticles[ipart];
+        selectedParticles[ipart] = nullptr;
+      }
+    }
   }
-
-  // now analyze the event
-
   // instantiate the collection as pointer
   std::unique_ptr<TFile> outputFilePtr(TFile::Open(outFileName.c_str(), "RECREATE"));
   outputFilePtr->cd();
 
-  pdgAcostheta->Write();
-  pdgBcostheta->Write();
-  mpdgapdgb->Write();
-  ptpdgapdgb->Write();
-  pzpdgapdgb->Write();
+  for (auto histo : costhetaHistos) {
+    histo->Write();
+  }
+  for (auto histo : massHistos) {
+    histo->Write();
+  }
+  for (auto histo : pTHistos) {
+    histo->Write();
+  }
+  for (auto histo : pZHistos) {
+    histo->Write();
+  }
 
   outputFilePtr->Write();
   outputFilePtr->Close();
+}
+std::string translatePDG2Name(int pdg) {
+
+  if (pdg == 1)
+    return "d";
+  else if (pdg == -1)
+    return "dbar";
+  else if (pdg == 2)
+    return "u";
+  else if (pdg == -2)
+    return "ubar";
+  else if (pdg == 3)
+    return "s";
+  else if (pdg == -3)
+    return "sbar";
+  else if (pdg == 4)
+    return "c";
+  else if (pdg == -4)
+    return "cbar";
+  else if (pdg == 5)
+    return "b";
+  else if (pdg == -5)
+    return "bbar";
+  else if (pdg == 6)
+    return "t";
+  else if (pdg == -6)
+    return "tbar";
+  else if (pdg == 11)
+    return "electron";
+  else if (pdg == -11)
+    return "positron";
+  else if (pdg == 12)
+    return "neutrinoe";
+  else if (pdg == -12)
+    return "antineutrinoe";
+  else if (pdg == 13)
+    return "muon";
+  else if (pdg == -13)
+    return "antimuon";
+  else if (pdg == 14)
+    return "neutrinomuon";
+  else if (pdg == -14)
+    return "antineutrinomuon";
+  else if (pdg == 15)
+    return "tau";
+  else if (pdg == -15)
+    return "antitau";
+  else if (pdg == 16)
+    return "neutrinotau";
+  else if (pdg == -16)
+    return "antineutrinotau";
+  else if (pdg == 21)
+    return "gluon";
+  else if (pdg == 22)
+    return "photon";
+  else if (pdg == 23)
+    return "Z";
+  else if (pdg == 24)
+    return "wplus";
+  else if (pdg == -24)
+    return "wminus";
+  else if (pdg == 25)
+    return "higgs";
+
+  // if it's not that:
+  return "unknown";
 }

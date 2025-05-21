@@ -9,6 +9,8 @@
 #include <unistd.h>
 
 int main(int argc, char** argv) {
+
+  std::string usage = "Usage: pythiaLHERunner [-h -v] -f FILEPATH -l FILEPATH [-o FILEPATH]\n";
   // Default values for the command-line arguments
   std::string pythiaCmdFilePath = "Pythia.dat";
   std::string lheFilePath = "Pythia.lhe";
@@ -32,15 +34,17 @@ int main(int argc, char** argv) {
       verbose = true;
       break;
     case 'h':
-    default:
-      std::cout << "Usage: pythiaLHERunner [-h, -v] " << "-f FILEPATH -l FILEPATH [-o FILEPATH]\n"
-                << "  -h: print this help and exit\n"
+      std::cout << usage << "  -h: print this help and exit\n"
                 << "  -v: more verbose output\n"
-                << "  -f FILEPATH: input file containing the Pythia " << "commands\n"
+                << "  -f FILEPATH: input file containing the Pythia commands\n"
                 << "  -l FILEPATH: input file containing the LHE events\n"
                 << "  -o FILEPATH: output file containing the HepMC events" << std::endl;
-
       exit(0);
+    default:
+      std::cerr << "pythiaRunner::Error: unknown argument " << char(opt) << std::endl;
+      std::cerr << usage;
+      std::cerr << "Exiting" << std::endl;
+      exit(1);
     }
   }
 
@@ -55,8 +59,8 @@ int main(int argc, char** argv) {
   {
     std::ifstream infile(pythiaCmdFilePath);
     if (!infile.good()) {
-      std::cout << "pythiaLHErunner::ERROR: Input Pythia command file with " << "name \"" << pythiaCmdFilePath
-                << "\" cannot be read!\n"
+      std::cout << "pythiaLHErunner::ERROR: Input Pythia command file with "
+                << "name \"" << pythiaCmdFilePath << "\" cannot be read!\n"
                 << "                        Aborting..." << std::endl;
       exit(1);
     }
@@ -131,9 +135,11 @@ int main(int argc, char** argv) {
       }
 
     } else {
-      std::cout << "Event rejected " << std::endl;
-      pythia.LHAeventList();
-      std::cout << "End of rejected event" << std::endl;
+      if (verbose) {
+        std::cout << "Event was rejected. LHA listing: " << std::endl;
+        pythia.LHAeventList();
+        std::cout << "End of rejected event" << std::endl;
+      }
       // Leave event loop if at end of file.
       if (pythia.info.atEndOfFile()) {
         std::cout << "pythiaLHERunner:: reached EOF at event " << iEvent << " when " << nEvent << " were expected"
@@ -143,8 +149,10 @@ int main(int argc, char** argv) {
 
       if (++iAbort >= nAbort) {
         std::cout << " Event generation aborted prematurely at event " << iEvent << std::endl;
-        std::cout << " LHA input:" << std::endl;
-        pythia.LHAeventList();
+        if (verbose) {
+          std::cout << " LHA input:" << std::endl;
+          pythia.LHAeventList();
+        }
         exit(1);
       }
     }
@@ -161,13 +169,13 @@ int main(int argc, char** argv) {
   }
 
   if (lheFilePathFromCmdFile != lheFilePath) {
-    std::cout << "Provided Pythia command file already specifies input LHE " << "file path \"" << lheFilePathFromCmdFile
-              << "\"!";
+    std::cout << "Provided Pythia command file already specifies input LHE "
+              << "file path \"" << lheFilePathFromCmdFile << "\"!";
   }
 
   if (hepmcFilePathFromCmdFile != hepmcFilePath) {
-    std::cout << "Provided Pythia command file already specifies output HepMC " << "file path \""
-              << hepmcFilePathFromCmdFile << "\"!";
+    std::cout << "Provided Pythia command file already specifies output HepMC "
+              << "file path \"" << hepmcFilePathFromCmdFile << "\"!";
   }
 
   // Done
