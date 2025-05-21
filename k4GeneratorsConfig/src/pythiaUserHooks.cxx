@@ -1,6 +1,8 @@
+// std
 #include <fstream>
 #include <iostream>
 
+// k4GeneratorsConfig
 #include "pythiaUserHooks.h"
 
 pythiaUserHooks::pythiaUserHooks(std::string filename) : m_isValid(true) {
@@ -8,9 +10,9 @@ pythiaUserHooks::pythiaUserHooks(std::string filename) : m_isValid(true) {
   std::cout << "pythiaUserHooks to restrict phase space instantiated from file " << filename << std::endl;
 
   std::string line;
-  std::string delimiter = " ";
   std::ifstream theFile(filename);
   if (theFile.is_open()) {
+    std::string delimiter = " ";
     while (getline(theFile, line)) {
       //      std::cout << line << std::endl;
       size_t pos = 0;
@@ -80,11 +82,12 @@ pythiaUserHooks::pythiaUserHooks(std::string filename) : m_isValid(true) {
       }
     }
   } else {
-    std::cout << "pythiaUserHooks::file could not be opened, not applying user cuts" << std::endl;
+    std::cout << "pythiaUserHooks::file could not be opened, not applying user cuts!" << std::endl;
     m_isValid = false;
   }
+  theFile.close();
 
-  // check consistency
+  // Check consistency
   if (m_NbOfParticles.size() != m_PDGID1.size() || m_PDGID1.size() != m_PDGID2.size() ||
       m_PDGID1.size() != m_Value.size() || m_Value.size() != m_Type.size()) {
     m_isValid = false;
@@ -93,25 +96,28 @@ pythiaUserHooks::pythiaUserHooks(std::string filename) : m_isValid(true) {
 
   print();
 }
+
 pythiaUserHooks::~pythiaUserHooks() {}
 
 bool pythiaUserHooks::canVetoProcessLevel() { return true; }
 
 bool pythiaUserHooks::doVetoProcessLevel(Pythia8::Event& event) {
-  // if the selectors are not configured correctly, do not veto...
+  // If the selectors are not configured correctly, do not veto
   if (!m_isValid)
     return false;
-  // ensure that the veto is called
+
+  // Ensure that the veto is called
   for (int i = 0; i < event.size(); i++) {
-    Particle part1 = event[i];
+    Pythia8::Particle part1 = event[i];
     if (part1.status() > 0) {
-      // if we see a veto reason do not waist time and return a veto, otherwirse continue
+      // if we see a veto reason do not waist time and return a veto,
+      // otherwise continue
       if (Veto1ParticleSelector(part1.e(), part1.px(), part1.py(), part1.pz(), part1.id())) {
         return true;
       }
     }
     for (int j = 0; j < event.size(); j++) {
-      Particle part2 = event[j];
+      Pythia8::Particle part2 = event[j];
       if (i != j && part1.status() > 0 && part2.status() > 0) {
         if (Veto2ParticleSelector(part1.e(), part1.px(), part1.py(), part1.pz(), part1.id(), part2.e(), part2.px(),
                                   part2.py(), part2.pz(), part2.id())) {
@@ -125,7 +131,6 @@ bool pythiaUserHooks::doVetoProcessLevel(Pythia8::Event& event) {
 }
 
 bool pythiaUserHooks::Veto1ParticleSelector(double energy, double px, double py, double pz, int pdg) {
-
   bool vetoed = false;
   for (unsigned int i = 0; i < m_PDGID1.size(); i++) {
     if (m_NbOfParticles[i] != 1)
@@ -151,15 +156,16 @@ bool pythiaUserHooks::Veto1ParticleSelector(double energy, double px, double py,
         if (!(value < m_Value[i]))
           vetoed = true;
       } else {
-        std::cout << "pythiaUserHooks::Vecto1Particle Comparator request unknown " << m_Comparator[i] << std::endl;
+        std::cout << "pythiaUserHooks::Vecto1Particle Comparator request unknown " << m_Comparator[i]
+                  << std::endl;
       }
     }
   }
   return vetoed;
 }
+
 bool pythiaUserHooks::Veto2ParticleSelector(double energy1, double px1, double py1, double pz1, int pdg1,
                                             double energy2, double px2, double py2, double pz2, int pdg2) {
-
   bool vetoed = false;
   for (unsigned int i = 0; i < m_PDGID1.size(); i++) {
     if (m_NbOfParticles[i] != 2)
@@ -189,7 +195,8 @@ bool pythiaUserHooks::Veto2ParticleSelector(double energy1, double px1, double p
         if (!(value < m_Value[i]))
           vetoed = true;
       } else {
-        std::cout << "pythiaUserHooks::Veto2Particles Comparator request unknown " << m_Comparator[i] << std::endl;
+        std::cout << "pythiaUserHooks::Veto2Particles Comparator request unknown " << m_Comparator[i]
+                  << std::endl;
       }
     }
   }
@@ -197,27 +204,29 @@ bool pythiaUserHooks::Veto2ParticleSelector(double energy1, double px1, double p
 }
 
 double pythiaUserHooks::PT(double px, double py) {
-
   double pt = px * px + py * py;
+
   if (pt >= 0) {
     pt = sqrt(pt);
   } else {
     pt = 0;
   }
+
   return pt;
 }
-double pythiaUserHooks::ET(double energy, double px, double py, double pz) {
 
+double pythiaUserHooks::ET(double energy, double px, double py, double pz) {
   double et = energy * sin(Theta(px, py, pz));
 
   return et;
 }
-double pythiaUserHooks::Rapidity(double energy, double pz) {
 
+double pythiaUserHooks::Rapidity(double energy, double pz) {
   double rap = 0.5 * log((energy + pz) / (energy - pz));
 
   return rap;
 }
+
 double pythiaUserHooks::Theta(double px, double py, double pz) {
 
   double costheta = 0.;
@@ -233,16 +242,16 @@ double pythiaUserHooks::Theta(double px, double py, double pz) {
 
   return theta;
 }
-double pythiaUserHooks::Eta(double px, double py, double pz) {
 
+double pythiaUserHooks::Eta(double px, double py, double pz) {
   double theta = Theta(px, py, pz);
   double eta = -log(tan(theta / 2.));
 
   return eta;
 }
+
 double pythiaUserHooks::Mass(double energy1, double px1, double py1, double pz1, double energy2, double px2, double py2,
                              double pz2) {
-
   double mass = (energy1 + energy2) * (energy1 + energy2) - (px1 + px2) * (px1 + px2) - (py1 + py2) * (py1 + py2) -
                 (pz1 + pz2) * (pz1 + pz2);
   if (mass > 0.) {
@@ -265,7 +274,6 @@ double pythiaUserHooks::Angle(double px1, double py1, double pz1, double px2, do
 }
 
 void pythiaUserHooks::print() {
-
   std::cout << "pythiaUserHooks::Single Particle Selectors" << std::endl;
   for (unsigned int i = 0; i < m_PDGID1.size(); i++) {
     std::cout << "PDGID: " << m_PDGID1[i] << " ";
