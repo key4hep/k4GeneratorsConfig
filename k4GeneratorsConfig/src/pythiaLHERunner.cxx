@@ -34,8 +34,7 @@ int main(int argc, char** argv) {
       verbose = true;
       break;
     case 'h':
-      std::cout << usage
-                << "  -h: print this help and exit\n"
+      std::cout << usage << "  -h: print this help and exit\n"
                 << "  -v: more verbose output\n"
                 << "  -f FILEPATH: input file containing the Pythia commands\n"
                 << "  -l FILEPATH: input file containing the LHE events\n"
@@ -60,8 +59,8 @@ int main(int argc, char** argv) {
   {
     std::ifstream infile(pythiaCmdFilePath);
     if (!infile.good()) {
-      std::cout << "pythiaLHErunner::ERROR: Input Pythia command file with " << "name \"" << pythiaCmdFilePath
-                << "\" cannot be read!\n"
+      std::cout << "pythiaLHErunner::ERROR: Input Pythia command file with "
+                << "name \"" << pythiaCmdFilePath << "\" cannot be read!\n"
                 << "                        Aborting..." << std::endl;
       exit(1);
     }
@@ -166,13 +165,13 @@ int main(int argc, char** argv) {
   }
 
   if (lheFilePathFromCmdFile != lheFilePath) {
-    std::cout << "Provided Pythia command file already specifies input LHE " << "file path \"" << lheFilePathFromCmdFile
-              << "\"!";
+    std::cout << "Provided Pythia command file already specifies input LHE "
+              << "file path \"" << lheFilePathFromCmdFile << "\"!";
   }
 
   if (hepmcFilePathFromCmdFile != hepmcFilePath) {
-    std::cout << "Provided Pythia command file already specifies output HepMC " << "file path \""
-              << hepmcFilePathFromCmdFile << "\"!";
+    std::cout << "Provided Pythia command file already specifies output HepMC "
+              << "file path \"" << hepmcFilePathFromCmdFile << "\"!";
   }
 
   // Done

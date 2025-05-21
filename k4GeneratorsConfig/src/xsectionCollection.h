@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "xsection.h"
 #include "differential.h"
+#include "xsection.h"
 
 namespace k4GeneratorsConfig {
 class xsectionCollection {
