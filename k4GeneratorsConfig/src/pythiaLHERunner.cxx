@@ -41,7 +41,7 @@ int main(int argc, char** argv) {
                 << "  -o FILEPATH: output file containing the HepMC events" << std::endl;
       exit(0);
     default:
-      std::cerr << "pythiaRunner::Error: unknown argument " << char(c) << std::endl;
+      std::cerr << "pythiaRunner::Error: unknown argument " << char(opt) << std::endl;
       std::cerr << usage;
       std::cerr << "Exiting" << std::endl;
       exit(1);

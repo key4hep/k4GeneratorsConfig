@@ -21,9 +21,9 @@ int main(int argc, char** argv) {
   bool verbose = false;
 
   // Read the command-line arguments
-  int c;
-  while ((c = getopt(argc, argv, "f:vh")) != -1) {
-    switch (c) {
+  int opt;
+  while ((opt = getopt(argc, argv, "f:vh")) != -1) {
+    switch (opt) {
     case 'f':
       pythiaCmdFilePath = std::string(optarg);
       break;
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
                 << "  -f FILEPATH: file containing the Pythia commands" << std::endl;
       exit(0);
     default:
-      std::cerr << "pythiaRunner::Error: unknown argument " << char(c) << std::endl;
+      std::cerr << "pythiaRunner::Error: unknown argument " << char(opt) << std::endl;
       std::cerr << usage << "Exiting" << std::endl;
       exit(1);
     }
