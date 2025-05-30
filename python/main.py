@@ -119,7 +119,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     releaseDate    = args.key4hepVersion
 
     ReleaseSpec.set_info("key4hepUseNightlies",args.key4hepUseNightlies)
-    if ReleaseSpecs.key4hepUseNightlies.value == True:
+    if ReleaseSpecs.key4hepUseNightlies.value:
         print(f"key4HEP configuration: NIGHTLIES")
     else:
         print(f"key4HEP configuration: RELEASE")
