@@ -95,7 +95,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     parser.add_argument(
         "--parameterTagFile",
         type=str,
-        default=None,
+        default="ParameterSets.yaml",
         help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in  directory: python",
     )
     parser.add_argument(
@@ -115,14 +115,14 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     rndmSeed       = args.seed
     events         = args.nevts
     paramTag       = args.parameterTag
-    paramFileName  = args.parameterTagFile
+    paramFileName  = os.path.dirname(os.path.realpath(__file__))+"/"+args.parameterTagFile
     releaseDate    = args.key4hepVersion
 
     ReleaseSpec.set_info("key4hepUseNightlies",args.key4hepUseNightlies)
-    if ReleaseSpecs.key4hepUseNightlies:
-        print(f"key4HEP configuration: using nightlies")
+    if ReleaseSpecs.key4hepUseNightlies.value == True:
+        print(f"key4HEP configuration: NIGHTLIES")
     else:
-        print(f"key4HEP configuration: using release")
+        print(f"key4HEP configuration: RELEASE")
 
     # make sure it's a valid date
     if releaseDate is not None:
