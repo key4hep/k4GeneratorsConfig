@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.25)
 
-project(k4GeneratorsConfig)
+project(k4GeneratorsConfig LANGUAGES CXX)
 
 # project version
 SET( ${PROJECT_NAME}_VERSION_MAJOR 0 )
