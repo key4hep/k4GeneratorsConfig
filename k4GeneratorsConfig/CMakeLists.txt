@@ -1,6 +1,6 @@
 set(basic_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/convertHepMC2EDM4HEP.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/cmdline.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/cmdline.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/WriterEDM4HEP.cxx
 )
 
