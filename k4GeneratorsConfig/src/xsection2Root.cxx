@@ -228,7 +228,7 @@ void k4GeneratorsConfig::xsection2Root::writeCrossSectionFigures() {
       unsigned int index = gen + proc * m_generatorsList.size();
       m_graphs[index]->SetStats(kFALSE);
       m_graphs[index]->SetMarkerStyle(20 + gen);
-      m_graphs[index]->SetMarkerColor(gen);
+      m_graphs[index]->SetMarkerColor(gen + 1);
       m_graphs[index]->SetMarkerSize(1.25);
       mg->Add(m_graphs[index], "AP");
     }
