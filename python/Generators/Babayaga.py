@@ -98,19 +98,15 @@ class Babayaga(GeneratorBase):
             print(f"Ignoring the selector")
             return
 
-        # add the selector implementation
-        if select.NParticle == 1:
-            self.add_one_ParticleSelector(select, key)
-        else:
-            print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
-
-    def add_one_ParticleSelector(self, sel, name):
+        # there is only the theta cut
         # if the unit is deg or rad, we need to change it:
-        unit = "deg"
-        Min, Max = sel.get_MinMax(unit)
-        if name == "theta":
+        if key == "Theta":
+            unit = "deg"
+            Min, Max = select.get_MinMax(unit)
             self.cuts += f"thmin {Min}\n"
             self.cuts += f"thmax {Max}\n"
+        else:
+            print(f"{key} is a not implemented as selector in {self.name}")
 
     def fill_datacard(self):
         self.write_process()
