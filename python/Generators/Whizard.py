@@ -16,7 +16,7 @@ class Whizard(GeneratorBase):
         # set up the correspondance between the yamlInput and the Sherpa convention
         self.selectorsDict['pt']    = "Pt"
         self.selectorsDict['energy']= "E"
-        self.selectorsDict['rap']   = "rap"
+        self.selectorsDict['rapidity'] = "rap"
         self.selectorsDict['eta']   = "eta"
         self.selectorsDict['theta'] = "Theta"
 

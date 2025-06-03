@@ -20,7 +20,7 @@ class Madgraph(GeneratorBase):
         # set up the correspondance between the yamlInput and the Sherpa convention
         self.selectorsDict['pt']    = "pt"
         self.selectorsDict['energy']= "e"
-        self.selectorsDict['rap']   = "eta"
+        self.selectorsDict['rapidity'] = "eta"
         self.selectorsDict['eta']   = "eta"
         self.selectorsDict['theta'] = "eta"
         

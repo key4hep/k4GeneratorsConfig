@@ -13,7 +13,7 @@ class Sherpa(GeneratorBase):
         # set up the correspondance between the yamlInput and the Sherpa convention
         self.selectorsDict['pt']    = "PT"
         self.selectorsDict['et']    = "ET"
-        self.selectorsDict['rap']   = "Rapidity"
+        self.selectorsDict['rapidity'] = "Rapidity"
         self.selectorsDict['eta']   = "Eta"
         self.selectorsDict['theta'] = "Eta"
         
