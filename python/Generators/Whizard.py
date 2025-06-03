@@ -143,7 +143,7 @@ class Whizard(GeneratorBase):
 
     def add_Selector(self, select):
         # get the native key for the selector
-        try: 
+        try:
             key = self.selectorsDict[select.name.lower()]
         except:
             print(f"{key} cannot be translated into a Whizard selector")

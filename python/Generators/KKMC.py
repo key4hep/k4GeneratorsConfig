@@ -16,6 +16,7 @@ class KKMC(GeneratorBase):
 
     def setSelectorsDict(self):
         # selectors not possible with KKMC
+        return
 
     def setModelParameters(self):
         # there are some parameters we cannot set
