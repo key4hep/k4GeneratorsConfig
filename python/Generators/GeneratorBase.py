@@ -18,6 +18,10 @@ class GeneratorBase(abc.ABC):
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
 
+        # set the Selectors Dictionary
+        self.selectorsDict = dict()
+        self.setSelectorsDict()
+        
         # set the default model parameters:
         self.setDefaultModelParameters()
         # set the Generator specific parameters
@@ -113,6 +117,9 @@ class GeneratorBase(abc.ABC):
         except:
             theModel = self.getModelName(self.procinfo.get('model'))
         return theModel
+
+    def setSelectorsDict(self):
+        raise NotImplementedError("setSelectorsDict")
 
     def getModelName(self):
         raise NotImplementedError("getModelName")

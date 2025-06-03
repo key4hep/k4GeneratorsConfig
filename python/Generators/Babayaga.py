@@ -12,6 +12,10 @@ class Babayaga(GeneratorBase):
 
         self.executable = "babayaga-fcc.exe"
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['theta'] = "Theta"
+
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -85,12 +89,22 @@ class Babayaga(GeneratorBase):
         for key, value in selectors.items():
             self.add_Selector(value)
 
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "theta":
-            self.add_one_ParticleSelector(value, "theta", "deg")
+    def add_Selector(self, select):
+        # get the native key for the selector
+        try: 
+            key = self.selectorsDict[select.name.lower()]
+        except:
+            print(f"{key} cannot be translated into a {self.name} selector")
+            print(f"Ignoring the selector")
+            return
+
+        # add the selector implementation
+        if select.NParticle == 1:
+            # if the unit is deg or rad, we need to change it:
+            unit = "deg"
+            self.add_one_ParticleSelector(select, key, unit)
         else:
-            print(f"{key} not a Standard Babayaga Selector")
+            print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
 
     def add_one_ParticleSelector(self, sel, name, unit=""):
         Min, Max = sel.get_MinMax(unit)

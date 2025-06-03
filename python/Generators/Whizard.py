@@ -12,6 +12,16 @@ class Whizard(GeneratorBase):
 
         self.procs = []
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['pt']    = "Pt"
+        self.selectorsDict['energy']= "E"
+        self.selectorsDict['rap']   = "rap"
+        self.selectorsDict['eta']   = "eta"
+        self.selectorsDict['theta'] = "theta"
+
+        self.selectorsDict['mass']     = "m"
+
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
@@ -131,23 +141,26 @@ class Whizard(GeneratorBase):
         for key, value in selectors.items():
             self.add_Selector(value)
 
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "pt":
-            self.add_one_ParticleSelector(value, "Pt")
-        elif key == "energy":
-            self.add_one_ParticleSelector(value, "E")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "rap")
-        elif key == "eta":
-            self.add_one_ParticleSelector(value, "eta")
-        elif key == "theta":
-            self.add_one_ParticleSelector(value, "Theta", "rad")
-            # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value, "m")
+    def add_Selector(self, select):
+        # get the native key for the selector
+        try: 
+            key = self.selectorsDict[select.name.lower()]
+        except:
+            print(f"{key} cannot be translated into a Whizard selector")
+            print(f"Ignoring the selector")
+            return
+
+        # add the selector implementation
+        if select.NParticle == 1:
+            # if the unit is deg or rad, we need to change it:
+            unit = ""
+            if select.get_unit() == "deg":
+                unit = "rad"
+            self.add_one_ParticleSelector(select, key, unit)
+        elif select.NParticle == 2:
+            self.add_two_ParticleSelector(select, key)
         else:
-            print(f"{key} not a Standard Whizard Selector")
+            print(f"{key} is a {select.NParticle} Particle selector, not implemented in Whizard")
 
     def add_two_ParticleSelector(self, sel, name):
         Min, Max = sel.get_MinMax()

@@ -16,6 +16,20 @@ class Madgraph(GeneratorBase):
         self.setOptionalFileNameAndExtension(f"pythia{self.GeneratorDatacardBase}","cmnd")
         self.fill_PythiaCMND()
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['pt']    = "pt"
+        self.selectorsDict['energy']= "e"
+        self.selectorsDict['rap']   = "eta"
+        self.selectorsDict['eta']   = "eta"
+        self.selectorsDict['theta'] = "eta"
+        
+        self.selectorsDict['mass']     = "mxx"
+        self.selectorsDict['angle']     = "Angle"
+        self.selectorsDict['deltarapidity'] = "DeltaY"
+        self.selectorsDict['deltaphi']      = "DeltaPhi"
+        self.selectorsDict['deltar']        = "DeltaR"
+
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
@@ -145,34 +159,26 @@ class Madgraph(GeneratorBase):
         for key, value in selectors.items():
             self.add_Selector(value)
 
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "pt":
-            self.add_one_ParticleSelector(value, "pt")
-        elif key == "energy":
-            self.add_one_ParticleSelector(value, "e")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "eta")
-        elif key == "eta":
-            self.add_one_ParticleSelector(value, "eta")
-        elif key == "theta":
-            self.add_one_ParticleSelector(value, "eta", "eta")
+    def add_Selector(self, select):
+        # get the native key for the selector
+        try: 
+            key = self.selectorsDict[select.name.lower()]
+        except:
+            print(f"{key} cannot be translated into a {self.name} selector")
+            print(f"Ignoring the selector")
+            return
 
-            # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value, "mxx")
-        elif key == "angle":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "deta":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "drap":
-            self.add_two_ParticleSelector(value, "DeltaY")
-        elif key == "dphi":
-            self.add_two_ParticleSelector(value, "DeltaPhi")
-        elif key == "dr":
-            self.add_two_ParticleSelector(value, "DeltaR")
+        # add the selector implementation
+        if select.NParticle == 1:
+            # if the unit is deg or rad, we need to change it:
+            unit = ""
+            if select.get_unit() == "rad" or select.get_unit() == "deg":
+                unit = "eta"
+            self.add_one_ParticleSelector(select, key, unit)
+        elif select.NParticle == 2:
+            self.add_two_ParticleSelector(select, key)
         else:
-            print(f"{key} not a MadGraph Selector")
+            print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
 
     def add_two_ParticleSelector(self, sel, name, flavs=None):
         Min, Max = sel.get_MinMax()

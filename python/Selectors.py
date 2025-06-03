@@ -5,8 +5,13 @@ class Selectors:
     """Selector Class"""
 
     def __init__(self, process, name, selector):
+        # define the standard names for single and double applications
+        self.oneParticleKeys = ["pt", "et", "energy", "rap", "eta", "theta"]
+        self.twoParticleKeys = ["mass", "angle", "deltaeta", "deltarapidity", "deltaphi", "deltar"]
+        
         self.process = process
         self.name = name
+        self.NParticle = 0
         self.LoadSelector(selector)
         self.CalculateAllOutputs()
 
@@ -14,6 +19,11 @@ class Selectors:
         if selector:
             for key, value in selector.items():
                 setattr(self, key.lower(), value)
+            # in addition to the user settings keep the number of particles
+            if self.name.lower() in self.oneParticleKeys:
+                self.NParticle = 1
+            if self.name.lower() in self.twoParticleKeys:
+                self.NParticle = 2
 
     def CalculateAllOutputs(self):
         # do something only for these units:

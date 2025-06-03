@@ -14,6 +14,21 @@ class Pythia(GeneratorBase):
         if settings.get_block("selectors"):
             self.fill_selectors()
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['pt']    = "PT"
+        self.selectorsDict['et']    = "ET"
+        self.selectorsDict['rap']   = "Rapidity"
+        self.selectorsDict['eta']   = "Eta"
+        self.selectorsDict['theta'] = "Theta"
+        
+        self.selectorsDict['mass']     = "Mass"
+        self.selectorsDict['angle']    = "Angle"
+        self.selectorsDict['deltaeta']      = "DeltaEta"
+        self.selectorsDict['deltarapidity'] = "DeltaY"
+        self.selectorsDict['deltaphi']      = "DeltaPhi"
+        self.selectorsDict['deltar']        = "DeltaR"
+
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('alphaEMMZ')
@@ -107,34 +122,26 @@ class Pythia(GeneratorBase):
         for key, value in selectors.items():
             self.add_Selector(value)
 
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "pt":
-            self.add_one_ParticleSelector(value, "PT")
-        elif key == "et":
-            self.add_one_ParticleSelector(value, "ET")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "Rapidity")
-        elif key == "eta":
-            self.add_one_ParticleSelector(value, "Eta")
-        elif key == "theta":
-            self.add_one_ParticleSelector(value, "Theta", "rad")
+    def add_Selector(self, select):
+        # get the native key for the selector
+        try: 
+            key = self.selectorsDict[select.name.lower()]
+        except:
+            print(f"{key} cannot be translated into a {self.name} selector")
+            print(f"Ignoring the selector")
+            return
 
-            # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value, "Mass")
-        elif key == "angle":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "deta":
-            self.add_two_ParticleSelector(value, "DeltaEta")
-        elif key == "drap":
-            self.add_two_ParticleSelector(value, "DeltaY")
-        elif key == "dphi":
-            self.add_two_ParticleSelector(value, "DeltaPhi")
-        elif key == "dr":
-            self.add_two_ParticleSelector(value, "DeltaR")
+        # add the selector implementation
+        if select.NParticle == 1:
+            # if the unit is deg or rad, we need to change it:
+            unit = ""
+            if select.get_unit() == "rad" or select.get_unit() == "deg":
+                unit = "rad"
+            self.add_one_ParticleSelector(select, key, unit)
+        elif select.NParticle == 2:
+            self.add_two_ParticleSelector(select, key)
         else:
-            print(f"{key} not a Pythia Selector")
+            print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
 
     def add_two_ParticleSelector(self, sel, name):
         Min, Max = sel.get_MinMax()
