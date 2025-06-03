@@ -152,7 +152,7 @@ class Sherpa(GeneratorBase):
     def add_one_ParticleSelector(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
-        if sel.get_unit() == "rad" or select.get_unit() == "deg":
+        if sel.get_unit() == "rad" or sel.get_unit() == "deg":
             unit = "eta"
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
