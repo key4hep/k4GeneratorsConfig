@@ -135,7 +135,7 @@ class Whizard(GeneratorBase):
                     if value.process == self.procinfo.get("procname"):
                         self.add_Selector(value)
         except Exception as e:
-            print("Failed to pass process specific cuts in Whizard")
+            print(f"Failed to pass process specific cuts in {self.name}")
             print(e)
             pass
         for key, value in selectors.items():
@@ -146,17 +146,13 @@ class Whizard(GeneratorBase):
         try:
             key = self.selectorsDict[select.name.lower()]
         except:
-            print(f"{key} cannot be translated into a Whizard selector")
+            print(f"{key} cannot be translated into a {self.name} selector")
             print(f"Ignoring the selector")
             return
 
         # add the selector implementation
         if select.NParticle == 1:
-            # if the unit is deg or rad, we need to change it:
-            unit = ""
-            if select.get_unit() == "deg":
-                unit = "rad"
-            self.add_one_ParticleSelector(select, key, unit)
+            self.add_one_ParticleSelector(select, key)
         elif select.NParticle == 2:
             self.add_two_ParticleSelector(select, key)
         else:
@@ -179,7 +175,11 @@ class Whizard(GeneratorBase):
                     continue
                 self.addCut2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
-    def add_one_ParticleSelector(self, sel, name, unit=""):
+    def add_one_ParticleSelector(self, sel, name):
+        # if the unit is deg or rad, we need to change it:
+        unit = ""
+        if sel.get_unit() == "deg":
+            unit = "rad"
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:

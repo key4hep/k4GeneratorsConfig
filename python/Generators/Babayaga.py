@@ -100,13 +100,13 @@ class Babayaga(GeneratorBase):
 
         # add the selector implementation
         if select.NParticle == 1:
-            # if the unit is deg or rad, we need to change it:
-            unit = "deg"
-            self.add_one_ParticleSelector(select, key, unit)
+            self.add_one_ParticleSelector(select, key)
         else:
             print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
 
-    def add_one_ParticleSelector(self, sel, name, unit=""):
+    def add_one_ParticleSelector(self, sel, name):
+        # if the unit is deg or rad, we need to change it:
+        unit = "deg"
         Min, Max = sel.get_MinMax(unit)
         if name == "theta":
             self.cuts += f"thmin {Min}\n"

@@ -116,11 +116,7 @@ class Sherpa(GeneratorBase):
 
         # add the selector implementation
         if select.NParticle == 1:
-            # if the unit is deg or rad, we need to change it:
-            unit = ""
-            if select.get_unit() == "rad" or select.get_unit() == "deg":
-                unit = "eta"
-            self.add_one_ParticleSelector(select, key, unit)
+            self.add_one_ParticleSelector(select, key)
         elif select.NParticle == 2:
             self.add_two_ParticleSelector(select, key)
         else:
@@ -153,7 +149,11 @@ class Sherpa(GeneratorBase):
                 if f"  - [{name}, {f1}, {f2}" not in self.getGeneratorDatacard():
                     self.add2GeneratorDatacard(f"{sname}\n")
 
-    def add_one_ParticleSelector(self, sel, name, unit=""):
+    def add_one_ParticleSelector(self, sel, name):
+        # if the unit is deg or rad, we need to change it:
+        unit = ""
+        if sel.get_unit() == "rad" or select.get_unit() == "deg":
+            unit = "eta"
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:

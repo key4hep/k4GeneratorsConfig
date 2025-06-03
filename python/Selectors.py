@@ -6,7 +6,7 @@ class Selectors:
 
     def __init__(self, process, name, selector):
         # define the standard names for single and double applications
-        self.oneParticleKeys = ["pt", "et", "energy", "rap", "eta", "theta"]
+        self.oneParticleKeys = ["pt", "et", "energy", "rapidity", "eta", "theta"]
         self.twoParticleKeys = ["mass", "angle", "deltaeta", "deltarapidity", "deltaphi", "deltar"]
         
         self.process = process
