@@ -23,7 +23,7 @@ class Madgraph(GeneratorBase):
         self.selectorsDict['rapidity'] = "eta"
         self.selectorsDict['eta']   = "eta"
         self.selectorsDict['theta'] = "eta"
-        
+
         self.selectorsDict['mass']     = "mxx"
         self.selectorsDict['angle']     = "Angle"
         self.selectorsDict['deltarapidity'] = "DeltaY"

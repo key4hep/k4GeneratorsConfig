@@ -21,7 +21,7 @@ class Pythia(GeneratorBase):
         self.selectorsDict['rapidity']   = "Rapidity"
         self.selectorsDict['eta']   = "Eta"
         self.selectorsDict['theta'] = "Theta"
-        
+
         self.selectorsDict['mass']     = "Mass"
         self.selectorsDict['angle']    = "Angle"
         self.selectorsDict['deltaeta']      = "DeltaEta"

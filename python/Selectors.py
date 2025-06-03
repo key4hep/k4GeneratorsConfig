@@ -8,7 +8,7 @@ class Selectors:
         # define the standard names for single and double applications
         self.oneParticleKeys = ["pt", "et", "energy", "rapidity", "eta", "theta"]
         self.twoParticleKeys = ["mass", "angle", "deltaeta", "deltarapidity", "deltaphi", "deltar"]
-        
+
         self.process = process
         self.name = name
         self.NParticle = 0

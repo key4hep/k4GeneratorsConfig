@@ -21,7 +21,7 @@ class GeneratorBase(abc.ABC):
         # set the Selectors Dictionary
         self.selectorsDict = dict()
         self.setSelectorsDict()
-        
+
         # set the default model parameters:
         self.setDefaultModelParameters()
         # set the Generator specific parameters
