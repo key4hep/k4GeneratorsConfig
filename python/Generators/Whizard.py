@@ -18,7 +18,7 @@ class Whizard(GeneratorBase):
         self.selectorsDict['energy']= "E"
         self.selectorsDict['rap']   = "rap"
         self.selectorsDict['eta']   = "eta"
-        self.selectorsDict['theta'] = "theta"
+        self.selectorsDict['theta'] = "Theta"
 
         self.selectorsDict['mass']     = "m"
 
