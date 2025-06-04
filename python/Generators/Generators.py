@@ -40,7 +40,7 @@ class Generators:
                 print(f"Error during runtime: {e}")
                 print(f"Datacard files and execution scripts not written for generator {generatorName}")
             except:
-                # all that remains is an excption from the execution of the modules
+                # all that remains is an exception from the execution of the modules
                 print(f"Execution of {generatorName} for {self.proc_info.get('_proclabel')} resulted in an exception, check the module for problems with loading doownstream modules like the corresponding ProcDB etc")
                 print("Datacard files and execution scripts not written for this generator")
                 raise
