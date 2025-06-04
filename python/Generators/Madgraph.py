@@ -16,6 +16,20 @@ class Madgraph(GeneratorBase):
         self.setOptionalFileNameAndExtension(f"pythia{self.GeneratorDatacardBase}","cmnd")
         self.fill_PythiaCMND()
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['pt']    = "pt"
+        self.selectorsDict['energy']= "e"
+        self.selectorsDict['rapidity'] = "eta"
+        self.selectorsDict['eta']   = "eta"
+        self.selectorsDict['theta'] = "eta"
+
+        self.selectorsDict['mass']     = "mxx"
+        self.selectorsDict['angle']     = "Angle"
+        self.selectorsDict['deltarapidity'] = "DeltaY"
+        self.selectorsDict['deltaphi']      = "DeltaPhi"
+        self.selectorsDict['deltar']        = "DeltaR"
+
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
@@ -80,7 +94,7 @@ class Madgraph(GeneratorBase):
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key, self.procDB.getDict()[key])
         # if self.settings.get_block("selectors"):
-        self.write_selectors()
+        self.writeAllSelectors()
         # else:
         #     self.add_default_Selectors()
         # now the structure is filled, transfer it to the baseclass
@@ -128,56 +142,9 @@ class Madgraph(GeneratorBase):
                 decays += f"{part.name_from_pdg(child)} "
         self.proc += decays
 
-    def write_selectors(self):
-        selectors = getattr(self.settings, "selectors")
-        try:
-            procselectors = getattr(self.settings, "procselectors")
-            for proc, sel in procselectors.items():
-                if proc != self.procinfo.get("procname"):
-                    continue
-                for key, value in sel.items():
-                    if value.process == self.procinfo.get("procname"):
-                        self.add_Selector(value)
-        except Exception as e:
-            print("Failed to pass process specific cuts in Madgraph")
-            print(e)
-            pass
-        for key, value in selectors.items():
-            self.add_Selector(value)
-
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "pt":
-            self.add_one_ParticleSelector(value, "pt")
-        elif key == "energy":
-            self.add_one_ParticleSelector(value, "e")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "eta")
-        elif key == "eta":
-            self.add_one_ParticleSelector(value, "eta")
-        elif key == "theta":
-            self.add_one_ParticleSelector(value, "eta", "eta")
-
-            # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value, "mxx")
-        elif key == "angle":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "deta":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "drap":
-            self.add_two_ParticleSelector(value, "DeltaY")
-        elif key == "dphi":
-            self.add_two_ParticleSelector(value, "DeltaPhi")
-        elif key == "dr":
-            self.add_two_ParticleSelector(value, "DeltaR")
-        else:
-            print(f"{key} not a MadGraph Selector")
-
-    def add_two_ParticleSelector(self, sel, name, flavs=None):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
-        if not flavs:
-            flavs = sel.get_Flavours()
+        flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = flavs[0]
             f2 = flavs[1]
@@ -216,10 +183,13 @@ class Madgraph(GeneratorBase):
 
                 # self.addOption2GeneratorDatacard(sname, maxcut)
 
-    def add_one_ParticleSelector(self, sel, name, unit="", f1=None):
+    def add1ParticleSelector2Card(self, sel, name):
+        # if the unit is deg or rad, we need to change it:
+        unit = ""
+        if sel.get_unit() == "rad" or sel.get_unit() == "deg":
+            unit = "eta"
         Min, Max = sel.get_MinMax(unit)
-        if not f1:
-            f1 = sel.get_Flavours()
+        f1 = sel.get_Flavours()
         for f in f1:
             if f < 0:
                 continue

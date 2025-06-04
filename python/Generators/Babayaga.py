@@ -12,6 +12,10 @@ class Babayaga(GeneratorBase):
 
         self.executable = "babayaga-fcc.exe"
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['theta'] = "Theta"
+
     def execute(self):
         # prepare the datacard
         self.fill_datacard()
@@ -63,40 +67,19 @@ class Babayaga(GeneratorBase):
             self.addOption2GeneratorDatacard("mode", "weighted")
 
         if self.settings.get_block("selectors"):
-            self.write_selectors()
+            self.writeAllSelectors()
 
     def add_decay(self):
         print("DECAY specified, cannot be implmented in Babayaga")
 
-    def write_selectors(self):
-        selectors = getattr(self.settings, "selectors")
-        try:
-            procselectors = getattr(self.settings, "procselectors")
-            for proc, sel in procselectors.items():
-                if proc != self.procinfo.get("procname"):
-                    continue
-                for key, value in sel.items():
-                    if value.process == self.procinfo.get("procname"):
-                        self.add_Selector(value)
-        except Exception as e:
-            print("Failed to pass process specific cuts in Babayaga")
-            print(e)
-            pass
-        for key, value in selectors.items():
-            self.add_Selector(value)
-
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "theta":
-            self.add_one_ParticleSelector(value, "theta", "deg")
-        else:
-            print(f"{key} not a Standard Babayaga Selector")
-
-    def add_one_ParticleSelector(self, sel, name, unit=""):
-        Min, Max = sel.get_MinMax(unit)
-        if name == "theta":
+    def add1ParticleSelector2Card(self, sel, name):
+        if name == "Theta":
+            unit = "deg"
+            Min, Max = sel.get_MinMax(unit)
             self.cuts += f"thmin {Min}\n"
             self.cuts += f"thmax {Max}\n"
+        else:
+            print(f"{key} is a not implemented as selector in {self.name}")
 
     def fill_datacard(self):
         self.write_process()

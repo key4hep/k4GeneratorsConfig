@@ -5,6 +5,7 @@ import ReleaseSpecs
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
 from Particles import Particle as ParticleClass
+from Selectors import SelectorKeys
 
 class GeneratorBase(abc.ABC):
     """GeneratorBase class"""
@@ -17,6 +18,11 @@ class GeneratorBase(abc.ABC):
         self.name = name
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
+
+        # set the Selectors Dictionary
+        self.selectorsDict = dict()
+        self.setSelectorsDict()
+        self.validateSelectorsDict()
 
         # set the default model parameters:
         self.setDefaultModelParameters()
@@ -114,8 +120,59 @@ class GeneratorBase(abc.ABC):
             theModel = self.getModelName(self.procinfo.get('model'))
         return theModel
 
+    def setSelectorsDict(self):
+        raise NotImplementedError("setSelectorsDict")
+
+    def validateSelectorsDict(self):
+        # get the allowed keys
+        keylistNominal = SelectorKeys().get_ParticleKeys()
+        # check that every Generator key is in the predefined list
+        for key in self.selectorsDict:
+            if key not in keylistNominal:
+                raise ValueError(f"{self.name} {key} not found in SelectorKeys list")
+
+    def writeAllSelectors(self):
+        selectors = getattr(self.settings, "selectors")
+        try:
+            procselectors = getattr(self.settings, "procselectors")
+            for proc, sel in procselectors.items():
+                if proc != self.procinfo.get("procname"):
+                    continue
+                for key, value in sel.items():
+                    if value.process == self.procinfo.get("procname"):
+                        self.writeSelector(value)
+        except Exception as e:
+            print(f"Failed to pass process specific cuts in {self.name}")
+            print(e)
+            pass
+        for key, value in selectors.items():
+            self.writeSelector(value)
+
+    def writeSelector(self, select):
+        # get the native key for the selector
+        try:
+            key = self.selectorsDict[select.name.lower()]
+        except:
+            print(f"{key} cannot be translated into a {self.name} selector")
+            print(f"Ignoring the selector")
+            return
+
+        # add the selector implementation
+        if select.NParticle == 1:
+            self.add1ParticleSelector2Card(select, key)
+        elif select.NParticle == 2:
+            self.add2ParticleSelector2Card(select, key)
+        else:
+            print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
+
+    def add1ParticleSelector2Card(self, sel, name):
+        raise NotImplementedError(f"add1ParticleSelector not implemented in {self.name}")
+
+    def add2ParticleSelector2Card(self, sel, name):
+        raise NotImplementedError(f"add2ParticleSelector not implemented in {self.name}")
+
     def getModelName(self):
-        raise NotImplementedError("getModelName")
+        raise NotImplementedError(f"getModelName not implemented in {self.name}")
 
     def setDefaultModelParameters(self):
         self.ModelInputParams = []

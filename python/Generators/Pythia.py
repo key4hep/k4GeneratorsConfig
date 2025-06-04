@@ -12,7 +12,22 @@ class Pythia(GeneratorBase):
 
         self.setOptionalFileNameAndExtension(self.GeneratorDatacardBase,"selectors")
         if settings.get_block("selectors"):
-            self.fill_selectors()
+            self.writeAllSelectors()
+
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['pt']    = "PT"
+        self.selectorsDict['et']    = "ET"
+        self.selectorsDict['rapidity']   = "Rapidity"
+        self.selectorsDict['eta']   = "Eta"
+        self.selectorsDict['theta'] = "Theta"
+
+        self.selectorsDict['mass']     = "Mass"
+        self.selectorsDict['angle']    = "Angle"
+        self.selectorsDict['deltaeta']      = "DeltaEta"
+        self.selectorsDict['deltarapidity'] = "DeltaY"
+        self.selectorsDict['deltaphi']      = "DeltaPhi"
+        self.selectorsDict['deltar']        = "DeltaR"
 
     def setModelParameters(self):
         # no alphaS and MZ, these are default
@@ -90,53 +105,7 @@ class Pythia(GeneratorBase):
         if self.procinfo.get("decay"):
             self.add_decay()
 
-    def fill_selectors(self):
-        selectors = getattr(self.settings, "selectors")
-        try:
-            procselectors = getattr(self.settings, "procselectors")
-            for proc, sel in procselectors.items():
-                if proc != self.procinfo.get("procname"):
-                    continue
-                for key, value in sel.items():
-                    if value.process == self.procinfo.get("procname"):
-                        self.add_Selector(value)
-        except Exception as e:
-            print("Failed to pass process specific cuts in Pythia")
-            print(e)
-            pass
-        for key, value in selectors.items():
-            self.add_Selector(value)
-
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "pt":
-            self.add_one_ParticleSelector(value, "PT")
-        elif key == "et":
-            self.add_one_ParticleSelector(value, "ET")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "Rapidity")
-        elif key == "eta":
-            self.add_one_ParticleSelector(value, "Eta")
-        elif key == "theta":
-            self.add_one_ParticleSelector(value, "Theta", "rad")
-
-            # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value, "Mass")
-        elif key == "angle":
-            self.add_two_ParticleSelector(value, "Angle")
-        elif key == "deta":
-            self.add_two_ParticleSelector(value, "DeltaEta")
-        elif key == "drap":
-            self.add_two_ParticleSelector(value, "DeltaY")
-        elif key == "dphi":
-            self.add_two_ParticleSelector(value, "DeltaPhi")
-        elif key == "dr":
-            self.add_two_ParticleSelector(value, "DeltaR")
-        else:
-            print(f"{key} not a Pythia Selector")
-
-    def add_two_ParticleSelector(self, sel, name):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -173,7 +142,11 @@ class Pythia(GeneratorBase):
             if f"  {f1} {f2} {name} <" not in self.cuts:
                 self.cuts += f"{sname}\n"
 
-    def add_one_ParticleSelector(self, sel, name, unit=""):
+    def add1ParticleSelector2Card(self, sel, name):
+        # if the unit is deg or rad, we need to change it:
+        unit = ""
+        if sel.get_unit() == "rad" or sel.get_unit() == "deg":
+            unit = "rad"
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
 

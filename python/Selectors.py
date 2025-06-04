@@ -1,12 +1,34 @@
+import abc
 import math
 
+class SelectorKeys(abc.ABC):
+    """SelectorKeys Class"""
 
-class Selectors:
+    def __init__(self):
+        # define the standard names for single and double applications
+        self.oneParticleKeys = ["pt", "et", "energy", "rapidity", "eta", "theta"]
+        self.twoParticleKeys = ["mass", "angle", "deltaeta", "deltarapidity", "deltaphi", "deltar"]
+
+    def get_oneParticleKeys(self):
+        return self.oneParticleKeys
+
+    def get_twoParticleKeys(self):
+        return self.twoParticleKeys
+
+    def get_ParticleKeys(self):
+        return self.oneParticleKeys + self.twoParticleKeys
+
+class Selectors(SelectorKeys):
     """Selector Class"""
 
     def __init__(self, process, name, selector):
+        # initialize the baseclass
+        super().__init__()
+
+        # now set the Selectors variables
         self.process = process
         self.name = name
+        self.NParticle = 0
         self.LoadSelector(selector)
         self.CalculateAllOutputs()
 
@@ -14,6 +36,11 @@ class Selectors:
         if selector:
             for key, value in selector.items():
                 setattr(self, key.lower(), value)
+            # in addition to the user settings keep the number of particles
+            if self.name.lower() in self.oneParticleKeys:
+                self.NParticle = 1
+            if self.name.lower() in self.twoParticleKeys:
+                self.NParticle = 2
 
     def CalculateAllOutputs(self):
         # do something only for these units:

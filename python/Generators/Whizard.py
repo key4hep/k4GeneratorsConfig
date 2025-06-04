@@ -12,6 +12,16 @@ class Whizard(GeneratorBase):
 
         self.procs = []
 
+    def setSelectorsDict(self):
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['pt']    = "Pt"
+        self.selectorsDict['energy']= "E"
+        self.selectorsDict['rapidity'] = "rap"
+        self.selectorsDict['eta']   = "eta"
+        self.selectorsDict['theta'] = "Theta"
+
+        self.selectorsDict['mass']     = "m"
+
     def setModelParameters(self):
         # no alphaS and MZ, these are default
         self.addModelParameter('GFermi')
@@ -93,7 +103,7 @@ class Whizard(GeneratorBase):
         if self.settings.get_block("selectors"):
             self.CutKeyWdPresent = False
             self.aCutIsPresent   = False
-            self.write_selectors()
+            self.writeAllSelectors()
 
     def add_decay(self):
         decay_opt = self.procinfo.get("decay")
@@ -114,42 +124,7 @@ class Whizard(GeneratorBase):
 
         self.add2GeneratorDatacard(decays)
 
-    def write_selectors(self):
-        selectors = getattr(self.settings, "selectors")
-        try:
-            procselectors = getattr(self.settings, "procselectors")
-            for proc, sel in procselectors.items():
-                if proc != self.procinfo.get("procname"):
-                    continue
-                for key, value in sel.items():
-                    if value.process == self.procinfo.get("procname"):
-                        self.add_Selector(value)
-        except Exception as e:
-            print("Failed to pass process specific cuts in Whizard")
-            print(e)
-            pass
-        for key, value in selectors.items():
-            self.add_Selector(value)
-
-    def add_Selector(self, value):
-        key = value.name.lower()
-        if key == "pt":
-            self.add_one_ParticleSelector(value, "Pt")
-        elif key == "energy":
-            self.add_one_ParticleSelector(value, "E")
-        elif key == "rap":
-            self.add_one_ParticleSelector(value, "rap")
-        elif key == "eta":
-            self.add_one_ParticleSelector(value, "eta")
-        elif key == "theta":
-            self.add_one_ParticleSelector(value, "Theta", "rad")
-            # Two particle selectors
-        elif key == "mass":
-            self.add_two_ParticleSelector(value, "m")
-        else:
-            print(f"{key} not a Standard Whizard Selector")
-
-    def add_two_ParticleSelector(self, sel, name):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -166,7 +141,11 @@ class Whizard(GeneratorBase):
                     continue
                 self.addCut2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
-    def add_one_ParticleSelector(self, sel, name, unit=""):
+    def add1ParticleSelector2Card(self, sel, name):
+        # if the unit is deg or rad, we need to change it:
+        unit = ""
+        if sel.get_unit() == "deg":
+            unit = "rad"
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
