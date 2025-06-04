@@ -5,6 +5,7 @@ import ReleaseSpecs
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
 from Particles import Particle as ParticleClass
+from Selectors import SelectorKeys
 
 class GeneratorBase(abc.ABC):
     """GeneratorBase class"""
@@ -21,6 +22,7 @@ class GeneratorBase(abc.ABC):
         # set the Selectors Dictionary
         self.selectorsDict = dict()
         self.setSelectorsDict()
+        self.validateSelectorsDict()
 
         # set the default model parameters:
         self.setDefaultModelParameters()
@@ -120,6 +122,14 @@ class GeneratorBase(abc.ABC):
 
     def setSelectorsDict(self):
         raise NotImplementedError("setSelectorsDict")
+
+    def validateSelectorsDict(self):
+        # get the allowed keys
+        keylistNominal = SelectorKeys().get_ParticleKeys()
+        # check that every Generator key is in the predefined list
+        for key in self.selectorsDict:
+            if key not in keylistNominal:
+                raise ValueError(f"{self.name} {key} not found in SelectorKeys list")
 
     def writeAllSelectors(self):
         selectors = getattr(self.settings, "selectors")

@@ -1,14 +1,31 @@
+import abc
 import math
 
+class SelectorKeys(abc.ABC):
+    """SelectorKeys Class"""
 
-class Selectors:
-    """Selector Class"""
-
-    def __init__(self, process, name, selector):
+    def __init__(self):
         # define the standard names for single and double applications
         self.oneParticleKeys = ["pt", "et", "energy", "rapidity", "eta", "theta"]
         self.twoParticleKeys = ["mass", "angle", "deltaeta", "deltarapidity", "deltaphi", "deltar"]
 
+    def get_oneParticleKeys(self):
+        return self.oneParticleKeys
+
+    def get_twoParticleKeys(self):
+        return self.twoParticleKeys
+
+    def get_ParticleKeys(self):
+        return self.oneParticleKeys + self.twoParticleKeys
+
+class Selectors(SelectorKeys):
+    """Selector Class"""
+
+    def __init__(self, process, name, selector):
+        # initialize the baseclass
+        super().__init__()
+
+        # now set the Selectors variables
         self.process = process
         self.name = name
         self.NParticle = 0
