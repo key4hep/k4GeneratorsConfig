@@ -37,6 +37,7 @@ ISRmode      : int (0: off, 1: on)
     OutputFormat : string (format output, available are hepmc2 and hepmc3)
 OutDir       : string (output directory, default=$PWD/Run-Cards)
 Events       : unsigned int (Number of Monte-Carlo events to be generated)
+RandomSeed   : unsigned int (specify a random seed, important when generating multiple files for the same process)
 Processes    : see README A list of processes which runcards should be generated. Each process should have its own unique name
         Processes:
           Muon:
@@ -44,7 +45,6 @@ Processes    : see README A list of processes which runcards should be generated
              Final: [13, -13]
              Order: [2,0]
                      NLO: lo/qcd/qed (optional, default: lo)
-                     RandomSeed : unsigned int (specify a random seed, important when generating multiple files for the same process)
 ParticleData : overwrite basic particle properties
         ParticleData:
           25:
@@ -52,7 +52,7 @@ ParticleData : overwrite basic particle properties
             width: 0
 
 For MADGRAPH and Whizard only:
-PolarisationDensity  : float ([-1 or 1, 1 or -1]) default: [-1, 1]
+PolarisationDensity  : int ([-1 or 1, 1 or -1]) default: [-1, 1]
 PolarisationFraction : float ([0...1.,0....1.]), default [0,0]
 Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
     """
