@@ -38,7 +38,7 @@ class Whizard(GeneratorBase):
     def write_process(self):
         self.whiz_beam1 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(1))
         self.whiz_beam2 = self.pdg_to_whizard(self.procinfo.get_beam_flavour(2))
-        fsParticles = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
+        fsParticles = [int(pdg) for pdg in self.procinfo.get_finalstate_pdgString().split(" ")]
         self.finalstate = ", ".join(
             map(self.pdg_to_whizard, fsParticles)
         )

@@ -78,7 +78,7 @@ class Sherpa2(GeneratorBase):
         if self.procinfo.get("decay"):
             self.add_decay()
         else:
-            self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()};\n")
+            self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initialstate_pdgString()} -> {self.procinfo.get_finalstate_pdgString()};\n")
         self.add2GeneratorDatacard(f"  Order ({self.procinfo.get_qcd_order()},{self.procinfo.get_qed_order()});\n")
         self.add2GeneratorDatacard("  End process;\n")
 
@@ -136,8 +136,8 @@ class Sherpa2(GeneratorBase):
             f1 = flavs[0]
             f2 = flavs[1]
             if (
-                str(f1) not in self.procinfo.get_final_pdg()
-                or str(f2) not in self.procinfo.get_final_pdg()
+                str(f1) not in self.procinfo.get_finalstate_pdgString()
+                or str(f2) not in self.procinfo.get_finalstate_pdgString()
             ):
                 return
             sname = f" {name} {f1} {f2} {Min} {Max}"
@@ -148,8 +148,8 @@ class Sherpa2(GeneratorBase):
                 f1 = fl[0]
                 f2 = fl[1]
                 if (
-                    str(f1) not in self.procinfo.get_final_pdg()
-                    or str(f2) not in self.procinfo.get_final_pdg()
+                    str(f1) not in self.procinfo.get_finalstate_pdgString()
+                    or str(f2) not in self.procinfo.get_finalstate_pdgString()
                 ):
                     continue
                 sname = f" {name} {f1} {f2} {Min} {Max}"
@@ -169,7 +169,7 @@ class Sherpa2(GeneratorBase):
         # in the main process
         decay_opt = self.procinfo.get("decay")
         for key in decay_opt:
-            if str(key) not in self.procinfo.get_final_pdg():
+            if str(key) not in self.procinfo.get_finalstate_pdgString():
                 print(
                     "Particle {0} not found in main process. Decay not allowed".format(
                         key
@@ -180,7 +180,7 @@ class Sherpa2(GeneratorBase):
         i = 97
         fs = ""
         decays = ""
-        for p in self.procinfo.get_final_pdg_list():
+        for p in self.procinfo.get_finalstate_pdgDictList():
             parent = str(p) + f"[{chr(i)}] "
             child = decay_opt[p]
             fs += parent
@@ -189,7 +189,7 @@ class Sherpa2(GeneratorBase):
                 decays += f"{c} "
             decays += "\n"
             i += 1
-        self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initial_pdg()} -> {fs};\n")
+        self.add2GeneratorDatacard(f"  Process {self.procinfo.get_initialstate_pdgString()} -> {fs};\n")
         self.add2GeneratorDatacard(decays)
 
     def fill_datacard(self):

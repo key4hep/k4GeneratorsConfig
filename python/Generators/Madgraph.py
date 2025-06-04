@@ -51,7 +51,7 @@ class Madgraph(GeneratorBase):
         self.addOption2GeneratorDatacard("import model",self.getModel())
         # particles
         self.mg_particles = list(
-            map(self.pdg_to_madgraph, self.procinfo.get_particles())
+            map(self.pdg_to_madgraph, self.procinfo.get_particlesOfProcessList())
         )
         self.proc = ""
         for i in range(len(self.mg_particles)):
@@ -130,7 +130,7 @@ class Madgraph(GeneratorBase):
         decay_opt = self.procinfo.get("decay")
         decays = " "
         for key in decay_opt:
-            if str(key) not in self.procinfo.get_final_pdg():
+            if str(key) not in self.procinfo.get_finalstate_pdgString():
                 print(
                     "Particle {0} not found in main process. Decay not allowed".format(
                         key
@@ -149,8 +149,8 @@ class Madgraph(GeneratorBase):
             f1 = flavs[0]
             f2 = flavs[1]
             if (
-                str(f1) not in self.procinfo.get_final_pdg()
-                or str(f2) not in self.procinfo.get_final_pdg()
+                str(f1) not in self.procinfo.get_finalstate_pdgString()
+                or str(f2) not in self.procinfo.get_finalstate_pdgString()
             ):
                 return
             self.add_min_max_cut(f1, name, Min, Max)
@@ -166,8 +166,8 @@ class Madgraph(GeneratorBase):
                 f1 = fl[0]
                 f2 = fl[1]
                 if (
-                    str(f1) not in self.procinfo.get_final_pdg()
-                    or str(f2) not in self.procinfo.get_final_pdg()
+                    str(f1) not in self.procinfo.get_finalstate_pdgString()
+                    or str(f2) not in self.procinfo.get_finalstate_pdgString()
                 ):
                     continue
                 if f1 != -f2:

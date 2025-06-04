@@ -19,8 +19,11 @@ class Process:
 
     def __init__(self, args, procname, params, **options):
         self._init = False
-        self._parts = []
-        self._dataparts = []
+        # all particles in process list
+        self._particlesOfProcessList = []
+        # list of particles filled from the input yaml file
+        self._inputParticlesList = []
+        # label to be used in the generatorDB
         self.generatorDBLabel = ""
         self.procname = procname
 
@@ -37,18 +40,23 @@ class Process:
             setattr(self, key, value)
 
     def prepareProcess(self, yamlParticleData):
+        # beam particles
         self._beam1 = Particle.get_info(self.initial[0])
         self._beam2 = Particle.get_info(self.initial[1])
-        self._finfo = {}
-        self._fpdg = []
-        self._parts.extend([self._beam1, self._beam2])
+        # final state particle dictionary
+        self._finalStateParticleDict = {}
+        # final state particle list
+        self._finalStatePDGList = []
+        # add beam to all particles list
+        self._particlesOfProcessList.extend([self._beam1, self._beam2])
+        # full process label
         self._proclabel = "{} {} -> ".format(self._beam1.name, self._beam2.name)
         for p in self.final:
-            self._finfo[p] = Particle.get_info(p)
-            self._fpdg.append(str(p))
-            self._proclabel += f"{self._finfo[p].name} "
-            self._parts.append(self._finfo[p])
-        # set the global particle data properties
+            self._finalStateParticleDict[p] = Particle.get_info(p)
+            self._finalStatePDGList.append(str(p))
+            self._proclabel += f"{self._finalStateParticleDict[p].name} "
+            self._particlesOfProcessList.append(self._finalStateParticleDict[p])
+        # set the input particle data properties
         self.set_particle_data(yamlParticleData)
         # generate the label for the generatorDB
         # first the initial state
@@ -75,7 +83,7 @@ class Process:
             return
         for key, value in pdata.items():
             Particle.set_info(key, value)
-            self._dataparts.append(Particle.get_info(key))
+            self._inputParticlesList.append(Particle.get_info(key))
         self._init = True
 
     def get_beam_flavour(self, beam):
@@ -83,14 +91,17 @@ class Process:
             raise ValueError("Beam should be 1 or 2 not {}".format(beam))
         return getattr(self, f"_beam{beam}").get("pdg_code")
 
-    def get_initial_pdg(self):
+    def get_initialstate_pdgString(self):
         return "{} {}".format(self.get_beam_flavour(1), self.get_beam_flavour(2))
 
-    def get_final_pdg(self):
-        return " ".join(self._fpdg)
+    def get_finalstate_pdgString(self):
+        return " ".join(self._finalStatePDGList)
 
-    def get_final_pdg_list(self):
-        return list(self._finfo)
+    def get_finalstate_pdgList(self):
+        return self._finalStatePDGList
+
+    def get_finalstate_pdgDictList(self):
+        return list(self._finalStateParticleDict)
 
     def get(self, name):
         try:
@@ -101,11 +112,11 @@ class Process:
     def get_args(self):
         return self._required_args
 
-    def get_particles(self):
-        return self._parts
+    def get_particlesOfProcessList(self):
+        return self._particlesOfProcessList
 
-    def get_data_particles(self):
-        return self._dataparts
+    def get_inputParticlesList(self):
+        return self._inputParticlesList
 
     def get_qcd_order(self):
         return self.get("order")[1]
@@ -140,11 +151,10 @@ class Process:
         return self.generatorDBLabel
 
     def print_info(self):
-        out = f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV"
-        print(out)
+        print(f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV")
         print("Particles are defined with the following parameters")
-        for p in self._parts:
-            p.print_info()
+        for part in self._particlesOfProcessList:
+            part.print_info()
 
 
 class ProcessParameters:

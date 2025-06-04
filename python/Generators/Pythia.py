@@ -112,8 +112,8 @@ class Pythia(GeneratorBase):
             f1 = flavs[0]
             f2 = flavs[1]
             if (
-                str(f1) not in self.procinfo.get_final_pdg()
-                or str(f2) not in self.procinfo.get_final_pdg()
+                str(f1) not in self.procinfo.get_finalstate_pdgString()
+                or str(f2) not in self.procinfo.get_finalstate_pdgString()
             ):
                 return
 
@@ -129,8 +129,8 @@ class Pythia(GeneratorBase):
                 f1 = fl[0]
                 f2 = fl[1]
                 if (
-                    str(f1) not in self.procinfo.get_final_pdg()
-                    or str(f2) not in self.procinfo.get_final_pdg()
+                    str(f1) not in self.procinfo.get_finalstate_pdgString()
+                    or str(f2) not in self.procinfo.get_finalstate_pdgString()
                 ):
                     continue
 
@@ -164,7 +164,7 @@ class Pythia(GeneratorBase):
         # in the main process
         decay_opt = self.procinfo.get("decay")
         for key in decay_opt:
-            if str(key) not in self.procinfo.get_final_pdg():
+            if str(key) not in self.procinfo.get_finalstate_pdgString():
                 print(
                     "Particle {0} not found in main process. Decay not allowed".format(
                         key
@@ -172,7 +172,7 @@ class Pythia(GeneratorBase):
                 )
         # Pythia turn off parent, then turn on
         decays = ""
-        for parent in self.procinfo.get_final_pdg_list():
+        for parent in self.procinfo.get_finalstate_pdgDictList():
             self.removeOptionGeneratorDatacard(f"{parent}:onMode")
             self.removeOptionGeneratorDatacard(f"{parent}:onIfAny")
             decays += f"{parent}:onMode off\n"

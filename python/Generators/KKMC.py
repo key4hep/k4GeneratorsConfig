@@ -47,7 +47,7 @@ class KKMC(GeneratorBase):
             )
             return
 
-        finalstate = self.procinfo.get_final_pdg().split(" ")
+        finalstate = self.procinfo.get_finalstate_pdgList()
         if len(finalstate) != 2:
             print("WARNING: KKMC is only for e+e- -> f fbar")
             sys.exit()

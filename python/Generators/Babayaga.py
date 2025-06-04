@@ -36,8 +36,7 @@ class Babayaga(GeneratorBase):
             )
             return
 
-        finalstate = self.procinfo.get_final_pdg().split(" ")
-        self.finalstate = "".join(map(self.pdg_to_babayaga, finalstate))
+        self.finalstate = "".join(map(self.pdg_to_babayaga, self.procinfo.get_finalstate_pdgList()))
         self.add2GeneratorDatacard(f"fs {self.finalstate}\n")
 
         self.addOption2GeneratorDatacard("seed", self.procinfo.get_rndmSeed())

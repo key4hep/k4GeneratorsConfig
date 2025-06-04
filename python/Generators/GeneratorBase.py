@@ -335,7 +335,7 @@ class GeneratorBase(abc.ABC):
 
         # now as last step we overwrite with the yaml if present:
         # retrieve the particles from the input
-        for yamlParticle in self.procinfo.get_data_particles():
+        for yamlParticle in self.procinfo.get_inputParticlesList():
             # loop over all attributes
             for attr in dir(yamlParticle):
                 # make sure it's not a special attribute
@@ -474,8 +474,7 @@ class GeneratorBase(abc.ABC):
             analysis += "$K4GenBuildDir/bin/key4HEPAnalysis -i {0}.edm4hep -o {0}.root -p ".format(
                 self.GeneratorDatacardBase
             )
-            finalStateList = [int(pdg) for pdg in self.procinfo.get_final_pdg().split(" ")]
-            for pdg in finalStateList:
+            for pdg in self.procinfo.get_finalstate_pdgList():
                 analysis += f"{pdg},"
             analysis = analysis.rstrip(",")
             analysis +="\n"
