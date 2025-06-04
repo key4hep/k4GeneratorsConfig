@@ -142,10 +142,9 @@ class Madgraph(GeneratorBase):
                 decays += f"{part.name_from_pdg(child)} "
         self.proc += decays
 
-    def add2ParticleSelector2Card(self, sel, name, flavs=None):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
-        if not flavs:
-            flavs = sel.get_Flavours()
+        flavs = sel.get_Flavours()
         if len(flavs) == 2:
             f1 = flavs[0]
             f2 = flavs[1]
@@ -184,14 +183,13 @@ class Madgraph(GeneratorBase):
 
                 # self.addOption2GeneratorDatacard(sname, maxcut)
 
-    def add1ParticleSelector2Card(self, sel, name, f1=None):
+    def add1ParticleSelector2Card(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
         if sel.get_unit() == "rad" or sel.get_unit() == "deg":
             unit = "eta"
         Min, Max = sel.get_MinMax(unit)
-        if not f1:
-            f1 = sel.get_Flavours()
+        f1 = sel.get_Flavours()
         for f in f1:
             if f < 0:
                 continue
