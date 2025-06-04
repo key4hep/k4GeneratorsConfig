@@ -121,6 +121,46 @@ class GeneratorBase(abc.ABC):
     def setSelectorsDict(self):
         raise NotImplementedError("setSelectorsDict")
 
+    def writeAllSelectors(self):
+        selectors = getattr(self.settings, "selectors")
+        try:
+            procselectors = getattr(self.settings, "procselectors")
+            for proc, sel in procselectors.items():
+                if proc != self.procinfo.get("procname"):
+                    continue
+                for key, value in sel.items():
+                    if value.process == self.procinfo.get("procname"):
+                        self.writeSelector(value)
+        except Exception as e:
+            print(f"Failed to pass process specific cuts in {self.name}")
+            print(e)
+            pass
+        for key, value in selectors.items():
+            self.writeSelector(value)
+
+    def writeSelector(self, select):
+        # get the native key for the selector
+        try:
+            key = self.selectorsDict[select.name.lower()]
+        except:
+            print(f"{key} cannot be translated into a {self.name} selector")
+            print(f"Ignoring the selector")
+            return
+
+        # add the selector implementation
+        if select.NParticle == 1:
+            self.add1ParticleSelector(select, key)
+        elif select.NParticle == 2:
+            self.add2ParticleSelector(select, key)
+        else:
+            print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
+
+    def add1ParticleSelector(self, sel, name):
+        raise NotImplementedError("add1ParticleSelector")
+
+    def add2ParticleSelector(self, sel, name):
+        raise NotImplementedError("add2ParticleSelector")
+
     def getModelName(self):
         raise NotImplementedError("getModelName")
 

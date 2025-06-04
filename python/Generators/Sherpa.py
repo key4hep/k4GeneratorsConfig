@@ -88,41 +88,7 @@ class Sherpa(GeneratorBase):
         self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
         self.add2GeneratorDatacard(f"    Order: {{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}\n")
 
-    def write_selectors(self):
-        selectors = getattr(self.settings, "selectors")
-        try:
-            procselectors = getattr(self.settings, "procselectors")
-            for proc, sel in procselectors.items():
-                if proc != self.procinfo.get("procname"):
-                    continue
-                for key, value in sel.items():
-                    if value.process == self.procinfo.get("procname"):
-                        self.add_Selector(value)
-        except Exception as e:
-            print("Failed to pass process specific cuts in Sherpa")
-            print(e)
-            pass
-        for key, value in selectors.items():
-            self.add_Selector(value)
-
-    def add_Selector(self, select):
-        # get the native key for the selector
-        try:
-            key = self.selectorsDict[select.name.lower()]
-        except:
-            print(f"{key} cannot be translated into a Sherpa selector")
-            print(f"Ignoring the selector")
-            return
-
-        # add the selector implementation
-        if select.NParticle == 1:
-            self.add_one_ParticleSelector(select, key)
-        elif select.NParticle == 2:
-            self.add_two_ParticleSelector(select, key)
-        else:
-            print(f"{key} is a {select.NParticle} Particle selector, not implemented in Sherpa")
-
-    def add_two_ParticleSelector(self, sel, name):
+    def add2ParticleSelector(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -149,7 +115,7 @@ class Sherpa(GeneratorBase):
                 if f"  - [{name}, {f1}, {f2}" not in self.getGeneratorDatacard():
                     self.add2GeneratorDatacard(f"{sname}\n")
 
-    def add_one_ParticleSelector(self, sel, name):
+    def add1ParticleSelector(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
         if sel.get_unit() == "rad" or sel.get_unit() == "deg":
@@ -194,7 +160,7 @@ class Sherpa(GeneratorBase):
         # writing selectors depends on the presence of the block
         if self.settings.get_block("selectors"):
             self.add2GeneratorDatacard("\nSELECTORS:\n")
-            self.write_selectors()
+            self.writeAllSelectors()
 
     def fill_key4hepScript(self):
         key4hepRun = ""

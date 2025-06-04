@@ -103,7 +103,7 @@ class Whizard(GeneratorBase):
         if self.settings.get_block("selectors"):
             self.CutKeyWdPresent = False
             self.aCutIsPresent   = False
-            self.write_selectors()
+            self.writeAllSelectors()
 
     def add_decay(self):
         decay_opt = self.procinfo.get("decay")
@@ -124,41 +124,7 @@ class Whizard(GeneratorBase):
 
         self.add2GeneratorDatacard(decays)
 
-    def write_selectors(self):
-        selectors = getattr(self.settings, "selectors")
-        try:
-            procselectors = getattr(self.settings, "procselectors")
-            for proc, sel in procselectors.items():
-                if proc != self.procinfo.get("procname"):
-                    continue
-                for key, value in sel.items():
-                    if value.process == self.procinfo.get("procname"):
-                        self.add_Selector(value)
-        except Exception as e:
-            print(f"Failed to pass process specific cuts in {self.name}")
-            print(e)
-            pass
-        for key, value in selectors.items():
-            self.add_Selector(value)
-
-    def add_Selector(self, select):
-        # get the native key for the selector
-        try:
-            key = self.selectorsDict[select.name.lower()]
-        except:
-            print(f"{key} cannot be translated into a {self.name} selector")
-            print(f"Ignoring the selector")
-            return
-
-        # add the selector implementation
-        if select.NParticle == 1:
-            self.add_one_ParticleSelector(select, key)
-        elif select.NParticle == 2:
-            self.add_two_ParticleSelector(select, key)
-        else:
-            print(f"{key} is a {select.NParticle} Particle selector, not implemented in Whizard")
-
-    def add_two_ParticleSelector(self, sel, name):
+    def add2ParticleSelector(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -175,7 +141,7 @@ class Whizard(GeneratorBase):
                     continue
                 self.addCut2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
-    def add_one_ParticleSelector(self, sel, name):
+    def add1ParticleSelector(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
         if sel.get_unit() == "deg":
