@@ -105,7 +105,7 @@ class Pythia(GeneratorBase):
         if self.procinfo.get("decay"):
             self.add_decay()
 
-    def add2ParticleSelector(self, sel, name):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -142,7 +142,7 @@ class Pythia(GeneratorBase):
             if f"  {f1} {f2} {name} <" not in self.cuts:
                 self.cuts += f"{sname}\n"
 
-    def add1ParticleSelector(self, sel, name):
+    def add1ParticleSelector2Card(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
         if sel.get_unit() == "rad" or sel.get_unit() == "deg":

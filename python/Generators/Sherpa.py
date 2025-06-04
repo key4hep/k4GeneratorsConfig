@@ -88,7 +88,7 @@ class Sherpa(GeneratorBase):
         self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
         self.add2GeneratorDatacard(f"    Order: {{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}\n")
 
-    def add2ParticleSelector(self, sel, name):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -115,7 +115,7 @@ class Sherpa(GeneratorBase):
                 if f"  - [{name}, {f1}, {f2}" not in self.getGeneratorDatacard():
                     self.add2GeneratorDatacard(f"{sname}\n")
 
-    def add1ParticleSelector(self, sel, name):
+    def add1ParticleSelector2Card(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
         if sel.get_unit() == "rad" or sel.get_unit() == "deg":

@@ -72,7 +72,7 @@ class Babayaga(GeneratorBase):
     def add_decay(self):
         print("DECAY specified, cannot be implmented in Babayaga")
 
-    def add1ParticleSelector(self, sel, name):
+    def add1ParticleSelector2Card(self, sel, name):
         if name == "Theta":
             unit = "deg"
             Min, Max = sel.get_MinMax(unit)

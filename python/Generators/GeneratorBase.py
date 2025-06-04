@@ -149,20 +149,20 @@ class GeneratorBase(abc.ABC):
 
         # add the selector implementation
         if select.NParticle == 1:
-            self.add1ParticleSelector(select, key)
+            self.add1ParticleSelector2Card(select, key)
         elif select.NParticle == 2:
-            self.add2ParticleSelector(select, key)
+            self.add2ParticleSelector2Card(select, key)
         else:
             print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
 
-    def add1ParticleSelector(self, sel, name):
-        raise NotImplementedError("add1ParticleSelector")
+    def add1ParticleSelector2Card(self, sel, name):
+        raise NotImplementedError(f"add1ParticleSelector not implemented in {self.name}")
 
-    def add2ParticleSelector(self, sel, name):
-        raise NotImplementedError("add2ParticleSelector")
+    def add2ParticleSelector2Card(self, sel, name):
+        raise NotImplementedError(f"add2ParticleSelector not implemented in {self.name}")
 
     def getModelName(self):
-        raise NotImplementedError("getModelName")
+        raise NotImplementedError(f"getModelName not implemented in {self.name}")
 
     def setDefaultModelParameters(self):
         self.ModelInputParams = []

@@ -124,7 +124,7 @@ class Whizard(GeneratorBase):
 
         self.add2GeneratorDatacard(decays)
 
-    def add2ParticleSelector(self, sel, name):
+    def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()
         flavs = sel.get_Flavours()
         if len(flavs) == 2:
@@ -141,7 +141,7 @@ class Whizard(GeneratorBase):
                     continue
                 self.addCut2GeneratorDatacard(f" all {Min} < {name} <= {Max} [{f1},{f2}] \n")
 
-    def add1ParticleSelector(self, sel, name):
+    def add1ParticleSelector2Card(self, sel, name):
         # if the unit is deg or rad, we need to change it:
         unit = ""
         if sel.get_unit() == "deg":
