@@ -43,8 +43,6 @@ Processes    : see README A list of processes which runcards should be generated
           Muon:
              Initial: [11, -11]
              Final: [13, -13]
-             Order: [2,0]
-                     NLO: lo/qcd/qed (optional, default: lo)
 ParticleData : overwrite basic particle properties
         ParticleData:
           25:
