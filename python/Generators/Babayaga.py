@@ -29,10 +29,10 @@ class Babayaga(GeneratorBase):
     def write_process(self):
         if (
             abs(self.procinfo.get_beam_flavour(1)) != 11
-            or abs(self.procinfo.get_beam_flavour(1)) != 11
+            or abs(self.procinfo.get_beam_flavour(2)) != 11
         ):
             print(
-                f"Babayaga not implemented for initial state {self.babayaga_beam1} {self.babayaga_beam2}"
+                f"Babayaga not implemented for initial state {self.procinfo.get_beam_flavour(1)} {self.procinfo.get_beam_flavour(2)}"
             )
             return
 
