@@ -8,6 +8,10 @@ class SherpaProcDB(ProcDBBase):
         self.process = process
 
     def execute(self):
+        # the electroweak scheme is common to all implemented processes so far
+        self.rundict['EW_SCHEME'] = 3
+        # the procdict:
+        self.procdict['Order'] = "{QCD: 0, EW: 2}"
         # choose as function of generatorDBLabel
         label = self.process.get_generatorDBLabel()
         if label == "11_11_5_5":
@@ -23,7 +27,5 @@ class SherpaProcDB(ProcDBBase):
             self.particlesdict['15'] = {'Massive' : 1}
             self.particlesdict['5']  = {'Massive' : 1}
             self.particlesdict['4']  = {'Massive' : 1}
-        # the electroweak scheme is common to all implemented processes so far
-        self.rundict['EW_SCHEME'] = 3
 
 

@@ -16,12 +16,10 @@ Model: SM
 Processes:
   ZH250:
      Final: [23, 25]
-     Order: [2,0]
      ISRMode: 1
 
   ZH350:
      Final: [23, 25]
-     Order: [2,0]
      RandomSeed: 42
      SqrtS: 350
      ISRMode: 1

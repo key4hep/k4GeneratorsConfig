@@ -68,8 +68,8 @@ class Sherpa(GeneratorBase):
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         # run settings
-        for key in self.procDB.getDictParameters():
-            self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
+        for key in self.procDB.getDictRun():
+            self.addOption2GeneratorDatacard(key,self.procDB.getDictRun()[key])
 
         self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.eventmode)
         if self.gen_settings is not None:
@@ -86,7 +86,12 @@ class Sherpa(GeneratorBase):
     def write_process(self):
         self.add2GeneratorDatacard("\nPROCESSES:\n")
         self.add2GeneratorDatacard(f"- {self.procinfo.get_initial_pdg()} -> {self.procinfo.get_final_pdg()}:\n")
-        self.add2GeneratorDatacard(f"    Order: {{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}\n")
+        # now we interrogate the process specific ProcDB settings
+        for key in self.procDB.getDictProc():
+            self.addOption2GeneratorDatacard("    "+key,self.procDB.getDictProc()[key])
+        # the yaml input superseeds the QCD/EW order if defined, add as option to avoid duplicates
+        if self.procinfo.get("order") is not None:
+            self.addOption2GeneratorDatacard("    Order",f"{{QCD: {self.procinfo.get_qcd_order()}, EW: {self.procinfo.get_qed_order()}}}")
 
     def add2ParticleSelector2Card(self, sel, name):
         Min, Max = sel.get_MinMax()

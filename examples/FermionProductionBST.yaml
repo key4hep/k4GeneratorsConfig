@@ -14,7 +14,6 @@ ISRMode: 1
 Processes:
   Muon250:
      Final: [13, -13]
-     Order: [2,0]
      ISRmode: 1
      Beamstrahlung: ILC
 

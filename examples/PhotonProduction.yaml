@@ -17,7 +17,6 @@ ISRMode: 0
 Processes:
   Photon91.0:
      Final: [22, 22]
-     Order: [2,0]
 
 Selectors:
   Process:

@@ -15,14 +15,12 @@ ISRMode: 0
 Processes:
   Top350:
      Final: [6, -6]
-     Order: [2,0]
      RandomSeed: 42
      SqrtS: 350
      ISRMode: 1
 
   Top1000:
      Final: [6, -6]
-     Order: [2,0]
      RandomSeed: 42
      SqrtS: 1000
      ISRMode: 1

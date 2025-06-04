@@ -17,7 +17,6 @@ ISRMode: 0
 Processes:
   ZHDecay250:
      Final: [23, 25]
-     Order: [2,0]
      RandomSeed: 42
      SqrtS: 250
      Decay:
@@ -29,7 +28,6 @@ Processes:
         - -5
   ZHDecay350:
      Final: [23, 25]
-     Order: [2,0]
      RandomSeed: 42
      SqrtS: 350
      Decay:
