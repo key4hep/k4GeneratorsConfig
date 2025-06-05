@@ -172,17 +172,13 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
     for yaml_file in files:
         # read the input file
         settings = Settings.Input(yaml_file, sqrts)
-        # ana = analysis.Analysis(settings)
-        if settings.rivetON():
-            print("Rivet is enabled")
-        if settings.key4HEPAnalysisON():
-            print("key4HEPAnalysis is enabled")
+        # set the number of events if present
         if events != -1:
             settings.set("events", events)
         settings.gens()
-        processes     = settings.get_processes(sqrts)
-        particle_data = settings.get_particle_data()
-        generators    = generators_module.Generators(settings)
+        processes        = settings.get_processes(sqrts)
+        yamlParticleData = settings.get_particle_data()
+        generators       = generators_module.Generators(settings)
         try:
             output_dir = getattr(settings, "outdir", "Run-Cards")
         except KeyError:
@@ -200,12 +196,13 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
                 value["randomseed"] = randomseed
                 rndmIncrement += 1
             param = process_module.ProcessParameters(settings)
+            # instantiate the class for each process
             process_instances[key] = process_module.Process(
-                value, key, param, OutDir=output_dir
+                value, key, param, yamlParticleData, OutDir=output_dir
             )
             # increment counter for randomseed
         for process_instance in process_instances.values():
-            process_instance.prepareProcess(particle_data)
+            process_instance.prepareProcess()
             generators.runGeneratorConfiguration(process_instance)
 
     return rndmIncrement
