@@ -55,14 +55,15 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
         if (!std::filesystem::is_directory(processPath))
           continue;
 
+	k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
         for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
           std::filesystem::path filenamePath = files.path();
           if (!std::filesystem::is_regular_file(filenamePath))
             continue;
           // take care of the total cross section extracted from the EDM4HEP file
           if (filenamePath.extension() == ".edm4hep") {
-            std::cout << "xsectionCollection:: processing " << processPath.filename().string() << std::endl;
-            k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
+            std::cout << "xsectionCollection:: processing Process: " << processPath.filename().string()
+		      << " File:" << filenamePath.filename().string() << std::endl;
             xsec->setProcess(processPath.filename().string());
             xsec->setFile(filenamePath.string());
             // in some cases the generator name is not available, then derive from the filename
@@ -74,14 +75,21 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
               m_validCounter++;
             if (!xsec->isValid())
               m_invalidCounter++;
-            delete xsec;
           }
+	}
+	// we need to keep xsec alive for the differential distributions
+        for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
+          std::filesystem::path filenamePath = files.path();
+          if (!std::filesystem::is_regular_file(filenamePath))
+            continue;
           // take care of the differential distributions extracted from the .root (analysis output) file
           if (filenamePath.extension() == ".root") {
-            std::cout << "xsectionCollection:: processing " << processPath.filename().string() << std::endl;
+            std::cout << "xsectionCollection:: processing Process: " << processPath.filename().string()
+		      << " File: " << filenamePath.filename().string() << std::endl;
             k4GeneratorsConfig::differential* diffDist = new k4GeneratorsConfig::differential();
             diffDist->setProcess(processPath.filename().string());
             diffDist->setFile(filenamePath.string());
+            diffDist->setSQRTS(xsec->SQRTS());
             // in some cases the generator name is not available, then derive from the filename
             if (diffDist->Generator().empty())
               diffDist->setGenerator(generatorsPath.filename().string());
@@ -91,6 +99,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
             delete diffDist;
           }
         }
+	delete xsec;
       }
     }
   }

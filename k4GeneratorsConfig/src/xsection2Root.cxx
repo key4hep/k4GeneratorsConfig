@@ -1,14 +1,34 @@
 #include "xsection2Root.h"
 #include <sstream>
 
+#include "TStyle.h"
 #include "TCanvas.h"
 #include "TMultiGraph.h"
+#include "TLegend.h"
 
-k4GeneratorsConfig::xsection2Root::xsection2Root() {
+k4GeneratorsConfig::xsection2Root::xsection2Root():
+  m_file(0),
+  m_tree(0),
+  m_processCode(-1),
+  m_processSqrtsCode(-1),
+  m_crossSection(0),
+  m_crossSectionError(0.),
+  m_sqrts(0.),
+  m_generatorCode(0)
+{
   m_file = new TFile("xsection2RootSummary.root", "RECREATE");
   Init();
 }
-k4GeneratorsConfig::xsection2Root::xsection2Root(std::string file) {
+k4GeneratorsConfig::xsection2Root::xsection2Root(std::string file):
+  m_file(0),
+  m_tree(0),
+  m_processCode(-1),
+  m_processSqrtsCode(-1),
+  m_crossSection(0),
+  m_crossSectionError(0.),
+  m_sqrts(0.),
+  m_generatorCode(0)
+{
   m_file = new TFile(file.c_str(), "RECREATE");
   Init();
 }
@@ -27,30 +47,31 @@ void k4GeneratorsConfig::xsection2Root::Execute(xsection& xsec) {
 
   m_generator = xsec.Generator();
   m_process = xsec.Process();
+  m_sqrts = xsec.SQRTS();
   decodeProcGen();
   add2Tree(xsec);
 }
 void k4GeneratorsConfig::xsection2Root::Execute(differential& diffHisto) {
-
   m_generator = diffHisto.Generator();
   m_process = diffHisto.Process();
-  // for safety decode the safe
+  m_sqrts = diffHisto.SQRTS();
+  // for safety decode the the process code and the generator
   decodeProcGen();
   // if it's the first occurrence of a set, need to prepare the canvas vector:
   m_canvas.resize(m_processesList.size());
-  m_canvasName.resize(m_processesList.size());
+  m_canvasName.resize(m_processesSqrtsList.size());
   std::stringstream name, desc;
-  for (unsigned int iProc = 0; iProc < m_processesList.size(); iProc++) {
+  for (unsigned int iProc = 0; iProc < m_processesSqrtsList.size(); iProc++) {
     // check that it's the correct process
-    if (!m_processesList[iProc].compare(m_process)) {
+    if (!m_processesSqrtsList[iProc].compare(m_processSqrts)) {
       // that there are histograms
       if (diffHisto.NbOf1DHistos() > 0) {
         // and so far no canvases have been prepared
         if (m_canvas[iProc].size() == 0) {
           // prepare the canvases
           for (unsigned int iHisto = 0; iHisto < diffHisto.NbOf1DHistos(); iHisto++) {
-            name << m_processesList[iProc] << " " << diffHisto.TH1DHisto(iHisto)->GetName();
-            desc << "Process: " << m_processesList[iProc];
+            name << m_processesSqrtsList[iProc] << " " << diffHisto.TH1DHisto(iHisto)->GetName();
+            desc << "Process: " << m_processesSqrtsList[iProc];
             m_canvas[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
             m_canvasName[iProc].push_back(diffHisto.TH1DHisto(iHisto)->GetName());
             name.clear();
@@ -62,17 +83,22 @@ void k4GeneratorsConfig::xsection2Root::Execute(differential& diffHisto) {
       }
     }
   }
-
   // the canvas vector is ready, so we can fill the canvas:
-  for (unsigned int iProc = 0; iProc < m_processesList.size(); iProc++) {
+  for (unsigned int iProc = 0; iProc < m_processesSqrtsList.size(); iProc++) {
     // check that it's the correct process
-    if (!m_processesList[iProc].compare(m_process)) {
+    if (!m_processesSqrtsList[iProc].compare(m_processSqrts)) {
       if (diffHisto.NbOf1DHistos() > 0) {
         for (unsigned int iHisto = 0; iHisto < diffHisto.NbOf1DHistos(); iHisto++) {
           m_canvas[iProc][iHisto]->cd();
           TH1D* theHisto = diffHisto.TH1DHisto(iHisto);
+	  desc << m_generator << " "  << theHisto->GetTitle();
+          theHisto->SetTitle(desc.str().c_str());
+	  desc.clear();
+	  desc.str("");
+          gStyle->SetOptTitle(0);
           theHisto->SetStats(kFALSE);
           theHisto->SetLineColor(m_generatorCode + 1);
+          theHisto->SetMinimum(0);
           theHisto->Draw("SAME");
         }
       }
@@ -81,13 +107,15 @@ void k4GeneratorsConfig::xsection2Root::Execute(differential& diffHisto) {
 }
 void k4GeneratorsConfig::xsection2Root::decodeProcGen() {
 
-  // need to remove - from the names
+  // remove - from the names
   if (m_generator.find("-") != std::string::npos) {
     m_generator.erase(m_generator.find("-"), 1);
   }
+  // remove @ from names
   if (m_generator.find("@") != std::string::npos) {
     m_generator.erase(m_generator.find("@"), 1);
   }
+  //remove _ from names
   if (m_generator.find("_") != std::string::npos) {
     m_generator.erase(m_generator.find("_"), 1);
   }
@@ -98,6 +126,32 @@ void k4GeneratorsConfig::xsection2Root::decodeProcGen() {
   }
 
   m_generatorCode = std::find(m_generatorsList.begin(), m_generatorsList.end(), m_generator) - m_generatorsList.begin();
+  
+  // first determined the sqrts code and add to list
+  // copy to work on it
+  m_processSqrts = m_process;
+  //remove the subscript which separates the process name from the sqrts
+  if (m_processSqrts.find_last_of("_") != std::string::npos) {
+    // make sure that _ is not the last character
+    if ( m_processSqrts.find_last_of("_") + 1 != std::string::npos) {
+      if ( std::stod(m_processSqrts.substr(m_processSqrts.find_last_of("_")+1,std::string::npos)) == m_sqrts ) {
+	// remove the underscore
+	m_processSqrts.erase(m_process.find_last_of("_"),1);
+      }
+      else {
+	// comparison not successful, so we add the sqrts
+	m_processSqrts += std::to_string(m_sqrts);
+      }
+    }
+    else {
+	m_processSqrts += std::to_string(m_sqrts);
+    }
+  }  
+  // assign a code for each process
+  if (std::find(m_processesSqrtsList.begin(), m_processesSqrtsList.end(), m_processSqrts) == m_processesSqrtsList.end()) {
+    m_processesSqrtsList.push_back(m_processSqrts);
+  }
+  m_processSqrtsCode = std::find(m_processesSqrtsList.begin(), m_processesSqrtsList.end(), m_processSqrts) - m_processesSqrtsList.begin();
 
   // process needs to be processed to remove everything from the subscript on:
   if (m_process.find_last_of("_") != std::string::npos) {
@@ -109,6 +163,7 @@ void k4GeneratorsConfig::xsection2Root::decodeProcGen() {
   }
 
   m_processCode = std::find(m_processesList.begin(), m_processesList.end(), m_process) - m_processesList.begin();
+
 }
 void k4GeneratorsConfig::xsection2Root::add2Tree(xsection& xsec) {
 
@@ -286,13 +341,16 @@ void k4GeneratorsConfig::xsection2Root::writeCrossSectionFigures() {
 }
 void k4GeneratorsConfig::xsection2Root::writeDifferentialFigures() {
 
+  // if the canvas is not filled do not try
+  if ( m_canvas.size() == 0 ) return;
+  
   std::stringstream name;
-
   // now write out the superposed histograms
-  for (unsigned int proc = 0; proc < m_processesList.size(); proc++) {
+  for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
     // check that it's the correct process
     for (unsigned int cnvs = 0; cnvs < m_canvas[proc].size(); cnvs++) {
-      name << m_processesList[proc] << m_canvasName[proc][cnvs] << ".png";
+      name << m_processesSqrtsList[proc] << m_canvasName[proc][cnvs] << ".png";
+      m_canvas[proc][cnvs]->BuildLegend();
       m_canvas[proc][cnvs]->Print(name.str().c_str());
       name.clear();
       name.str("");

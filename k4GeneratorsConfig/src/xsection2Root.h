@@ -48,7 +48,9 @@ private:
 
   // data members
   std::string m_process;
+  std::string m_processSqrts;
   int m_processCode;
+  int m_processSqrtsCode;
   double m_crossSection;
   double m_crossSectionError;
   double m_sqrts;
@@ -57,6 +59,7 @@ private:
 
   std::vector<std::string> m_generatorsList;
   std::vector<std::string> m_processesList;
+  std::vector<std::string> m_processesSqrtsList;
 };
 } // namespace k4GeneratorsConfig
 
