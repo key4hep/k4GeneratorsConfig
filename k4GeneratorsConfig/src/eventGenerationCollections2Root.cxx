@@ -121,19 +121,19 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
   // first determined the sqrts code and add to list
   // copy to work on it
   m_processSqrts = m_process;
-  // remove the subscript which separates the process name from the sqrts
+  // check consistency
   if (m_processSqrts.find_last_of("_") != std::string::npos) {
     // make sure that _ is not the last character
     if (m_processSqrts.find_last_of("_") + 1 != std::string::npos) {
-      if (std::stod(m_processSqrts.substr(m_processSqrts.find_last_of("_") + 1, std::string::npos)) == m_sqrts) {
+      if (std::stod(m_processSqrts.substr(m_processSqrts.find_last_of("_") + 1, std::string::npos)) == int(m_sqrts*1000)) {
         // remove the underscore
         m_processSqrts.erase(m_process.find_last_of("_"), 1);
       } else {
         // comparison not successful, so we add the sqrts
-        m_processSqrts += std::to_string(m_sqrts);
+        m_processSqrts += std::to_string(int(m_sqrts*1000));
       }
     } else {
-      m_processSqrts += std::to_string(m_sqrts);
+      m_processSqrts += std::to_string(int(m_sqrts*1000));
     }
   }
   // assign a code for each process

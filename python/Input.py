@@ -74,7 +74,7 @@ class Input:
         # overwrite now sqrts with new value
         # now calculate the process extension if necessary
         if sqrtsOverride != 0:
-            procExt = "_" + str(sqrtsOverride)
+            procExt = "_" + str(int(sqrtsOverride*1000))
             processes = {proc + procExt: value for proc, value in processes.items()}
             for proc, values in processes.items():
                 values["sqrts"] = sqrtsOverride
