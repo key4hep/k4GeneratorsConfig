@@ -108,7 +108,7 @@ int main(int argc, char** argv) {
   std::vector<TH1D*> pTHistos;
   std::vector<TH1D*> pZHistos;
 
-  for (unsigned int part = 0; particlesList.size(); part++) {
+  for (unsigned int part = 0; part < particlesList.size(); part++) {
     name.clear();
     name.str("");
     desc.clear();
@@ -184,6 +184,7 @@ int main(int argc, char** argv) {
         }
       }
     }
+
     // fill the histograms:
     for (unsigned int ipart = 0; ipart < particlesList.size(); ipart++) {
       if (selectedParticles[ipart]) {
