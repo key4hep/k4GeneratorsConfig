@@ -6,7 +6,8 @@
 #include <sys/stat.h>
 
 k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections() : m_validCounter(0), m_invalidCounter(0) {}
-k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections(const eventGenerationCollections& theOriginal) {
+k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections(
+    const eventGenerationCollections& theOriginal) {
   if (this != &theOriginal) {
     m_xsectionCollection = theOriginal.m_xsectionCollection;
     m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
