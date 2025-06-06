@@ -1,17 +1,17 @@
-#ifndef K4GENERATORSCONFIG_DIFFERENTIAL_H
-#define K4GENERATORSCONFIG_DIFFERENTIAL_H
+#ifndef K4GENERATORSCONFIG_ANALYSISHISTOS_H
+#define K4GENERATORSCONFIG_ANALYSISHISTOS_H
 
 #include <string>
 
 #include "TH1D.h"
 
 namespace k4GeneratorsConfig {
-class differential {
+class analysisHistos {
 public:
-  differential();
-  differential(const differential&);
-  differential& operator=(const differential&);
-  ~differential();
+  analysisHistos();
+  analysisHistos(const analysisHistos&);
+  analysisHistos& operator=(const analysisHistos&);
+  ~analysisHistos();
 
   bool processFile();
 

@@ -13,7 +13,7 @@
 #include <string>
 #include <unordered_map>
 
-#include "differential.h"
+#include "analysisHistos.h"
 #include "xsection.h"
 
 namespace k4GeneratorsConfig {
@@ -25,7 +25,7 @@ public:
 
   void Init();
   void Execute(xsection&);
-  void Execute(differential&);
+  void Execute(analysisHistos&);
   void Finalize();
 
   void decodeProcGen();
@@ -33,7 +33,7 @@ public:
   void writeTree();
   void writeHistos();
   void writeCrossSectionFigures();
-  void writeDifferentialFigures();
+  void writeAnalysisHistosFigures();
 
 private:
   TFile* m_file;

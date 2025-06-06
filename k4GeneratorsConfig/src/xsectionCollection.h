@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "differential.h"
+#include "analysisHistos.h"
 #include "xsection.h"
 
 namespace k4GeneratorsConfig {
@@ -19,7 +19,7 @@ public:
   void orderCollections();
   bool compareLength(xsection, xsection);
   bool compareLexical(xsection, xsection);
-  bool compareLexical(differential, differential);
+  bool compareLexical(analysisHistos, analysisHistos);
 
   unsigned int NbOfSuccesses();
   unsigned int NbOfFailures();
@@ -31,7 +31,7 @@ public:
 
 private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;
-  std::vector<k4GeneratorsConfig::differential> m_differentialCollection;
+  std::vector<k4GeneratorsConfig::analysisHistos> m_analysisHistosCollection;
   unsigned int m_validCounter;
   unsigned int m_invalidCounter;
 };

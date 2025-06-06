@@ -37,7 +37,7 @@ void k4GeneratorsConfig::xsection2Root::Execute(xsection& xsec) {
   decodeProcGen();
   add2Tree(xsec);
 }
-void k4GeneratorsConfig::xsection2Root::Execute(differential& diffHisto) {
+void k4GeneratorsConfig::xsection2Root::Execute(analysisHistos& diffHisto) {
   m_generator = diffHisto.Generator();
   m_process = diffHisto.Process();
   m_sqrts = diffHisto.SQRTS();
@@ -168,8 +168,8 @@ void k4GeneratorsConfig::xsection2Root::Finalize() {
   writeTree();
   // write cross section images
   writeCrossSectionFigures();
-  // deal with the differential distributions
-  writeDifferentialFigures();
+  // deal with the analysisHistos distributions
+  writeAnalysisHistosFigures();
   // close the file
   m_file->Close();
 }
@@ -324,7 +324,7 @@ void k4GeneratorsConfig::xsection2Root::writeCrossSectionFigures() {
   }
   delete c1;
 }
-void k4GeneratorsConfig::xsection2Root::writeDifferentialFigures() {
+void k4GeneratorsConfig::xsection2Root::writeAnalysisHistosFigures() {
 
   // if the canvas is not filled do not try
   if (m_canvas.size() == 0)

@@ -58,7 +58,7 @@ set(xsection_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionCollection.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection2Root.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/differential.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/analysisHistos.cxx
 )
 
 add_executable(xsectionSummary ${xsection_sources})
