@@ -1,5 +1,5 @@
-#ifndef K4GENERATORSCONFIG_XSECTIONCOLLECTION_H
-#define K4GENERATORSCONFIG_XSECTIONCOLLECTION_H
+#ifndef K4GENERATORSCONFIG_EVENTGENERATIONCOLLECTIONS_H
+#define K4GENERATORSCONFIG_EVENTGENERATIONCOLLECTIONS_H
 
 #include <vector>
 
@@ -7,12 +7,12 @@
 #include "xsection.h"
 
 namespace k4GeneratorsConfig {
-class xsectionCollection {
+class eventGenerationCollections {
 public:
-  xsectionCollection();
-  xsectionCollection(const xsectionCollection&);
-  xsectionCollection& operator=(const xsectionCollection&);
-  ~xsectionCollection();
+  eventGenerationCollections();
+  eventGenerationCollections(const eventGenerationCollections&);
+  eventGenerationCollections& operator=(const eventGenerationCollections&);
+  ~eventGenerationCollections();
 
   void Execute();
   void makeCollections();

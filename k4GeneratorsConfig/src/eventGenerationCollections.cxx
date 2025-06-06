@@ -1,12 +1,12 @@
-#include "xsectionCollection.h"
+#include "eventGenerationCollections.h"
 #include "xsection2Root.h"
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <sys/stat.h>
 
-k4GeneratorsConfig::xsectionCollection::xsectionCollection() : m_validCounter(0), m_invalidCounter(0) {}
-k4GeneratorsConfig::xsectionCollection::xsectionCollection(const xsectionCollection& theOriginal) {
+k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections() : m_validCounter(0), m_invalidCounter(0) {}
+k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections(const eventGenerationCollections& theOriginal) {
   if (this != &theOriginal) {
     m_xsectionCollection = theOriginal.m_xsectionCollection;
     m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
@@ -14,8 +14,8 @@ k4GeneratorsConfig::xsectionCollection::xsectionCollection(const xsectionCollect
     m_invalidCounter = theOriginal.m_invalidCounter;
   }
 }
-k4GeneratorsConfig::xsectionCollection&
-k4GeneratorsConfig::xsectionCollection::operator=(const xsectionCollection& theOriginal) {
+k4GeneratorsConfig::eventGenerationCollections&
+k4GeneratorsConfig::eventGenerationCollections::operator=(const eventGenerationCollections& theOriginal) {
   if (this != &theOriginal) {
     m_xsectionCollection = theOriginal.m_xsectionCollection;
     m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
@@ -25,8 +25,8 @@ k4GeneratorsConfig::xsectionCollection::operator=(const xsectionCollection& theO
 
   return *this;
 }
-k4GeneratorsConfig::xsectionCollection::~xsectionCollection() {}
-void k4GeneratorsConfig::xsectionCollection::Execute() {
+k4GeneratorsConfig::eventGenerationCollections::~eventGenerationCollections() {}
+void k4GeneratorsConfig::eventGenerationCollections::Execute() {
 
   // first make the collection
   makeCollections();
@@ -37,7 +37,7 @@ void k4GeneratorsConfig::xsectionCollection::Execute() {
   // third print the final results
   Print();
 }
-void k4GeneratorsConfig::xsectionCollection::makeCollections() {
+void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
 
   for (const auto& yamls : std::filesystem::directory_iterator(".")) {
     std::filesystem::path yamlsPath = yamls.path();
@@ -62,7 +62,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
             continue;
           // take care of the total cross section extracted from the EDM4HEP file
           if (filenamePath.extension() == ".edm4hep") {
-            std::cout << "xsectionCollection:: processing Process: " << processPath.filename().string()
+            std::cout << "eventGenerationCollections:: processing Process: " << processPath.filename().string()
                       << " File:" << filenamePath.filename().string() << std::endl;
             xsec->setProcess(processPath.filename().string());
             xsec->setFile(filenamePath.string());
@@ -84,7 +84,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
             continue;
           // take care of the analysisHistos distributions extracted from the .root (analysis output) file
           if (filenamePath.extension() == ".root") {
-            std::cout << "xsectionCollection:: processing Process: " << processPath.filename().string()
+            std::cout << "eventGenerationCollections:: processing Process: " << processPath.filename().string()
                       << " File: " << filenamePath.filename().string() << std::endl;
             k4GeneratorsConfig::analysisHistos* diffDist = new k4GeneratorsConfig::analysisHistos();
             diffDist->setProcess(processPath.filename().string());
@@ -104,7 +104,7 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
     }
   }
 }
-void k4GeneratorsConfig::xsectionCollection::orderCollections() {
+void k4GeneratorsConfig::eventGenerationCollections::orderCollections() {
 
   // order by content
   std::sort(m_xsectionCollection.begin(), m_xsectionCollection.end(),
@@ -114,7 +114,7 @@ void k4GeneratorsConfig::xsectionCollection::orderCollections() {
   std::sort(m_analysisHistosCollection.begin(), m_analysisHistosCollection.end(),
             [this](analysisHistos A, analysisHistos B) { return this->compareLexical(A, B); });
 }
-bool k4GeneratorsConfig::xsectionCollection::compareLength(xsection A, xsection B) {
+bool k4GeneratorsConfig::eventGenerationCollections::compareLength(xsection A, xsection B) {
 
   // retrieve the process as ordering variable
   std::string processA = A.Process();
@@ -122,7 +122,7 @@ bool k4GeneratorsConfig::xsectionCollection::compareLength(xsection A, xsection 
 
   return processA.size() < processB.size();
 }
-bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection B) {
+bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(xsection A, xsection B) {
 
   // retrieve the process as ordering variable
   std::string processNgenA = A.Process() + A.Generator();
@@ -139,7 +139,7 @@ bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection
 
   return false;
 }
-bool k4GeneratorsConfig::xsectionCollection::compareLexical(analysisHistos A, analysisHistos B) {
+bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(analysisHistos A, analysisHistos B) {
 
   // retrieve the process as ordering variable
   std::string processNgenA = A.Process() + A.Generator();
@@ -156,9 +156,9 @@ bool k4GeneratorsConfig::xsectionCollection::compareLexical(analysisHistos A, an
 
   return false;
 }
-unsigned int k4GeneratorsConfig::xsectionCollection::NbOfSuccesses() { return m_validCounter; }
-unsigned int k4GeneratorsConfig::xsectionCollection::NbOfFailures() { return m_invalidCounter; }
-void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename) {
+unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() { return m_validCounter; }
+unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() { return m_invalidCounter; }
+void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string filename) {
 
   xsection2Root out(filename);
 
@@ -175,7 +175,7 @@ void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename) {
   }
   out.Finalize();
 }
-void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK) {
+void k4GeneratorsConfig::eventGenerationCollections::Print(bool onlyOK) {
 
   for (auto xsec : m_xsectionCollection) {
     if (!onlyOK) {
@@ -187,7 +187,7 @@ void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK) {
     }
   }
 }
-void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream& output) const {
+void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& output) const {
 
   std::string previousProcess = "XXXX";
   for (auto xsec : m_xsectionCollection) {

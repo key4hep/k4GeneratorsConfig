@@ -56,7 +56,7 @@ install(TARGETS convertHepMC2EDM4HEP
 set(xsection_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationSummary.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionCollection.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationCollections.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection2Root.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/analysisHistos.cxx
 )
