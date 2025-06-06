@@ -71,24 +71,27 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   }
   // the canvas vector is ready, so we can fill the canvas:
   // - determine the index from the process sqrts
-  unsigned int iProc = std::find(m_processesSqrtsList.begin(), m_processesSqrtsList.end(), m_processSqrts)-m_processesSqrtsList.begin();
+  unsigned int iProc = std::find(m_processesSqrtsList.begin(), m_processesSqrtsList.end(), m_processSqrts) -
+                       m_processesSqrtsList.begin();
   // - check that the index is valid (not found==size) and that there are histos to add
-  if ( iProc < m_processesSqrtsList.size() && anaHistos.NbOf1DHistos() > 0) {
+  if (iProc < m_processesSqrtsList.size() && anaHistos.NbOf1DHistos() > 0) {
     // now add the histos
-    for (auto histo : anaHistos.TH1DHistos() ) {
-      unsigned int iHisto = std::find(m_cnvAnalysisHistosNames[iProc].begin(), m_cnvAnalysisHistosNames[iProc].end(), histo->GetName())-m_cnvAnalysisHistosNames[iProc].begin();
-      if (iHisto < m_cnvAnalysisHistos[iProc].size()){
-	m_cnvAnalysisHistos[iProc][iHisto]->cd();
-	TH1D* theHisto = anaHistos.TH1DHisto(iHisto);
-	desc << m_generator << " " << theHisto->GetTitle();
-	theHisto->SetTitle(desc.str().c_str());
-	desc.clear();
-	desc.str("");
-	gStyle->SetOptTitle(0);
-	theHisto->SetStats(kFALSE);
-	theHisto->SetLineColor(m_generatorCode + 1);
-	theHisto->SetMinimum(0);
-	theHisto->Draw("SAME");
+    for (auto histo : anaHistos.TH1DHistos()) {
+      unsigned int iHisto =
+          std::find(m_cnvAnalysisHistosNames[iProc].begin(), m_cnvAnalysisHistosNames[iProc].end(), histo->GetName()) -
+          m_cnvAnalysisHistosNames[iProc].begin();
+      if (iHisto < m_cnvAnalysisHistos[iProc].size()) {
+        m_cnvAnalysisHistos[iProc][iHisto]->cd();
+        TH1D* theHisto = anaHistos.TH1DHisto(iHisto);
+        desc << m_generator << " " << theHisto->GetTitle();
+        theHisto->SetTitle(desc.str().c_str());
+        desc.clear();
+        desc.str("");
+        gStyle->SetOptTitle(0);
+        theHisto->SetStats(kFALSE);
+        theHisto->SetLineColor(m_generatorCode + 1);
+        theHisto->SetMinimum(0);
+        theHisto->Draw("SAME");
       }
     }
   }
