@@ -26,6 +26,7 @@ public:
   std::string File();
   bool isValid();
   TH1D* TH1DHisto(unsigned int);
+  const std::vector<TH1D*>& TH1DHistos() const;
   unsigned int NbOf1DHistos();
 
   void Print();

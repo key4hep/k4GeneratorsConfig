@@ -108,19 +108,18 @@ int main(int argc, char** argv) {
   std::vector<TH1D*> pTHistos;
   std::vector<TH1D*> pZHistos;
 
-  unsigned int i = 0;
-  for (auto part : particlesList) {
+  for (unsigned int part = 0; particlesList.size(); part++) {
     name.clear();
     name.str("");
     desc.clear();
     desc.str("");
-    name << particlesNamesList[i] << "costheta" << i;
+    name << particlesNamesList[part] << "costheta" << part;
+    desc << "cos#theta (" << particlesNamesList[part] << ")";
     costhetaHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 50, -1., 1.));
     desc.clear();
     desc.str("");
-    desc << "cos#theta (" << part << "/" << particlesNamesList[i] << ")";
+    desc << "cos#theta";
     costhetaHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
-    i++;
   }
 
   // create a unique identifier to avoid same particle problems like ZZ (adding the index)
@@ -132,7 +131,10 @@ int main(int argc, char** argv) {
       desc.clear();
       desc.str("");
       name << "mass" << particlesNamesList[part1] << particlesNamesList[part2] << part1 << part2;
+      desc << "Mass(" << particlesNamesList[part1] << "+" << particlesNamesList[part2] << ")";
       massHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts));
+      desc.clear();
+      desc.str("");
       desc << "Mass(" << particlesList[part1] << "," << particlesList[part2] << ") [GeV]";
       massHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
 
@@ -141,8 +143,11 @@ int main(int argc, char** argv) {
       desc.clear();
       desc.str("");
       name << "pt" << particlesNamesList[part1] << particlesNamesList[part2] << part1 << part2;
+      desc << "pT(" << particlesNamesList[part1] << "+" << particlesNamesList[part2] << ")";
       pTHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts));
-      desc << "pT(" << particlesList[part1] << "," << particlesList[part2] << ") [GeV]";
+      desc.clear();
+      desc.str("");
+      desc << "pT [GeV]";
       pTHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
 
       name.clear();
@@ -150,8 +155,11 @@ int main(int argc, char** argv) {
       desc.clear();
       desc.str("");
       name << "pz" << particlesNamesList[part1] << particlesNamesList[part2] << part1 << part2;
+      desc << "pZ(" << particlesNamesList[part1] << "+" << particlesNamesList[part2] << ")";
       pZHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts));
-      desc << "pZ(" << particlesList[part1] << "," << particlesList[part2] << ") [GeV]";
+      desc.clear();
+      desc.str("");
+      desc << "pZ [GeV]";
       pZHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
     }
   }

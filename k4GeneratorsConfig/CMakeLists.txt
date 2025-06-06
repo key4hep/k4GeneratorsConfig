@@ -57,7 +57,7 @@ set(xsection_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationSummary.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationCollections.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection2Root.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationCollections2Root.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/analysisHistos.cxx
 )
 

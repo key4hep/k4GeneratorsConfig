@@ -75,6 +75,9 @@ bool k4GeneratorsConfig::analysisHistos::isValid() { return m_isValid; }
 TH1D* k4GeneratorsConfig::analysisHistos::TH1DHisto(unsigned int iHisto) {
   return m_listOfHists.size() > 0 ? m_listOfHists[iHisto] : 0;
 }
+const std::vector<TH1D*>& k4GeneratorsConfig::analysisHistos::TH1DHistos() const{
+  return m_listOfHists;
+}
 unsigned int k4GeneratorsConfig::analysisHistos::NbOf1DHistos() { return m_listOfHists.size(); }
 void k4GeneratorsConfig::analysisHistos::Print() {
   std::cout << std::endl;

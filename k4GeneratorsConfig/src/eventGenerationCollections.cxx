@@ -1,5 +1,5 @@
 #include "eventGenerationCollections.h"
-#include "xsection2Root.h"
+#include "eventGenerationCollections2Root.h"
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
@@ -161,7 +161,7 @@ unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() { r
 unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() { return m_invalidCounter; }
 void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string filename) {
 
-  xsection2Root out(filename);
+  eventGenerationCollections2Root out(filename);
 
   for (auto xsec : m_xsectionCollection) {
     if (xsec.isValid()) {
