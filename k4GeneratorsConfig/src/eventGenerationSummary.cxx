@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
 
   std::string filename = "XsectionSummary.dat";
-  std::string fileRoot = "XsectionSummary.root";
+  std::string fileRoot = "eventGenerationSummary.root";
   int c;
   while ((c = getopt(argc, argv, "hf:r:")) != -1)
     switch (c) {

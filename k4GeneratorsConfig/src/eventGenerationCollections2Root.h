@@ -36,13 +36,15 @@ public:
   void writeAnalysisHistosFigures();
 
 private:
+  // steers the precision criteria
+  const double m_sqrtsPrecision;
+  const double m_xsectionMinimal;
+
   TFile* m_file;
   TTree* m_tree;
-  std::vector<TH2D*> m_histos;
-  std::vector<TProfile*> m_profiles;
-  std::vector<TH1D*> m_rms;
-  std::vector<TGraphErrors*> m_graphs;
-  std::vector<TGraph*> m_graphsDelta;
+
+  std::vector<TGraphErrors*> m_xsectionGraphs;
+  std::vector<TGraphErrors*> m_xsectionRMSGraphs;
   std::vector<std::vector<TCanvas*>> m_cnvAnalysisHistos;
   std::vector<std::vector<std::string>> m_cnvAnalysisHistosNames;
 
@@ -60,6 +62,13 @@ private:
   std::vector<std::string> m_generatorsList;
   std::vector<std::string> m_processesList;
   std::vector<std::string> m_processesSqrtsList;
+  std::vector<double> m_sqrtsList;
+
+  // structure for the average and RMS of the cross section per Process and sqrts
+  std::vector<double> m_xsectionMean4ProcessSqrts;
+  std::vector<double> m_xsectionRMS4ProcessSqrts;
+  std::vector<unsigned int> m_xsectionN4ProcessSqrts;
+  std::vector<int> m_xsectionPROC4ProcessSqrts;
 };
 } // namespace k4GeneratorsConfig
 

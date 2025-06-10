@@ -10,8 +10,8 @@ cd ci-setups
 
 # STEP 4
 # since we have run the generators we can also do the summary now:
-echo Extracting the cross sections by reading EDM4HEP files
-$K4GENERATORSCONFIG/xsectionSummary -f ${CWD}/xsectionSummary.dat
+echo Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions
+$K4GENERATORSCONFIG/eventGenerationSummary -f ${CWD}/xsectionSummary.dat
 
 cp *.png ${CWD}/.
 
