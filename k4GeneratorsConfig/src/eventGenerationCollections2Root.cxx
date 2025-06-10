@@ -7,14 +7,14 @@
 #include "TStyle.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
-  : m_sqrtsPrecision(1.e-6),m_xsectionMinimal(1.e-12),m_file(0), m_tree(0), m_processCode(-1), m_processSqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.),
-      m_sqrts(0.), m_generatorCode(0) {
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1),
+      m_processSqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile("eventGenerationSummary.root", "RECREATE");
   Init();
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root(std::string file)
-  : m_sqrtsPrecision(1.e-6),m_xsectionMinimal(1.e-12),m_file(0), m_tree(0), m_processCode(-1), m_processSqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.),
-      m_sqrts(0.), m_generatorCode(0) {
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1),
+      m_processSqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile(file.c_str(), "RECREATE");
   Init();
 }
@@ -128,7 +128,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
     if (m_processSqrts.find_last_of("_") + 1 != std::string::npos) {
       // compare to sqrts, but limit precision to something reasonable (set in constructor)
       if (abs(std::stoi(m_processSqrts.substr(m_processSqrts.find_last_of("_") + 1, std::string::npos)) -
-	      int(m_sqrts * 1000))/int(m_sqrts * 1000) < m_sqrtsPrecision ) {
+              int(m_sqrts * 1000)) /
+              int(m_sqrts * 1000) <
+          m_sqrtsPrecision) {
         // remove the underscore
         m_processSqrts.erase(m_process.find_last_of("_"), 1);
       } else {
@@ -228,30 +230,31 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
       // accumulate the averages and the squares:
       index = m_processSqrtsCode;
       m_xsectionMean4ProcessSqrts[index] += m_crossSection;
-      m_xsectionRMS4ProcessSqrts[index]  += (m_crossSection*m_crossSection);
-      m_xsectionN4ProcessSqrts[index]    += 1;
-      if ( m_xsectionPROC4ProcessSqrts[index] == -1 ) {
-	m_xsectionPROC4ProcessSqrts[index]  = m_processCode;
+      m_xsectionRMS4ProcessSqrts[index] += (m_crossSection * m_crossSection);
+      m_xsectionN4ProcessSqrts[index] += 1;
+      if (m_xsectionPROC4ProcessSqrts[index] == -1) {
+        m_xsectionPROC4ProcessSqrts[index] = m_processCode;
       }
     }
   }
 
   // now average:
-  for (unsigned int iproc=0; iproc < m_processesSqrtsList.size(); iproc++ ){
-    if ( m_xsectionN4ProcessSqrts[iproc] > 0 ) {
+  for (unsigned int iproc = 0; iproc < m_processesSqrtsList.size(); iproc++) {
+    if (m_xsectionN4ProcessSqrts[iproc] > 0) {
       // average
       m_xsectionMean4ProcessSqrts[iproc] /= m_xsectionN4ProcessSqrts[iproc];
       // average of squares
-      m_xsectionRMS4ProcessSqrts[iproc]  /= m_xsectionN4ProcessSqrts[iproc];
+      m_xsectionRMS4ProcessSqrts[iproc] /= m_xsectionN4ProcessSqrts[iproc];
       // the RMS
-      m_xsectionRMS4ProcessSqrts[iproc] = sqrt(m_xsectionRMS4ProcessSqrts[iproc] - m_xsectionMean4ProcessSqrts[iproc]*m_xsectionMean4ProcessSqrts[iproc]);
+      m_xsectionRMS4ProcessSqrts[iproc] = sqrt(m_xsectionRMS4ProcessSqrts[iproc] -
+                                               m_xsectionMean4ProcessSqrts[iproc] * m_xsectionMean4ProcessSqrts[iproc]);
       // now we can fill the entries of the graphs
-      if ( m_xsectionPROC4ProcessSqrts[iproc] >= 0){
-	double relRMS = m_xsectionRMS4ProcessSqrts[iproc]/m_xsectionMean4ProcessSqrts[iproc];
-	m_xsectionRMSGraphs[ m_xsectionPROC4ProcessSqrts[iproc] ]->AddPoint(m_sqrtsList[iproc],relRMS);
-	// set the error on the RMS to 0
-	unsigned int lastPoint = m_xsectionRMSGraphs[ m_xsectionPROC4ProcessSqrts[iproc] ]->GetN()-1;
-	m_xsectionRMSGraphs[ m_xsectionPROC4ProcessSqrts[iproc] ]->SetPointError(lastPoint,1.e-6);
+      if (m_xsectionPROC4ProcessSqrts[iproc] >= 0) {
+        double relRMS = m_xsectionRMS4ProcessSqrts[iproc] / m_xsectionMean4ProcessSqrts[iproc];
+        m_xsectionRMSGraphs[m_xsectionPROC4ProcessSqrts[iproc]]->AddPoint(m_sqrtsList[iproc], relRMS);
+        // set the error on the RMS to 0
+        unsigned int lastPoint = m_xsectionRMSGraphs[m_xsectionPROC4ProcessSqrts[iproc]]->GetN() - 1;
+        m_xsectionRMSGraphs[m_xsectionPROC4ProcessSqrts[iproc]]->SetPointError(lastPoint, 1.e-6);
       }
     }
   }
@@ -269,11 +272,11 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
   std::stringstream name, desc;
   // produce a png
   TCanvas* c1 = new TCanvas("c1", "CrossSectionsCanvas");
-  TPad *topPad = new TPad("topPad", "The pad 70% of the height", 0.0, 0.3, 1.0, 1.0, 0);
-  TPad *bottomPad = new TPad("bottomPad", "The pad 30% of the height", 0.0, 0.0, 1.0, 0.3, 0);
+  TPad* topPad = new TPad("topPad", "The pad 70% of the height", 0.0, 0.3, 1.0, 1.0, 0);
+  TPad* bottomPad = new TPad("bottomPad", "The pad 30% of the height", 0.0, 0.0, 1.0, 0.3, 0);
   topPad->Draw();
   bottomPad->Draw();
-  // the canvas is prepared we can now 
+  // the canvas is prepared we can now
   for (unsigned int proc = 0; proc < m_processesList.size(); proc++) {
     // top pad
     topPad->cd();
@@ -298,7 +301,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mg->GetXaxis()->SetLabelSize(0);
     // build the legend of the pad
     topPad->BuildLegend(0.65, 0.65, 0.9, 0.9);
-    
+
     // and now the lower part with the RMS/average
     bottomPad->cd();
     bottomPad->SetTopMargin(0);
@@ -311,8 +314,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     m_xsectionRMSGraphs[proc]->SetMarkerSize(1.25);
     mgRMS->Add(m_xsectionRMSGraphs[proc], "AP");
     mgRMS->Draw("AP");
-    
-    //    
+
+    //
     mgRMS->GetXaxis()->SetTitle("#sqrt{s} [GeV]");
     mgRMS->GetXaxis()->SetTitleSize(0.12);
     mgRMS->GetXaxis()->SetTitleOffset(0.8);
