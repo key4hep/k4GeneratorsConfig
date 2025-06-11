@@ -7,14 +7,14 @@
 #include "TStyle.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1),
-      m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
+      m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile("eventGenerationSummary.root", "RECREATE");
   Init();
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root(std::string file)
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1),
-      m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
+      m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile(file.c_str(), "RECREATE");
   Init();
 }
@@ -34,14 +34,14 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(xsection& xsec
 
   m_generator = xsec.Generator();
   m_process = xsec.Process();
-  m_sqrts = int((xsec.SQRTS()*1.e3)+0.5)/1.e3;
+  m_sqrts = int((xsec.SQRTS() * 1.e3) + 0.5) / 1.e3;
   decodeProcGen();
   add2Tree(xsec);
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos& anaHistos) {
   m_generator = anaHistos.Generator();
   m_process = anaHistos.Process();
-  m_sqrts = int((anaHistos.SQRTS()*1.e3)+0.5)/1.e3;
+  m_sqrts = int((anaHistos.SQRTS() * 1.e3) + 0.5) / 1.e3;
   // for safety decode the the process code and the generator
   decodeProcGen();
   // if it's the first occurrence of a set, need to prepare the canvas vector:
@@ -62,22 +62,24 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
             name << m_processesSqrtsList[iProc] << " " << anaHistos.TH1DHisto(iHisto)->GetName();
             desc << "Process: " << m_processesSqrtsList[iProc];
             m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
-	    m_cnvAnalysisHistos[iProc].back()->cd();
-	    TPad* topPad = new TPad("topPad", "A bottom histo", 0.0, 0.3, 1.0, 1.0, 0);
-	    TPad* bottomPad = new TPad("bottomPad", "a bottom histo", 0.0, 0.0, 1.0, 0.3, 0);
-	    topPad->SetNumber(1);
-	    topPad->SetBottomMargin(0);
-	    topPad->Draw();
-	    bottomPad->SetNumber(2);
-	    bottomPad->SetTopMargin(0);
-	    bottomPad->SetBottomMargin(0.25);
-	    bottomPad->Draw();
-	    TH1D *histo = anaHistos.TH1DHisto(iHisto);
+            m_cnvAnalysisHistos[iProc].back()->cd();
+            TPad* topPad = new TPad("topPad", "A bottom histo", 0.0, 0.3, 1.0, 1.0, 0);
+            TPad* bottomPad = new TPad("bottomPad", "a bottom histo", 0.0, 0.0, 1.0, 0.3, 0);
+            topPad->SetNumber(1);
+            topPad->SetBottomMargin(0);
+            topPad->Draw();
+            bottomPad->SetNumber(2);
+            bottomPad->SetTopMargin(0);
+            bottomPad->SetBottomMargin(0.25);
+            bottomPad->Draw();
+            TH1D* histo = anaHistos.TH1DHisto(iHisto);
             m_cnvAnalysisHistosNames[iProc].push_back(histo->GetName());
-	    // create a new histo with the parameters from the set
-	    name << histo->GetName() << m_generator;
-            m_analysisHistosAverage[iProc].push_back(new TH1D(name.str().c_str(), histo->GetTitle(), histo->GetNbinsX(), histo->GetBinLowEdge(1), histo->GetBinLowEdge(histo->GetNbinsX()+1)));
-	    m_analysisHistosAverage[iProc].back()->GetXaxis()->SetTitle(anaHistos.TH1DHisto(iHisto)->GetTitle());
+            // create a new histo with the parameters from the set
+            name << histo->GetName() << m_generator;
+            m_analysisHistosAverage[iProc].push_back(new TH1D(name.str().c_str(), histo->GetTitle(), histo->GetNbinsX(),
+                                                              histo->GetBinLowEdge(1),
+                                                              histo->GetBinLowEdge(histo->GetNbinsX() + 1)));
+            m_analysisHistosAverage[iProc].back()->GetXaxis()->SetTitle(anaHistos.TH1DHisto(iHisto)->GetTitle());
             m_analysisHistosCounter[iProc].push_back(0);
             name.clear();
             name.str("");
@@ -111,15 +113,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
         theHisto->SetLineColor(2 + m_generatorCode);
         theHisto->SetMinimum(0);
         theHisto->Draw("SAME");
-	theHisto->GetYaxis()->SetTitleSize(0.06);
-	theHisto->GetYaxis()->SetTitleOffset(0.7);
-	theHisto->GetYaxis()->SetLabelSize(0.05);
-	// x axis turn off the labels
-	theHisto->GetXaxis()->SetLabelSize(0);
-	// increment the counter and add the histogram
-	if (!(m_analysisHistosAverage[iProc][iHisto]->GetSumw2N() > 0)) m_analysisHistosAverage[iProc][iHisto]->Sumw2(kTRUE);
-	m_analysisHistosAverage[iProc][iHisto]->Add(theHisto);
-	m_analysisHistosCounter[iProc][iHisto] += 1;
+        theHisto->GetYaxis()->SetTitleSize(0.06);
+        theHisto->GetYaxis()->SetTitleOffset(0.7);
+        theHisto->GetYaxis()->SetLabelSize(0.05);
+        // x axis turn off the labels
+        theHisto->GetXaxis()->SetLabelSize(0);
+        // increment the counter and add the histogram
+        if (!(m_analysisHistosAverage[iProc][iHisto]->GetSumw2N() > 0))
+          m_analysisHistosAverage[iProc][iHisto]->Sumw2(kTRUE);
+        m_analysisHistosAverage[iProc][iHisto]->Add(theHisto);
+        m_analysisHistosCounter[iProc][iHisto] += 1;
       }
     }
   }
@@ -174,8 +177,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
     m_processesSqrtsList.push_back(m_processSqrts);
     m_sqrtsList.push_back(m_sqrts);
   }
-  m_sqrtsCode = std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) -
-                       m_sqrtsList.begin();
+  m_sqrtsCode = std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) - m_sqrtsList.begin();
 
   // process needs to be processed to remove everything from the subscript on:
   if (m_process.find_last_of("_") != std::string::npos) {
@@ -224,7 +226,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
       name.str("");
       desc.clear();
       desc.str("");
-      // the DELTA needs the loop over the generators 
+      // the DELTA needs the loop over the generators
       name << gen << proc << "Delta";
       desc << "Process: " << proc << ": Delta/average vs Sqrts";
       m_xsectionDeltaGraphs.push_back(new TGraphErrors());
@@ -232,7 +234,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
       name.clear();
       name.str("");
       desc.clear();
-    desc.str("");
+      desc.str("");
     }
     // the RMS does not need the loop over the generators
     name << proc << "RMS";
@@ -246,10 +248,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
   }
 
   // to calculate per Process and Sqrts average cross section, RMS and number of entries
-  m_xsectionMean4Process.resize(m_processesList.size()*m_sqrtsList.size(), 0.);
-  m_xsectionRMS4Process.resize(m_processesList.size()*m_sqrtsList.size(), 0.);
-  m_xsectionN4Process.resize(m_processesList.size()*m_sqrtsList.size(), 0);
-  m_xsectionPROC4Process.resize(m_processesList.size()*m_sqrtsList.size(), -1);
+  m_xsectionMean4Process.resize(m_processesList.size() * m_sqrtsList.size(), 0.);
+  m_xsectionRMS4Process.resize(m_processesList.size() * m_sqrtsList.size(), 0.);
+  m_xsectionN4Process.resize(m_processesList.size() * m_sqrtsList.size(), 0);
+  m_xsectionPROC4Process.resize(m_processesList.size() * m_sqrtsList.size(), -1);
 
   // access the data and write to the histo via the index of the generatorList
   for (unsigned int entry = 0; entry < m_tree->GetEntries(); entry++) {
@@ -264,7 +266,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
     // process profile, but make sure it's positive and > 1ab
     if (m_crossSection > m_xsectionMinimal) {
       // accumulate the averages and the squares:
-      index = m_sqrtsCode + m_processCode*m_generatorsList.size();
+      index = m_sqrtsCode + m_processCode * m_generatorsList.size();
       m_xsectionMean4Process[index] += m_crossSection;
       m_xsectionRMS4Process[index] += (m_crossSection * m_crossSection);
       m_xsectionN4Process[index] += 1;
@@ -277,36 +279,37 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
   // now average:
   for (unsigned int iproc = 0; iproc < m_processesList.size(); iproc++) {
     for (unsigned int isqrts = 0; isqrts < m_sqrtsList.size(); isqrts++) {
-      unsigned int index = isqrts + iproc*m_sqrtsList.size();
+      unsigned int index = isqrts + iproc * m_sqrtsList.size();
       if (m_xsectionN4Process[index] > 0) {
-	// average
-	m_xsectionMean4Process[index] /= m_xsectionN4Process[index];
-	// average of squares
-	m_xsectionRMS4Process[index] /= m_xsectionN4Process[index];
-	// the RMS
-	m_xsectionRMS4Process[index] = sqrt(m_xsectionRMS4Process[index] -
-                                               m_xsectionMean4Process[index] * m_xsectionMean4Process[index]);
-	// now we can fill the entries of the graphs
-	if (m_xsectionPROC4Process[index] >= 0) {
-	  // fill the RMS graphs
-	  double relRMS = m_xsectionRMS4Process[index] / m_xsectionMean4Process[index];
-	  m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
-	  unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
-	  m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
-	  for (unsigned int igen=0; igen < m_generatorsList.size(); igen++) {
-	    // new index for the deltagraphs
-	    unsigned int indexDelta = igen + iproc * m_generatorsList.size();
-	    double relDelta = 0.;
-	    // we need to get the data from the generator graph, make sure the data is there
-	    if ( int(isqrts) < m_xsectionGraphs[indexDelta]->GetN() ) {
-	      relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrts) - m_xsectionMean4Process[index] ) / m_xsectionMean4Process[index];
-	      m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
-	      // set the error on the delta to 0
-	      lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
-	      m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
-	    }
-	  }
-	}
+        // average
+        m_xsectionMean4Process[index] /= m_xsectionN4Process[index];
+        // average of squares
+        m_xsectionRMS4Process[index] /= m_xsectionN4Process[index];
+        // the RMS
+        m_xsectionRMS4Process[index] =
+            sqrt(m_xsectionRMS4Process[index] - m_xsectionMean4Process[index] * m_xsectionMean4Process[index]);
+        // now we can fill the entries of the graphs
+        if (m_xsectionPROC4Process[index] >= 0) {
+          // fill the RMS graphs
+          double relRMS = m_xsectionRMS4Process[index] / m_xsectionMean4Process[index];
+          m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
+          unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
+          m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
+          for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
+            // new index for the deltagraphs
+            unsigned int indexDelta = igen + iproc * m_generatorsList.size();
+            double relDelta = 0.;
+            // we need to get the data from the generator graph, make sure the data is there
+            if (int(isqrts) < m_xsectionGraphs[indexDelta]->GetN()) {
+              relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrts) - m_xsectionMean4Process[index]) /
+                         m_xsectionMean4Process[index];
+              m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
+              // set the error on the delta to 0
+              lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
+              m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
+            }
+          }
+        }
       }
     }
   }
@@ -375,7 +378,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     m_xsectionRMSGraphs[proc]->SetMarkerSize(1.25);
 
     // now the graph
-    TMultiGraph* mgRMS = new TMultiGraph();    
+    TMultiGraph* mgRMS = new TMultiGraph();
     mgRMS->Add(m_xsectionRMSGraphs[proc], "AP");
     mgRMS->Draw("AP");
 
@@ -430,7 +433,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     c1->Print(name.str().c_str());
     name.clear();
     name.str("");
-    
+
     // delete the pointers
     delete mg;
     mg = nullptr;
@@ -450,43 +453,43 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   // now write out the superposed histograms
   for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
     for (unsigned int ihisto = 0; ihisto < m_analysisHistosAverage[proc].size(); ihisto++) {
-      if ( m_analysisHistosCounter[proc][ihisto] > 0 ) {
-	m_analysisHistosAverage[proc][ihisto]->Scale(1./m_analysisHistosCounter[proc][ihisto]);
+      if (m_analysisHistosCounter[proc][ihisto] > 0) {
+        m_analysisHistosAverage[proc][ihisto]->Scale(1. / m_analysisHistosCounter[proc][ihisto]);
       }
     }
   }
-  
-  
+
   // now write out the superposed histograms
   for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
     // check that it's the correct process
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
       name << m_processesSqrtsList[proc] << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
-      TVirtualPad *topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
+      TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
       topPad->BuildLegend();
       // we need to get the histo from the top
-      TList *padPrimitives = topPad->GetListOfPrimitives();
+      TList* padPrimitives = topPad->GetListOfPrimitives();
       // move to the bottom pad
-      TVirtualPad *bottomPad = m_cnvAnalysisHistos[proc][ihisto]->cd(2);
+      TVirtualPad* bottomPad = m_cnvAnalysisHistos[proc][ihisto]->cd(2);
       bottomPad->cd();
       // fetch the histograms TH1D
-      for (auto obj: *padPrimitives ) {
-	if ( obj->InheritsFrom(TH1D::Class()) ) {
-	  // subtract and divide
-	  TH1D * theDelta = new TH1D(*(TH1D*) obj);
-	  if (!(theDelta->GetSumw2N() > 0)) theDelta->Sumw2(kTRUE);
-	  theDelta->Add(m_analysisHistosAverage[proc][ihisto],-1.);
-	  theDelta->Divide(m_analysisHistosAverage[proc][ihisto]);
-	  theDelta->Draw("SAME");
-	  theDelta->GetXaxis()->SetTitle(m_analysisHistosAverage[proc][ihisto]->GetXaxis()->GetTitle());
-	  theDelta->GetXaxis()->SetTitleSize(0.12);
-	  theDelta->GetXaxis()->SetTitleOffset(0.8);
-	  theDelta->GetXaxis()->SetLabelSize(0.1);
-	  theDelta->GetYaxis()->SetTitle("#Delta/<N>");
-	  theDelta->GetYaxis()->SetTitleSize(0.12);
-	  theDelta->GetYaxis()->SetTitleOffset(0.4);
-	  theDelta->GetYaxis()->SetLabelSize(0.1);
-	}
+      for (auto obj : *padPrimitives) {
+        if (obj->InheritsFrom(TH1D::Class())) {
+          // subtract and divide
+          TH1D* theDelta = new TH1D(*(TH1D*)obj);
+          if (!(theDelta->GetSumw2N() > 0))
+            theDelta->Sumw2(kTRUE);
+          theDelta->Add(m_analysisHistosAverage[proc][ihisto], -1.);
+          theDelta->Divide(m_analysisHistosAverage[proc][ihisto]);
+          theDelta->Draw("SAME");
+          theDelta->GetXaxis()->SetTitle(m_analysisHistosAverage[proc][ihisto]->GetXaxis()->GetTitle());
+          theDelta->GetXaxis()->SetTitleSize(0.12);
+          theDelta->GetXaxis()->SetTitleOffset(0.8);
+          theDelta->GetXaxis()->SetLabelSize(0.1);
+          theDelta->GetYaxis()->SetTitle("#Delta/<N>");
+          theDelta->GetYaxis()->SetTitleSize(0.12);
+          theDelta->GetYaxis()->SetTitleOffset(0.4);
+          theDelta->GetYaxis()->SetLabelSize(0.1);
+        }
       }
       // done, save the canvas
       m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());

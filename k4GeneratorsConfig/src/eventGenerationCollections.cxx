@@ -68,7 +68,7 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
             xsec->setProcess(processPath.filename().string());
             xsec->setFile(filenamePath.string());
             // in some cases the generator name is not available, therefore derive from the filename
-	    xsec->setGenerator(generatorsPath.filename().string());
+            xsec->setGenerator(generatorsPath.filename().string());
             std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
             m_xsectionCollection.push_back(*xsec);
             if (xsec->isValid())
@@ -91,7 +91,7 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
             diffDist->setFile(filenamePath.string());
             diffDist->setSQRTS(xsec->SQRTS());
             // in some cases the generator name is not available, therefore derive from the filename
-	    diffDist->setGenerator(generatorsPath.filename().string());
+            diffDist->setGenerator(generatorsPath.filename().string());
             std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
                       << std::endl;
             m_analysisHistosCollection.push_back(*diffDist);
