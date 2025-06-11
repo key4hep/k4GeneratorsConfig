@@ -43,11 +43,16 @@ private:
   TFile* m_file;
   TTree* m_tree;
 
+  // for the cross section
   std::vector<TGraphErrors*> m_xsectionGraphs;
   std::vector<TGraphErrors*> m_xsectionRMSGraphs;
   std::vector<TGraphErrors*> m_xsectionDeltaGraphs;
+
+  // for the differential distributions
   std::vector<std::vector<TCanvas*>> m_cnvAnalysisHistos;
   std::vector<std::vector<std::string>> m_cnvAnalysisHistosNames;
+  std::vector<std::vector<TH1D*>> m_analysisHistosAverage;
+  std::vector<std::vector<unsigned int>> m_analysisHistosCounter;
 
   // data members
   std::string m_process;
