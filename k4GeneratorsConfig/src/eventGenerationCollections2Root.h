@@ -45,6 +45,7 @@ private:
 
   std::vector<TGraphErrors*> m_xsectionGraphs;
   std::vector<TGraphErrors*> m_xsectionRMSGraphs;
+  std::vector<TGraphErrors*> m_xsectionDeltaGraphs;
   std::vector<std::vector<TCanvas*>> m_cnvAnalysisHistos;
   std::vector<std::vector<std::string>> m_cnvAnalysisHistosNames;
 
@@ -52,7 +53,7 @@ private:
   std::string m_process;
   std::string m_processSqrts;
   int m_processCode;
-  int m_processSqrtsCode;
+  int m_sqrtsCode;
   double m_crossSection;
   double m_crossSectionError;
   double m_sqrts;
@@ -65,10 +66,10 @@ private:
   std::vector<double> m_sqrtsList;
 
   // structure for the average and RMS of the cross section per Process and sqrts
-  std::vector<double> m_xsectionMean4ProcessSqrts;
-  std::vector<double> m_xsectionRMS4ProcessSqrts;
-  std::vector<unsigned int> m_xsectionN4ProcessSqrts;
-  std::vector<int> m_xsectionPROC4ProcessSqrts;
+  std::vector<double> m_xsectionMean4Process;
+  std::vector<double> m_xsectionRMS4Process;
+  std::vector<unsigned int> m_xsectionN4Process;
+  std::vector<int> m_xsectionPROC4Process;
 };
 } // namespace k4GeneratorsConfig
 

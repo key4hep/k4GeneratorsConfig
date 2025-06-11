@@ -63,13 +63,12 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
             continue;
           // take care of the total cross section extracted from the EDM4HEP file
           if (filenamePath.extension() == ".edm4hep") {
-            std::cout << "eventGenerationCollections:: processing Process: " << processPath.filename().string()
+            std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
                       << " File:" << filenamePath.filename().string() << std::endl;
             xsec->setProcess(processPath.filename().string());
             xsec->setFile(filenamePath.string());
-            // in some cases the generator name is not available, then derive from the filename
-            if (xsec->Generator().empty())
-              xsec->setGenerator(generatorsPath.filename().string());
+            // in some cases the generator name is not available, therefore derive from the filename
+	    xsec->setGenerator(generatorsPath.filename().string());
             std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
             m_xsectionCollection.push_back(*xsec);
             if (xsec->isValid())
@@ -85,15 +84,14 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
             continue;
           // take care of the analysisHistos distributions extracted from the .root (analysis output) file
           if (filenamePath.extension() == ".root") {
-            std::cout << "eventGenerationCollections:: processing Process: " << processPath.filename().string()
+            std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
                       << " File: " << filenamePath.filename().string() << std::endl;
             k4GeneratorsConfig::analysisHistos* diffDist = new k4GeneratorsConfig::analysisHistos();
             diffDist->setProcess(processPath.filename().string());
             diffDist->setFile(filenamePath.string());
             diffDist->setSQRTS(xsec->SQRTS());
-            // in some cases the generator name is not available, then derive from the filename
-            if (diffDist->Generator().empty())
-              diffDist->setGenerator(generatorsPath.filename().string());
+            // in some cases the generator name is not available, therefore derive from the filename
+	    diffDist->setGenerator(generatorsPath.filename().string());
             std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
                       << std::endl;
             m_analysisHistosCollection.push_back(*diffDist);
