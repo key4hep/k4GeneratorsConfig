@@ -2,10 +2,10 @@
 #include <sstream>
 
 #include "TCanvas.h"
+#include "TGaxis.h"
 #include "TLegend.h"
 #include "TMultiGraph.h"
 #include "TStyle.h"
-#include "TGaxis.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
     : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
@@ -21,7 +21,7 @@ k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
   TGaxis::SetMaxDigits(6);
-  
+
   m_tree = new TTree("CrossSections", "cross sections");
   m_tree->Branch("process", &m_process);
   m_tree->Branch("isqrts", &m_sqrtsCode, "isqrts/I");
@@ -288,16 +288,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
             // new index for the deltagraphs
             unsigned int indexDelta = igen + iproc * m_generatorsList.size();
             double relDelta = 0.;
-	    // we need to play it safe: we do not know the order of the points, so we loop to determine
-	    int isqrtsPoint = -1;
-	    for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++ ) {
-	      double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
-	      if ( abs(sqrts-m_sqrtsList[isqrts])/sqrts < m_sqrtsPrecision ) {
-		isqrtsPoint = iPoint;
-	      }
-	    }
+            // we need to play it safe: we do not know the order of the points, so we loop to determine
+            int isqrtsPoint = -1;
+            for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++) {
+              double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
+              if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
+                isqrtsPoint = iPoint;
+              }
+            }
             // we need to get the data from the generator graph, make sure the data is there
-            if ( isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
+            if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
               relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrtsPoint) - m_xsectionMean4Process[index]) /
                          m_xsectionMean4Process[index];
               m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
