@@ -24,13 +24,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
 
   m_tree = new TTree("CrossSections", "cross sections");
   m_tree->Branch("process", &m_process);
-  m_tree->Branch("isqrts", &m_sqrtsCode, "isqrts/I");
-  m_tree->Branch("xsec", &m_crossSection, "xsec/D");
-  m_tree->Branch("dxsec", &m_crossSectionError, "dxsec/D");
-  m_tree->Branch("sqrts", &m_sqrts, "sqrts/D");
   m_tree->Branch("iprocess", &m_processCode, "iprocess/I");
+  m_tree->Branch("sqrts", &m_sqrts, "sqrts/D");
+  m_tree->Branch("isqrts", &m_sqrtsCode, "isqrts/I");
   m_tree->Branch("generator", &m_generator);
   m_tree->Branch("igenerator", &m_generatorCode, "igenerator/I");
+  m_tree->Branch("xsec", &m_crossSection, "xsec/D");
+  m_tree->Branch("dxsec", &m_crossSectionError, "dxsec/D");
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::~eventGenerationCollections2Root() {}
 void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(xsection& xsec) {
