@@ -129,7 +129,7 @@ int main(int argc, char** argv) {
       desc.str("");
       name << "mass" << particlesNamesList[part1] << particlesNamesList[part2] << part1 << part2;
       desc << "Mass(" << particlesNamesList[part1] << "+" << particlesNamesList[part2] << ")";
-      massHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts*1.01));
+      massHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts * 1.01));
       desc << " [GeV]";
       massHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
 
@@ -139,7 +139,7 @@ int main(int argc, char** argv) {
       desc.str("");
       name << "pt" << particlesNamesList[part1] << particlesNamesList[part2] << part1 << part2;
       desc << "pT(" << particlesNamesList[part1] << "+" << particlesNamesList[part2] << ")";
-      pTHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts*1.01));
+      pTHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, 0., sqrts * 1.01));
       desc << " [GeV]";
       pTHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
 
@@ -149,7 +149,7 @@ int main(int argc, char** argv) {
       desc.str("");
       name << "pz" << particlesNamesList[part1] << particlesNamesList[part2] << part1 << part2;
       desc << "pZ(" << particlesNamesList[part1] << "+" << particlesNamesList[part2] << ")";
-      pZHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, -sqrts*1.01, sqrts*1.01));
+      pZHistos.push_back(new TH1D(name.str().c_str(), desc.str().c_str(), 100, -sqrts * 1.01, sqrts * 1.01));
       desc << " [GeV]";
       pZHistos.back()->GetXaxis()->SetTitle(desc.str().c_str());
     }
