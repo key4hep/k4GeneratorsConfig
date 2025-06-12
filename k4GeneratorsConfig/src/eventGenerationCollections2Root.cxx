@@ -150,7 +150,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
   m_processCode = std::find(m_processesList.begin(), m_processesList.end(), m_process) - m_processesList.begin();
 
   // first determined the sqrts code and add to list
-    m_procSqrts = std::pair<std::string, double> {m_process, m_sqrts};
+  m_procSqrts = std::pair<std::string, double> {m_process, m_sqrts};
     // assign a code for each process
   if (std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) ==
       m_procSqrtsList.end()) {
