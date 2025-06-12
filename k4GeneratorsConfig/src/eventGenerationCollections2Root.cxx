@@ -8,13 +8,13 @@
 #include "TStyle.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
       m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile("eventGenerationSummary.root", "RECREATE");
   Init();
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root(std::string file)
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-12), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
       m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile(file.c_str(), "RECREATE");
   Init();
@@ -233,7 +233,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
     m_xsectionGraphs[index]->AddPoint(m_sqrts, m_crossSection);
     unsigned int lastPoint = m_xsectionGraphs[index]->GetN() - 1;
     m_xsectionGraphs[index]->SetPointError(lastPoint, m_sqrts * 1e-4, m_crossSectionError);
-    // process profile, but make sure it's positive and > 1ab
+    // process profile, but make sure it's positive and > 1*10^-3 attobarn
     if (m_crossSection > m_xsectionMinimal) {
       // accumulate the averages and the squares:
       index = m_sqrtsCode + m_processCode * m_generatorsList.size();
