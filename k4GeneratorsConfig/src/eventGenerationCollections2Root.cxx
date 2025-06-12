@@ -519,20 +519,21 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   }
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeTree() { m_tree->Write(); }
-void k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo1,
-                                                                        TH1D* histo2) {
+void k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo,
+                                                                        TH1D* refHisto) {
 
-  if (histo1->GetNbinsX() != histo2->GetNbinsX()) {
-    std::cout << "Process " << procName << " chi2 test impossible: number of bins incompatible " << histo1->GetNbinsX()
-              << " != " << histo2->GetNbinsX() << std::endl;
+  if (histo->GetNbinsX() != refHisto->GetNbinsX()) {
+    std::cout << "Process " << procName << " chi2 test impossible: number of bins incompatible " << histo->GetNbinsX()
+              << " != " << refHisto->GetNbinsX() << std::endl;
   }
   double chi2 = 0.;
   unsigned int nbOfPoints = 0;
-  for (int i = 0; i < histo1->GetNbinsX() + 2; i++) {
-    if (histo1->GetBinError(i) != 0. || histo2->GetBinError(i) != 0.) {
-      double deltaChi2 = histo1->GetBinContent(i) - histo2->GetBinContent(i);
+  for (int i = 0; i < histo->GetNbinsX() + 2; i++) {
+    if (histo->GetBinError(i) != 0. || refHisto->GetBinError(i) != 0.) {
+      double deltaChi2 = histo->GetBinContent(i) - refHisto->GetBinContent(i);
       deltaChi2 *= deltaChi2;
-      deltaChi2 /= (histo1->GetBinError(i) * histo1->GetBinError(i) + histo2->GetBinError(i) * histo2->GetBinError(i));
+      // to be checked whether we say "ref" has not error?
+      deltaChi2 /= (histo->GetBinError(i) * histo->GetBinError(i) + refHisto->GetBinError(i) * refHisto->GetBinError(i));
       chi2 += deltaChi2;
       nbOfPoints++;
     }
@@ -540,6 +541,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::str
 
   // divide by the number of measurements
   chi2 /= nbOfPoints;
-  std::cout << "Proc " << procName << " Generator " << histo1->GetTitle() << " Type " << histo2->GetXaxis()->GetTitle()
+  std::cout << "Proc " << procName << " Generator " << histo->GetTitle() << " Type " << refHisto->GetXaxis()->GetTitle()
             << " chi2 = " << chi2 << std::endl;
 }
