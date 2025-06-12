@@ -36,7 +36,6 @@ void k4GeneratorsConfig::eventGenerationCollections::Execute() {
 
   // second order the collection according to the process
   orderCollections();
-
 }
 void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
 
