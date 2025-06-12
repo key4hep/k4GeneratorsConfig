@@ -456,7 +456,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
 	    generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(), generatorHisto->GetNbinsX(),
 				       generatorHisto->GetBinLowEdge(1),
 				       generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
-	    generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetTitle());
+	    generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetXaxis()->GetTitle());
 	    name.clear();
 	    name.str("");
 	  }
@@ -501,7 +501,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
 	  // draw the histo and set the usual options
           theDelta->Draw("SAME");
-          theDelta->GetXaxis()->SetTitle(m_cnvAnalysisHistosNames[proc][ihisto].c_str());
+          theDelta->GetXaxis()->SetTitle(analysisHistosAverage[proc][ihisto]->GetXaxis()->GetTitle());
           theDelta->GetXaxis()->SetTitleSize(0.12);
           theDelta->GetXaxis()->SetTitleOffset(0.8);
           theDelta->GetXaxis()->SetLabelSize(0.1);
