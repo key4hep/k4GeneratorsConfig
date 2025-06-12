@@ -26,7 +26,10 @@ public:
 
   void Write2Root(std::string);
 
-  void Print(bool onlyOK = false);
+  std::vector<std::string> m_log;
+  
+  void Print(bool onlyOK = false, std::ostream& output = std::cout) const;
+  void PrintRootLog(std::ostream& output = std::cout) const;
   void PrintSummary(std::ostream& output = std::cout) const;
 
 private:

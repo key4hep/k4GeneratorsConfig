@@ -7,7 +7,7 @@
 //
 int main(int argc, char** argv) {
 
-  std::string filename = "XsectionSummary.dat";
+  std::string filename = "GenerationSummary.dat";
   std::string fileRoot = "eventGenerationSummary.root";
   int c;
   while ((c = getopt(argc, argv, "hf:r:")) != -1)
@@ -32,14 +32,14 @@ int main(int argc, char** argv) {
   k4GeneratorsConfig::eventGenerationCollections* evgenColls = new k4GeneratorsConfig::eventGenerationCollections();
   // execute the gathering of information including detailed output
   evgenColls->Execute();
+  // do the root analysis
+  evgenColls->Write2Root(fileRoot);
   // print the summary on screen
   evgenColls->PrintSummary(std::cout);
-  // save the summary in a file
+  // save the summary in a file (call after root to fill the log
   std::ofstream outFile(filename);
   std::ostream& output = outFile;
   evgenColls->PrintSummary(output);
-  // write to root
-  evgenColls->Write2Root(fileRoot);
   // if there is a failure:
   if (evgenColls->NbOfFailures() != 0) {
     std::cout << evgenColls->NbOfFailures() << "/" << evgenColls->NbOfFailures() + evgenColls->NbOfSuccesses()

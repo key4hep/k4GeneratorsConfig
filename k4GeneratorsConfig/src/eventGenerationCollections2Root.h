@@ -28,7 +28,7 @@ public:
   void Execute(analysisHistos&);
   void Finalize();
 
-  void calculateChi2(std::string, TH1D*, TH1D*);
+  double calculateChi2(std::string, TH1D*, TH1D*);
 
   void decodeProcGen();
   void add2Tree(xsection&);
@@ -37,10 +37,14 @@ public:
   void writeCrossSectionFigures();
   void writeAnalysisHistosFigures();
 
+  std::vector<std::string> getLog();
+
 private:
   // steers the precision criteria
   const double m_sqrtsPrecision;
   const double m_xsectionMinimal;
+
+  std::vector<std::string> m_log;
 
   TFile* m_file;
   TTree* m_tree;
@@ -53,6 +57,7 @@ private:
   // for the differential distributions
   std::vector<std::vector<TCanvas*>> m_cnvAnalysisHistos;
   std::vector<std::vector<std::string>> m_cnvAnalysisHistosNames;
+  std::vector<std::vector<double>> m_analysisHistosChi2;
 
   // data members
   std::string m_process;

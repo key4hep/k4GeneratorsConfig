@@ -479,7 +479,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
     // check that it's the correct process
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
-      name << m_processesSqrtsList[proc] << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
       TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
       topPad->BuildLegend();
       // we need to get the histo from the top
@@ -494,8 +493,11 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           TH1D* theDelta = new TH1D(*(TH1D*)obj);
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
-          // check the compatibility of the histo compared to average
-          calculateChi2(m_processesSqrtsList[proc], theDelta, analysisHistosAverage[proc][ihisto]);
+          // calculate the compatbility before operations and output text
+          double chi2 = calculateChi2(m_processesSqrtsList[proc], theDelta, analysisHistosAverage[proc][ihisto]);
+	  std::stringstream message;
+	  message << m_processesSqrtsList[proc] << " " << theDelta->GetTitle() << " " << theDelta->GetXaxis()->GetTitle()<< " Chi2 = " << chi2;
+	  m_log.push_back(message.str());
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
@@ -512,6 +514,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         }
       }
       // done, save the canvas
+      name << m_processesSqrtsList[proc] << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
       m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());
       name.clear();
       name.str("");
@@ -519,12 +522,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   }
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeTree() { m_tree->Write(); }
-void k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo,
+double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo,
                                                                         TH1D* refHisto) {
 
   if (histo->GetNbinsX() != refHisto->GetNbinsX()) {
     std::cout << "Process " << procName << " chi2 test impossible: number of bins incompatible " << histo->GetNbinsX()
               << " != " << refHisto->GetNbinsX() << std::endl;
+    return -1.;
   }
   double chi2 = 0.;
   unsigned int nbOfPoints = 0;
@@ -541,6 +545,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::str
 
   // divide by the number of measurements
   chi2 /= nbOfPoints;
-  std::cout << "Proc " << procName << " Generator " << histo->GetTitle() << " Type " << refHisto->GetXaxis()->GetTitle()
-            << " chi2 = " << chi2 << std::endl;
+
+  return chi2;
+}
+std::vector<std::string> k4GeneratorsConfig::eventGenerationCollections2Root::getLog() {
+  return m_log;
 }

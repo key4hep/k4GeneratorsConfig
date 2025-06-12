@@ -13,6 +13,7 @@ k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections(
     m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
     m_validCounter = theOriginal.m_validCounter;
     m_invalidCounter = theOriginal.m_invalidCounter;
+    m_log = theOriginal.m_log;
   }
 }
 k4GeneratorsConfig::eventGenerationCollections&
@@ -22,6 +23,7 @@ k4GeneratorsConfig::eventGenerationCollections::operator=(const eventGenerationC
     m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
     m_validCounter = theOriginal.m_validCounter;
     m_invalidCounter = theOriginal.m_invalidCounter;
+    m_log = theOriginal.m_log;
   }
 
   return *this;
@@ -35,8 +37,6 @@ void k4GeneratorsConfig::eventGenerationCollections::Execute() {
   // second order the collection according to the process
   orderCollections();
 
-  // third print the final results
-  Print();
 }
 void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
 
@@ -173,21 +173,39 @@ void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string file
     }
   }
   out.Finalize();
+
+  // now we save the log to the log :)
+  std::vector<std::string> logRoot;
+  logRoot = out.getLog();
+  m_log.insert(m_log.end(), logRoot.begin(), logRoot.end());
 }
-void k4GeneratorsConfig::eventGenerationCollections::Print(bool onlyOK) {
+void k4GeneratorsConfig::eventGenerationCollections::Print(bool onlyOK, std::ostream& output) const {
 
   for (auto xsec : m_xsectionCollection) {
     if (!onlyOK) {
-      xsec.Print();
+      xsec.Print(output);
     } else {
       if (xsec.isValid()) {
-        xsec.Print();
+        xsec.Print(output);
       }
     }
   }
 }
+void k4GeneratorsConfig::eventGenerationCollections::PrintRootLog(std::ostream& output) const {
+
+  for (auto line : m_log) {
+    output << line << std::endl;
+  }
+}
 void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& output) const {
 
+  // print the root messages (chi2)
+  PrintRootLog(output);
+
+  // print all details for each run
+  Print(false, output);
+
+  // and now the summary
   std::string previousProcess = "XXXX";
   for (auto xsec : m_xsectionCollection) {
     // only print valid cross sections
