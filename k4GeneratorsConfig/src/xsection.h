@@ -32,7 +32,7 @@ public:
   std::string File();
   bool isValid();
 
-  void Print(std::ostream& output=std::cout);
+  void Print(std::ostream& output = std::cout);
 
 private:
   double m_xsection;

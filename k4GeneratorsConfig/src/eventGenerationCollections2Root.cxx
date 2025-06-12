@@ -450,16 +450,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         if (obj->InheritsFrom(TH1D::Class())) {
           // recreate TH1D
           TH1D* generatorHisto = new TH1D(*(TH1D*)obj);
-	  if ( generatorAverageHisto == nullptr ){
-	    // to avoid memory leaks add the proc number
-	    name << generatorHisto->GetName() << proc;
-	    generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(),
-					     generatorHisto->GetNbinsX(), generatorHisto->GetBinLowEdge(1),
-					     generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
-	    generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetXaxis()->GetTitle());
-	    name.clear();
-	    name.str("");
-	  }
+          if (generatorAverageHisto == nullptr) {
+            // to avoid memory leaks add the proc number
+            name << generatorHisto->GetName() << proc;
+            generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(),
+                                             generatorHisto->GetNbinsX(), generatorHisto->GetBinLowEdge(1),
+                                             generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
+            generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetXaxis()->GetTitle());
+            name.clear();
+            name.str("");
+          }
           if (!(generatorAverageHisto->GetSumw2N() > 0))
             generatorAverageHisto->Sumw2(kTRUE);
           generatorAverageHisto->Add(generatorHisto);
@@ -495,9 +495,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
             theDelta->Sumw2(kTRUE);
           // calculate the compatbility before operations and output text
           double chi2 = calculateChi2(m_processesSqrtsList[proc], theDelta, analysisHistosAverage[proc][ihisto]);
-	  std::stringstream message;
-	  message << m_processesSqrtsList[proc] << " " << theDelta->GetTitle() << " " << theDelta->GetXaxis()->GetTitle()<< " Chi2 = " << chi2;
-	  m_log.push_back(message.str());
+          std::stringstream message;
+          message << m_processesSqrtsList[proc] << " " << theDelta->GetTitle() << " "
+                  << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
+          m_log.push_back(message.str());
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
@@ -523,7 +524,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeTree() { m_tree->Write(); }
 double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo,
-                                                                        TH1D* refHisto) {
+                                                                          TH1D* refHisto) {
 
   if (histo->GetNbinsX() != refHisto->GetNbinsX()) {
     std::cout << "Process " << procName << " chi2 test impossible: number of bins incompatible " << histo->GetNbinsX()
@@ -537,7 +538,8 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::s
       double deltaChi2 = histo->GetBinContent(i) - refHisto->GetBinContent(i);
       deltaChi2 *= deltaChi2;
       // to be checked whether we say "ref" has not error?
-      deltaChi2 /= (histo->GetBinError(i) * histo->GetBinError(i) + refHisto->GetBinError(i) * refHisto->GetBinError(i));
+      deltaChi2 /=
+          (histo->GetBinError(i) * histo->GetBinError(i) + refHisto->GetBinError(i) * refHisto->GetBinError(i));
       chi2 += deltaChi2;
       nbOfPoints++;
     }
@@ -548,6 +550,4 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::s
 
   return chi2;
 }
-std::vector<std::string> k4GeneratorsConfig::eventGenerationCollections2Root::getLog() {
-  return m_log;
-}
+std::vector<std::string> k4GeneratorsConfig::eventGenerationCollections2Root::getLog() { return m_log; }
