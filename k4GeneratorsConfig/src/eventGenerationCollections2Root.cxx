@@ -48,20 +48,20 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   // for safety decode the the process code and the generator
   decodeProcGen();
   // if it's the first occurrence of a set, need to prepare the canvas vector:
-  m_cnvAnalysisHistos.resize(m_processesSqrtsList.size());
-  m_cnvAnalysisHistosNames.resize(m_processesSqrtsList.size());
+  m_cnvAnalysisHistos.resize(m_procSqrtsList.size());
+  m_cnvAnalysisHistosNames.resize(m_procSqrtsList.size());
   std::stringstream name, desc;
-  for (unsigned int iProc = 0; iProc < m_processesSqrtsList.size(); iProc++) {
+  for (unsigned int iProc = 0; iProc < m_procSqrtsList.size(); iProc++) {
     // check that it's the correct process
-    if (!m_processesSqrtsList[iProc].compare(m_processSqrts)) {
+    if (! (m_procSqrtsList[iProc] != m_procSqrts)) {
       // that there are histograms
       if (anaHistos.NbOf1DHistos() > 0) {
         // and so far no canvases have been prepared
         if (m_cnvAnalysisHistos[iProc].size() == 0) {
           // prepare the canvases
           for (unsigned int iHisto = 0; iHisto < anaHistos.NbOf1DHistos(); iHisto++) {
-            name << m_processesSqrtsList[iProc] << " " << anaHistos.TH1DHisto(iHisto)->GetName();
-            desc << "Process: " << m_processesSqrtsList[iProc];
+            name << m_procSqrtsList[iProc].first << (unsigned int) (m_procSqrtsList[iProc].second*1000) << " " << anaHistos.TH1DHisto(iHisto)->GetName();
+            desc << "Process: " << m_procSqrtsList[iProc].first << " " << m_procSqrtsList[iProc].second;
             m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
             m_cnvAnalysisHistos[iProc].back()->cd();
             TPad* topPad = new TPad("topPad", "A bottom histo", 0.0, 0.3, 1.0, 1.0, 0);
@@ -86,10 +86,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   }
   // the canvas vector is ready, so we can fill the canvas:
   // - determine the index from the process sqrts
-  unsigned int iProc = std::find(m_processesSqrtsList.begin(), m_processesSqrtsList.end(), m_processSqrts) -
-                       m_processesSqrtsList.begin();
+  unsigned int iProc = std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) -
+                       m_procSqrtsList.begin();
   // - check that the index is valid (not found==size) and that there are histos to add
-  if (iProc < m_processesSqrtsList.size() && anaHistos.NbOf1DHistos() > 0) {
+  if (iProc < m_procSqrtsList.size() && anaHistos.NbOf1DHistos() > 0) {
     // now add the histos
     for (auto histo : anaHistos.TH1DHistos()) {
       unsigned int iHisto =
@@ -138,36 +138,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
 
   m_generatorCode = std::find(m_generatorsList.begin(), m_generatorsList.end(), m_generator) - m_generatorsList.begin();
 
-  // first determined the sqrts code and add to list
-  // copy to work on it
-  m_processSqrts = m_process;
-  // check consistency
-  if (m_processSqrts.find_last_of("_") != std::string::npos) {
-    // make sure that _ is not the last character
-    if (m_processSqrts.find_last_of("_") + 1 != std::string::npos) {
-      // compare to sqrts, but limit precision to something reasonable (set in constructor)
-      if (abs(std::stoi(m_processSqrts.substr(m_processSqrts.find_last_of("_") + 1, std::string::npos)) -
-              int(m_sqrts * 1000)) /
-              int(m_sqrts * 1000) <
-          m_sqrtsPrecision) {
-        // remove the underscore
-        m_processSqrts.erase(m_process.find_last_of("_"), 1);
-      } else {
-        // comparison not successful, so we add the sqrts
-        m_processSqrts += std::to_string(int(m_sqrts * 1000));
-      }
-    } else {
-      m_processSqrts += std::to_string(int(m_sqrts * 1000));
-    }
-  }
-  // assign a code for each process
-  if (std::find(m_processesSqrtsList.begin(), m_processesSqrtsList.end(), m_processSqrts) ==
-      m_processesSqrtsList.end()) {
-    m_processesSqrtsList.push_back(m_processSqrts);
-    m_sqrtsList.push_back(m_sqrts);
-  }
-  m_sqrtsCode = std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) - m_sqrtsList.begin();
-
   // process needs to be processed to remove everything from the subscript on:
   if (m_process.find_last_of("_") != std::string::npos) {
     m_process.erase(m_process.find_last_of("_"));
@@ -178,6 +148,17 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
   }
 
   m_processCode = std::find(m_processesList.begin(), m_processesList.end(), m_process) - m_processesList.begin();
+
+  // first determined the sqrts code and add to list
+    m_procSqrts = std::pair<std::string, double> {m_process, m_sqrts};
+    // assign a code for each process
+  if (std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) ==
+      m_procSqrtsList.end()) {
+    m_procSqrtsList.push_back(m_procSqrts);
+    m_sqrtsList.push_back(m_sqrts);
+  }
+  m_sqrtsCode = std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) - m_sqrtsList.begin();
+
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::add2Tree(xsection& xsec) {
 
@@ -448,8 +429,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   std::stringstream name;
   // first process the histogram averaging
   std::vector<std::vector<TH1D*>> analysisHistosAverage;
-  analysisHistosAverage.resize(m_processesSqrtsList.size());
-  for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
+  analysisHistosAverage.resize(m_procSqrtsList.size());
+  for (unsigned int proc = 0; proc < m_procSqrtsList.size(); proc++) {
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
       // calculate the average
       TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
@@ -487,7 +468,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   }
 
   // now write out the superposed histograms
-  for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
+  for (unsigned int proc = 0; proc < m_procSqrtsList.size(); proc++) {
     // check that it's the correct process
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
       TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
@@ -505,10 +486,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
           // calculate the compatbility before operations and output text
-          double chi2 = calculateChi2(m_processesSqrtsList[proc], theDelta, analysisHistosAverage[proc][ihisto]);
+          double chi2 = calculateChi2(m_procSqrtsList[proc].first, theDelta, analysisHistosAverage[proc][ihisto]);
           std::stringstream message;
-          message << m_processesSqrtsList[proc] << " " << theDelta->GetTitle() << " "
-                  << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
+          message << m_procSqrtsList[proc].first <<  " " << theDelta->GetTitle() << " " << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
           m_log.push_back(message.str());
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
@@ -526,7 +506,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         }
       }
       // done, save the canvas
-      name << m_processesSqrtsList[proc] << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
+      name << m_procSqrtsList[proc].first <<  (unsigned int) (m_procSqrtsList[proc].second*1000) << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
       m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());
       name.clear();
       name.str("");

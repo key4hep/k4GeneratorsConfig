@@ -61,7 +61,7 @@ private:
 
   // data members
   std::string m_process;
-  std::string m_processSqrts;
+  std::pair<std::string, double> m_procSqrts;
   int m_processCode;
   int m_sqrtsCode;
   double m_crossSection;
@@ -72,7 +72,7 @@ private:
 
   std::vector<std::string> m_generatorsList;
   std::vector<std::string> m_processesList;
-  std::vector<std::string> m_processesSqrtsList;
+  std::vector<std::pair<std::string, double>> m_procSqrtsList;
   std::vector<double> m_sqrtsList;
 
   // structure for the average and RMS of the cross section per Process and sqrts
