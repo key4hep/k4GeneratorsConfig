@@ -47,8 +47,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   // if it's the first occurrence of a set, need to prepare the canvas vector:
   m_cnvAnalysisHistos.resize(m_processesSqrtsList.size());
   m_cnvAnalysisHistosNames.resize(m_processesSqrtsList.size());
-  m_analysisHistosAverage.resize(m_processesSqrtsList.size());
-  m_analysisHistosCounter.resize(m_processesSqrtsList.size());
   std::stringstream name, desc;
   for (unsigned int iProc = 0; iProc < m_processesSqrtsList.size(); iProc++) {
     // check that it's the correct process
@@ -74,13 +72,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
             bottomPad->Draw();
             TH1D* histo = anaHistos.TH1DHisto(iHisto);
             m_cnvAnalysisHistosNames[iProc].push_back(histo->GetName());
-            // create a new histo with the parameters from the set
-            name << histo->GetName() << m_generator;
-            m_analysisHistosAverage[iProc].push_back(new TH1D(name.str().c_str(), histo->GetTitle(), histo->GetNbinsX(),
-                                                              histo->GetBinLowEdge(1),
-                                                              histo->GetBinLowEdge(histo->GetNbinsX() + 1)));
-            m_analysisHistosAverage[iProc].back()->GetXaxis()->SetTitle(anaHistos.TH1DHisto(iHisto)->GetTitle());
-            m_analysisHistosCounter[iProc].push_back(0);
             name.clear();
             name.str("");
             desc.clear();
@@ -118,11 +109,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
         theHisto->GetYaxis()->SetLabelSize(0.05);
         // x axis turn off the labels
         theHisto->GetXaxis()->SetLabelSize(0);
-        // increment the counter and add the histogram
-        if (!(m_analysisHistosAverage[iProc][iHisto]->GetSumw2N() > 0))
-          m_analysisHistosAverage[iProc][iHisto]->Sumw2(kTRUE);
-        m_analysisHistosAverage[iProc][iHisto]->Add(theHisto);
-        m_analysisHistosCounter[iProc][iHisto] += 1;
       }
     }
   }
@@ -450,12 +436,42 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
 
   std::stringstream name;
   // first process the histogram averaging
-  // now write out the superposed histograms
+  std::vector<std::vector<TH1D*>> analysisHistosAverage;
+  analysisHistosAverage.resize(m_processesSqrtsList.size());
   for (unsigned int proc = 0; proc < m_processesSqrtsList.size(); proc++) {
-    for (unsigned int ihisto = 0; ihisto < m_analysisHistosAverage[proc].size(); ihisto++) {
-      if (m_analysisHistosCounter[proc][ihisto] > 0) {
-        m_analysisHistosAverage[proc][ihisto]->Scale(1. / m_analysisHistosCounter[proc][ihisto]);
+    for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
+      // calculate the average
+      TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
+      TList* padPrimitives = topPad->GetListOfPrimitives();
+      // fetch the histograms TH1D
+      unsigned int counter = 0;
+      TH1D* generatorAverageHisto = nullptr;
+      for (auto obj : *padPrimitives) {
+        if (obj->InheritsFrom(TH1D::Class())) {
+          // recreate TH1D
+          TH1D* generatorHisto = new TH1D(*(TH1D*)obj);
+	  // create the average histo
+	  if ( generatorAverageHisto == nullptr ) {
+	    name << generatorHisto->GetName() << counter;
+	    generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(), generatorHisto->GetNbinsX(),
+				       generatorHisto->GetBinLowEdge(1),
+				       generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
+	    generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetTitle());
+	    name.clear();
+	    name.str("");
+	  }
+	  if (!(generatorAverageHisto->GetSumw2N() > 0))
+	    generatorAverageHisto->Sumw2(kTRUE);
+	  generatorAverageHisto->Add(generatorHisto);
+	  counter++;
+	}
       }
+      // we got all our histos together, so we can average
+      if ( counter > 0 ) {
+	generatorAverageHisto->Scale(1. / counter);
+      }
+      // push_back
+      analysisHistosAverage[proc].push_back(generatorAverageHisto);
     }
   }
 
@@ -479,13 +495,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
 	  // check the compatibility of the histo compared to average
-	  calculateChi2(m_processesSqrtsList[proc], theDelta, m_analysisHistosAverage[proc][ihisto]);
+	  calculateChi2(m_processesSqrtsList[proc], theDelta, analysisHistosAverage[proc][ihisto]);
 	  // subtract average and divide
-          theDelta->Add(m_analysisHistosAverage[proc][ihisto], -1.);
-          theDelta->Divide(m_analysisHistosAverage[proc][ihisto]);
+          theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
+          theDelta->Divide(analysisHistosAverage[proc][ihisto]);
 	  // draw the histo and set the usual options
           theDelta->Draw("SAME");
-          theDelta->GetXaxis()->SetTitle(m_analysisHistosAverage[proc][ihisto]->GetXaxis()->GetTitle());
+          theDelta->GetXaxis()->SetTitle(m_cnvAnalysisHistosNames[proc][ihisto].c_str());
           theDelta->GetXaxis()->SetTitleSize(0.12);
           theDelta->GetXaxis()->SetTitleOffset(0.8);
           theDelta->GetXaxis()->SetLabelSize(0.1);
