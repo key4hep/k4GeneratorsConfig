@@ -28,6 +28,8 @@ public:
   void Execute(analysisHistos&);
   void Finalize();
 
+  void calculateChi2(std::string, TH1D*, TH1D*);
+
   void decodeProcGen();
   void add2Tree(xsection&);
   void writeTree();

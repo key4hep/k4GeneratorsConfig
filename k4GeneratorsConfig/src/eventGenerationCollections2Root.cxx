@@ -478,8 +478,12 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           TH1D* theDelta = new TH1D(*(TH1D*)obj);
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
+	  // check the compatibility of the histo compared to average
+	  calculateChi2(m_processesSqrtsList[proc], theDelta, m_analysisHistosAverage[proc][ihisto]);
+	  // subtract average and divide
           theDelta->Add(m_analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(m_analysisHistosAverage[proc][ihisto]);
+	  // draw the histo and set the usual options
           theDelta->Draw("SAME");
           theDelta->GetXaxis()->SetTitle(m_analysisHistosAverage[proc][ihisto]->GetXaxis()->GetTitle());
           theDelta->GetXaxis()->SetTitleSize(0.12);
@@ -499,3 +503,25 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   }
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeTree() { m_tree->Write(); }
+void k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo1, TH1D* histo2) {
+
+  if ( histo1->GetNbinsX() != histo2->GetNbinsX() ) {
+    std::cout << "Process " << procName << " chi2 test impossible: number of bins incompatible " << histo1->GetNbinsX() << " != " << histo2->GetNbinsX() << std::endl;
+  }
+  double chi2 = 0.;
+  unsigned int nbOfPoints = 0;
+  for (int i = 0; i < histo1->GetNbinsX()+2; i++) {
+    if ( histo1->GetBinError(i) != 0. || histo2->GetBinError(i) != 0. ) {
+      double deltaChi2 = histo1->GetBinContent(i) - histo2->GetBinContent(i);
+      deltaChi2 *= deltaChi2;
+      deltaChi2 /= (histo1->GetBinError(i)*histo1->GetBinError(i) + histo2->GetBinError(i)*histo2->GetBinError(i));
+      chi2 += deltaChi2;
+      nbOfPoints++;
+    }
+  }
+
+  // divide by the number of measurements
+  chi2 /= nbOfPoints;  
+  std::cout << "Proc " << procName << " Generator " << histo1->GetTitle() << " Type " << histo2->GetXaxis()->GetTitle() << " chi2 = " << chi2 << std::endl; 
+}
+
