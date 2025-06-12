@@ -95,7 +95,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
       if (iHisto < m_cnvAnalysisHistos[iProc].size()) {
         m_cnvAnalysisHistos[iProc][iHisto]->cd(1);
         TH1D* theHisto = anaHistos.TH1DHisto(iHisto);
-        desc << m_generator;
+        desc << m_generator << " " << m_process << " " << m_sqrts << " GeV";
         theHisto->SetTitle(desc.str().c_str());
         desc.clear();
         desc.str("");
@@ -450,16 +450,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         if (obj->InheritsFrom(TH1D::Class())) {
           // recreate TH1D
           TH1D* generatorHisto = new TH1D(*(TH1D*)obj);
-          // create the average histo
-          if (generatorAverageHisto == nullptr) {
-            name << generatorHisto->GetName() << counter;
-            generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(),
-                                             generatorHisto->GetNbinsX(), generatorHisto->GetBinLowEdge(1),
-                                             generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
-            generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetXaxis()->GetTitle());
-            name.clear();
-            name.str("");
-          }
+	  if ( generatorAverageHisto == nullptr ){
+	    // to avoid memory leaks add the proc number
+	    name << generatorHisto->GetName() << proc;
+	    generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(),
+					     generatorHisto->GetNbinsX(), generatorHisto->GetBinLowEdge(1),
+					     generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
+	    generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetXaxis()->GetTitle());
+	    name.clear();
+	    name.str("");
+	  }
           if (!(generatorAverageHisto->GetSumw2N() > 0))
             generatorAverageHisto->Sumw2(kTRUE);
           generatorAverageHisto->Add(generatorHisto);
