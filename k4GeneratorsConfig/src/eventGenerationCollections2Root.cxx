@@ -8,14 +8,16 @@
 #include "TStyle.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
-  : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
-      m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_file(0),
+      m_tree(0), m_processCode(-1), m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.),
+      m_generatorCode(0) {
   m_file = new TFile("eventGenerationSummary.root", "RECREATE");
   Init();
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root(std::string file)
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
-      m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_file(0),
+      m_tree(0), m_processCode(-1), m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.),
+      m_generatorCode(0) {
   m_file = new TFile(file.c_str(), "RECREATE");
   Init();
 }
@@ -53,14 +55,15 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   std::stringstream name, desc;
   for (unsigned int iProc = 0; iProc < m_procSqrtsList.size(); iProc++) {
     // check that it's the correct process
-    if (! (m_procSqrtsList[iProc] != m_procSqrts)) {
+    if (!(m_procSqrtsList[iProc] != m_procSqrts)) {
       // that there are histograms
       if (anaHistos.NbOf1DHistos() > 0) {
         // and so far no canvases have been prepared
         if (m_cnvAnalysisHistos[iProc].size() == 0) {
           // prepare the canvases
           for (unsigned int iHisto = 0; iHisto < anaHistos.NbOf1DHistos(); iHisto++) {
-            name << m_procSqrtsList[iProc].first << (unsigned int) (m_procSqrtsList[iProc].second*m_EnergyUnitCnv) << " " << anaHistos.TH1DHisto(iHisto)->GetName();
+            name << m_procSqrtsList[iProc].first << (unsigned int)(m_procSqrtsList[iProc].second * m_EnergyUnitCnv)
+                 << " " << anaHistos.TH1DHisto(iHisto)->GetName();
             desc << "Process: " << m_procSqrtsList[iProc].first << " " << m_procSqrtsList[iProc].second;
             m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
             m_cnvAnalysisHistos[iProc].back()->cd();
@@ -86,8 +89,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   }
   // the canvas vector is ready, so we can fill the canvas:
   // - determine the index from the process sqrts
-  unsigned int iProc = std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) -
-                       m_procSqrtsList.begin();
+  unsigned int iProc = std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) - m_procSqrtsList.begin();
   // - check that the index is valid (not found==size) and that there are histos to add
   if (iProc < m_procSqrtsList.size() && anaHistos.NbOf1DHistos() > 0) {
     // now add the histos
@@ -150,35 +152,32 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
   m_processCode = std::find(m_processesList.begin(), m_processesList.end(), m_process) - m_processesList.begin();
 
   // first determined the sqrts code and add to list
-  m_procSqrts = std::pair<std::string, double> {m_process, m_sqrts};
-    // assign a code for each process
-  if (std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) ==
-      m_procSqrtsList.end()) {
+  m_procSqrts = std::pair<std::string, double>{m_process, m_sqrts};
+  // assign a code for each process
+  if (std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) == m_procSqrtsList.end()) {
     m_procSqrtsList.push_back(m_procSqrts);
   }
-  
+
   // now the sqrts list
-  if (std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) ==
-      m_sqrtsList.end()) {
+  if (std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) == m_sqrtsList.end()) {
     m_sqrtsList.push_back(m_sqrts);
   }
   m_sqrtsCode = std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) - m_sqrtsList.begin();
-
 }
 unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(std::string proc, double sqrts) {
   // first determined the sqrts code and add to list
-  std::pair<std::string, double> procSqrts = std::pair<std::string, double> {proc, sqrts};
+  std::pair<std::string, double> procSqrts = std::pair<std::string, double>{proc, sqrts};
   // get the iterator
   return std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), procSqrts) - m_procSqrtsList.begin();
 }
 double k4GeneratorsConfig::eventGenerationCollections2Root::getSqrtsFromProcSqrtsID(unsigned int index) {
-  if ( index < m_procSqrtsList.size() ){
+  if (index < m_procSqrtsList.size()) {
     return m_procSqrtsList[index].second;
   }
   return 0.;
 }
 std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcSqrtsID(unsigned int index) {
-  if ( index < m_procSqrtsList.size() ){
+  if (index < m_procSqrtsList.size()) {
     return m_procSqrtsList[index].first;
   }
   return "unknown";
@@ -263,10 +262,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
     if (m_crossSection > m_xsectionMinimal) {
       // accumulate the averages and the squares:
       unsigned int indexProcSqrts = ProcSqrtsID(m_process, m_sqrts);
-      if ( indexProcSqrts < m_procSqrtsList.size() ) {
-	xsectionMean4Process[indexProcSqrts] += m_crossSection;
-	xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
-	xsectionN4Process[indexProcSqrts] += 1;
+      if (indexProcSqrts < m_procSqrtsList.size()) {
+        xsectionMean4Process[indexProcSqrts] += m_crossSection;
+        xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
+        xsectionN4Process[indexProcSqrts] += 1;
       }
     }
   }
@@ -282,33 +281,34 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
         xsectionRMS4Process[indexProcSqrts] /= xsectionN4Process[indexProcSqrts];
         // the RMS
         xsectionRMS4Process[indexProcSqrts] =
-            sqrt(xsectionRMS4Process[indexProcSqrts] - xsectionMean4Process[indexProcSqrts] * xsectionMean4Process[indexProcSqrts]);
+            sqrt(xsectionRMS4Process[indexProcSqrts] -
+                 xsectionMean4Process[indexProcSqrts] * xsectionMean4Process[indexProcSqrts]);
         // now we can fill the entries of the graphs
-	double relRMS = xsectionRMS4Process[indexProcSqrts] / xsectionMean4Process[indexProcSqrts];
-	m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
-	unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
-	m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
-	for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
-	  // new index for the deltagraphs
-	  unsigned int indexDelta = igen + iproc * m_generatorsList.size();
-	  double relDelta = 0.;
-	  // we need to play it safe: we do not know the order of the points, so we loop to determine
-	  int isqrtsPoint = -1;
-	  for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++) {
-	    double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
-	    if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
-	      isqrtsPoint = iPoint;
-	    }
-	  }
-	  // we need to get the data from the generator graph, make sure the data is there
-	  if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
-	    relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
-	      xsectionMean4Process[indexProcSqrts];
-	    m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
-	    // set the error on the delta to 0
-	    lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
-	    m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
-	  }
+        double relRMS = xsectionRMS4Process[indexProcSqrts] / xsectionMean4Process[indexProcSqrts];
+        m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
+        unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
+        m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
+        for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
+          // new index for the deltagraphs
+          unsigned int indexDelta = igen + iproc * m_generatorsList.size();
+          double relDelta = 0.;
+          // we need to play it safe: we do not know the order of the points, so we loop to determine
+          int isqrtsPoint = -1;
+          for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++) {
+            double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
+            if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
+              isqrtsPoint = iPoint;
+            }
+          }
+          // we need to get the data from the generator graph, make sure the data is there
+          if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
+            relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
+                       xsectionMean4Process[indexProcSqrts];
+            m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
+            // set the error on the delta to 0
+            lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
+            m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
+          }
         }
       }
     }
@@ -510,7 +510,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           // calculate the compatbility before operations and output text
           double chi2 = calculateChi2(m_procSqrtsList[proc].first, theDelta, analysisHistosAverage[proc][ihisto]);
           std::stringstream message;
-          message << m_procSqrtsList[proc].first <<  " " << theDelta->GetTitle() << " " << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
+          message << m_procSqrtsList[proc].first << " " << theDelta->GetTitle() << " "
+                  << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
           m_log.push_back(message.str());
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
@@ -528,7 +529,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         }
       }
       // done, save the canvas
-      name << m_procSqrtsList[proc].first <<  (unsigned int) (m_procSqrtsList[proc].second*m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
+      name << m_procSqrtsList[proc].first << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv)
+           << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
       m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());
       name.clear();
       name.str("");
