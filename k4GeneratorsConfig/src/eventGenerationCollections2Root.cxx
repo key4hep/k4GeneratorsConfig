@@ -50,28 +50,30 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   // for safety decode the the process code and the generator
   decodeProcGen();
   // if it's the first occurrence of a set, need to resize the canvas vector:
-  if ( m_cnvAnalysisHistos.size() != m_procSqrtsList.size()) {
+  if (m_cnvAnalysisHistos.size() != m_procSqrtsList.size()) {
     m_cnvAnalysisHistos.resize(m_procSqrtsList.size());
     m_cnvAnalysisHistosNames.resize(m_procSqrtsList.size());
   }
   std::stringstream name, desc;
   unsigned int iProc = ProcSqrtsID(m_procSqrts);
-    // check that it's in range
-  if ( iProc >= m_procSqrtsList.size()) {
-    std::cout << "eventGenerationCollections2Root::Execute ERROR " << m_procSqrts.first << " " << m_procSqrts.second << " not found for " << m_generator << std::endl;
+  // check that it's in range
+  if (iProc >= m_procSqrtsList.size()) {
+    std::cout << "eventGenerationCollections2Root::Execute ERROR " << m_procSqrts.first << " " << m_procSqrts.second
+              << " not found for " << m_generator << std::endl;
     return;
   }
   // that there are histograms
   if (anaHistos.NbOf1DHistos() == 0) {
-    std::cout << "eventGenerationCollections2Root::Execute ERROR " << m_procSqrts.first << " " << m_procSqrts.second << " no TH!Ds found for " << m_generator << std::endl;
+    std::cout << "eventGenerationCollections2Root::Execute ERROR " << m_procSqrts.first << " " << m_procSqrts.second
+              << " no TH!Ds found for " << m_generator << std::endl;
     return;
   }
   // and so far no canvases have been prepared
   if (m_cnvAnalysisHistos[iProc].size() == 0) {
     // prepare the canvases
     for (unsigned int iHisto = 0; iHisto < anaHistos.NbOf1DHistos(); iHisto++) {
-      name << m_procSqrtsList[iProc].first << (unsigned int)(m_procSqrtsList[iProc].second * m_EnergyUnitCnv)
-	   << " " << anaHistos.TH1DHisto(iHisto)->GetName();
+      name << m_procSqrtsList[iProc].first << (unsigned int)(m_procSqrtsList[iProc].second * m_EnergyUnitCnv) << " "
+           << anaHistos.TH1DHisto(iHisto)->GetName();
       desc << "Process: " << m_procSqrtsList[iProc].first << " " << m_procSqrtsList[iProc].second;
       m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
       m_cnvAnalysisHistos[iProc].back()->cd();
@@ -95,8 +97,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   // now add the histos
   for (auto histo : anaHistos.TH1DHistos()) {
     unsigned int iHisto =
-      std::find(m_cnvAnalysisHistosNames[iProc].begin(), m_cnvAnalysisHistosNames[iProc].end(), histo->GetName()) -
-      m_cnvAnalysisHistosNames[iProc].begin();
+        std::find(m_cnvAnalysisHistosNames[iProc].begin(), m_cnvAnalysisHistosNames[iProc].end(), histo->GetName()) -
+        m_cnvAnalysisHistosNames[iProc].begin();
     if (iHisto < m_cnvAnalysisHistos[iProc].size()) {
       m_cnvAnalysisHistos[iProc][iHisto]->cd(1);
       TH1D* theHisto = anaHistos.TH1DHisto(iHisto);
@@ -158,7 +160,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
   }
 
   // pair of proc + gen
-  std::pair<std::string,std::string>procGen = std::pair<std::string, std::string>{m_process, m_generator};
+  std::pair<std::string, std::string> procGen = std::pair<std::string, std::string>{m_process, m_generator};
   // assign a code for each process
   if (std::find(m_procGenList.begin(), m_procGenList.end(), procGen) == m_procGenList.end()) {
     m_procGenList.push_back(procGen);
@@ -176,7 +178,8 @@ unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(st
   // get the iterator
   return ProcSqrtsID(procSqrts);
 }
-unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(std::pair<std::string, double> procSqrts) {
+unsigned int
+k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(std::pair<std::string, double> procSqrts) {
   // get the iterator
   return std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), procSqrts) - m_procSqrtsList.begin();
 }
@@ -198,7 +201,8 @@ unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcGenID(std:
   // get the iterator
   return ProcGenID(procGen);
 }
-unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcGenID(std::pair<std::string, std::string> procGen) {
+unsigned int
+k4GeneratorsConfig::eventGenerationCollections2Root::ProcGenID(std::pair<std::string, std::string> procGen) {
   // get the iterator
   return std::find(m_procGenList.begin(), m_procGenList.end(), procGen) - m_procGenList.begin();
 }
@@ -288,20 +292,20 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
     m_tree->GetEntry(entry);
     // calculate the index of histos and graphs
     unsigned int indexProcGen = ProcGenID(m_process, m_generator);
-    if ( indexProcGen < m_procGenList.size()) {
+    if (indexProcGen < m_procGenList.size()) {
       // graphs for pecise drawing
       m_xsectionGraphs[indexProcGen]->AddPoint(m_sqrts, m_crossSection);
       unsigned int lastPoint = m_xsectionGraphs[indexProcGen]->GetN() - 1;
       m_xsectionGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrts * 1e-4, m_crossSectionError);
       // process profile, but make sure it's positive and > 1*10^-3 attobarn
       if (m_crossSection > m_xsectionMinimal) {
-	// accumulate the averages and the squares:
-	unsigned int indexProcSqrts = ProcSqrtsID(m_process, m_sqrts);
-	if (indexProcSqrts < m_procSqrtsList.size()) {
-	  xsectionMean4Process[indexProcSqrts] += m_crossSection;
-	  xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
-	  xsectionN4Process[indexProcSqrts] += 1;
-	}
+        // accumulate the averages and the squares:
+        unsigned int indexProcSqrts = ProcSqrtsID(m_process, m_sqrts);
+        if (indexProcSqrts < m_procSqrtsList.size()) {
+          xsectionMean4Process[indexProcSqrts] += m_crossSection;
+          xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
+          xsectionN4Process[indexProcSqrts] += 1;
+        }
       }
     }
   }
@@ -381,16 +385,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     TMultiGraph* mg = new TMultiGraph();
     for (unsigned int gen = 0; gen < m_generatorsList.size(); gen++) {
       unsigned int indexProcGen = ProcGenID(m_processesList[iProc], m_generatorsList[gen]);
-      if ( indexProcGen < m_procGenList.size() ) {
-	name << m_processesList[iProc] << " " << m_generatorsList[gen];
-	m_xsectionGraphs[indexProcGen]->SetName(name.str().c_str());
-	m_xsectionGraphs[indexProcGen]->SetStats(kFALSE);
-	m_xsectionGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
-	m_xsectionGraphs[indexProcGen]->SetMarkerColor(2 + gen);
-	m_xsectionGraphs[indexProcGen]->SetMarkerSize(1.25);
-	mg->Add(m_xsectionGraphs[indexProcGen], "AP");
-	name.clear();
-	name.str("");
+      if (indexProcGen < m_procGenList.size()) {
+        name << m_processesList[iProc] << " " << m_generatorsList[gen];
+        m_xsectionGraphs[indexProcGen]->SetName(name.str().c_str());
+        m_xsectionGraphs[indexProcGen]->SetStats(kFALSE);
+        m_xsectionGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
+        m_xsectionGraphs[indexProcGen]->SetMarkerColor(2 + gen);
+        m_xsectionGraphs[indexProcGen]->SetMarkerSize(1.25);
+        mg->Add(m_xsectionGraphs[indexProcGen], "AP");
+        name.clear();
+        name.str("");
       }
     }
     // draw and set the stuff for the multigraphs
@@ -445,15 +449,15 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     for (unsigned int gen = 0; gen < m_generatorsList.size(); gen++) {
       unsigned int indexProcGen = ProcGenID(m_processesList[iProc], m_generatorsList[gen]);
       if (indexProcGen < m_procGenList.size()) {
-	name << m_processesList[iProc] << " " << m_generatorsList[gen];
-	m_xsectionDeltaGraphs[indexProcGen]->SetName(name.str().c_str());
-	m_xsectionDeltaGraphs[indexProcGen]->SetStats(kFALSE);
-	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
-	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + gen);
-	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerSize(1.25);
-	mgDelta->Add(m_xsectionDeltaGraphs[indexProcGen], "AP");
-	name.clear();
-	name.str("");
+        name << m_processesList[iProc] << " " << m_generatorsList[gen];
+        m_xsectionDeltaGraphs[indexProcGen]->SetName(name.str().c_str());
+        m_xsectionDeltaGraphs[indexProcGen]->SetStats(kFALSE);
+        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
+        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + gen);
+        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerSize(1.25);
+        mgDelta->Add(m_xsectionDeltaGraphs[indexProcGen], "AP");
+        name.clear();
+        name.str("");
       }
     }
     mgDelta->Draw("AP");
