@@ -36,6 +36,10 @@ public:
   double getSqrtsFromProcSqrtsID(unsigned int);
   std::string getProcFromProcSqrtsID(unsigned int);
 
+  unsigned int ProcGenID(std::string, std::string);
+  std::string getGenFromProcGenID(unsigned int);
+  std::string getProcFromProcGenID(unsigned int);
+
   void add2Tree(xsection&);
   void writeTree();
   void writeHistos();
@@ -80,6 +84,7 @@ private:
   std::vector<std::string> m_generatorsList;
   std::vector<std::string> m_processesList;
   std::vector<std::pair<std::string, double>> m_procSqrtsList;
+  std::vector<std::pair<std::string, std::string>> m_procGenList;
   std::vector<double> m_sqrtsList;
 };
 } // namespace k4GeneratorsConfig

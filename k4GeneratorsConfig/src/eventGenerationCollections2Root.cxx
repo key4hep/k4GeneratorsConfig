@@ -151,11 +151,18 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
 
   m_processCode = std::find(m_processesList.begin(), m_processesList.end(), m_process) - m_processesList.begin();
 
-  // first determined the sqrts code and add to list
+  // Pair of proc+sqrts
   m_procSqrts = std::pair<std::string, double>{m_process, m_sqrts};
   // assign a code for each process
   if (std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) == m_procSqrtsList.end()) {
     m_procSqrtsList.push_back(m_procSqrts);
+  }
+
+  // pair of proc + gen
+  std::pair<std::string,std::string>procGen = std::pair<std::string, std::string>{m_process, m_generator};
+  // assign a code for each process
+  if (std::find(m_procGenList.begin(), m_procGenList.end(), procGen) == m_procGenList.end()) {
+    m_procGenList.push_back(procGen);
   }
 
   // now the sqrts list
@@ -179,6 +186,24 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::getSqrtsFromProcSqrt
 std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcSqrtsID(unsigned int index) {
   if (index < m_procSqrtsList.size()) {
     return m_procSqrtsList[index].first;
+  }
+  return "unknown";
+}
+unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcGenID(std::string proc, std::string gen) {
+  // first determined the sqrts code and add to list
+  std::pair<std::string, std::string> procGen = std::pair<std::string, std::string>{proc, gen};
+  // get the iterator
+  return std::find(m_procGenList.begin(), m_procGenList.end(), procGen) - m_procGenList.begin();
+}
+std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcGenID(unsigned int index) {
+  if (index < m_procGenList.size()) {
+    return m_procGenList[index].second;
+  }
+  return "unknown";
+}
+std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcGenID(unsigned int index) {
+  if (index < m_procGenList.size()) {
+    return m_procGenList[index].first;
   }
   return "unknown";
 }
