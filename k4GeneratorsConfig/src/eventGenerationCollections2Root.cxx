@@ -84,8 +84,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
       bottomPad->SetTopMargin(0);
       bottomPad->SetBottomMargin(0.25);
       bottomPad->Draw();
-      TH1D* histo = anaHistos.TH1DHisto(iHisto);
-      m_cnvAnalysisHistosNames[iProc].push_back(histo->GetName());
+      m_cnvAnalysisHistosNames[iProc].push_back(anaHistos.TH1DHisto(iHisto)->GetName());
       name.clear();
       name.str("");
       desc.clear();
@@ -241,27 +240,29 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Finalize() {
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
 
   std::stringstream name, desc;
+  for (auto procGen : m_procGenList) {
+    std::string proc = procGen.first;
+    std::string gen = procGen.second;
+    name << gen << proc;
+    desc << gen << "::Process: " << proc << ": Cross section vs Sqrts";
+    m_xsectionGraphs.push_back(new TGraphErrors());
+    m_xsectionGraphs.back()->SetName(name.str().c_str());
+    name.clear();
+    name.str("");
+    desc.clear();
+    desc.str("");
+    // the DELTA needs the loop over the generators
+    name << gen << proc << "Delta";
+    desc << "Process: " << proc << ": Delta/average vs Sqrts";
+    m_xsectionDeltaGraphs.push_back(new TGraphErrors());
+    m_xsectionDeltaGraphs.back()->SetName(name.str().c_str());
+    name.clear();
+    name.str("");
+    desc.clear();
+    desc.str("");
+  }
+  // the RMS does not need the loop over the generators
   for (auto proc : m_processesList) {
-    for (auto gen : m_generatorsList) {
-      name << gen << proc;
-      desc << gen << "::Process: " << proc << ": Cross section vs Sqrts";
-      m_xsectionGraphs.push_back(new TGraphErrors());
-      m_xsectionGraphs.back()->SetName(name.str().c_str());
-      name.clear();
-      name.str("");
-      desc.clear();
-      desc.str("");
-      // the DELTA needs the loop over the generators
-      name << gen << proc << "Delta";
-      desc << "Process: " << proc << ": Delta/average vs Sqrts";
-      m_xsectionDeltaGraphs.push_back(new TGraphErrors());
-      m_xsectionDeltaGraphs.back()->SetName(name.str().c_str());
-      name.clear();
-      name.str("");
-      desc.clear();
-      desc.str("");
-    }
-    // the RMS does not need the loop over the generators
     name << proc << "RMS";
     desc << "Process: " << proc << ": RMS/average vs Sqrts";
     m_xsectionRMSGraphs.push_back(new TGraphErrors());
@@ -286,19 +287,21 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
     // a tree for root analysis
     m_tree->GetEntry(entry);
     // calculate the index of histos and graphs
-    unsigned int index = m_generatorCode + m_processCode * m_generatorsList.size();
-    // graphs for pecise drawing
-    m_xsectionGraphs[index]->AddPoint(m_sqrts, m_crossSection);
-    unsigned int lastPoint = m_xsectionGraphs[index]->GetN() - 1;
-    m_xsectionGraphs[index]->SetPointError(lastPoint, m_sqrts * 1e-4, m_crossSectionError);
-    // process profile, but make sure it's positive and > 1*10^-3 attobarn
-    if (m_crossSection > m_xsectionMinimal) {
-      // accumulate the averages and the squares:
-      unsigned int indexProcSqrts = ProcSqrtsID(m_process, m_sqrts);
-      if (indexProcSqrts < m_procSqrtsList.size()) {
-        xsectionMean4Process[indexProcSqrts] += m_crossSection;
-        xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
-        xsectionN4Process[indexProcSqrts] += 1;
+    unsigned int indexProcGen = ProcGenID(m_process, m_generator);
+    if ( indexProcGen < m_procGenList.size()) {
+      // graphs for pecise drawing
+      m_xsectionGraphs[indexProcGen]->AddPoint(m_sqrts, m_crossSection);
+      unsigned int lastPoint = m_xsectionGraphs[indexProcGen]->GetN() - 1;
+      m_xsectionGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrts * 1e-4, m_crossSectionError);
+      // process profile, but make sure it's positive and > 1*10^-3 attobarn
+      if (m_crossSection > m_xsectionMinimal) {
+	// accumulate the averages and the squares:
+	unsigned int indexProcSqrts = ProcSqrtsID(m_process, m_sqrts);
+	if (indexProcSqrts < m_procSqrtsList.size()) {
+	  xsectionMean4Process[indexProcSqrts] += m_crossSection;
+	  xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
+	  xsectionN4Process[indexProcSqrts] += 1;
+	}
       }
     }
   }
@@ -369,24 +372,26 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
   topPad->Draw();
   bottomPad->SetNumber(2);
   bottomPad->Draw();
-  // the canvas is prepared we can now
-  for (unsigned int proc = 0; proc < m_processesList.size(); proc++) {
+  // the canvas is prepared we can now proceed to output all processes:
+  for (unsigned int iProc = 0; iProc < m_processesList.size(); iProc++) {
     // top pad
     topPad->cd();
     topPad->SetBottomMargin(0);
     // the cross sections with the graph
     TMultiGraph* mg = new TMultiGraph();
     for (unsigned int gen = 0; gen < m_generatorsList.size(); gen++) {
-      unsigned int index = gen + proc * m_generatorsList.size();
-      name << m_processesList[proc] << " " << m_generatorsList[gen];
-      m_xsectionGraphs[index]->SetName(name.str().c_str());
-      m_xsectionGraphs[index]->SetStats(kFALSE);
-      m_xsectionGraphs[index]->SetMarkerStyle(20 + gen);
-      m_xsectionGraphs[index]->SetMarkerColor(2 + gen);
-      m_xsectionGraphs[index]->SetMarkerSize(1.25);
-      mg->Add(m_xsectionGraphs[index], "AP");
-      name.clear();
-      name.str("");
+      unsigned int indexProcGen = ProcGenID(m_processesList[iProc], m_generatorsList[gen]);
+      if ( indexProcGen < m_procGenList.size() ) {
+	name << m_processesList[iProc] << " " << m_generatorsList[gen];
+	m_xsectionGraphs[indexProcGen]->SetName(name.str().c_str());
+	m_xsectionGraphs[indexProcGen]->SetStats(kFALSE);
+	m_xsectionGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
+	m_xsectionGraphs[indexProcGen]->SetMarkerColor(2 + gen);
+	m_xsectionGraphs[indexProcGen]->SetMarkerSize(1.25);
+	mg->Add(m_xsectionGraphs[indexProcGen], "AP");
+	name.clear();
+	name.str("");
+      }
     }
     // draw and set the stuff for the multigraphs
     mg->Draw("AP");
@@ -405,14 +410,14 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     bottomPad->SetBottomMargin(0.25);
 
     // prepare the figures
-    m_xsectionRMSGraphs[proc]->SetStats(kFALSE);
-    m_xsectionRMSGraphs[proc]->SetMarkerStyle(20);
-    m_xsectionRMSGraphs[proc]->SetMarkerColor(kBlack);
-    m_xsectionRMSGraphs[proc]->SetMarkerSize(1.25);
+    m_xsectionRMSGraphs[iProc]->SetStats(kFALSE);
+    m_xsectionRMSGraphs[iProc]->SetMarkerStyle(20);
+    m_xsectionRMSGraphs[iProc]->SetMarkerColor(kBlack);
+    m_xsectionRMSGraphs[iProc]->SetMarkerSize(1.25);
 
     // now the graph
     TMultiGraph* mgRMS = new TMultiGraph();
-    mgRMS->Add(m_xsectionRMSGraphs[proc], "AP");
+    mgRMS->Add(m_xsectionRMSGraphs[iProc], "AP");
     mgRMS->Draw("AP");
 
     // graph drawn we can work on the axes
@@ -426,7 +431,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgRMS->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
-    name << m_processesList[proc] << "wRMS.png";
+    name << m_processesList[iProc] << "wRMS.png";
     c1->Print(name.str().c_str());
     name.clear();
     name.str("");
@@ -438,16 +443,18 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     // the multigraph
     TMultiGraph* mgDelta = new TMultiGraph();
     for (unsigned int gen = 0; gen < m_generatorsList.size(); gen++) {
-      unsigned int index = gen + proc * m_generatorsList.size();
-      name << m_processesList[proc] << " " << m_generatorsList[gen];
-      m_xsectionDeltaGraphs[index]->SetName(name.str().c_str());
-      m_xsectionDeltaGraphs[index]->SetStats(kFALSE);
-      m_xsectionDeltaGraphs[index]->SetMarkerStyle(20 + gen);
-      m_xsectionDeltaGraphs[index]->SetMarkerColor(2 + gen);
-      m_xsectionDeltaGraphs[index]->SetMarkerSize(1.25);
-      mgDelta->Add(m_xsectionDeltaGraphs[index], "AP");
-      name.clear();
-      name.str("");
+      unsigned int indexProcGen = ProcGenID(m_processesList[iProc], m_generatorsList[gen]);
+      if (indexProcGen < m_procGenList.size()) {
+	name << m_processesList[iProc] << " " << m_generatorsList[gen];
+	m_xsectionDeltaGraphs[indexProcGen]->SetName(name.str().c_str());
+	m_xsectionDeltaGraphs[indexProcGen]->SetStats(kFALSE);
+	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
+	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + gen);
+	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerSize(1.25);
+	mgDelta->Add(m_xsectionDeltaGraphs[indexProcGen], "AP");
+	name.clear();
+	name.str("");
+      }
     }
     mgDelta->Draw("AP");
 
@@ -462,7 +469,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgDelta->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
-    name << m_processesList[proc] << "wDelta.png";
+    name << m_processesList[iProc] << "wDelta.png";
     c1->Print(name.str().c_str());
     name.clear();
     name.str("");
