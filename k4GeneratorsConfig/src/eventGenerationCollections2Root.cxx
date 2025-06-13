@@ -8,13 +8,13 @@
 #include "TStyle.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
+  : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
       m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile("eventGenerationSummary.root", "RECREATE");
   Init();
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root(std::string file)
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1),
       m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.), m_generatorCode(0) {
   m_file = new TFile(file.c_str(), "RECREATE");
   Init();
@@ -37,14 +37,14 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(xsection& xsec
 
   m_generator = xsec.Generator();
   m_process = xsec.Process();
-  m_sqrts = int((xsec.SQRTS() * 1.e3) + 0.5) / 1.e3;
+  m_sqrts = prepSqrts(xsec.SQRTS(), m_EnergyUnitCnv);
   decodeProcGen();
   add2Tree(xsec);
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos& anaHistos) {
   m_generator = anaHistos.Generator();
   m_process = anaHistos.Process();
-  m_sqrts = int((anaHistos.SQRTS() * 1.e3) + 0.5) / 1.e3;
+  m_sqrts = prepSqrts(anaHistos.SQRTS(), m_EnergyUnitCnv);
   // for safety decode the the process code and the generator
   decodeProcGen();
   // if it's the first occurrence of a set, need to prepare the canvas vector:
@@ -60,7 +60,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
         if (m_cnvAnalysisHistos[iProc].size() == 0) {
           // prepare the canvases
           for (unsigned int iHisto = 0; iHisto < anaHistos.NbOf1DHistos(); iHisto++) {
-            name << m_procSqrtsList[iProc].first << (unsigned int) (m_procSqrtsList[iProc].second*1000) << " " << anaHistos.TH1DHisto(iHisto)->GetName();
+            name << m_procSqrtsList[iProc].first << (unsigned int) (m_procSqrtsList[iProc].second*m_EnergyUnitCnv) << " " << anaHistos.TH1DHisto(iHisto)->GetName();
             desc << "Process: " << m_procSqrtsList[iProc].first << " " << m_procSqrtsList[iProc].second;
             m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
             m_cnvAnalysisHistos[iProc].back()->cd();
@@ -506,7 +506,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         }
       }
       // done, save the canvas
-      name << m_procSqrtsList[proc].first <<  (unsigned int) (m_procSqrtsList[proc].second*1000) << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
+      name << m_procSqrtsList[proc].first <<  (unsigned int) (m_procSqrtsList[proc].second*m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
       m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());
       name.clear();
       name.str("");
@@ -514,6 +514,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   }
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeTree() { m_tree->Write(); }
+double k4GeneratorsConfig::eventGenerationCollections2Root::prepSqrts(double sqrts, double unit) {
+  return int((sqrts * unit) + 0.5) / unit;
+}
 double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::string procName, TH1D* histo,
                                                                           TH1D* refHisto) {
 

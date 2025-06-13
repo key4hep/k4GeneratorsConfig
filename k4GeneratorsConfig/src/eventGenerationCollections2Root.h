@@ -28,6 +28,7 @@ public:
   void Execute(analysisHistos&);
   void Finalize();
 
+  double prepSqrts(double, double);
   double calculateChi2(std::string, TH1D*, TH1D*);
 
   void decodeProcGen();
@@ -43,6 +44,8 @@ private:
   // steers the precision criteria
   const double m_sqrtsPrecision;
   const double m_xsectionMinimal;
+  const double m_GeV2MeV;
+  double m_EnergyUnitCnv;
 
   std::vector<std::string> m_log;
 
