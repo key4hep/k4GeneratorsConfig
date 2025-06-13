@@ -155,10 +155,33 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
   if (std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) ==
       m_procSqrtsList.end()) {
     m_procSqrtsList.push_back(m_procSqrts);
+  }
+  
+  // now the sqrts list
+  if (std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) ==
+      m_sqrtsList.end()) {
     m_sqrtsList.push_back(m_sqrts);
   }
   m_sqrtsCode = std::find(m_sqrtsList.begin(), m_sqrtsList.end(), m_sqrts) - m_sqrtsList.begin();
 
+}
+unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(std::string proc, double sqrts) {
+  // first determined the sqrts code and add to list
+  std::pair<std::string, double> procSqrts = std::pair<std::string, double> {proc, sqrts};
+  // get the iterator
+  return std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), procSqrts) - m_procSqrtsList.begin();
+}
+double k4GeneratorsConfig::eventGenerationCollections2Root::getSqrtsFromProcSqrtsID(unsigned int index) {
+  if ( index < m_procSqrtsList.size() ){
+    return m_procSqrtsList[index].second;
+  }
+  return 0.;
+}
+std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcSqrtsID(unsigned int index) {
+  if ( index < m_procSqrtsList.size() ){
+    return m_procSqrtsList[index].first;
+  }
+  return "unknown";
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::add2Tree(xsection& xsec) {
 
@@ -218,10 +241,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
   }
 
   // to calculate per Process and Sqrts average cross section, RMS and number of entries
-  m_xsectionMean4Process.resize(m_processesList.size() * m_sqrtsList.size(), 0.);
-  m_xsectionRMS4Process.resize(m_processesList.size() * m_sqrtsList.size(), 0.);
-  m_xsectionN4Process.resize(m_processesList.size() * m_sqrtsList.size(), 0);
-  m_xsectionPROC4Process.resize(m_processesList.size() * m_sqrtsList.size(), -1);
+  // structure for the average and RMS of the cross section per Process and sqrts
+  std::vector<double> xsectionMean4Process;
+  std::vector<double> xsectionRMS4Process;
+  std::vector<unsigned int> xsectionN4Process;
+  xsectionMean4Process.resize(m_procSqrtsList.size(), 0.);
+  xsectionRMS4Process.resize(m_procSqrtsList.size(), 0.);
+  xsectionN4Process.resize(m_procSqrtsList.size(), 0);
 
   // access the data and write to the histo via the index of the generatorList
   for (unsigned int entry = 0; entry < m_tree->GetEntries(); entry++) {
@@ -236,12 +262,11 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
     // process profile, but make sure it's positive and > 1*10^-3 attobarn
     if (m_crossSection > m_xsectionMinimal) {
       // accumulate the averages and the squares:
-      index = m_sqrtsCode + m_processCode * m_generatorsList.size();
-      m_xsectionMean4Process[index] += m_crossSection;
-      m_xsectionRMS4Process[index] += (m_crossSection * m_crossSection);
-      m_xsectionN4Process[index] += 1;
-      if (m_xsectionPROC4Process[index] == -1) {
-        m_xsectionPROC4Process[index] = m_processCode;
+      unsigned int indexProcSqrts = ProcSqrtsID(m_process, m_sqrts);
+      if ( indexProcSqrts < m_procSqrtsList.size() ) {
+	xsectionMean4Process[indexProcSqrts] += m_crossSection;
+	xsectionRMS4Process[indexProcSqrts] += (m_crossSection * m_crossSection);
+	xsectionN4Process[indexProcSqrts] += 1;
       }
     }
   }
@@ -249,44 +274,41 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
   // now average:
   for (unsigned int iproc = 0; iproc < m_processesList.size(); iproc++) {
     for (unsigned int isqrts = 0; isqrts < m_sqrtsList.size(); isqrts++) {
-      unsigned int index = isqrts + iproc * m_sqrtsList.size();
-      if (m_xsectionN4Process[index] > 0) {
+      unsigned int indexProcSqrts = ProcSqrtsID(m_processesList[iproc], m_sqrtsList[isqrts]);
+      if (indexProcSqrts < m_procSqrtsList.size() && xsectionN4Process[indexProcSqrts] > 0) {
         // average
-        m_xsectionMean4Process[index] /= m_xsectionN4Process[index];
+        xsectionMean4Process[indexProcSqrts] /= xsectionN4Process[indexProcSqrts];
         // average of squares
-        m_xsectionRMS4Process[index] /= m_xsectionN4Process[index];
+        xsectionRMS4Process[indexProcSqrts] /= xsectionN4Process[indexProcSqrts];
         // the RMS
-        m_xsectionRMS4Process[index] =
-            sqrt(m_xsectionRMS4Process[index] - m_xsectionMean4Process[index] * m_xsectionMean4Process[index]);
+        xsectionRMS4Process[indexProcSqrts] =
+            sqrt(xsectionRMS4Process[indexProcSqrts] - xsectionMean4Process[indexProcSqrts] * xsectionMean4Process[indexProcSqrts]);
         // now we can fill the entries of the graphs
-        if (m_xsectionPROC4Process[index] >= 0) {
-          // fill the RMS graphs
-          double relRMS = m_xsectionRMS4Process[index] / m_xsectionMean4Process[index];
-          m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
-          unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
-          m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
-          for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
-            // new index for the deltagraphs
-            unsigned int indexDelta = igen + iproc * m_generatorsList.size();
-            double relDelta = 0.;
-            // we need to play it safe: we do not know the order of the points, so we loop to determine
-            int isqrtsPoint = -1;
-            for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++) {
-              double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
-              if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
-                isqrtsPoint = iPoint;
-              }
-            }
-            // we need to get the data from the generator graph, make sure the data is there
-            if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
-              relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrtsPoint) - m_xsectionMean4Process[index]) /
-                         m_xsectionMean4Process[index];
-              m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
-              // set the error on the delta to 0
-              lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
-              m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
-            }
-          }
+	double relRMS = xsectionRMS4Process[indexProcSqrts] / xsectionMean4Process[indexProcSqrts];
+	m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
+	unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
+	m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
+	for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
+	  // new index for the deltagraphs
+	  unsigned int indexDelta = igen + iproc * m_generatorsList.size();
+	  double relDelta = 0.;
+	  // we need to play it safe: we do not know the order of the points, so we loop to determine
+	  int isqrtsPoint = -1;
+	  for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++) {
+	    double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
+	    if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
+	      isqrtsPoint = iPoint;
+	    }
+	  }
+	  // we need to get the data from the generator graph, make sure the data is there
+	  if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
+	    relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
+	      xsectionMean4Process[indexProcSqrts];
+	    m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
+	    // set the error on the delta to 0
+	    lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
+	    m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
+	  }
         }
       }
     }

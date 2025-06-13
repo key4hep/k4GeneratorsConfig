@@ -32,6 +32,10 @@ public:
   double calculateChi2(std::string, TH1D*, TH1D*);
 
   void decodeProcGen();
+  unsigned int ProcSqrtsID(std::string, double);
+  double getSqrtsFromProcSqrtsID(unsigned int);
+  std::string getProcFromProcSqrtsID(unsigned int);
+  
   void add2Tree(xsection&);
   void writeTree();
   void writeHistos();
@@ -78,11 +82,6 @@ private:
   std::vector<std::pair<std::string, double>> m_procSqrtsList;
   std::vector<double> m_sqrtsList;
 
-  // structure for the average and RMS of the cross section per Process and sqrts
-  std::vector<double> m_xsectionMean4Process;
-  std::vector<double> m_xsectionRMS4Process;
-  std::vector<unsigned int> m_xsectionN4Process;
-  std::vector<int> m_xsectionPROC4Process;
 };
 } // namespace k4GeneratorsConfig
 
