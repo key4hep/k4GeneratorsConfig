@@ -33,10 +33,12 @@ public:
 
   void decodeProcGen();
   unsigned int ProcSqrtsID(std::string, double);
+  unsigned int ProcSqrtsID(std::pair<std::string, double>);
   double getSqrtsFromProcSqrtsID(unsigned int);
   std::string getProcFromProcSqrtsID(unsigned int);
 
   unsigned int ProcGenID(std::string, std::string);
+  unsigned int ProcGenID(std::pair<std::string, std::string>);
   std::string getGenFromProcGenID(unsigned int);
   std::string getProcFromProcGenID(unsigned int);
 

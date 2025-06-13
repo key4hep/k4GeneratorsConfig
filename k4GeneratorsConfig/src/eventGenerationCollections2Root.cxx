@@ -49,72 +49,72 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   m_sqrts = prepSqrts(anaHistos.SQRTS(), m_EnergyUnitCnv);
   // for safety decode the the process code and the generator
   decodeProcGen();
-  // if it's the first occurrence of a set, need to prepare the canvas vector:
-  m_cnvAnalysisHistos.resize(m_procSqrtsList.size());
-  m_cnvAnalysisHistosNames.resize(m_procSqrtsList.size());
+  // if it's the first occurrence of a set, need to resize the canvas vector:
+  if ( m_cnvAnalysisHistos.size() != m_procSqrtsList.size()) {
+    m_cnvAnalysisHistos.resize(m_procSqrtsList.size());
+    m_cnvAnalysisHistosNames.resize(m_procSqrtsList.size());
+  }
   std::stringstream name, desc;
-  for (unsigned int iProc = 0; iProc < m_procSqrtsList.size(); iProc++) {
-    // check that it's the correct process
-    if (!(m_procSqrtsList[iProc] != m_procSqrts)) {
-      // that there are histograms
-      if (anaHistos.NbOf1DHistos() > 0) {
-        // and so far no canvases have been prepared
-        if (m_cnvAnalysisHistos[iProc].size() == 0) {
-          // prepare the canvases
-          for (unsigned int iHisto = 0; iHisto < anaHistos.NbOf1DHistos(); iHisto++) {
-            name << m_procSqrtsList[iProc].first << (unsigned int)(m_procSqrtsList[iProc].second * m_EnergyUnitCnv)
-                 << " " << anaHistos.TH1DHisto(iHisto)->GetName();
-            desc << "Process: " << m_procSqrtsList[iProc].first << " " << m_procSqrtsList[iProc].second;
-            m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
-            m_cnvAnalysisHistos[iProc].back()->cd();
-            TPad* topPad = new TPad("topPad", "A bottom histo", 0.0, 0.3, 1.0, 1.0, 0);
-            TPad* bottomPad = new TPad("bottomPad", "a bottom histo", 0.0, 0.0, 1.0, 0.3, 0);
-            topPad->SetNumber(1);
-            topPad->SetBottomMargin(0);
-            topPad->Draw();
-            bottomPad->SetNumber(2);
-            bottomPad->SetTopMargin(0);
-            bottomPad->SetBottomMargin(0.25);
-            bottomPad->Draw();
-            TH1D* histo = anaHistos.TH1DHisto(iHisto);
-            m_cnvAnalysisHistosNames[iProc].push_back(histo->GetName());
-            name.clear();
-            name.str("");
-            desc.clear();
-            desc.str("");
-          }
-        }
-      }
+  unsigned int iProc = ProcSqrtsID(m_procSqrts);
+    // check that it's in range
+  if ( iProc >= m_procSqrtsList.size()) {
+    std::cout << "eventGenerationCollections2Root::Execute ERROR " << m_procSqrts.first << " " << m_procSqrts.second << " not found for " << m_generator << std::endl;
+    return;
+  }
+  // that there are histograms
+  if (anaHistos.NbOf1DHistos() == 0) {
+    std::cout << "eventGenerationCollections2Root::Execute ERROR " << m_procSqrts.first << " " << m_procSqrts.second << " no TH!Ds found for " << m_generator << std::endl;
+    return;
+  }
+  // and so far no canvases have been prepared
+  if (m_cnvAnalysisHistos[iProc].size() == 0) {
+    // prepare the canvases
+    for (unsigned int iHisto = 0; iHisto < anaHistos.NbOf1DHistos(); iHisto++) {
+      name << m_procSqrtsList[iProc].first << (unsigned int)(m_procSqrtsList[iProc].second * m_EnergyUnitCnv)
+	   << " " << anaHistos.TH1DHisto(iHisto)->GetName();
+      desc << "Process: " << m_procSqrtsList[iProc].first << " " << m_procSqrtsList[iProc].second;
+      m_cnvAnalysisHistos[iProc].push_back(new TCanvas(name.str().c_str(), desc.str().c_str()));
+      m_cnvAnalysisHistos[iProc].back()->cd();
+      TPad* topPad = new TPad("topPad", "A bottom histo", 0.0, 0.3, 1.0, 1.0, 0);
+      TPad* bottomPad = new TPad("bottomPad", "a bottom histo", 0.0, 0.0, 1.0, 0.3, 0);
+      topPad->SetNumber(1);
+      topPad->SetBottomMargin(0);
+      topPad->Draw();
+      bottomPad->SetNumber(2);
+      bottomPad->SetTopMargin(0);
+      bottomPad->SetBottomMargin(0.25);
+      bottomPad->Draw();
+      TH1D* histo = anaHistos.TH1DHisto(iHisto);
+      m_cnvAnalysisHistosNames[iProc].push_back(histo->GetName());
+      name.clear();
+      name.str("");
+      desc.clear();
+      desc.str("");
     }
   }
   // the canvas vector is ready, so we can fill the canvas:
-  // - determine the index from the process sqrts
-  unsigned int iProc = std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), m_procSqrts) - m_procSqrtsList.begin();
-  // - check that the index is valid (not found==size) and that there are histos to add
-  if (iProc < m_procSqrtsList.size() && anaHistos.NbOf1DHistos() > 0) {
-    // now add the histos
-    for (auto histo : anaHistos.TH1DHistos()) {
-      unsigned int iHisto =
-          std::find(m_cnvAnalysisHistosNames[iProc].begin(), m_cnvAnalysisHistosNames[iProc].end(), histo->GetName()) -
-          m_cnvAnalysisHistosNames[iProc].begin();
-      if (iHisto < m_cnvAnalysisHistos[iProc].size()) {
-        m_cnvAnalysisHistos[iProc][iHisto]->cd(1);
-        TH1D* theHisto = anaHistos.TH1DHisto(iHisto);
-        desc << m_generator << " " << m_process << " " << m_sqrts << " GeV";
-        theHisto->SetTitle(desc.str().c_str());
-        desc.clear();
-        desc.str("");
-        gStyle->SetOptTitle(0);
-        theHisto->SetStats(kFALSE);
-        theHisto->SetLineColor(2 + m_generatorCode);
-        theHisto->SetMinimum(0);
-        theHisto->Draw("SAME");
-        theHisto->GetYaxis()->SetTitleSize(0.06);
-        theHisto->GetYaxis()->SetTitleOffset(0.7);
-        theHisto->GetYaxis()->SetLabelSize(0.05);
-        // x axis turn off the labels
-        theHisto->GetXaxis()->SetLabelSize(0);
-      }
+  // now add the histos
+  for (auto histo : anaHistos.TH1DHistos()) {
+    unsigned int iHisto =
+      std::find(m_cnvAnalysisHistosNames[iProc].begin(), m_cnvAnalysisHistosNames[iProc].end(), histo->GetName()) -
+      m_cnvAnalysisHistosNames[iProc].begin();
+    if (iHisto < m_cnvAnalysisHistos[iProc].size()) {
+      m_cnvAnalysisHistos[iProc][iHisto]->cd(1);
+      TH1D* theHisto = anaHistos.TH1DHisto(iHisto);
+      desc << m_generator << " " << m_process << " " << m_sqrts << " GeV";
+      theHisto->SetTitle(desc.str().c_str());
+      desc.clear();
+      desc.str("");
+      gStyle->SetOptTitle(0);
+      theHisto->SetStats(kFALSE);
+      theHisto->SetLineColor(2 + m_generatorCode);
+      theHisto->SetMinimum(0);
+      theHisto->Draw("SAME");
+      theHisto->GetYaxis()->SetTitleSize(0.06);
+      theHisto->GetYaxis()->SetTitleOffset(0.7);
+      theHisto->GetYaxis()->SetLabelSize(0.05);
+      // x axis turn off the labels
+      theHisto->GetXaxis()->SetLabelSize(0);
     }
   }
 }
@@ -175,7 +175,17 @@ unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(st
   // first determined the sqrts code and add to list
   std::pair<std::string, double> procSqrts = std::pair<std::string, double>{proc, sqrts};
   // get the iterator
+  return ProcSqrtsID(procSqrts);
+}
+unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsID(std::pair<std::string, double> procSqrts) {
+  // get the iterator
   return std::find(m_procSqrtsList.begin(), m_procSqrtsList.end(), procSqrts) - m_procSqrtsList.begin();
+}
+std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcSqrtsID(unsigned int index) {
+  if (index < m_procSqrtsList.size()) {
+    return m_procSqrtsList[index].first;
+  }
+  return "";
 }
 double k4GeneratorsConfig::eventGenerationCollections2Root::getSqrtsFromProcSqrtsID(unsigned int index) {
   if (index < m_procSqrtsList.size()) {
@@ -183,27 +193,25 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::getSqrtsFromProcSqrt
   }
   return 0.;
 }
-std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcSqrtsID(unsigned int index) {
-  if (index < m_procSqrtsList.size()) {
-    return m_procSqrtsList[index].first;
-  }
-  return "unknown";
-}
 unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcGenID(std::string proc, std::string gen) {
   // first determined the sqrts code and add to list
   std::pair<std::string, std::string> procGen = std::pair<std::string, std::string>{proc, gen};
   // get the iterator
-  return std::find(m_procGenList.begin(), m_procGenList.end(), procGen) - m_procGenList.begin();
+  return ProcGenID(procGen);
 }
-std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcGenID(unsigned int index) {
-  if (index < m_procGenList.size()) {
-    return m_procGenList[index].second;
-  }
-  return "unknown";
+unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcGenID(std::pair<std::string, std::string> procGen) {
+  // get the iterator
+  return std::find(m_procGenList.begin(), m_procGenList.end(), procGen) - m_procGenList.begin();
 }
 std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcGenID(unsigned int index) {
   if (index < m_procGenList.size()) {
     return m_procGenList[index].first;
+  }
+  return "";
+}
+std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcGenID(unsigned int index) {
+  if (index < m_procGenList.size()) {
+    return m_procGenList[index].second;
   }
   return "unknown";
 }
