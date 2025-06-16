@@ -42,8 +42,7 @@ public:
   std::string getGenFromProcGenID(unsigned int);
   std::string getProcFromProcGenID(unsigned int);
 
-  void writeTree();
-  void writeHistos();
+  void writeXsectionGraphs();
   void writeCrossSectionFigures();
   void writeAnalysisHistosFigures();
 

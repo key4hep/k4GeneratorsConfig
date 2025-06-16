@@ -226,9 +226,9 @@ std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcG
 void k4GeneratorsConfig::eventGenerationCollections2Root::Finalize() {
   // go to the top root directory
   m_file->cd();
-  // the total cross section tree and comparison histos
-  writeHistos();
-  writeTree();
+  // the total cross section tree and comparison graphs
+  writeXsectionGraphs();
+  m_tree->Write();
   // write cross section images
   writeCrossSectionFigures();
   // deal with the analysisHistos distributions
@@ -236,7 +236,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Finalize() {
   // close the file
   m_file->Close();
 }
-void k4GeneratorsConfig::eventGenerationCollections2Root::writeHistos() {
+void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() {
 
   std::stringstream name, desc;
   for (auto procGen : m_procGenList) {
@@ -576,7 +576,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
     }
   }
 }
-void k4GeneratorsConfig::eventGenerationCollections2Root::writeTree() { m_tree->Write(); }
 double k4GeneratorsConfig::eventGenerationCollections2Root::prepSqrts(double sqrts, double unit) {
   return int((sqrts * unit) + 0.5) / unit;
 }
