@@ -1,5 +1,4 @@
 Generators:
-  - Whizard
   - Madgraph
 
 OutputFormat: hepmc3
