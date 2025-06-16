@@ -44,7 +44,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(xsection& xsec
   m_crossSection = xsec.Xsection();
   m_crossSectionError = xsec.XsectionError();
   // derive the indices for simpler nagivation 
-  decodeProcGen();
+  mapProcGenSqrts();
   // write to the tree
   m_tree->Fill();
 }
@@ -53,7 +53,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
   m_process = anaHistos.Process();
   m_sqrts = prepSqrts(anaHistos.SQRTS(), m_EnergyUnitCnv);
   // for safety decode the the process code and the generator
-  decodeProcGen();
+  mapProcGenSqrts();
   // if it's the first occurrence of a set, need to resize the canvas vector:
   if (m_cnvAnalysisHistos.size() != m_procSqrtsList.size()) {
     m_cnvAnalysisHistos.resize(m_procSqrtsList.size());
@@ -124,7 +124,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
     }
   }
 }
-void k4GeneratorsConfig::eventGenerationCollections2Root::decodeProcGen() {
+void k4GeneratorsConfig::eventGenerationCollections2Root::mapProcGenSqrts() {
 
   // remove - from the names
   if (m_generator.find("-") != std::string::npos) {
@@ -589,6 +589,7 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::s
   }
   double chi2 = 0.;
   unsigned int nbOfPoints = 0;
+  // loop over all bins inclusing underflow and overflow
   for (int i = 0; i < histo->GetNbinsX() + 2; i++) {
     if (histo->GetBinError(i) != 0. || refHisto->GetBinError(i) != 0.) {
       double deltaChi2 = histo->GetBinContent(i) - refHisto->GetBinContent(i);

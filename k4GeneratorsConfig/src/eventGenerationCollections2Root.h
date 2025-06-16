@@ -31,7 +31,7 @@ public:
   double prepSqrts(double, double);
   double calculateChi2(std::string, TH1D*, TH1D*);
 
-  void decodeProcGen();
+  void mapProcGenSqrts();
   unsigned int ProcSqrtsID(std::string, double);
   unsigned int ProcSqrtsID(std::pair<std::string, double>);
   double getSqrtsFromProcSqrtsID(unsigned int);
