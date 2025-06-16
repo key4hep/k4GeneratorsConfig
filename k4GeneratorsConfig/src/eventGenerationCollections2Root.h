@@ -34,13 +34,20 @@ public:
   void mapProcGenSqrts();
   unsigned int ProcSqrtsID(std::string, double);
   unsigned int ProcSqrtsID(std::pair<std::string, double>);
-  double getSqrtsFromProcSqrtsID(unsigned int);
   std::string getProcFromProcSqrtsID(unsigned int);
+  double getSqrtsFromProcSqrtsID(unsigned int);
 
   unsigned int ProcGenID(std::string, std::string);
   unsigned int ProcGenID(std::pair<std::string, std::string>);
-  std::string getGenFromProcGenID(unsigned int);
   std::string getProcFromProcGenID(unsigned int);
+  std::string getGenFromProcGenID(unsigned int);
+
+  unsigned int ProcSqrtsGenID(std::string, double, std::string);
+  unsigned int ProcSqrtsGenID(std::pair<std::string, double>, std::string);
+  unsigned int ProcSqrtsGenID(std::pair<std::pair<std::string, double>, std::string>);
+  std::string getProcFromProcSqrtsGenID(unsigned int);
+  double getSqrtsFromProcSqrtsGenID(unsigned int);
+  std::string getGenFromProcSqrtsGenID(unsigned int);
 
   void writeXsectionGraphs();
   void writeCrossSectionFigures();
@@ -84,6 +91,7 @@ private:
   std::vector<std::string> m_generatorsList;
   std::vector<std::string> m_processesList;
   std::vector<std::pair<std::string, double>> m_procSqrtsList;
+  std::vector<std::pair<std::pair<std::string, double>, std::string>> m_procSqrtsGenList;
   std::vector<std::pair<std::string, std::string>> m_procGenList;
   std::vector<double> m_sqrtsList;
 };
