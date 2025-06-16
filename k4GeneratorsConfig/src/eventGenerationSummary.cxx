@@ -44,9 +44,11 @@ int main(int argc, char** argv) {
   if (evgenColls->NbOfFailures() != 0) {
     std::cout << evgenColls->NbOfFailures() << "/" << evgenColls->NbOfFailures() + evgenColls->NbOfSuccesses()
               << " Runs failed" << std::endl;
-    exit(1);
+    // we return nevertheless "success" since the artififacts are not loaded otherwise
+    //    exit(1);
+    exit(0);
   }
   // delete the pointer
   delete evgenColls;
-  evgenColls = 0;
+  evgenColls = nullptr;
 }

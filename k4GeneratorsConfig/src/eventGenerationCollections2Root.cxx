@@ -43,7 +43,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(xsection& xsec
   m_sqrts = prepSqrts(xsec.SQRTS(), m_EnergyUnitCnv);
   m_crossSection = xsec.Xsection();
   m_crossSectionError = xsec.XsectionError();
-  // derive the indices for simpler nagivation 
+  // derive the indices for simpler nagivation
   mapProcGenSqrts();
   // write to the tree
   m_tree->Fill();
@@ -322,26 +322,27 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
         for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
           // new index for the deltagraphs
           unsigned int indexProcGen = ProcGenID(m_processesList[iproc], m_generatorsList[igen]);
-	  if (indexProcGen < m_procGenList.size()) {
-	    double relDelta = 0.;
-	    // we need to play it safe: we do not know the order of the points, so we loop to determine
-	    int isqrtsPoint = -1;
-	    for (int iPoint = 0; iPoint < m_xsectionGraphs[indexProcGen]->GetN(); iPoint++) {
-	      double sqrts = m_xsectionGraphs[indexProcGen]->GetPointX(iPoint);
-	      if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
-		isqrtsPoint = iPoint;
-	      }
-	    }
-	    // we need to get the data from the generator graph, make sure the data is there
-	    if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexProcGen]->GetN()) {
-	      relDelta = (m_xsectionGraphs[indexProcGen]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
-		xsectionMean4Process[indexProcSqrts];
-	      m_xsectionDeltaGraphs[indexProcGen]->AddPoint(m_sqrtsList[isqrts], relDelta);
-	      // set the error on the delta to 0
-	      lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
-	      m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, 1.e-6);
-	    }
-	  }
+          if (indexProcGen < m_procGenList.size()) {
+            double relDelta = 0.;
+            // we need to play it safe: we do not know the order of the points, so we loop to determine
+            int isqrtsPoint = -1;
+            for (int iPoint = 0; iPoint < m_xsectionGraphs[indexProcGen]->GetN(); iPoint++) {
+              double sqrts = m_xsectionGraphs[indexProcGen]->GetPointX(iPoint);
+              if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
+                isqrtsPoint = iPoint;
+              }
+            }
+            // we need to get the data from the generator graph, make sure the data is there
+            if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexProcGen]->GetN()) {
+              relDelta =
+                  (m_xsectionGraphs[indexProcGen]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
+                  xsectionMean4Process[indexProcSqrts];
+              m_xsectionDeltaGraphs[indexProcGen]->AddPoint(m_sqrtsList[isqrts], relDelta);
+              // set the error on the delta to 0
+              lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
+              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, 1.e-6);
+            }
+          }
         }
       }
     }
