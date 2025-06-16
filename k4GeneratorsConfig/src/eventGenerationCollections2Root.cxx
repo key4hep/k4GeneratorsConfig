@@ -164,14 +164,6 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::mapProcGenSqrts() {
     m_procSqrtsList.push_back(m_procSqrts);
   }
 
-  // Pair(Pair(proc+sqrts),generator)
-    // the triplet
-  std::pair<std::pair<std::string, double>, std::string> procSqrtsGen = std::pair<std::pair<std::string, double>, std::string>{m_procSqrts, m_generator};
-  if (std::find(m_procSqrtsGenList.begin(), m_procSqrtsGenList.end(), procSqrtsGen) == m_procSqrtsGenList.end()) {
-    m_procSqrtsGenList.push_back(procSqrtsGen);
-  }
-
-
   // pair of proc + gen
   std::pair<std::string, std::string> procGen = std::pair<std::string, std::string>{m_process, m_generator};
   // assign a code for each process
@@ -224,34 +216,6 @@ std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProc
 std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcGenID(unsigned int index) {
   if (index < m_procGenList.size()) {
     return m_procGenList[index].second;
-  }
-  return "unknown";
-}
-unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsGenID(std::string proc, double sqrts, std::string gen) {
-  return ProcSqrtsGenID({{proc, sqrts}, gen});
-}
-unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsGenID(std::pair<std::string, double> procSqrts, std::string gen) {
-  return ProcSqrtsGenID({procSqrts, gen});
-}
-unsigned int k4GeneratorsConfig::eventGenerationCollections2Root::ProcSqrtsGenID(std::pair<std::pair<std::string, double>, std::string> procSqrtsGen) {
-  // get the iterator
-  return std::find(m_procSqrtsGenList.begin(), m_procSqrtsGenList.end(), procSqrtsGen) - m_procSqrtsGenList.begin();
-}
-std::string k4GeneratorsConfig::eventGenerationCollections2Root::getProcFromProcSqrtsGenID(unsigned int index) {
- if (index < m_procSqrtsGenList.size()) {
-   return m_procSqrtsGenList[index].first.first;
-  }
-  return "unknown";
-}
-double k4GeneratorsConfig::eventGenerationCollections2Root::getSqrtsFromProcSqrtsGenID(unsigned int index) {
- if (index < m_procSqrtsGenList.size()) {
-   return m_procSqrtsGenList[index].first.second;
-  }
-  return 0.;
-}
-std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcSqrtsGenID(unsigned int index) {
- if (index < m_procSqrtsGenList.size()) {
-    return m_procSqrtsGenList[index].second;
   }
   return "unknown";
 }
@@ -357,25 +321,27 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
         m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
         for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
           // new index for the deltagraphs
-          unsigned int indexDelta = igen + iproc * m_generatorsList.size();
-          double relDelta = 0.;
-          // we need to play it safe: we do not know the order of the points, so we loop to determine
-          int isqrtsPoint = -1;
-          for (int iPoint = 0; iPoint < m_xsectionGraphs[indexDelta]->GetN(); iPoint++) {
-            double sqrts = m_xsectionGraphs[indexDelta]->GetPointX(iPoint);
-            if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
-              isqrtsPoint = iPoint;
-            }
-          }
-          // we need to get the data from the generator graph, make sure the data is there
-          if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexDelta]->GetN()) {
-            relDelta = (m_xsectionGraphs[indexDelta]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
-                       xsectionMean4Process[indexProcSqrts];
-            m_xsectionDeltaGraphs[indexDelta]->AddPoint(m_sqrtsList[isqrts], relDelta);
-            // set the error on the delta to 0
-            lastPoint = m_xsectionDeltaGraphs[indexDelta]->GetN() - 1;
-            m_xsectionDeltaGraphs[indexDelta]->SetPointError(lastPoint, 1.e-6);
-          }
+          unsigned int indexProcGen = ProcGenID(m_processesList[iproc], m_generatorsList[igen]);
+	  if (indexProcGen < m_procGenList.size()) {
+	    double relDelta = 0.;
+	    // we need to play it safe: we do not know the order of the points, so we loop to determine
+	    int isqrtsPoint = -1;
+	    for (int iPoint = 0; iPoint < m_xsectionGraphs[indexProcGen]->GetN(); iPoint++) {
+	      double sqrts = m_xsectionGraphs[indexProcGen]->GetPointX(iPoint);
+	      if (abs(sqrts - m_sqrtsList[isqrts]) / sqrts < m_sqrtsPrecision) {
+		isqrtsPoint = iPoint;
+	      }
+	    }
+	    // we need to get the data from the generator graph, make sure the data is there
+	    if (isqrtsPoint > -1 && isqrtsPoint < m_xsectionGraphs[indexProcGen]->GetN()) {
+	      relDelta = (m_xsectionGraphs[indexProcGen]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
+		xsectionMean4Process[indexProcSqrts];
+	      m_xsectionDeltaGraphs[indexProcGen]->AddPoint(m_sqrtsList[isqrts], relDelta);
+	      // set the error on the delta to 0
+	      lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
+	      m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, 1.e-6);
+	    }
+	  }
         }
       }
     }
