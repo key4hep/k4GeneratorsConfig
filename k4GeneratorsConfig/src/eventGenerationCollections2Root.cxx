@@ -37,11 +37,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
 k4GeneratorsConfig::eventGenerationCollections2Root::~eventGenerationCollections2Root() {}
 void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(xsection& xsec) {
 
+  // fill the TREE structure with the predictions and meta data
   m_generator = xsec.Generator();
   m_process = xsec.Process();
   m_sqrts = prepSqrts(xsec.SQRTS(), m_EnergyUnitCnv);
+  m_crossSection = xsec.Xsection();
+  m_crossSectionError = xsec.XsectionError();
+  // derive the indices for simpler nagivation 
   decodeProcGen();
-  add2Tree(xsec);
+  // write to the tree
+  m_tree->Fill();
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos& anaHistos) {
   m_generator = anaHistos.Generator();
@@ -217,16 +222,6 @@ std::string k4GeneratorsConfig::eventGenerationCollections2Root::getGenFromProcG
     return m_procGenList[index].second;
   }
   return "unknown";
-}
-void k4GeneratorsConfig::eventGenerationCollections2Root::add2Tree(xsection& xsec) {
-
-  // do things
-  m_crossSection = xsec.Xsection();
-  m_crossSectionError = xsec.XsectionError();
-  m_sqrts = xsec.SQRTS();
-
-  // write to the tree
-  m_tree->Fill();
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Finalize() {
   // go to the top root directory
