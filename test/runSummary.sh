@@ -22,8 +22,11 @@ done
 cat ${CWD}/GenerationSummary.dat
 
 echo Debugging WHizard on alma
-ls -l ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/
-#cat $(CWD)/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/whizard.log
+ls -l ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/ >> ${CWD}/GenerationSummary.dat
+if [ -f "${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/whizard.log"] ; then
+    cat ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/whizard.log >> ${CWD}/GenerationSummary.dat
+fi
+
 
 #cleanup at the end
 #rm - r ${CWD } / ci - setups
