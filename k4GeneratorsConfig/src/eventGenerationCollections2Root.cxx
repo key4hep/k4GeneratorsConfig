@@ -314,16 +314,18 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
         xsectionRMS4Process[indexProcSqrts] =
             sqrt(xsectionRMS4Process[indexProcSqrts] -
                  xsectionMean4Process[indexProcSqrts] * xsectionMean4Process[indexProcSqrts]);
-        // now we can fill the entries of the graphs
+        // calculate sigma and error on the estimation of sigma (simplified formula)
         double relRMS = xsectionRMS4Process[indexProcSqrts] / xsectionMean4Process[indexProcSqrts];
+        double relRMSError = relRMS / sqrt(2.*xsectionMean4Process[indexProcSqrts]);
         m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
         unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
-        m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, 1.e-6);
+        m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, relRMSError);
         for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
           // new index for the deltagraphs
           unsigned int indexProcGen = ProcGenID(m_processesList[iproc], m_generatorsList[igen]);
           if (indexProcGen < m_procGenList.size()) {
             double relDelta = 0.;
+            double relDeltaError = 0.;
             // we need to play it safe: we do not know the order of the points, so we loop to determine
             int isqrtsPoint = -1;
             for (int iPoint = 0; iPoint < m_xsectionGraphs[indexProcGen]->GetN(); iPoint++) {
@@ -337,10 +339,12 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
               relDelta =
                   (m_xsectionGraphs[indexProcGen]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
                   xsectionMean4Process[indexProcSqrts];
+              relDeltaError = m_xsectionGraphs[indexProcGen]->GetErrorY(isqrtsPoint) /
+                  xsectionMean4Process[indexProcSqrts];
               m_xsectionDeltaGraphs[indexProcGen]->AddPoint(m_sqrtsList[isqrts], relDelta);
               // set the error on the delta to 0
               lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
-              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, 1.e-6);
+              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, relDeltaError);
             }
           }
         }
