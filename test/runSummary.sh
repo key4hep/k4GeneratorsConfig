@@ -15,7 +15,7 @@ $K4GENERATORSCONFIG/eventGenerationSummary -f ${CWD}/GenerationSummary.dat
 
 cp *.png ${CWD}/.
 
-cat ${CWD}/xsectionSummary.dat
+cat ${CWD}/eventGenerationSummary.dat
 
 # cleanup at the end
 #rm -r ${CWD}/ci-setups
