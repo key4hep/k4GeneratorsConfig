@@ -22,7 +22,7 @@ done
 cat ${CWD}/GenerationSummary.dat
 
 echo Debugging WHizard on alma
-ls -l $(CWD)/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/
+ls -l ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/
 #cat $(CWD)/ci-setups/test-FermionProduction/Run-Cards/Whizard/Muon350/whizard.log
 
 #cleanup at the end
