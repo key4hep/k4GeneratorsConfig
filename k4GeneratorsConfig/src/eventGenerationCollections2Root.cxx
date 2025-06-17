@@ -22,7 +22,9 @@ k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2
   Init();
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
-  TGaxis::SetMaxDigits(6);
+  // some gimmicks to avoid that the axis common exponent is hidden for the bottom figure:
+  TGaxis::SetMaxDigits(5);
+  TGaxis::SetExponentOffset(-0.08, -0.12, "y");
 
   m_tree = new TTree("CrossSections", "cross sections");
   m_tree->Branch("process", &m_process);
@@ -430,6 +432,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgRMS->GetYaxis()->SetTitle("RMS/<#sigma>");
     mgRMS->GetYaxis()->SetTitleSize(0.12);
     mgRMS->GetYaxis()->SetTitleOffset(0.4);
+    mgRMS->GetYaxis()->CenterTitle();
     mgRMS->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
@@ -468,6 +471,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgDelta->GetYaxis()->SetTitle("#Delta#sigma/<#sigma>");
     mgDelta->GetYaxis()->SetTitleSize(0.12);
     mgDelta->GetYaxis()->SetTitleOffset(0.4);
+    mgDelta->GetYaxis()->CenterTitle();
     mgDelta->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
@@ -567,6 +571,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           theDelta->GetYaxis()->SetTitle("#Delta/<N>");
           theDelta->GetYaxis()->SetTitleSize(0.12);
           theDelta->GetYaxis()->SetTitleOffset(0.4);
+          theDelta->GetYaxis()->CenterTitle();
           theDelta->GetYaxis()->SetLabelSize(0.1);
         }
       }

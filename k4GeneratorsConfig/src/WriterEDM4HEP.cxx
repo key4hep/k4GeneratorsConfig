@@ -35,7 +35,7 @@ namespace HepMC3 {
 WriterEDM4HEP::WriterEDM4HEP(const std::string& filename, std::shared_ptr<GenRunInfo> run)
     : m_file(filename), m_stream(&m_file), m_particle_counter(0), m_edm4hepWriterClosed(false),
       m_edm4hepWriter(filename) {
-  HEPMC3_WARNING("WriterEDM4HEP::WriterEDM4HEP: the conversion to EDM4HEP is still being developed")
+  //  HEPMC3_WARNING("WriterEDM4HEP::WriterEDM4HEP: the conversion to EDM4HEP is still being developed")
   set_run_info(run);
   if (!run_info())
     set_run_info(std::make_shared<GenRunInfo>());
