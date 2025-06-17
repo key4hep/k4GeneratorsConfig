@@ -318,7 +318,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
                  xsectionMean4Process[indexProcSqrts] * xsectionMean4Process[indexProcSqrts]);
         // calculate sigma and error on the estimation of sigma (simplified formula)
         double relRMS = xsectionRMS4Process[indexProcSqrts] / xsectionMean4Process[indexProcSqrts];
-        double relRMSError = relRMS / sqrt(2.*xsectionMean4Process[indexProcSqrts]);
+        double relRMSError = relRMS / sqrt(2. * xsectionMean4Process[indexProcSqrts]);
         m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
         unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
         m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, relRMSError);
@@ -341,12 +341,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
               relDelta =
                   (m_xsectionGraphs[indexProcGen]->GetPointY(isqrtsPoint) - xsectionMean4Process[indexProcSqrts]) /
                   xsectionMean4Process[indexProcSqrts];
-              relDeltaError = m_xsectionGraphs[indexProcGen]->GetErrorY(isqrtsPoint) /
-                  xsectionMean4Process[indexProcSqrts];
+              relDeltaError =
+                  m_xsectionGraphs[indexProcGen]->GetErrorY(isqrtsPoint) / xsectionMean4Process[indexProcSqrts];
               m_xsectionDeltaGraphs[indexProcGen]->AddPoint(m_sqrtsList[isqrts], relDelta);
               // set the error on the delta to 0
               lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
-              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, relDeltaError);
+              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision,
+                                                                 relDeltaError);
             }
           }
         }
