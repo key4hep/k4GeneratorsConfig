@@ -287,7 +287,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
       // graphs for pecise drawing
       m_xsectionGraphs[indexProcGen]->AddPoint(m_sqrts, m_crossSection);
       unsigned int lastPoint = m_xsectionGraphs[indexProcGen]->GetN() - 1;
-      m_xsectionGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrts * 1e-4, m_crossSectionError);
+      m_xsectionGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrts * m_sqrtsPrecision, m_crossSectionError);
       // process profile, but make sure it's positive and > 1*10^-3 attobarn
       if (m_crossSection > m_xsectionMinimal) {
         // accumulate the averages and the squares:
@@ -318,7 +318,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
         double relRMS = xsectionRMS4Process[indexProcSqrts] / xsectionMean4Process[indexProcSqrts];
         m_xsectionRMSGraphs[iproc]->AddPoint(m_sqrtsList[isqrts], relRMS);
         unsigned int lastPoint = m_xsectionRMSGraphs[iproc]->GetN() - 1;
-        m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, 1.e-6);
+        m_xsectionRMSGraphs[iproc]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, 1.e-6);
         for (unsigned int igen = 0; igen < m_generatorsList.size(); igen++) {
           // new index for the deltagraphs
           unsigned int indexProcGen = ProcGenID(m_processesList[iproc], m_generatorsList[igen]);
@@ -340,7 +340,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
               m_xsectionDeltaGraphs[indexProcGen]->AddPoint(m_sqrtsList[isqrts], relDelta);
               // set the error on the delta to 0
               lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
-              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, 1.e-6);
+              m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision, 1.e-6);
             }
           }
         }
