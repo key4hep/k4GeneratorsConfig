@@ -13,9 +13,12 @@ cd ci-setups
 echo Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions
 $K4GENERATORSCONFIG/eventGenerationSummary -f ${CWD}/GenerationSummary.dat
 
-cp *.png ${CWD}/output/.
-cp *.pdf ${CWD}/output/.
-cp *.root ${CWD}/output/.
+for file in *.png *.pdf *.root;
+do
+    if [ -f "$file" ]; then
+	cp $file ${CWD}/output/.
+    fi 
+done
 
 cat ${CWD}/GenerationSummary.dat
 
