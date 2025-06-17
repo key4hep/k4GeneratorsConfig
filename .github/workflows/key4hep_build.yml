@@ -31,7 +31,7 @@ jobs:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
           test/GenerationSummary.dat
-	  test/*.root
           test/*.png
           test/*.pdf
+          test/*.root
           test/output/*
