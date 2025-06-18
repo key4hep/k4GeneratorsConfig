@@ -17,4 +17,9 @@ echo ldd of .libs/default_lib.so.0  >> whizardDEBUG.log
 ldd .libs/default_lib.so.0  >> whizardDEBUG.log
 echo ldd of .libs/default_lib.so.0.0.0  >> whizardDEBUG.log
 ldd .libs/default_lib.so.0.0.0  >> whizardDEBUG.log
+echo ldd of .libs/default_lib.so.0.0.0  >> whizardDEBUG.log
+echo cat default_lib.la >> whizardDEBUG.log
+cat default_lib.la >> whizardDEBUG.log
+echo cat default_lib.lo >> whizardDEBUG.log
+cat default_lib.lo >> whizardDEBUG.log
 
