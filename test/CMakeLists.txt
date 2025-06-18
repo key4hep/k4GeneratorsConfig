@@ -17,15 +17,8 @@ foreach(generator ${generatorList})
   message(${generator} " appended to the runlist ")
 endforeach()
 
-add_test(NAME libtoolDebug COMMAND which libtool )
-set_tests_properties("libtoolDebug"
-  PROPERTIES
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  ENVIRONMENT ${TEST_ENVIRONMENT}
-)
-
-# add the first test: setting up and comapring the yaml files
-add_test(NAME WhizardDebug COMMAND whizard ref-results/Whizard/Muon350/Muon350_ISR.sin )
+# add the whizard debug
+add_test(NAME WhizardDebug COMMAND runWhizard.sh )
 set_tests_properties("WhizardDebug"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
