@@ -41,12 +41,8 @@ ldd libomega.so  >> ${CWD}/GenerationSummary.dat
 echo "ldd libomega.so.0"  >> ${CWD}/GenerationSummary.dat
 ldd libomega.so.0  >> ${CWD}/GenerationSummary.dat
 
-echo " "   >> ${CWD}/GenerationSummary.dat
-echo LD_LIBRARY_PATH is  >> ${CWD}/GenerationSummary.dat
-echo $LD_LIBRARY_PATH   >> ${CWD}/GenerationSummary.dat
-
 echo Library check ls:
-ls ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/.libs >> ${CWD}/GenerationSummary.dat
+#ls ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/.libs >> ${CWD}/GenerationSummary.dat
 
 #echo Library check ls:
 #ldd ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/.libs/default_lib.so.0.0.0 >> ${CWD}/GenerationSummary.dat
