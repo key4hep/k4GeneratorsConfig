@@ -14,7 +14,7 @@ echo Extracting the cross sections by reading EDM4HEP files and superposing the 
 $K4GENERATORSCONFIG/eventGenerationSummary -f ${CWD}/GenerationSummary.dat
 
 for file in *.png *.pdf *.root; do
-    if [ -f "$file"] ; then
+    if [ -f "$file"]; then
 	cp $file ${CWD}/output/
     fi
 done
@@ -48,8 +48,8 @@ echo $LD_LIBRARY_PATH   >> ${CWD}/GenerationSummary.dat
 echo Library check ls:
 ls ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/.libs >> ${CWD}/GenerationSummary.dat
 
-echo Library check ls:
-ldd ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/.libs/default_lib.so.0.0.0 >> ${CWD}/GenerationSummary.dat
+#echo Library check ls:
+#ldd ${CWD}/ci-setups/test-FermionProduction/Run-Cards/Whizard/.libs/default_lib.so.0.0.0 >> ${CWD}/GenerationSummary.dat
 #cleanup at the end
 #rm - r ${CWD } / ci - setups
 
