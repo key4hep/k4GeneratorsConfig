@@ -41,6 +41,10 @@ ldd libomega.so  >> ${CWD}/GenerationSummary.dat
 echo "ldd libomega.so.0"  >> ${CWD}/GenerationSummary.dat
 ldd libomega.so.0  >> ${CWD}/GenerationSummary.dat
 
+echo " "   >> ${CWD}/GenerationSummary.dat
+echo LD_LIBRARY_PATH is  >> ${CWD}/GenerationSummary.dat
+echo $LD_LIBRARY_PATH   >> ${CWD}/GenerationSummary.dat
+
 #cleanup at the end
 #rm - r ${CWD } / ci - setups
 
