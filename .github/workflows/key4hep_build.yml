@@ -32,6 +32,7 @@ jobs:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
           test/whizard.log
+	  test/whizardDEBUG.log
           test/GenerationSummary.dat
           test/*.png
           test/*.pdf
