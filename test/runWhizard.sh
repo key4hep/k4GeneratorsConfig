@@ -10,7 +10,7 @@ whizard ref-results/Whizard/Muon350/Muon350_ISR.sin
 echo LIBTOOL in makefile is: >> whizardDEBUG.log
 grep libtool default_lib.makefile >> whizardDEBUG.log
 echo LOOKING INTO .libs >> whizardDEBUG.log
-ls .libs/* >> whizardDEBUG.log
+ls -l .libs/* >> whizardDEBUG.log
 echo ldd of .libs/default_lib.so  >> whizardDEBUG.log
 ldd .libs/default_lib.so  >> whizardDEBUG.log
 echo ldd of .libs/default_lib.so.0  >> whizardDEBUG.log
