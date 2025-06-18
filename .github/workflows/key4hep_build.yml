@@ -33,7 +33,7 @@ jobs:
         path: |
           test/whizard.log
           test/GenerationSummary.dat
-	  test/whizardDEBUG.log
+          test/whizardDEBUG.log
           test/*.png
           test/*.pdf
           test/*.root
