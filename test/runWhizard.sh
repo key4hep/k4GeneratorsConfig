@@ -24,3 +24,5 @@ echo cat default_lib.lo >> whizardDEBUG.log
 cat default_lib.lo >> whizardDEBUG.log
 echo ls -l /cvmfs/sw-nightlies.hsf.org/key4hep/releases/2025-06-07/x86_64-almalinux9-gcc14.2.0-opt/whizard/3.1.5-3v5fcx/lib >> whizardDEBUG.log
 ls -l /cvmfs/sw-nightlies.hsf.org/key4hep/releases/2025-06-07/x86_64-almalinux9-gcc14.2.0-opt/whizard/3.1.5-3v5fcx/lib >> whizardDEBUG.log
+echo readelf -d .libs/default_lib.so  >> whizardDEBUG.log
+readelf -d .libs/default_lib.so  >> whizardDEBUG.log
