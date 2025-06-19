@@ -26,3 +26,6 @@ echo ls -l /cvmfs/sw-nightlies.hsf.org/key4hep/releases/2025-06-07/x86_64-almali
 ls -l /cvmfs/sw-nightlies.hsf.org/key4hep/releases/2025-06-07/x86_64-almalinux9-gcc14.2.0-opt/whizard/3.1.5-3v5fcx/lib >> whizardDEBUG.log
 echo readelf -d .libs/default_lib.so  >> whizardDEBUG.log
 readelf -d .libs/default_lib.so  >> whizardDEBUG.log
+echo LD_LIBRARY_PATH  >> whizardDEBUG.log
+echo $LD_LIBRARY_PATH  >> whizardDEBUG.log
+
