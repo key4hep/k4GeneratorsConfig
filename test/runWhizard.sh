@@ -1,3 +1,6 @@
+export WHIZARDLIB=`whizard-config --libdir`/../
+echo EXTENDING LD_LIBRARY_PATH with $WHIZARDLIB >> whizardDEBUG.log
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$WHIZARDLIB
 export MYWHIZARD=`which whizard`
 echo whizard is: $MYWHIZARD >> whizardDEBUG.log
 echo ldd whizard >> whizardDEBUG.log
