@@ -8,7 +8,7 @@ class Pythia(GeneratorBase):
 
         self.version = "x.y.z"
 
-        self.executable = "$K4GenBuildDir/bin/pythiaRunner -f"
+        self.executable = self.binDir+"pythiaRunner -f"
 
         self.setOptionalFileNameAndExtension(self.GeneratorDatacardBase,"selectors")
         if settings.get_block("selectors"):

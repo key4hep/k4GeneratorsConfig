@@ -6,7 +6,7 @@ if [ -z "${K4GeneratorsConfigBinDir}" ]; then
    K4GeneratorsConfigBinDir = ""
 fi
 
-$K4GenBuildDir/bin/pythiaRunner -f Muon91.2.dat
+${K4GeneratorsConfigBinDir}pythiaRunner -f Muon91.2.dat
 ${K4GeneratorsConfigBinDir}convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc3 Muon91.2.edm4hep
 
 ${K4GeneratorsConfigBinDir}key4HEPAnalysis -i Muon91.2.edm4hep -o Muon91.2.root -p 13,-13

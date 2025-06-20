@@ -6,7 +6,7 @@ if [ -z "${K4GeneratorsConfigBinDir}" ]; then
    K4GeneratorsConfigBinDir = ""
 fi
 
-$K4GenBuildDir/bin/pythiaRunner -f Top350_ISR.dat
+${K4GeneratorsConfigBinDir}pythiaRunner -f Top350_ISR.dat
 ${K4GeneratorsConfigBinDir}convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Top350_ISR.hepmc3 Top350_ISR.edm4hep
 
 ${K4GeneratorsConfigBinDir}key4HEPAnalysis -i Top350_ISR.edm4hep -o Top350_ISR.root -p 6,-6
