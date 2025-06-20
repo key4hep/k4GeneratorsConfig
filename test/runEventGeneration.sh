@@ -3,7 +3,7 @@
 set -e
 
 shopt -s expand_aliases
-#source ../setup.sh
+source ../setup.sh
 
 # decode command line options
 
