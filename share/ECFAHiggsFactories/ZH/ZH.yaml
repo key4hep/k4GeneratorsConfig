@@ -27,3 +27,5 @@ ParticleData:
   24:
     mass: 80.419
 
+Analysis:
+  Tools: [key4hep]

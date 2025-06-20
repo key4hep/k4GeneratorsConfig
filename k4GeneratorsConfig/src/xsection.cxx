@@ -131,14 +131,14 @@ std::string k4GeneratorsConfig::xsection::Generator() { return m_generator; }
 std::string k4GeneratorsConfig::xsection::Process() { return m_process; }
 std::string k4GeneratorsConfig::xsection::File() { return m_file; }
 bool k4GeneratorsConfig::xsection::isValid() { return m_isValid; }
-void k4GeneratorsConfig::xsection::Print() {
-  std::cout << std::endl;
-  std::cout << "xsection object summary:" << std::endl;
-  std::cout << "File          : " << m_file << std::endl;
-  std::cout << "Process       : " << m_process << std::endl;
-  std::cout << "SQRTS         : " << m_sqrts << std::endl;
-  std::cout << "Generator     : " << m_generator << std::endl;
-  std::cout << "xsection valid: " << m_isValid << std::endl;
-  std::cout << "xsection      : " << m_xsection << " +- " << m_xsectionError << " pb" << std::endl;
-  std::cout << std::endl;
+void k4GeneratorsConfig::xsection::Print(std::ostream& output) {
+  output << std::endl;
+  output << "xsection object summary:" << std::endl;
+  output << "File          : " << m_file << std::endl;
+  output << "Process       : " << m_process << std::endl;
+  output << "SQRTS         : " << m_sqrts << std::endl;
+  output << "Generator     : " << m_generator << std::endl;
+  output << "xsection valid: " << m_isValid << std::endl;
+  output << "xsection      : " << m_xsection << " +- " << m_xsectionError << " pb" << std::endl;
+  output << std::endl;
 }

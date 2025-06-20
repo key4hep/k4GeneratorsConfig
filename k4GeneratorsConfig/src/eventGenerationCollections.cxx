@@ -1,43 +1,43 @@
-#include "xsectionCollection.h"
-#include "xsection2Root.h"
+#include "eventGenerationCollections.h"
+#include "eventGenerationCollections2Root.h"
 #include <algorithm>
 #include <filesystem>
 #include <iostream>
 #include <sys/stat.h>
 
-k4GeneratorsConfig::xsectionCollection::xsectionCollection() : m_validCounter(0), m_invalidCounter(0) {}
-k4GeneratorsConfig::xsectionCollection::xsectionCollection(const xsectionCollection& theOriginal) {
+k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections() : m_validCounter(0), m_invalidCounter(0) {}
+k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections(
+    const eventGenerationCollections& theOriginal) {
   if (this != &theOriginal) {
     m_xsectionCollection = theOriginal.m_xsectionCollection;
-    m_differentialCollection = theOriginal.m_differentialCollection;
+    m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
     m_validCounter = theOriginal.m_validCounter;
     m_invalidCounter = theOriginal.m_invalidCounter;
+    m_log = theOriginal.m_log;
   }
 }
-k4GeneratorsConfig::xsectionCollection&
-k4GeneratorsConfig::xsectionCollection::operator=(const xsectionCollection& theOriginal) {
+k4GeneratorsConfig::eventGenerationCollections&
+k4GeneratorsConfig::eventGenerationCollections::operator=(const eventGenerationCollections& theOriginal) {
   if (this != &theOriginal) {
     m_xsectionCollection = theOriginal.m_xsectionCollection;
-    m_differentialCollection = theOriginal.m_differentialCollection;
+    m_analysisHistosCollection = theOriginal.m_analysisHistosCollection;
     m_validCounter = theOriginal.m_validCounter;
     m_invalidCounter = theOriginal.m_invalidCounter;
+    m_log = theOriginal.m_log;
   }
 
   return *this;
 }
-k4GeneratorsConfig::xsectionCollection::~xsectionCollection() {}
-void k4GeneratorsConfig::xsectionCollection::Execute() {
+k4GeneratorsConfig::eventGenerationCollections::~eventGenerationCollections() {}
+void k4GeneratorsConfig::eventGenerationCollections::Execute() {
 
   // first make the collection
   makeCollections();
 
   // second order the collection according to the process
   orderCollections();
-
-  // third print the final results
-  Print();
 }
-void k4GeneratorsConfig::xsectionCollection::makeCollections() {
+void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
 
   for (const auto& yamls : std::filesystem::directory_iterator(".")) {
     std::filesystem::path yamlsPath = yamls.path();
@@ -55,57 +55,64 @@ void k4GeneratorsConfig::xsectionCollection::makeCollections() {
         if (!std::filesystem::is_directory(processPath))
           continue;
 
+        k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
         for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
           std::filesystem::path filenamePath = files.path();
           if (!std::filesystem::is_regular_file(filenamePath))
             continue;
           // take care of the total cross section extracted from the EDM4HEP file
           if (filenamePath.extension() == ".edm4hep") {
-            std::cout << "xsectionCollection:: processing " << processPath.filename().string() << std::endl;
-            k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
+            std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
+                      << " File:" << filenamePath.filename().string() << std::endl;
             xsec->setProcess(processPath.filename().string());
             xsec->setFile(filenamePath.string());
-            // in some cases the generator name is not available, then derive from the filename
-            if (xsec->Generator().empty())
-              xsec->setGenerator(generatorsPath.filename().string());
+            // in some cases the generator name is not available, therefore derive from the filename
+            xsec->setGenerator(generatorsPath.filename().string());
             std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
             m_xsectionCollection.push_back(*xsec);
             if (xsec->isValid())
               m_validCounter++;
             if (!xsec->isValid())
               m_invalidCounter++;
-            delete xsec;
           }
-          // take care of the differential distributions extracted from the .root (analysis output) file
+        }
+        // we need to keep xsec alive for the analysisHistos distributions
+        for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
+          std::filesystem::path filenamePath = files.path();
+          if (!std::filesystem::is_regular_file(filenamePath))
+            continue;
+          // take care of the analysisHistos distributions extracted from the .root (analysis output) file
           if (filenamePath.extension() == ".root") {
-            std::cout << "xsectionCollection:: processing " << processPath.filename().string() << std::endl;
-            k4GeneratorsConfig::differential* diffDist = new k4GeneratorsConfig::differential();
+            std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
+                      << " File: " << filenamePath.filename().string() << std::endl;
+            k4GeneratorsConfig::analysisHistos* diffDist = new k4GeneratorsConfig::analysisHistos();
             diffDist->setProcess(processPath.filename().string());
             diffDist->setFile(filenamePath.string());
-            // in some cases the generator name is not available, then derive from the filename
-            if (diffDist->Generator().empty())
-              diffDist->setGenerator(generatorsPath.filename().string());
-            std::cout << "Generator " << diffDist->Generator() << " has been processed for differential distributions"
+            diffDist->setSQRTS(xsec->SQRTS());
+            // in some cases the generator name is not available, therefore derive from the filename
+            diffDist->setGenerator(generatorsPath.filename().string());
+            std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
                       << std::endl;
-            m_differentialCollection.push_back(*diffDist);
+            m_analysisHistosCollection.push_back(*diffDist);
             delete diffDist;
           }
         }
+        delete xsec;
       }
     }
   }
 }
-void k4GeneratorsConfig::xsectionCollection::orderCollections() {
+void k4GeneratorsConfig::eventGenerationCollections::orderCollections() {
 
   // order by content
   std::sort(m_xsectionCollection.begin(), m_xsectionCollection.end(),
             [this](xsection A, xsection B) { return this->compareLexical(A, B); });
 
   // order by content
-  std::sort(m_differentialCollection.begin(), m_differentialCollection.end(),
-            [this](differential A, differential B) { return this->compareLexical(A, B); });
+  std::sort(m_analysisHistosCollection.begin(), m_analysisHistosCollection.end(),
+            [this](analysisHistos A, analysisHistos B) { return this->compareLexical(A, B); });
 }
-bool k4GeneratorsConfig::xsectionCollection::compareLength(xsection A, xsection B) {
+bool k4GeneratorsConfig::eventGenerationCollections::compareLength(xsection A, xsection B) {
 
   // retrieve the process as ordering variable
   std::string processA = A.Process();
@@ -113,7 +120,7 @@ bool k4GeneratorsConfig::xsectionCollection::compareLength(xsection A, xsection 
 
   return processA.size() < processB.size();
 }
-bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection B) {
+bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(xsection A, xsection B) {
 
   // retrieve the process as ordering variable
   std::string processNgenA = A.Process() + A.Generator();
@@ -130,7 +137,7 @@ bool k4GeneratorsConfig::xsectionCollection::compareLexical(xsection A, xsection
 
   return false;
 }
-bool k4GeneratorsConfig::xsectionCollection::compareLexical(differential A, differential B) {
+bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(analysisHistos A, analysisHistos B) {
 
   // retrieve the process as ordering variable
   std::string processNgenA = A.Process() + A.Generator();
@@ -147,11 +154,11 @@ bool k4GeneratorsConfig::xsectionCollection::compareLexical(differential A, diff
 
   return false;
 }
-unsigned int k4GeneratorsConfig::xsectionCollection::NbOfSuccesses() { return m_validCounter; }
-unsigned int k4GeneratorsConfig::xsectionCollection::NbOfFailures() { return m_invalidCounter; }
-void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename) {
+unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() { return m_validCounter; }
+unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() { return m_invalidCounter; }
+void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string filename) {
 
-  xsection2Root out(filename);
+  eventGenerationCollections2Root out(filename);
 
   for (auto xsec : m_xsectionCollection) {
     if (xsec.isValid()) {
@@ -159,27 +166,45 @@ void k4GeneratorsConfig::xsectionCollection::Write2Root(std::string filename) {
     }
   }
   // diffhists uses the matrix calculated before for the xsectionCollection
-  for (auto diffHists : m_differentialCollection) {
+  for (auto diffHists : m_analysisHistosCollection) {
     if (diffHists.isValid()) {
       out.Execute(diffHists);
     }
   }
   out.Finalize();
+
+  // now we save the log to the log :)
+  std::vector<std::string> logRoot;
+  logRoot = out.getLog();
+  m_log.insert(m_log.end(), logRoot.begin(), logRoot.end());
 }
-void k4GeneratorsConfig::xsectionCollection::Print(bool onlyOK) {
+void k4GeneratorsConfig::eventGenerationCollections::Print(bool onlyOK, std::ostream& output) const {
 
   for (auto xsec : m_xsectionCollection) {
     if (!onlyOK) {
-      xsec.Print();
+      xsec.Print(output);
     } else {
       if (xsec.isValid()) {
-        xsec.Print();
+        xsec.Print(output);
       }
     }
   }
 }
-void k4GeneratorsConfig::xsectionCollection::PrintSummary(std::ostream& output) const {
+void k4GeneratorsConfig::eventGenerationCollections::PrintRootLog(std::ostream& output) const {
 
+  for (auto line : m_log) {
+    output << line << std::endl;
+  }
+}
+void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& output) const {
+
+  // print the root messages (chi2)
+  PrintRootLog(output);
+
+  // print all details for each run
+  Print(false, output);
+
+  // and now the summary
   std::string previousProcess = "XXXX";
   for (auto xsec : m_xsectionCollection) {
     // only print valid cross sections

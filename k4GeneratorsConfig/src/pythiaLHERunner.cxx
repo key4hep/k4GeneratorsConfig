@@ -87,7 +87,7 @@ int main(int argc, char** argv) {
 
   // Check for HepMC
   const bool hepmc = pythia.flag("Main:writeHepMC");
-  const std::string hepmcFilePathFromCmdFile = pythia.word("Main:HepMCFile");
+  //  const std::string hepmcFilePathFromCmdFile = pythia.word("Main:HepMCFile");
   Pythia8::Pythia8ToHepMC ToHepMC;
   if (hepmc) {
     ToHepMC.setNewFile(hepmcFilePath);
@@ -168,15 +168,15 @@ int main(int argc, char** argv) {
               << "           Main:writeHepMC = on" << std::endl;
   }
 
-  if (lheFilePathFromCmdFile != lheFilePath) {
+  if (!lheFilePathFromCmdFile.empty() && lheFilePathFromCmdFile != lheFilePath) {
     std::cout << "Provided Pythia command file already specifies input LHE "
-              << "file path \"" << lheFilePathFromCmdFile << "\"!";
+              << "file path \"" << lheFilePathFromCmdFile << "\"!" << std::endl;
   }
 
-  if (hepmcFilePathFromCmdFile != hepmcFilePath) {
-    std::cout << "Provided Pythia command file already specifies output HepMC "
-              << "file path \"" << hepmcFilePathFromCmdFile << "\"!";
-  }
+  //  if (hepmcFilePathFromCmdFile != hepmcFilePath) {
+  //    std::cout << "Provided Pythia command file already specifies output HepMC "
+  //              << "file path \"" << hepmcFilePathFromCmdFile << "\"!";
+  //  }
 
   // Done
   return 0;

@@ -54,19 +54,19 @@ install(TARGETS convertHepMC2EDM4HEP
 )
 
 set(xsection_sources
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionSummary.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationSummary.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsectionCollection.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/xsection2Root.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/differential.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationCollections.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/eventGenerationCollections2Root.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/analysisHistos.cxx
 )
 
-add_executable(xsectionSummary ${xsection_sources})
-target_link_libraries(xsectionSummary PRIVATE
+add_executable(eventGenerationSummary ${xsection_sources})
+target_link_libraries(eventGenerationSummary PRIVATE
   EDM4HEP::edm4hep podio::podioRootIO ROOT::Tree ROOT::Hist ROOT::Gpad
 )
 
-install(TARGETS xsectionSummary
+install(TARGETS eventGenerationSummary
   EXPORT k4GeneratorsConfigTargets
   DESTINATION "${CMAKE_INSTALL_BINDIR}"
 )

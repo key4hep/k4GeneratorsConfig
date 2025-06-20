@@ -1,5 +1,5 @@
 // File to read EDM4HEP output and extract the cross sections
-#include "xsectionCollection.h"
+#include "eventGenerationCollections.h"
 #include <fstream>
 #include <iostream>
 #include <unistd.h>
@@ -7,8 +7,8 @@
 //
 int main(int argc, char** argv) {
 
-  std::string filename = "XsectionSummary.dat";
-  std::string fileRoot = "XsectionSummary.root";
+  std::string filename = "GenerationSummary.dat";
+  std::string fileRoot = "eventGenerationSummary.root";
   int c;
   while ((c = getopt(argc, argv, "hf:r:")) != -1)
     switch (c) {
@@ -29,24 +29,30 @@ int main(int argc, char** argv) {
     }
 
   // instantiate the collection as pointer
-  k4GeneratorsConfig::xsectionCollection* xsecColl = new k4GeneratorsConfig::xsectionCollection();
+  k4GeneratorsConfig::eventGenerationCollections* evgenColls = new k4GeneratorsConfig::eventGenerationCollections();
   // execute the gathering of information including detailed output
-  xsecColl->Execute();
+  evgenColls->Execute();
+  // do the root analysis
+  evgenColls->Write2Root(fileRoot);
   // print the summary on screen
-  xsecColl->PrintSummary(std::cout);
-  // save the summary in a file
+  evgenColls->PrintSummary(std::cout);
+  // save the summary in a file (call after root to fill the log
   std::ofstream outFile(filename);
   std::ostream& output = outFile;
-  xsecColl->PrintSummary(output);
-  // write to root
-  xsecColl->Write2Root(fileRoot);
+  evgenColls->PrintSummary(output);
   // if there is a failure:
-  if (xsecColl->NbOfFailures() != 0) {
-    std::cout << xsecColl->NbOfFailures() << "/" << xsecColl->NbOfFailures() + xsecColl->NbOfSuccesses()
+  bool failure = false;
+  if (evgenColls->NbOfFailures() != 0) {
+    std::cout << evgenColls->NbOfFailures() << "/" << evgenColls->NbOfFailures() + evgenColls->NbOfSuccesses()
               << " Runs failed" << std::endl;
-    exit(1);
+    failure = true;
   }
   // delete the pointer
-  delete xsecColl;
-  xsecColl = 0;
+  delete evgenColls;
+  evgenColls = nullptr;
+
+  // fallure exit non zero
+  if (failure) {
+    exit(1);
+  }
 }

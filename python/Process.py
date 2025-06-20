@@ -17,12 +17,15 @@ class Process:
         "beamstrahlung",
     ]
 
-    def __init__(self, args, procname, params, **options):
-        self._init = False
-        # all particles in process list
-        self._particlesOfProcessList = []
+    def __init__(self, args, procname, params, particleData, **options):
         # list of particles filled from the input yaml file
         self._inputParticlesList = []
+        if particleData is not None:
+            for key, value in particleData.items():
+                Particle.set_info(key, value)
+                self._inputParticlesList.append(Particle.get_info(key))
+        # all particles in process list
+        self._particlesOfProcessList = []
         # label to be used in the generatorDB
         self.generatorDBLabel = ""
         self.procname = procname
@@ -39,7 +42,7 @@ class Process:
         for key, value in args.items():
             setattr(self, key, value)
 
-    def prepareProcess(self, yamlParticleData):
+    def prepareProcess(self):
         # beam particles
         self._beam1 = Particle.get_info(self.initial[0])
         self._beam2 = Particle.get_info(self.initial[1])
@@ -56,8 +59,6 @@ class Process:
             self._finalStatePDGList.append(str(p))
             self._proclabel += f"{self._finalStateParticleDict[p].name} "
             self._particlesOfProcessList.append(self._finalStateParticleDict[p])
-        # set the input particle data properties
-        self.set_particle_data(yamlParticleData)
         # generate the label for the generatorDB
         # first the initial state
         initialstate = [abs(self.initial[0]), abs(self.initial[1])]
@@ -77,14 +78,6 @@ class Process:
         # add to label
         for pdg in finalstate:
             self.generatorDBLabel += f"_{str(abs(pdg))}"
-
-    def set_particle_data(self, pdata):
-        if pdata is None or self._init:
-            return
-        for key, value in pdata.items():
-            Particle.set_info(key, value)
-            self._inputParticlesList.append(Particle.get_info(key))
-        self._init = True
 
     def get_beam_flavour(self, beam):
         if beam not in {1, 2}:

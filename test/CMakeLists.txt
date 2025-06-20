@@ -17,7 +17,7 @@ foreach(generator ${generatorList})
   message(${generator} " appended to the runlist ")
 endforeach()
 
-# add the first test: setting up and comapring the yaml files
+# add the first test: setting up the yaml files
 add_test(NAME createGeneratorDatacards COMMAND ${RUN_YAMLS} )
 set_tests_properties("createGeneratorDatacards"
   PROPERTIES
@@ -26,7 +26,7 @@ set_tests_properties("createGeneratorDatacards"
   FIXTURES_SETUP  "processYamls"
 )
 
-# add the first test: setting up and comapring the yaml files
+# add the second test: comparing the yaml files to the reference files
 function(check_generator_datacards generator)
   add_test(NAME checkGeneratorDatacards_${generator} COMMAND ${CHECK_DATACARDS} -g ${generator})
   set_tests_properties("checkGeneratorDatacards_${generator}"
@@ -59,7 +59,7 @@ foreach(generator ${generatorList})
   add_generator_run(Run ${generator} )
 endforeach()
 
-# thirs test (after all others have been run: gather the xsections
+# third test (after all others have been run: gather the xsections
 add_test(NAME xsectionRuns COMMAND ${RUN_SUMMARY} )
 set_tests_properties("xsectionRuns"
     PROPERTIES
@@ -68,4 +68,4 @@ set_tests_properties("xsectionRuns"
       DEPENDS "${RunList}"
 )
 
-#add_test(NAME Finalize COMMAND ${CMAKE_BINARY_DIR}/bin/xsectionSummary -f ${CMAKE_SOURCE_DIR}/test/xsectionSummary.dat)
+#add_test(NAME Finalize COMMAND ${CMAKE_BINARY_DIR}/bin/eventGenerationSummary -f ${CMAKE_SOURCE_DIR}/test/xsectionSummary.dat)
