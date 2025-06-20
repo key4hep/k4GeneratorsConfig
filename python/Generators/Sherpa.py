@@ -60,11 +60,11 @@ class Sherpa(GeneratorBase):
         self.prepareParameters()
 
         if self.procinfo.get("output_format") == "hepmc2":
-            eoutname = "HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
+            eoutname = f"HepMC_GenEvent[{self.GeneratorDatacardBase}.hepmc2]"
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         elif self.procinfo.get("output_format") == "hepmc3":
-            eoutname = "HepMC3_GenEvent[{0}.hepmc3]".format(self.GeneratorDatacardBase)
+            eoutname = f"HepMC3_GenEvent[{self.GeneratorDatacardBase}.hepmc3]"
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         # run settings
