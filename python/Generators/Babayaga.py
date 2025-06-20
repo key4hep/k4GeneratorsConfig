@@ -91,11 +91,11 @@ class Babayaga(GeneratorBase):
         key4hepRun += (
             "cat " + self.GeneratorDatacardName + " | " + self.executable + "\n"
         )
-        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i lhe -o {0} events.lhe {1}.{0}\n".format(
-            self.procinfo.get("output_format"), self.GeneratorDatacardBase
+        key4hepRun += "{0}convertHepMC2EDM4HEP -i lhe -o {1} events.lhe {2}.{1}\n".format(
+            self.prefixExecute, self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
-        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
-            self.procinfo.get("output_format"), self.GeneratorDatacardBase
+        key4hepRun += "{0}convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
+            self.prefixExecute, self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
 

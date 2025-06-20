@@ -94,8 +94,8 @@ class KKMC(GeneratorBase):
             self.procinfo.get("output_format"),
             self.procinfo.get("events"),
         )
-        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.{0} {1}.edm4hep\n".format(
-            self.procinfo.get("output_format"), self.GeneratorDatacardBase
+        key4hepRun += "{0}convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
+            self.prefixExecute, self.procinfo.get("output_format"), self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
 
