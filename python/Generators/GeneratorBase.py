@@ -12,6 +12,9 @@ class GeneratorBase(abc.ABC):
 
     def __init__(self, procinfo, settings, name, inputFileExtension):
 
+        # prefix for execution:
+        self.prefixExecute = f"$""{K4GeneratorsConfigBinDir""}"
+        
         # general settings of the class
         self.procinfo = procinfo
         self.settings = settings
@@ -450,19 +453,9 @@ class GeneratorBase(abc.ABC):
         key4hep_config += (
             f"    source /cvmfs/sw{nightlies}.hsf.org/key4hep/setup.sh{releaseDate}\n"
         )
-        # if KEY4HEP was not setup, we need to point the scripts to the release
-        key4hep_config += '    if [ -z "${K4GenBuildDir}" ]; then\n'
-        key4hep_config += (
-            '        export K4GenBuildDir=${K4GENERATORSCONFIG}/../../\n'
-        )
-        key4hep_config += (
-            '        echo "variable K4GenBuildDir was not defined using directory ${K4GenBuildDir} for the executables"\n'
-        )
-        key4hep_config += "    else\n"
-        key4hep_config += (
-            '        echo "k4GeneratorsConfig:: using directory ${K4GenBuildDir} for the executables"\n'
-        )
-        key4hep_config += "    fi\n"
+        key4hep_config += "fi\n"
+        key4hep_config += 'if [ -z "${K4GeneratorsConfigBinDir}" ]; then\n'
+        key4hep_config += '   K4GeneratorsConfigBinDir = ""\n'
         key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)
@@ -471,8 +464,8 @@ class GeneratorBase(abc.ABC):
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
         if self.settings.key4HEPAnalysisON():
-            analysis += "$K4GenBuildDir/bin/key4HEPAnalysis -i {0}.edm4hep -o {0}.root -p ".format(
-                self.GeneratorDatacardBase
+            analysis += "{0}key4HEPAnalysis -i {1}.edm4hep -o {1}.root -p ".format(
+                self.prefixExecute, self.GeneratorDatacardBase
             )
             for pdg in self.procinfo.get_finalstate_pdgList():
                 analysis += f"{pdg},"
