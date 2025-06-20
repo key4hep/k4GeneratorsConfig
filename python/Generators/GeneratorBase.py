@@ -13,8 +13,8 @@ class GeneratorBase(abc.ABC):
     def __init__(self, procinfo, settings, name, inputFileExtension):
 
         # prefix for execution:
-        self.prefixExecute = f"$""{K4GeneratorsConfigBinDir""}"
-        
+        self.binDir = f"$""{K4GeneratorsConfigBinDir""}"
+
         # general settings of the class
         self.procinfo = procinfo
         self.settings = settings
@@ -465,7 +465,7 @@ class GeneratorBase(abc.ABC):
         analysis = "\n"
         if self.settings.key4HEPAnalysisON():
             analysis += "{0}key4HEPAnalysis -i {1}.edm4hep -o {1}.root -p ".format(
-                self.prefixExecute, self.GeneratorDatacardBase
+                self.binDir, self.GeneratorDatacardBase
             )
             for pdg in self.procinfo.get_finalstate_pdgList():
                 analysis += f"{pdg},"

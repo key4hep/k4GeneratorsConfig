@@ -229,10 +229,10 @@ class Madgraph(GeneratorBase):
         )
         # temporarily kick out the header since the
         #key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        #key4hepRun += f"{self.prefixExecute}convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
+        #key4hepRun += f"{self.binDir}convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
         hepmcformat = self.procinfo.get("output_format")
         key4hepRun += "{0}convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.hepmc {2}.edm4hep\n".format(
-            self.prefixExecute, hepmcformat, self.GeneratorDatacardBase
+            self.binDir, hepmcformat, self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
 

@@ -190,7 +190,7 @@ class Pythia(GeneratorBase):
 
         hepmcformat = self.procinfo.get("output_format")
         key4hepRun += "{0}convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
-            self.prefixExecute, hepmcformat, self.GeneratorDatacardBase
+            self.binDir, hepmcformat, self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
 
