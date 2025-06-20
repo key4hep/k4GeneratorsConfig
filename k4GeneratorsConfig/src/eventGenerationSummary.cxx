@@ -41,14 +41,18 @@ int main(int argc, char** argv) {
   std::ostream& output = outFile;
   evgenColls->PrintSummary(output);
   // if there is a failure:
+  bool failure = false;
   if (evgenColls->NbOfFailures() != 0) {
     std::cout << evgenColls->NbOfFailures() << "/" << evgenColls->NbOfFailures() + evgenColls->NbOfSuccesses()
               << " Runs failed" << std::endl;
-    // we return nevertheless "success" since the artififacts are not loaded otherwise
-    //    exit(1);
-    exit(0);
+    failure = true;
   }
   // delete the pointer
   delete evgenColls;
   evgenColls = nullptr;
+
+  // fallure exit non zero
+  if (failure) {
+    exit(1);
+  }
 }

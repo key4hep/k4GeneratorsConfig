@@ -14,10 +14,8 @@ echo Extracting the cross sections by reading EDM4HEP files and superposing the 
 $K4GENERATORSCONFIG/eventGenerationSummary -f ${CWD}/GenerationSummary.dat
 
 for file in *.png *.pdf *.root; do
-    echo FOUND file $file >> ${CWD}/GenerationSummary.dat
     if [ -f "$file" ]; then
 	cp $file ${CWD}/output/
-	echo COPIED file $file to ${CWD}/output >> ${CWD}/GenerationSummary.dat
     fi
 done
 
