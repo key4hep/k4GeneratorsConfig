@@ -40,13 +40,10 @@ Processes:
      Order: [2,0]
 
 
-Sherpa:
-  Run:
-    EW_SCHEME: 3
-
-
 ParticleData:
   23:
     mass: 91.1876
     width: 2.4952
 
+Analysis:
+  Tools: [key4hep]

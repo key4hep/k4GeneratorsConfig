@@ -168,9 +168,9 @@ int main(int argc, char** argv) {
               << "           Main:writeHepMC = on" << std::endl;
   }
 
-  if (lheFilePathFromCmdFile != lheFilePath) {
+  if (!lheFilePathFromCmdFile.empty() && lheFilePathFromCmdFile != lheFilePath) {
     std::cout << "Provided Pythia command file already specifies input LHE "
-              << "file path \"" << lheFilePathFromCmdFile << "\"!";
+              << "file path \"" << lheFilePathFromCmdFile << "\"!" << std::endl;
   }
 
   //  if (hepmcFilePathFromCmdFile != hepmcFilePath) {
