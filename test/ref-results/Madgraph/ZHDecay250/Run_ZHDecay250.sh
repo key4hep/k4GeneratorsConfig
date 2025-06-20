@@ -9,7 +9,7 @@ fi
 mg5_aMC ZHDecay250.dat
 gunzip Output/Events/run_01/unweighted_events.lhe.gz
 ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
-$K4GenBuildDir/bin/pythiaLHERunner -f pythiaZHDecay250.cmnd -l unweighted_events.lhe -o ZHDecay250.hepmc
+${K4GeneratorsConfigBinDir}pythiaLHERunner -f pythiaZHDecay250.cmnd -l unweighted_events.lhe -o ZHDecay250.hepmc
 ${K4GeneratorsConfigBinDir}convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay250.hepmc ZHDecay250.edm4hep
 
 ${K4GeneratorsConfigBinDir}key4HEPAnalysis -i ZHDecay250.edm4hep -o ZHDecay250.root -p 23,25

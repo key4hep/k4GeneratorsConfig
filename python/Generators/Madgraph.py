@@ -224,8 +224,8 @@ class Madgraph(GeneratorBase):
             f"ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         )
         # adding the Pythia step a poetriori
-        key4hepRun += "$K4GenBuildDir/bin/pythiaLHERunner -f {0} -l unweighted_events.lhe -o {1}.hepmc\n".format(
-            self.getOptionalFileName(),self.GeneratorDatacardBase
+        key4hepRun += "{0}pythiaLHERunner -f {1} -l unweighted_events.lhe -o {2}.hepmc\n".format(
+            self.binDir, self.getOptionalFileName(),self.GeneratorDatacardBase
         )
         # temporarily kick out the header since the
         #key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
