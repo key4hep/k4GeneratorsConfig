@@ -455,7 +455,7 @@ class GeneratorBase(abc.ABC):
         )
         key4hep_config += "fi\n"
         key4hep_config += 'if [ -z "${K4GeneratorsConfigBinDir}" ]; then\n'
-        key4hep_config += '   K4GeneratorsConfigBinDir = ""\n'
+        key4hep_config += '   K4GeneratorsConfigBinDir=""\n'
         key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)

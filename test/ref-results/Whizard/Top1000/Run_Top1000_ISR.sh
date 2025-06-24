@@ -3,7 +3,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
     source /cvmfs/sw.hsf.org/key4hep/setup.sh
 fi
 if [ -z "${K4GeneratorsConfigBinDir}" ]; then
-   K4GeneratorsConfigBinDir = ""
+   K4GeneratorsConfigBinDir=""
 fi
 
 whizard Top1000_ISR.sin
