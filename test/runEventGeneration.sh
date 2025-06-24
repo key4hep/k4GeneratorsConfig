@@ -3,13 +3,7 @@
 set -e
 
 shopt -s expand_aliases
-echo generatorsconfig $K4GENERATORSCONFIG
-echo $K4GENERATORSCONFIG
-which k4_local_repo
-echo AFTER LOCAL REPO:
-echo generatorsconfig $K4GENERATORSCONFIG
-which convert2MESSY
-source ../setup.sh
+#source ../setup.sh
 
 # decode command line options
 
