@@ -4,8 +4,7 @@ set -e
 
 shopt -s expand_aliases
 echo the stack is at $KEY4HEP_STACK
-echo which ../install/key4HEPAnalysis gives:
-which ../install/key4HEPAnalysis
+echo Current directory $pwd
 echo which /k4GeneratosConfig/install/key4HEPAnalysis
 which /k4GeneratosConfig/install/key4HEPAnalysis
 source ../setup.sh
