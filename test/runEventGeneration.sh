@@ -6,8 +6,8 @@ shopt -s expand_aliases
 echo the stack is at $KEY4HEP_STACK
 echo Current directory $pwd
 pwd
-echo which /k4generatorsconfig/install/bin/key4HEPAnalysis
-which /k4generatorsconfig/install/bin/key4HEPAnalysis
+echo generatorsconfig $K4GENERATORSCONFIG
+echo $K4GENERATORSCONFIG
 source ../setup.sh
 
 # decode command line options
