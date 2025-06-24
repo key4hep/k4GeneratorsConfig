@@ -8,6 +8,7 @@ echo Current directory $pwd
 pwd
 echo generatorsconfig $K4GENERATORSCONFIG
 echo $K4GENERATORSCONFIG
+which convert2MESSY
 source ../setup.sh
 
 # decode command line options
