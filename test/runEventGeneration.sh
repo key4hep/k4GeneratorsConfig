@@ -3,7 +3,10 @@
 set -e
 
 shopt -s expand_aliases
-#source ../setup.sh
+echo the stack is at $KEY4HEP_STACK
+echo which key4HEPAnalysis gives:
+which key4HEPAnalysis
+source ../setup.sh
 
 # decode command line options
 
