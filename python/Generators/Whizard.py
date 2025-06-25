@@ -87,7 +87,7 @@ class Whizard(GeneratorBase):
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
         self.addOption2GeneratorDatacard(
-            "sample_format", str(self.procinfo.get_output_format()).rstrip("23")
+            "sample_format", str("hepmc3").rstrip("23")
         )
         self.addOption2GeneratorDatacard("?hepmc_output_cross_section", "true")
         self.addOption2GeneratorDatacard("?write_raw", "false")
@@ -182,9 +182,10 @@ class Whizard(GeneratorBase):
             key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
         # back to normal
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
-        key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep proc.hepmc {2}.edm4hep\n".format(
-            self.binDir, self.procinfo.get_output_format(), self.GeneratorDatacardBase
-        )
+        if self.procinfo.get_output_format() == "edm4hep":
+            key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {1}.edm4hep\n".format(
+                self.binDir, self.GeneratorDatacardBase
+            )
         self.add2Key4hepScript(key4hepRun)
 
     def getModelName(self, model):
