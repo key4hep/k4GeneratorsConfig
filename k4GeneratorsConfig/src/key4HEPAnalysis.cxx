@@ -79,7 +79,7 @@ int main(int argc, char** argv) {
   auto runinfo = podio::Frame(reader->readNextEntry(podio::Category::Run));
   auto toolInfos = edm4hep::utils::getGenToolInfos(runinfo);
   if (toolInfos.size() > 0) {
-    std::cout << "analyze2f the tool " << toolInfos[0].name << std::endl;
+    std::cout << "key4HEPAnalysis working on " << toolInfos[0].name << std::endl;
   } else {
     std::cout << "k4GeneratorsConfig::Warning: ToolInfos not available" << std::endl;
   }

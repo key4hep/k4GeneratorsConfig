@@ -2,7 +2,7 @@
 
 
 # Automatically get the directory where this script is located
-#K4GenDir=$(cd -- "$(dirname -- "${(%):-%x}")" && pwd)
+#K4GeneratorsConfigLocalBuildDir=$(cd -- "$(dirname -- "${(%):-%x}")" && pwd)
 # check that we are sourcing
 if ("$0" != "-tcsh" && "$0" != "tcsh") then
     echo Please use source setup.csh to set up the project
@@ -11,7 +11,7 @@ endif
 # it's clumsy, but that's C-SHELL which does not allow nested commands
 set theCommand=($_)
 set thePath=`dirname "$theCommand[2]"`
-set K4GenDir=`cd "$thePath"; pwd`
+set K4GeneratorsConfigDir=`cd "$thePath"; pwd`
 unset thePath
 unset theCommand
 
@@ -25,19 +25,23 @@ set SrcDir=( Generators )
 
 foreach dir ( $SrcDir )
    if ( $?PYTHONPATH ) then
-       setenv PYTHONPATH ${K4GenDir}/python/${dir}:$PYTHONPATH
+       setenv PYTHONPATH ${K4GeneratorsConfigDir}/python/${dir}:$PYTHONPATH
    else
-       setenv PYTHONPATH ${K4GenDir}/python/${dir}
+       setenv PYTHONPATH ${K4GeneratorsConfigDir}/python/${dir}
    endif
 end
 
-setenv K4GenBuildDir "${K4GenDir}/build/"
-
 # Check if the directory exists
-if (! -d "${K4GenBuildDir}") then
-    echo "Build directory not found!"
+if (! -d "${K4GeneratorsConfigDir}/install/") then
+    echo Install directory not found!
+    echo After: 
+    echo cmake ../CMakeLists.txt -DCMAKE_INSTALL_PREFIX=../install
+    echo Please run:
+    echo make install
     exit 1
 endif
 
+setenv K4GENERATORSCONFIG  "${K4GeneratorsConfigDir}/install/bin"
+
 # Set executable
-alias k4GeneratorsConfig "python3 ${K4GenDir}/python/main.py"
+alias k4GeneratorsConfig "python3 ${K4GeneratorsConfigDir}/python/main.py"

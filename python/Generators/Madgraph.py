@@ -224,15 +224,15 @@ class Madgraph(GeneratorBase):
             f"ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         )
         # adding the Pythia step a poetriori
-        key4hepRun += "$K4GenBuildDir/bin/pythiaLHERunner -f {0} -l unweighted_events.lhe -o {1}.hepmc\n".format(
-            self.getOptionalFileName(),self.GeneratorDatacardBase
+        key4hepRun += "{0}/pythiaLHERunner -f {1} -l unweighted_events.lhe -o {2}.hepmc\n".format(
+            self.binDir, self.getOptionalFileName(),self.GeneratorDatacardBase
         )
         # temporarily kick out the header since the
         #key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        #key4hepRun += f"$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
+        #key4hepRun += f"{self.binDir}/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
-            hepmcformat, self.GeneratorDatacardBase
+        key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.hepmc {2}.edm4hep\n".format(
+            self.binDir, hepmcformat, self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)
 

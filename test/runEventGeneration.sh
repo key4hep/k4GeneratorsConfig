@@ -3,6 +3,7 @@
 set -e
 
 shopt -s expand_aliases
+echo the KEY4HEPSTACK is $KEY4HEP_STACK
 source ../setup.sh
 
 # decode command line options
