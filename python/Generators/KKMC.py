@@ -100,7 +100,7 @@ class KKMC(GeneratorBase):
             )
         elif outformat == "lhe":
             print("KKMC cannot provide LHE files, hepmc3 files will be produced")
-            
+
         self.add2Key4hepScript(key4hepRun)
 
     def getParameterLabel(self, param):
