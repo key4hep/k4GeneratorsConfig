@@ -34,7 +34,7 @@ end
 # Check if the directory exists
 if (! -d "${K4GeneratorsConfigDir}/install/") then
     echo Install directory not found!
-    echo After: 
+    echo After:
     echo cmake ../CMakeLists.txt -DCMAKE_INSTALL_PREFIX=../install
     echo Please run:
     echo make install
