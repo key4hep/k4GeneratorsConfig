@@ -8,7 +8,7 @@ class Pythia(GeneratorBase):
 
         self.version = "x.y.z"
 
-        self.executable = self.binDir+"pythiaRunner -f"
+        self.executable = self.binDir+"/"+"pythiaRunner -f"
 
         self.setOptionalFileNameAndExtension(self.GeneratorDatacardBase,"selectors")
         if settings.get_block("selectors"):
@@ -189,7 +189,7 @@ class Pythia(GeneratorBase):
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "{0}convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
+        key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
             self.binDir, hepmcformat, self.GeneratorDatacardBase
         )
         self.add2Key4hepScript(key4hepRun)

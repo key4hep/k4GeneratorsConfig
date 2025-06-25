@@ -13,7 +13,7 @@ class GeneratorBase(abc.ABC):
     def __init__(self, procinfo, settings, name, inputFileExtension):
 
         # prefix for execution:
-        self.binDir = f"$""{K4GeneratorsConfigBinDir""}"
+        self.binDir = f"$""{K4GENERATORSCONFIG""}"
 
         # general settings of the class
         self.procinfo = procinfo
@@ -454,9 +454,6 @@ class GeneratorBase(abc.ABC):
             f"    source /cvmfs/sw{nightlies}.hsf.org/key4hep/setup.sh{releaseDate}\n"
         )
         key4hep_config += "fi\n"
-        key4hep_config += 'if [ -z "${K4GeneratorsConfigBinDir}" ]; then\n'
-        key4hep_config += '   K4GeneratorsConfigBinDir=""\n'
-        key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)
 
@@ -464,7 +461,7 @@ class GeneratorBase(abc.ABC):
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
         if self.settings.key4HEPAnalysisON():
-            analysis += "{0}key4HEPAnalysis -i {1}.edm4hep -o {1}.root -p ".format(
+            analysis += "{0}/key4HEPAnalysis -i {1}.edm4hep -o {1}.root -p ".format(
                 self.binDir, self.GeneratorDatacardBase
             )
             for pdg in self.procinfo.get_finalstate_pdgList():
