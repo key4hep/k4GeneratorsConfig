@@ -38,8 +38,8 @@ bash
 source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
 mkdir build
 cd build
-cmake ../CMakeLists.txt
-make
+cmake ../CMakeLists.txt -DCMAKE_INSTALL_PREFIX=../install
+make install
 cd /path/to/out
 ./Run_PROCESSNAME.sh
 ```
