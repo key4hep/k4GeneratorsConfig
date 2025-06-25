@@ -453,7 +453,7 @@ class GeneratorBase(abc.ABC):
         key4hep_config += (
             f"    source /cvmfs/sw{nightlies}.hsf.org/key4hep/setup.sh{releaseDate}\n"
         )
-        key4hep_config += "fi\n"
+        key4hep_config += "fi\n\n"
         # store it
         self.add2Key4hepScript(key4hep_config)
 
