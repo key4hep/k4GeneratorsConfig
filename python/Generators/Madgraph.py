@@ -231,7 +231,7 @@ class Madgraph(GeneratorBase):
             )
             # convert if the highest is requested
             if self.procinfo.get_output_format() == "edm4hep":
-                key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {1}.hepmc3 {1}.edm4hep\n".format(
+                key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
                     self.binDir, self.GeneratorDatacardBase
                 )
 
