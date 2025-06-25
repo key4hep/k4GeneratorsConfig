@@ -55,11 +55,11 @@ class Sherpa2(GeneratorBase):
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
 
-        if self.procinfo.get("output_format") == "hepmc2":
+        if self.procinfo.get_output_format() == "hepmc2":
             eoutname = "HepMC_GenEvent[{0}]".format(self.GeneratorDatacardBase)
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
-        elif self.procinfo.get("output_format") == "hepmc3":
+        elif self.procinfo.get_output_format() == "hepmc3":
             eoutname = "HepMC3_GenEvent[{0}.hepmc3]".format(self.GeneratorDatacardBase)
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
@@ -210,7 +210,7 @@ class Sherpa2(GeneratorBase):
         else:
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
-        hepmcformat = self.procinfo.get("output_format")
+        hepmcformat = self.procinfo.get_output_format()
         hepmcversion = hepmcformat[-1]
         key4hepRun += "$K4GenBuildDir/bin/convertHepMC2EDM4HEP -i {0} -o edm4hep {1}.hepmc{2} {1}.edm4hep\n".format(
             hepmcformat, self.GeneratorDatacardBase, hepmcversion

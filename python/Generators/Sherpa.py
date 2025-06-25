@@ -59,11 +59,11 @@ class Sherpa(GeneratorBase):
         # now add the model checking for overlap
         self.prepareParameters()
 
-        if self.procinfo.get("output_format") == "hepmc2":
+        if self.procinfo.get_output_format() == "hepmc2":
             eoutname = f"HepMC_GenEvent[{self.GeneratorDatacardBase}.hepmc2]"
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
-        elif self.procinfo.get("output_format") == "hepmc3":
+        elif self.procinfo.get_output_format() == "hepmc3":
             eoutname = f"HepMC3_GenEvent[{self.GeneratorDatacardBase}.hepmc3]"
             self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
@@ -176,7 +176,7 @@ class Sherpa(GeneratorBase):
         else:
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
-        hepmcformat = self.procinfo.get("output_format")
+        hepmcformat = self.procinfo.get_output_format()
         hepmcversion = hepmcformat[-1]
         key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.hepmc{3} {2}.edm4hep\n".format(
             self.binDir, hepmcformat, self.GeneratorDatacardBase, hepmcversion
