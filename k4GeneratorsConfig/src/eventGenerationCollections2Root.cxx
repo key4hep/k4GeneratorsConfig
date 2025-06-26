@@ -28,10 +28,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
 
   // define the generator colors (as offset)
   std::vector<std::string> genNames = {"Madgraph", "Sherpa", "Whizard", "KKMC", "Pythia", "Babayaga"};
-  for (unsigned int i = 0; i < genNames.size(); i++){
+  for (unsigned int i = 0; i < genNames.size(); i++) {
     m_generatorColorOffset[genNames[i]] = i;
   }
-  
+
   // define the root tree
   m_tree = new TTree("CrossSections", "cross sections");
   m_tree->Branch("process", &m_process);
@@ -156,10 +156,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::mapProcGenSqrts() {
   m_generatorCode = std::find(m_generatorsList.begin(), m_generatorsList.end(), m_generator) - m_generatorsList.begin();
 
   // check that the generator has a color offset, if not add it
-  if (m_generatorColorOffset.find(m_generator) == m_generatorColorOffset.end())  {
+  if (m_generatorColorOffset.find(m_generator) == m_generatorColorOffset.end()) {
     m_generatorColorOffset[m_generator] = m_generatorColorOffset.size();
   }
-  
+
   // process needs to be processed to remove everything from the subscript on:
   if (m_process.find_last_of("_") != std::string::npos) {
     m_process.erase(m_process.find_last_of("_"));
