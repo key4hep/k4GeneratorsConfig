@@ -26,6 +26,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
   TGaxis::SetMaxDigits(5);
   TGaxis::SetExponentOffset(-0.08, -0.12, "y");
 
+  // define the generator colors (as offset)
+  std::vector<std::string> genNames = {"Madgraph", "Sherpa", "Whizard", "KKMC", "Pythia", "Babayaga"};
+  for (unsigned int i = 0; i < genNames.size(); i++){
+    m_generatorColorOffset[genNames[i]] = i;
+  }
+  
+  // define the root tree
   m_tree = new TTree("CrossSections", "cross sections");
   m_tree->Branch("process", &m_process);
   m_tree->Branch("iprocess", &m_processCode, "iprocess/I");
@@ -115,7 +122,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Execute(analysisHistos
       desc.str("");
       gStyle->SetOptTitle(0);
       theHisto->SetStats(kFALSE);
-      theHisto->SetLineColor(2 + m_generatorCode);
+      theHisto->SetLineColor(2 + m_generatorColorOffset[m_generator]);
       theHisto->SetMinimum(0);
       theHisto->Draw("SAME");
       theHisto->GetYaxis()->SetTitleSize(0.06);
@@ -148,6 +155,11 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::mapProcGenSqrts() {
 
   m_generatorCode = std::find(m_generatorsList.begin(), m_generatorsList.end(), m_generator) - m_generatorsList.begin();
 
+  // check that the generator has a color offset, if not add it
+  if (m_generatorColorOffset.find(m_generator) == m_generatorColorOffset.end())  {
+    m_generatorColorOffset[m_generator] = m_generatorColorOffset.size();
+  }
+  
   // process needs to be processed to remove everything from the subscript on:
   if (m_process.find_last_of("_") != std::string::npos) {
     m_process.erase(m_process.find_last_of("_"));
@@ -390,8 +402,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
         name << m_processesList[iProc] << " " << m_generatorsList[gen];
         m_xsectionGraphs[indexProcGen]->SetName(name.str().c_str());
         m_xsectionGraphs[indexProcGen]->SetStats(kFALSE);
-        m_xsectionGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
-        m_xsectionGraphs[indexProcGen]->SetMarkerColor(2 + gen);
+        m_xsectionGraphs[indexProcGen]->SetMarkerStyle(20 + m_generatorColorOffset[m_generatorsList[gen]]);
+        m_xsectionGraphs[indexProcGen]->SetMarkerColor(2 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionGraphs[indexProcGen]->SetMarkerSize(1.25);
         mg->Add(m_xsectionGraphs[indexProcGen], "AP");
         name.clear();
@@ -454,8 +466,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
         name << m_processesList[iProc] << " " << m_generatorsList[gen];
         m_xsectionDeltaGraphs[indexProcGen]->SetName(name.str().c_str());
         m_xsectionDeltaGraphs[indexProcGen]->SetStats(kFALSE);
-        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + gen);
-        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + gen);
+        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + m_generatorColorOffset[m_generatorsList[gen]]);
+        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionDeltaGraphs[indexProcGen]->SetMarkerSize(1.25);
         mgDelta->Add(m_xsectionDeltaGraphs[indexProcGen], "AP");
         name.clear();
