@@ -458,9 +458,11 @@ class GeneratorBase(abc.ABC):
         self.add2Key4hepScript(key4hep_config)
 
     def prepareAnalysisContent(self):
+        # analysis is conditioned on the output format
+        outformat = self.settings.get_output_format()
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
-        if self.settings.key4HEPAnalysisON():
+        if outformat == "edm4hep" and self.settings.key4HEPAnalysisON():
             analysis += "{0}/key4HEPAnalysis -i {1}.edm4hep -o {1}.root -p ".format(
                 self.binDir, self.GeneratorDatacardBase
             )
@@ -470,12 +472,12 @@ class GeneratorBase(abc.ABC):
             analysis +="\n"
 
         # write the RIVET analysis
-        if self.settings.rivetON():
+        if (outformat == "edm4hep" or outformat == "hepmc3") and self.settings.rivetON():
             yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
             analysis += f"rivet"
             for ana in self.settings.analysisname:
                 analysis += f" -a {ana}"
-            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get('output_format')}\n"
+            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get_output_format()}\n"
 
         # add to the text to the data member
         self.add2Analysis(analysis)

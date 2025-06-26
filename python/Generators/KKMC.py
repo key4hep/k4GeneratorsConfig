@@ -88,15 +88,19 @@ class KKMC(GeneratorBase):
 
     def fill_key4hepScript(self):
         key4hepRun = ""
-        key4hepRun += "KKMCee -c  {0} --nevts {3} -o {1}.{2}\n".format(
+        key4hepRun += "KKMCee -c  {0} --nevts {2} -o {1}.hepmc3\n".format(
             self.GeneratorDatacardName,
             self.GeneratorDatacardBase,
-            self.procinfo.get("output_format"),
             self.procinfo.get("events"),
         )
-        key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
-            self.binDir, self.procinfo.get("output_format"), self.GeneratorDatacardBase
-        )
+        outformat = self.procinfo.get_output_format()
+        if outformat == "edm4hep":
+            key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {1}.hepmc3 {1}.edm4hep\n".format(
+                self.binDir, self.GeneratorDatacardBase
+            )
+        elif outformat == "lhe":
+            print("KKMC cannot provide LHE files, hepmc3 files will be produced")
+
         self.add2Key4hepScript(key4hepRun)
 
     def getParameterLabel(self, param):

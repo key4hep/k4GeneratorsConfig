@@ -2,7 +2,7 @@ Generators:
   - Whizard
   - Madgraph
 
-OutputFormat: hepmc3
+OutputFormat: edm4hep
 OutDir: Run-Cards
 Events: 10000
 EventMode: unweighted
@@ -16,7 +16,7 @@ Model: SM
 ISRMode: 0
 
 Processes:
-  ZH:
+  ZHPolarized:
      Final: [23, 25]
      Order: [2,0]
 

@@ -4,7 +4,7 @@ Generators:
   - Madgraph
   - Pythia
 
-OutputFormat: hepmc3
+OutputFormat: edm4hep
 OutDir: Run-Cards
 Events: 10000
 EventMode: unweighted
@@ -33,3 +33,5 @@ ParticleData:
     mass: 173
     width: 1.4915
 
+Analysis:
+  Tools: [key4hep]

@@ -223,17 +223,18 @@ class Madgraph(GeneratorBase):
         key4hepRun += (
             f"ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe\n"
         )
-        # adding the Pythia step a poetriori
-        key4hepRun += "{0}/pythiaLHERunner -f {1} -l unweighted_events.lhe -o {2}.hepmc\n".format(
-            self.binDir, self.getOptionalFileName(),self.GeneratorDatacardBase
-        )
-        # temporarily kick out the header since the
-        #key4hepRun += "sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe\n"
-        #key4hepRun += f"{self.binDir}/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe {self.GeneratorDatacardBase}.hepmc\n"
-        hepmcformat = self.procinfo.get("output_format")
-        key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.hepmc {2}.edm4hep\n".format(
-            self.binDir, hepmcformat, self.GeneratorDatacardBase
-        )
+        outformat = self.procinfo.get_output_format()
+        # adding the Pythia step a posteriori if hepmc3 or edm4hep are requested:
+        if  outformat == "hepmc3" or outformat == "edm4hep":
+            key4hepRun += "{0}/pythiaLHERunner -f {1} -l unweighted_events.lhe -o {2}.hepmc\n".format(
+                self.binDir, self.getOptionalFileName(),self.GeneratorDatacardBase
+            )
+            # convert if the highest is requested
+            if self.procinfo.get_output_format() == "edm4hep":
+                key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
+                    self.binDir, self.GeneratorDatacardBase
+                )
+
         self.add2Key4hepScript(key4hepRun)
 
     def fill_PythiaCMND(self):

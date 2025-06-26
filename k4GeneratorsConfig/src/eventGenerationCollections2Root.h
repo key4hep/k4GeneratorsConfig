@@ -55,6 +55,9 @@ private:
   const double m_GeV2MeV;
   double m_EnergyUnitCnv;
 
+  // define standard color
+  std::map<std::string, unsigned int> m_generatorColorOffset;
+
   std::vector<std::string> m_log;
 
   TFile* m_file;

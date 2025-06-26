@@ -3,7 +3,7 @@ Generators:
   - Whizard
   - Madgraph
 
-OutputFormat: hepmc3
+OutputFormat: edm4hep
 OutDir: Run-Cards
 Events: 10000
 EventMode: unweighted
@@ -26,3 +26,5 @@ ParticleData:
   24:
     mass: 80.419
 
+Analysis:
+  Tools: [key4hep]

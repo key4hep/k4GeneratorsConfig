@@ -83,16 +83,17 @@ class Input:
 
     def get_output_format(self):
         outformat = ""
-        # check for presence, if not: hepmc3
+        # check for presence, if not: edm4hep
         try:
-            outformat = self.settings["outputformat"]
+            outformat = self.settings["outputformat"].lower()
         except:
-            return "hepmc3"
+            return "edm4hep"
 
+        validFormats = ["edm4hep", "hepmc3", "lhe"]
         # check that only supported formats are requested
-        if outformat != "hepmc2" and outformat != "hepmc3":
-            print("OutputFormat " + outformat + " not supported using hepmc3")
-            return "hepmc3"
+        if outformat not in validFormats:
+            print("OutputFormat " + outformat + " not supported, using key4hep")
+            return "edm4hep"
 
         return outformat
 

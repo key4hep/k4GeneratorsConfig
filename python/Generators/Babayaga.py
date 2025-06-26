@@ -91,12 +91,16 @@ class Babayaga(GeneratorBase):
         key4hepRun += (
             "cat " + self.GeneratorDatacardName + " | " + self.executable + "\n"
         )
-        key4hepRun += "{0}/convertHepMC2EDM4HEP -i lhe -o {1} events.lhe {2}.{1}\n".format(
-            self.binDir, self.procinfo.get("output_format"), self.GeneratorDatacardBase
-        )
-        key4hepRun += "{0}/convertHepMC2EDM4HEP -i {1} -o edm4hep {2}.{1} {2}.edm4hep\n".format(
-            self.binDir, self.procinfo.get("output_format"), self.GeneratorDatacardBase
-        )
+        outformat = self.procinfo.get_output_format()
+        if outformat == "hepmc3":
+            key4hepRun += "{0}/convertHepMC2EDM4HEP -i lhe -o hepmc3 events.lhe {1}.hepmc\n".format(
+                self.binDir, self.GeneratorDatacardBase
+            )
+        elif outformat == "edm4hep":
+            key4hepRun += "{0}/convertHepMC2EDM4HEP -i lhe -o edm4hep events.lhe {1}.edm4hep\n".format(
+                self.binDir, self.GeneratorDatacardBase
+            )
+
         self.add2Key4hepScript(key4hepRun)
 
     def getGeneratorCommand(self,key,value):
