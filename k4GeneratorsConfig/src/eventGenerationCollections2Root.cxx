@@ -466,7 +466,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
         name << m_processesList[iProc] << " " << m_generatorsList[gen];
         m_xsectionDeltaGraphs[indexProcGen]->SetName(name.str().c_str());
         m_xsectionDeltaGraphs[indexProcGen]->SetStats(kFALSE);
-	m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + m_generatorColorOffset[m_generatorsList[gen]]);
+        m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionDeltaGraphs[indexProcGen]->SetMarkerSize(1.25);
         mgDelta->Add(m_xsectionDeltaGraphs[indexProcGen], "AP");
