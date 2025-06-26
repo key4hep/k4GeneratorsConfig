@@ -57,7 +57,7 @@ private:
 
   // define standard color
   std::map<std::string, unsigned int> m_generatorColorOffset;
-  
+
   std::vector<std::string> m_log;
 
   TFile* m_file;
