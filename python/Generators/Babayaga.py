@@ -100,6 +100,7 @@ class Babayaga(GeneratorBase):
             key4hepRun += "{0}/convertHepMC2EDM4HEP -i lhe -o edm4hep events.lhe {1}.edm4hep\n".format(
                 self.binDir, self.GeneratorDatacardBase
             )
+
         self.add2Key4hepScript(key4hepRun)
 
     def getGeneratorCommand(self,key,value):

@@ -186,6 +186,7 @@ class Whizard(GeneratorBase):
             key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {1}.edm4hep\n".format(
                 self.binDir, self.GeneratorDatacardBase
             )
+
         self.add2Key4hepScript(key4hepRun)
 
     def getModelName(self, model):

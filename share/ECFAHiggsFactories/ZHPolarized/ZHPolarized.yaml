@@ -8,7 +8,7 @@ Events: 10000
 EventMode: unweighted
 
 
-PolarisationDensity: [1,-1]
+PolarisationDensity: [-1,1]
 PolarisationFraction: [0.8,0.3]
 
 SqrtS: 250.
