@@ -8,17 +8,17 @@
 #include "TStyle.h"
 
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root()
-    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_dirname(""), m_file(0),
-      m_tree(0), m_processCode(-1), m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.),
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_dirname(""),
+      m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.),
       m_generatorCode(0) {
   m_file = new TFile("eventGenerationSummary.root", "RECREATE");
   Init();
 }
 k4GeneratorsConfig::eventGenerationCollections2Root::eventGenerationCollections2Root(std::string dir, std::string file)
-  : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_dirname(dir), m_file(0),
-    m_tree(0), m_processCode(-1), m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.),
+    : m_sqrtsPrecision(1.e-6), m_xsectionMinimal(1.e-9), m_GeV2MeV(1.e3), m_EnergyUnitCnv(m_GeV2MeV), m_dirname(dir),
+      m_file(0), m_tree(0), m_processCode(-1), m_sqrtsCode(-1), m_crossSection(0), m_crossSectionError(0.), m_sqrts(0.),
       m_generatorCode(0) {
-  m_file = new TFile((dir+"/"+file).c_str(), "RECREATE");
+  m_file = new TFile((dir + "/" + file).c_str(), "RECREATE");
   Init();
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
@@ -589,8 +589,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
         }
       }
       // done, save the canvas
-      name << m_dirname << "/" << m_procSqrtsList[proc].first << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv)
-           << m_cnvAnalysisHistosNames[proc][ihisto] << ".png";
+      name << m_dirname << "/" << m_procSqrtsList[proc].first
+           << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]
+           << ".png";
       m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());
       name.clear();
       name.str("");
