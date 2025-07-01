@@ -461,6 +461,7 @@ class GeneratorBase(abc.ABC):
         analysis = "\n"
         if outformat == "edm4hep" and self.settings.key4HEPAnalysisON():
             analysis += f"key4HEPAnalysis -i {self.GeneratorDatacardBase}.edm4hep -o {self.GeneratorDatacardBase}.root -p "
+
             for pdg in self.procinfo.get_finalstate_pdgList():
                 analysis += f"{pdg},"
             analysis = analysis.rstrip(",")
