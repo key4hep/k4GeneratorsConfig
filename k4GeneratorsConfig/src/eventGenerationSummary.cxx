@@ -57,7 +57,7 @@ int main(int argc, char** argv) {
   evgenColls = nullptr;
 
   // fallure exit non zero
-  if (failure || !failure) {
+  if (failure) {
     exit(1);
   }
 }
