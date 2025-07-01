@@ -13,4 +13,8 @@ cd ci-setups
 echo Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions
 $K4GENERATORSCONFIG/eventGenerationSummary -f ${CWD}/GenerationSummary.dat -d ../output
 
+echo PATH is $PATH >> ${CWD}/GenerationSummary.dat
+echo which  convertHepMC2EDM4HEP >> ${CWD}/GenerationSummary.dat
+which convertHepMC2EDM4HEP >> ${CWD}/GenerationSummary.dat
+
 exit 0
