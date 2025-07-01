@@ -26,7 +26,7 @@ The setup script will check that python3 is available on your machine.
 
 Once you have written your own inputfile(`input.yaml`), as seen in the [examples](https://github.com/key4hep/k4GeneratorsConfig/tree/main/examples), execute the following:\
 
-`k4gen -f input.yaml`
+`k4GeneratorsConfig input.yaml`
 
 This will create a directory containing the desired runcards. The directory can be set in the inputfile as:\
 `OutDir: /path/to/out`
@@ -54,6 +54,18 @@ cd build
 ctest --verbose
 ```
 Warning: always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
+
+## Running with local modifications of the code:
+Setup the 
+```
+source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
+cd build
+cmake ../CMakeLists.txt -DCMAKE_INSTALL_PREFIX=../install
+make install
+k4_local_repo
+```
+will extract the global paths and set the executables to the local install directory instead of the release. The runscripts therefore will run automatically with the executables
+you have modified
 
 ## General Settings
 The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.
