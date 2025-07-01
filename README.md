@@ -56,7 +56,7 @@ ctest --verbose
 Warning: always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
 
 ## Running with local modifications of the code:
-Setup the 
+Setting up with
 ```
 source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
 cd build

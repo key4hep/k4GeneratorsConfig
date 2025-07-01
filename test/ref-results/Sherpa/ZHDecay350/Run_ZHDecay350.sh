@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f ZHDecay350.dat
-${K4GENERATORSCONFIG}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc3 ZHDecay350.edm4hep
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc3 ZHDecay350.edm4hep
 
-${K4GENERATORSCONFIG}/key4HEPAnalysis -i ZHDecay350.edm4hep -o ZHDecay350.root -p 23,25
+key4HEPAnalysis -i ZHDecay350.edm4hep -o ZHDecay350.root -p 23,25

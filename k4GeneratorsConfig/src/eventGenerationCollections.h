@@ -24,7 +24,7 @@ public:
   unsigned int NbOfSuccesses();
   unsigned int NbOfFailures();
 
-  void Write2Root(std::string);
+  void Write2Root(std::string, std::string);
 
   std::vector<std::string> m_log;
 

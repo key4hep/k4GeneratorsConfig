@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 cat Photon91.0.dat | babayaga-fcc.exe
-${K4GENERATORSCONFIG}/convertHepMC2EDM4HEP -i lhe -o edm4hep events.lhe Photon91.0.edm4hep
+convertHepMC2EDM4HEP -i lhe -o edm4hep events.lhe Photon91.0.edm4hep
 
-${K4GENERATORSCONFIG}/key4HEPAnalysis -i Photon91.0.edm4hep -o Photon91.0.root -p 22,22
+key4HEPAnalysis -i Photon91.0.edm4hep -o Photon91.0.root -p 22,22

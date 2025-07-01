@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f up91.2.dat
-$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep up91.2.hepmc3g up91.2.edm4hep
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep up91.2.hepmc3g up91.2.edm4hep
 
-$K4GENERATORSCONFIG/key4HEPAnalysis -i up91.2.edm4hep -o up91.2.root -p 2,-2
+key4HEPAnalysis -i up91.2.edm4hep -o up91.2.root -p 2,-2

@@ -226,14 +226,10 @@ class Madgraph(GeneratorBase):
         outformat = self.procinfo.get_output_format()
         # adding the Pythia step a posteriori if hepmc3 or edm4hep are requested:
         if  outformat == "hepmc3" or outformat == "edm4hep":
-            key4hepRun += "{0}/pythiaLHERunner -f {1} -l unweighted_events.lhe -o {2}.hepmc\n".format(
-                self.binDir, self.getOptionalFileName(),self.GeneratorDatacardBase
-            )
+            key4hepRun += f"pythiaLHERunner -f {self.getOptionalFileName()} -l unweighted_events.lhe -o {self.GeneratorDatacardBase}.hepmc\n"
             # convert if the highest is requested
             if self.procinfo.get_output_format() == "edm4hep":
-                key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {1}.hepmc {1}.edm4hep\n".format(
-                    self.binDir, self.GeneratorDatacardBase
-                )
+                key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 

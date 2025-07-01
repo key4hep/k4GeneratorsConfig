@@ -93,13 +93,9 @@ class Babayaga(GeneratorBase):
         )
         outformat = self.procinfo.get_output_format()
         if outformat == "hepmc3":
-            key4hepRun += "{0}/convertHepMC2EDM4HEP -i lhe -o hepmc3 events.lhe {1}.hepmc\n".format(
-                self.binDir, self.GeneratorDatacardBase
-            )
+            key4hepRun += f"convertHepMC2EDM4HEP -i lhe -o hepmc3 events.lhe {self.GeneratorDatacardBase}.hepmc\n"
         elif outformat == "edm4hep":
-            key4hepRun += "{0}/convertHepMC2EDM4HEP -i lhe -o edm4hep events.lhe {1}.edm4hep\n".format(
-                self.binDir, self.GeneratorDatacardBase
-            )
+            key4hepRun += f"convertHepMC2EDM4HEP -i lhe -o edm4hep events.lhe {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 

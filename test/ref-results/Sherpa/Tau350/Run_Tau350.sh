@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f Tau350.dat
-${K4GENERATORSCONFIG}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau350.hepmc3 Tau350.edm4hep
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau350.hepmc3 Tau350.edm4hep
 
-${K4GENERATORSCONFIG}/key4HEPAnalysis -i Tau350.edm4hep -o Tau350.root -p 15,-15
+key4HEPAnalysis -i Tau350.edm4hep -o Tau350.root -p 15,-15

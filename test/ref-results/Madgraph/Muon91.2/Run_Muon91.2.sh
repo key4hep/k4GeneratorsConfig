@@ -6,7 +6,7 @@ fi
 mg5_aMC Muon91.2.dat
 gunzip Output/Events/run_01/unweighted_events.lhe.gz
 ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
-${K4GENERATORSCONFIG}/pythiaLHERunner -f pythiaMuon91.2.cmnd -l unweighted_events.lhe -o Muon91.2.hepmc
-${K4GENERATORSCONFIG}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc Muon91.2.edm4hep
+pythiaLHERunner -f pythiaMuon91.2.cmnd -l unweighted_events.lhe -o Muon91.2.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc Muon91.2.edm4hep
 
-${K4GENERATORSCONFIG}/key4HEPAnalysis -i Muon91.2.edm4hep -o Muon91.2.root -p 13,-13
+key4HEPAnalysis -i Muon91.2.edm4hep -o Muon91.2.root -p 13,-13

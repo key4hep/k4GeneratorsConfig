@@ -7,7 +7,7 @@ mg5_aMC bottom91.2.dat
 gunzip Output/Events/run_01/unweighted_events.lhe.gz
 ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
 sed -i '/<header>/,/<\/header>/{//!d}' unweighted_events.lhe
-$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe bottom91.2.hepmc
-$K4GENERATORSCONFIG/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep bottom91.2.hepmc bottom91.2.edm4hep
+convertHepMC2EDM4HEP -i lhe -o hepmc3 unweighted_events.lhe bottom91.2.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep bottom91.2.hepmc bottom91.2.edm4hep
 
-$K4GENERATORSCONFIG/key4HEPAnalysis -i bottom91.2.edm4hep -o bottom91.2.root -p 2,-2
+key4HEPAnalysis -i bottom91.2.edm4hep -o bottom91.2.root -p 2,-2
