@@ -183,9 +183,7 @@ class Whizard(GeneratorBase):
         # back to normal
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {1}.edm4hep\n".format(
-                self.binDir, self.GeneratorDatacardBase
-            )
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 

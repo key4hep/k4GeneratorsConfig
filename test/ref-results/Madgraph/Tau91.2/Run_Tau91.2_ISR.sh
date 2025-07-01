@@ -6,7 +6,7 @@ fi
 mg5_aMC Tau91.2_ISR.dat
 gunzip Output/Events/run_01/unweighted_events.lhe.gz
 ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
-${K4GENERATORSCONFIG}/pythiaLHERunner -f pythiaTau91.2_ISR.cmnd -l unweighted_events.lhe -o Tau91.2_ISR.hepmc
-${K4GENERATORSCONFIG}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau91.2_ISR.hepmc Tau91.2_ISR.edm4hep
+pythiaLHERunner -f pythiaTau91.2_ISR.cmnd -l unweighted_events.lhe -o Tau91.2_ISR.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Tau91.2_ISR.hepmc Tau91.2_ISR.edm4hep
 
-${K4GENERATORSCONFIG}/key4HEPAnalysis -i Tau91.2_ISR.edm4hep -o Tau91.2_ISR.root -p 15,-15
+key4HEPAnalysis -i Tau91.2_ISR.edm4hep -o Tau91.2_ISR.root -p 15,-15

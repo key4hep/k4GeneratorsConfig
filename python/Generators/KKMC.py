@@ -95,8 +95,8 @@ class KKMC(GeneratorBase):
         )
         outformat = self.procinfo.get_output_format()
         if outformat == "edm4hep":
-            key4hepRun += "{0}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {1}.hepmc3 {1}.edm4hep\n".format(
-                self.binDir, self.GeneratorDatacardBase
+            key4hepRun += "convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {0}.hepmc3 {0}.edm4hep\n".format(
+                self.GeneratorDatacardBase
             )
         elif outformat == "lhe":
             print("KKMC cannot provide LHE files, hepmc3 files will be produced")

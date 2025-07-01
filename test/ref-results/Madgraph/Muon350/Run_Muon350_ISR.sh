@@ -6,7 +6,7 @@ fi
 mg5_aMC Muon350_ISR.dat
 gunzip Output/Events/run_01/unweighted_events.lhe.gz
 ln -sf Output/Events/run_01/unweighted_events.lhe unweighted_events.lhe
-${K4GENERATORSCONFIG}/pythiaLHERunner -f pythiaMuon350_ISR.cmnd -l unweighted_events.lhe -o Muon350_ISR.hepmc
-${K4GENERATORSCONFIG}/convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon350_ISR.hepmc Muon350_ISR.edm4hep
+pythiaLHERunner -f pythiaMuon350_ISR.cmnd -l unweighted_events.lhe -o Muon350_ISR.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon350_ISR.hepmc Muon350_ISR.edm4hep
 
-${K4GENERATORSCONFIG}/key4HEPAnalysis -i Muon350_ISR.edm4hep -o Muon350_ISR.root -p 13,-13
+key4HEPAnalysis -i Muon350_ISR.edm4hep -o Muon350_ISR.root -p 13,-13
