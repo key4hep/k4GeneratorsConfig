@@ -20,7 +20,7 @@ namespace k4GeneratorsConfig {
 class eventGenerationCollections2Root {
 public:
   eventGenerationCollections2Root();
-  eventGenerationCollections2Root(std::string);
+  eventGenerationCollections2Root(std::string, std::string);
   ~eventGenerationCollections2Root();
 
   void Init();
@@ -60,6 +60,7 @@ private:
 
   std::vector<std::string> m_log;
 
+  std::string m_dirname;
   TFile* m_file;
   TTree* m_tree;
 

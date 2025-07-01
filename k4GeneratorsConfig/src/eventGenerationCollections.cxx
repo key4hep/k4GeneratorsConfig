@@ -156,9 +156,9 @@ bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(analysisHist
 }
 unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() { return m_validCounter; }
 unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() { return m_invalidCounter; }
-void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string filename) {
+void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string dirname, std::string filename) {
 
-  eventGenerationCollections2Root out(filename);
+  eventGenerationCollections2Root out(dirname, filename);
 
   for (auto xsec : m_xsectionCollection) {
     if (xsec.isValid()) {
