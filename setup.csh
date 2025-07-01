@@ -41,7 +41,5 @@ if (! -d "${K4GeneratorsConfigDir}/install/") then
     exit 1
 endif
 
-setenv K4GENERATORSCONFIG  "${K4GeneratorsConfigDir}/install/bin"
-
 # Set executable
 alias k4GeneratorsConfig "python3 ${K4GeneratorsConfigDir}/python/main.py"
