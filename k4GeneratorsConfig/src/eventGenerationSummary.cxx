@@ -8,12 +8,16 @@
 int main(int argc, char** argv) {
 
   std::string filename = "GenerationSummary.dat";
+  std::string dirRoot  = "";
   std::string fileRoot = "eventGenerationSummary.root";
   int c;
-  while ((c = getopt(argc, argv, "hf:r:")) != -1)
+  while ((c = getopt(argc, argv, "hf:d:r:")) != -1)
     switch (c) {
     case 'f':
       filename = optarg;
+      break;
+    case 'd':
+      dirRoot = optarg;
       break;
     case 'r':
       fileRoot = optarg;
@@ -22,6 +26,7 @@ int main(int argc, char** argv) {
       std::cout << "Usage: xsectionSummary -h -f filename" << std::endl;
       std::cout << "-h: print this help" << std::endl;
       std::cout << "-f filename: print the summary information to this file" << std::endl;
+      std::cout << "-d dirname: write the RootTree and figures to this directory" << std::endl;
       std::cout << "-r filename: write the RootTree to this file" << std::endl;
       exit(0);
     default:
@@ -33,7 +38,7 @@ int main(int argc, char** argv) {
   // execute the gathering of information including detailed output
   evgenColls->Execute();
   // do the root analysis
-  evgenColls->Write2Root(fileRoot);
+  evgenColls->Write2Root(dirRoot, fileRoot);
   // print the summary on screen
   evgenColls->PrintSummary(std::cout);
   // save the summary in a file (call after root to fill the log
