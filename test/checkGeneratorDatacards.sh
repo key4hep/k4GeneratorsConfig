@@ -59,8 +59,8 @@ for generator in */$GENERATOR; do
     [[ -d "$generator" ]] || continue
     for outFile in "$PWD/$generator"/*/*; do
         [[ -f "$outFile" ]] || continue
-	local fullpath="$(dirname "$outFile")"
-	local procname="$(basename "$fullpath")"
+	fullpath="$(dirname "$outFile")"
+	procname="$(basename "$fullpath")"
         checkFile "$generator" "$procname" "$(basename "$outFile")"
 	# copy the files to the output
         mkdir -p "${CWD}"/output/"$generator"/"$procname"/
