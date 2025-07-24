@@ -39,66 +39,59 @@ void k4GeneratorsConfig::eventGenerationCollections::Execute() {
 }
 void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
 
-  for (const auto& yamls : std::filesystem::directory_iterator(".")) {
-    std::filesystem::path yamlsPath = yamls.path();
-    //    if ( yamlsPath.extension() == ".yaml" ) continue;
-    if (!std::filesystem::is_directory(yamlsPath))
+  for (const auto& generators : std::filesystem::directory_iterator("Run-Cards")) {
+    std::filesystem::path generatorsPath = generators.path();
+    if (!std::filesystem::is_directory(generatorsPath))
       continue;
-
-    for (const auto& generators : std::filesystem::directory_iterator(yamlsPath.string() + "/Run-Cards")) {
-      std::filesystem::path generatorsPath = generators.path();
-      if (!std::filesystem::is_directory(generatorsPath))
-        continue;
-
-      for (const auto& procs : std::filesystem::directory_iterator(generatorsPath.string())) {
-        std::filesystem::path processPath = procs.path();
-        if (!std::filesystem::is_directory(processPath))
-          continue;
-
-        k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
-        for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
-          std::filesystem::path filenamePath = files.path();
-          if (!std::filesystem::is_regular_file(filenamePath))
-            continue;
-          // take care of the total cross section extracted from the EDM4HEP file
-          if (filenamePath.extension() == ".edm4hep") {
-            std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
-                      << " File:" << filenamePath.filename().string() << std::endl;
-            xsec->setProcess(processPath.filename().string());
-            xsec->setFile(filenamePath.string());
-            // in some cases the generator name is not available, therefore derive from the filename
-            xsec->setGenerator(generatorsPath.filename().string());
-            std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
-            m_xsectionCollection.push_back(*xsec);
-            if (xsec->isValid())
-              m_validCounter++;
-            if (!xsec->isValid())
-              m_invalidCounter++;
-          }
-        }
-        // we need to keep xsec alive for the analysisHistos distributions
-        for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
-          std::filesystem::path filenamePath = files.path();
-          if (!std::filesystem::is_regular_file(filenamePath))
-            continue;
-          // take care of the analysisHistos distributions extracted from the .root (analysis output) file
-          if (filenamePath.extension() == ".root") {
-            std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
-                      << " File: " << filenamePath.filename().string() << std::endl;
-            k4GeneratorsConfig::analysisHistos* diffDist = new k4GeneratorsConfig::analysisHistos();
-            diffDist->setProcess(processPath.filename().string());
-            diffDist->setFile(filenamePath.string());
-            diffDist->setSQRTS(xsec->SQRTS());
-            // in some cases the generator name is not available, therefore derive from the filename
-            diffDist->setGenerator(generatorsPath.filename().string());
-            std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
-                      << std::endl;
-            m_analysisHistosCollection.push_back(*diffDist);
-            delete diffDist;
-          }
-        }
-        delete xsec;
+    
+    for (const auto& procs : std::filesystem::directory_iterator(generatorsPath.string())) {
+      std::filesystem::path processPath = procs.path();
+      if (!std::filesystem::is_directory(processPath))
+	continue;
+      
+      k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
+      for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
+	std::filesystem::path filenamePath = files.path();
+	if (!std::filesystem::is_regular_file(filenamePath))
+	  continue;
+	// take care of the total cross section extracted from the EDM4HEP file
+	if (filenamePath.extension() == ".edm4hep") {
+	  std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
+		    << " File:" << filenamePath.filename().string() << std::endl;
+	  xsec->setProcess(processPath.filename().string());
+	  xsec->setFile(filenamePath.string());
+	  // in some cases the generator name is not available, therefore derive from the filename
+	  xsec->setGenerator(generatorsPath.filename().string());
+	  std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
+	  m_xsectionCollection.push_back(*xsec);
+	  if (xsec->isValid())
+	    m_validCounter++;
+	  if (!xsec->isValid())
+	    m_invalidCounter++;
+	}
       }
+      // we need to keep xsec alive for the analysisHistos distributions
+      for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
+	std::filesystem::path filenamePath = files.path();
+	if (!std::filesystem::is_regular_file(filenamePath))
+	  continue;
+	// take care of the analysisHistos distributions extracted from the .root (analysis output) file
+	if (filenamePath.extension() == ".root") {
+	  std::cout << "eventGenerationCollections::Process: " << processPath.filename().string()
+		    << " File: " << filenamePath.filename().string() << std::endl;
+	  k4GeneratorsConfig::analysisHistos* diffDist = new k4GeneratorsConfig::analysisHistos();
+	  diffDist->setProcess(processPath.filename().string());
+	  diffDist->setFile(filenamePath.string());
+	  diffDist->setSQRTS(xsec->SQRTS());
+	  // in some cases the generator name is not available, therefore derive from the filename
+	  diffDist->setGenerator(generatorsPath.filename().string());
+	  std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
+		    << std::endl;
+	  m_analysisHistosCollection.push_back(*diffDist);
+	  delete diffDist;
+	}
+      }
+      delete xsec;
     }
   }
 }
