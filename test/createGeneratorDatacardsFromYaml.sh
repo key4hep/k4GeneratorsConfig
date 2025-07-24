@@ -34,11 +34,11 @@ done
 
 CWD=${PWD}
 # only create the directory if it does not exist yet
-if [[ ! -d ${CWD}/ci-setups ]]; then
-   mkdir -p ${CWD}/ci-setups
+if [[ ! -d ${CWD}/ci ]]; then
+   mkdir -p ${CWD}/ci
 else
     # clean up the content if necessary
-    rm -Rf ci-setups/*
+    rm -Rf ci/*
 fi
 # only create the directory if it does not exist yet
 if [[ ! -d ${CWD}/output ]]; then
@@ -52,22 +52,22 @@ fi
 # only copy if the file does not exist yet:
 for yamlFileWithPath in "$YAMLDIR"/*.yaml; do
     yamlFile="$(basename "$yamlFileWithPath")"
-    if [[ ! -f ci-setups/"$yamlFile" ]]; then
-	echo copying $yamlFileWithPath to ci-setups
-	cp -f "$yamlFileWithPath" ci-setups
+    if [[ ! -f ci/"$yamlFile" ]]; then
+	echo copying $yamlFileWithPath to ci
+	cp -f "$yamlFileWithPath" ci
     fi
 done
 
 # check whether ecms.dat files are available:
 for ecmsFileWithPath in "$YAMLDIR"/"ecms"*.dat; do
     ecmsFile="$(basename "$ecmsFileWithPath")"
-    if [[ -f "$ecmsFileWithPath" && ! -f ci-setups/"$ecmsFile" && "$ecmsFile" != "ecms.dat" ]]; then
-	echo copying $ecmsFileWithPath to ci-setups
-	cp -f "$ecmsFileWithPath" ci-setups
+    if [[ -f "$ecmsFileWithPath" && ! -f ci/"$ecmsFile" && "$ecmsFile" != "ecms.dat" ]]; then
+	echo copying $ecmsFileWithPath to ci
+	cp -f "$ecmsFileWithPath" ci
     fi
 done
 
-cd ci-setups
+cd ci
 
 # STEP 1: check the input
 

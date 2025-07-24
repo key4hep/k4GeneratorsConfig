@@ -29,7 +29,7 @@ while getopts ${OPTSTRING} opt; do
 done
 
 CWD=${PWD}
-cd ci-setups
+cd ci
 
 function checkOutputs() {
     local requestedGenerator="$1"

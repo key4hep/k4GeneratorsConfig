@@ -34,7 +34,7 @@ if [ -z $GENERATOR ]; then
 fi
 
 CWD=${PWD}
-cd ci-setups
+cd ci
 
 # run a generator: argument is a pathname
 function processRun() {
