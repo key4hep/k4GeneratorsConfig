@@ -52,16 +52,11 @@ function processRun() {
     cd $topDir
 }
 
-# loop through all directors to run all files
-for yamlDir in test-*; do
-    cd $yamlDir
-    file_pattern="*/${GENERATOR}/*/*.sh"
-    if ls $file_pattern 1> /dev/null 2>&1; then
-    	for aRunScript in ${file_pattern}; do
-    	    processRun "$aRunScript"
-    	done
-    fi
-    cd ..
-done
+file_pattern="*/${GENERATOR}/*/*.sh"
+if ls $file_pattern 1> /dev/null 2>&1; then
+    for aRunScript in ${file_pattern}; do
+    	processRun "$aRunScript"
+    done
+fi
 
 exit 0

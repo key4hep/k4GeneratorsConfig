@@ -75,15 +75,12 @@ function processYAML() {
     local yamlFile="$1"
     local filename="${yamlFile%.yaml}"
 
-    mkdir -p "test-$filename"
-    cd "test-$filename"
     echo "Processing file: $yamlFile"
-    if [[ ! -f ../ecms"$filename".dat ]]; then
-	k4GeneratorsConfig "../$yamlFile"
+    if [[ ! -f ecms"$filename".dat ]]; then
+	k4GeneratorsConfig "$yamlFile"
     else
-	k4GeneratorsConfig "../$yamlFile" --ecmsFile ../ecms"$filename".dat
+	k4GeneratorsConfig "$yamlFile" --ecmsFile ecms"$filename".dat
     fi
-    cd ..
 }
 
 
