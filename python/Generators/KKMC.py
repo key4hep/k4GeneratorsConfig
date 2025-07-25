@@ -26,6 +26,7 @@ class KKMC(GeneratorBase):
         # parameters to be set
         self.addModelParameter('GFermi')
         self.addModelParameter('alphaEMM1')
+        self.addModelParameter('sin2thetaLO')
         # need to ensure MZ, Mtop are set:
         self.addModelParticleProperty(pdg_code=23, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
@@ -102,7 +103,7 @@ class KKMC(GeneratorBase):
         self.add2Key4hepScript(key4hepRun)
 
     def getParameterLabel(self, param):
-        parameterDict = { 'GFermi' : '_GFermi', 'alphaSMZ' : '_alphaSMZ', 'alphaEMM1': '_alphaEMM1'}
+        parameterDict = { 'GFermi' : '_GFermi', 'alphaSMZ' : '_alphaSMZ', 'alphaEMM1': '_alphaEMM1', 'sin2thetaLO': '_sin2thetaW'}
         # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::KKMC: parameter {param} has no translation in KKMC Parameter Dictionary")

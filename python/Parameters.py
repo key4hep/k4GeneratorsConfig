@@ -84,6 +84,13 @@ GFermi = Parameter(
     texname="G_f"
 )
 
+sin2thetaLO = Parameter(
+    name="sin2thetaLO",
+    value=0.22276773,
+    isParticleProperty=False,
+    texname="sin ^{2}\\theta"
+)
+
 sin2theta = Parameter(
     name="sin2theta",
     value=0.23155,

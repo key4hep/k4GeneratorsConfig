@@ -8,7 +8,7 @@
 int main(int argc, char** argv) {
 
   std::string filename = "GenerationSummary.dat";
-  std::string dirRoot = "";
+  std::string dirRoot = ".";
   std::string fileRoot = "eventGenerationSummary.root";
   int c;
   while ((c = getopt(argc, argv, "hf:d:r:")) != -1)

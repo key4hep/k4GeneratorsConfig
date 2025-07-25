@@ -28,27 +28,13 @@ while getopts ${OPTSTRING} opt; do
   esac
 done
 
-CWD=${PWD}
-cd ci-setups
+# if the generator is not requested explicitely, we define a wildcard (=all)
+if [ -z $GENERATOR ]; then
+    GENERATOR=*
+fi
 
-function checkOutputs() {
-    local requestedGenerator="$1"
-    if [ "$#" -eq 0 ]; then
-	requestedGenerator=*
-    fi
-    for generator in */$requestedGenerator; do
-	[[ -d "$generator" ]] || continue
-	for outFile in "$PWD/$generator"/*/*; do
-            [[ -f "$outFile" ]] || continue
-	    local fullpath="$(dirname "$outFile")"
-	    local procname="$(basename "$fullpath")"
-            checkFile "$generator" "$procname" "$(basename "$outFile")"
-	    # copy the files to the output
-            mkdir -p "${CWD}"/output/"$generator"/"$procname"/
-  	    cp "$outFile" "${CWD}"/output/"$generator"/"$procname"/"$(basename "$outFile")"
-	done
-    done
-}
+CWD=${PWD}
+cd ci
 
 function checkFile() {
     local generator="$1"
@@ -68,12 +54,18 @@ function checkFile() {
     fi
 }
 
-for testDir in test-*; do
-    [[ -d "$testDir" ]] || continue
-    cd $testDir
-    checkOutputs "$GENERATOR"
-    cd ..
+# loop over the generators requested:
+for generator in */$GENERATOR; do
+    [[ -d "$generator" ]] || continue
+    for outFile in "$PWD/$generator"/*/*; do
+        [[ -f "$outFile" ]] || continue
+	fullpath="$(dirname "$outFile")"
+	procname="$(basename "$fullpath")"
+        checkFile "$generator" "$procname" "$(basename "$outFile")"
+	# copy the files to the output
+        mkdir -p "${CWD}"/output/"$generator"/"$procname"/
+  	cp "$outFile" "${CWD}"/output/"$generator"/"$procname"/"$(basename "$outFile")"
+    done
 done
-
 
 exit 0

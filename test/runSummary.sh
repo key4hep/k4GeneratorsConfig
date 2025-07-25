@@ -6,11 +6,11 @@ shopt -s expand_aliases
 source ../setup.sh
 
 CWD=${PWD}
-cd ci-setups
+cd ci
 
 #STEP 4
 #since we have run the generators we can also do the summary now:
-echo Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions
-eventGenerationSummary -f ${CWD}/GenerationSummary.dat -d ../output
+echo "Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions"
+eventGenerationSummary -f ${CWD}/output/GenerationSummary.dat -d ../output
 
 exit 0
