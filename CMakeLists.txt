@@ -16,6 +16,7 @@ find_package(EDM4HEP REQUIRED)
 find_package(HepMC3 REQUIRED)
 find_package(HepPDT REQUIRED)
 find_package(pythia8 REQUIRED)
+find_package(ROOT REQUIRED COMPONENTS Core Tree Hist)
 
 # --- optional dependencies for additional functionality via HepMC3
 find_package(ZLIB)
