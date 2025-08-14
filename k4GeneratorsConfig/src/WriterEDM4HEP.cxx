@@ -330,7 +330,11 @@ edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenPartic
     float theta = static_cast<float>(thetaPtr->value());
     float phi = static_cast<float>(phiPtr->value());
     edm4hep::Vector3f hel(cos(phi) * cos(theta), sin(phi) * cos(theta), sin(theta));
+#ifdef EDM4HEP_MCPARTICLE_HAS_HELICITY
+    // TODO: Figure out what actually needs to go here
+#else
     edm_particle.setSpin(hel);
+#endif
   }
 
   // convert production vertex info and time info:
