@@ -22,6 +22,7 @@
 #include "edm4hep/GeneratorPdfInfoCollection.h"
 #include "edm4hep/GeneratorToolInfo.h"
 
+#include "edm4hep/EDM4hepVersion.h"
 #include "edm4hep/EventHeaderCollection.h"
 #include "edm4hep/MCParticleCollection.h"
 
@@ -330,7 +331,11 @@ edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenPartic
     float theta = static_cast<float>(thetaPtr->value());
     float phi = static_cast<float>(phiPtr->value());
     edm4hep::Vector3f hel(cos(phi) * cos(theta), sin(phi) * cos(theta), sin(theta));
+#if EDM4HEP_BUILD_VERSION <= EDM4HEP_VERSION(0, 99, 2)
     edm_particle.setSpin(hel);
+#else
+    // TODO: Figure out what actually needs to go here
+#endif
   }
 
   // convert production vertex info and time info:
