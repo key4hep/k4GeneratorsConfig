@@ -22,7 +22,6 @@
 #include "edm4hep/GeneratorPdfInfoCollection.h"
 #include "edm4hep/GeneratorToolInfo.h"
 
-#include "edm4hep/EDM4hepVersion.h"
 #include "edm4hep/EventHeaderCollection.h"
 #include "edm4hep/MCParticleCollection.h"
 
