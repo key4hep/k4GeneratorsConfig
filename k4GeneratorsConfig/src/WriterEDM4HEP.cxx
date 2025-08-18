@@ -317,6 +317,9 @@ edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenPartic
   // set the mass (energy is deduced in EDM4HEP
   edm_particle.setMass(p.m());
 
+#ifdef EDM4HEP_MCPARTICLE_HAS_HELICITY
+  // TODO: Figure out what actually needs to go here
+#else
   // add spin (particle helicity) information if available
   //  std::shared_ptr<HepMC3::VectorFloatAttribute> spin =
   //  hepmcParticle->attribute<HepMC3::VectorFloatAttribute>("spin");
@@ -330,12 +333,9 @@ edm4hep::MutableMCParticle WriterEDM4HEP::transformParticle(const ConstGenPartic
     float theta = static_cast<float>(thetaPtr->value());
     float phi = static_cast<float>(phiPtr->value());
     edm4hep::Vector3f hel(cos(phi) * cos(theta), sin(phi) * cos(theta), sin(theta));
-#ifdef EDM4HEP_MCPARTICLE_HAS_HELICITY
-    // TODO: Figure out what actually needs to go here
-#else
     edm_particle.setSpin(hel);
-#endif
   }
+#endif
 
   // convert production vertex info and time info:
   auto prodVtx = hepmcParticle->production_vertex();
