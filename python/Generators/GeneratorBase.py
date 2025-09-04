@@ -190,35 +190,37 @@ class GeneratorBase(abc.ABC):
         raise NotImplementedError("setModelParameters")
 
     def checkModelParameters(self):
-        # check alphaEM from MZ, MW and GFermi
-        mW        = ParameterClass.get_info("MW").value
-        mZ        = ParameterClass.get_info("MZ").value
-        Gf        = ParameterClass.get_info("GFermi").value
-        alphaEMLO = ParameterClass.get_info("alphaEMLO").value
-        alphaEMLOPred = math.sqrt(2.)/math.pi*Gf*mW**2*(1.-mW**2/mZ**2)
-        if not self.isCompatible(alphaEMLO, alphaEMLOPred):
-            print(f"WARNING: alphaEMLO and GF, MW, MZ not compatible")
-            print(f" Input: {alphaEMLO} Predicted: {alphaEMLOPred}")
-        # check alphaEMLOM1 from alphaEMLO
-        alphaEMLOM1 = ParameterClass.get_info("alphaEMLOM1").value
-        alphaEMLOM1Pred = 1./alphaEMLOPred
-        if not self.isCompatible(alphaEMLOM1, alphaEMLOM1Pred):
-            print(f"WARNING: alphaEMLO and alphaEMLOM1 not compatible")
-            print(f" Input: {alphaEMLOM1} Predicted: {alphaEMLOM1Pred}")
-        # check sin2theta
+        # retrieve the parameters
+        Gf          = ParameterClass.get_info("GFermi").value
+        mW          = ParameterClass.get_info("MW").value
+        mZ          = ParameterClass.get_info("MZ").value
         sin2thetaLO = ParameterClass.get_info("sin2thetaLO").value
+        alphaEMLO   = ParameterClass.get_info("alphaEMLO").value
+        alphaEMLOM1 = ParameterClass.get_info("alphaEMLOM1").value
+        vev         = ParameterClass.get_info("VEV").value
+        # calculate the prediction from GF, MW, MZ
         sin2thetaLOPred = 1.- mW**2 / mZ**2
-        if not self.isCompatible(sin2thetaLO, sin2thetaLOPred):
-            print(f"WARNING: sin2thetaLO not compatible with MW, MZ")
-            print(f" Input: {sin2thetaLO} Predicted: {sin2thetaLOPred}")
-        # check VEV
-        vev = ParameterClass.get_info("VEV").value
+        alphaEMLOPred   = math.sqrt(2.)/math.pi*Gf*mW**2*sin2thetaLOPred
+        alphaEMLOM1Pred = 1./alphaEMLOPred
         e2        = 4. *math.pi * alphaEMLOPred;
         g1sq      = e2/(1.-sin2thetaLOPred);
         g2sq      = e2/sin2thetaLOPred;
         vevLOPred = 2.* mZ/math.sqrt(g1sq+g2sq)
+        # check compatibility of sin2theta with MW, MZ
+        if not self.isCompatible(sin2thetaLO, sin2thetaLOPred):
+            print(f"WARNING: sin2thetaLO not compatible with MW, MZ")
+            print(f" Input: {sin2thetaLO} Predicted: {sin2thetaLOPred}")
+        # check compatibility of alphaEMLO with GF, MW, MZ
+        if not self.isCompatible(alphaEMLO, alphaEMLOPred):
+            print(f"WARNING: alphaEMLO not compatible with GF, MW, MZ")
+            print(f" Input: {alphaEMLO} Predicted: {alphaEMLOPred}")
+        # check compatibility of alphaEMLOM1 with GF, MZ, MZ
+        if not self.isCompatible(alphaEMLOM1, alphaEMLOM1Pred):
+            print(f"WARNING: alphaEMLOM1 not compatible with GF, MW, MZ")
+            print(f" Input: {alphaEMLOM1} Predicted: {alphaEMLOM1Pred}")
+        # check VEV
         if not self.isCompatible(vev, vevLOPred):
-            print(f"WARNING: vev not compatible with sin2thetaLO")
+            print(f"WARNING: vev not compatible with GF, MW, MZ")
             print(f" Input: {vev} Predicted: {vevLOPred}")
 
     def isCompatible(self, target, prediction):
