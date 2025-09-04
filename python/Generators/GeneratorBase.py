@@ -201,7 +201,7 @@ class GeneratorBase(abc.ABC):
             print(f" Input: {alphaEMLO} Predicted: {alphaEMLOPred}")
         # check alphaEMLOM1 from alphaEMLO
         alphaEMLOM1 = ParameterClass.get_info("alphaEMLOM1").value
-        alphaEMLOM1Pred = 1./alphaEMLO
+        alphaEMLOM1Pred = 1./alphaEMLOPred
         if not self.isCompatible(alphaEMLOM1, alphaEMLOM1Pred):
             print(f"WARNING: alphaEMLO and alphaEMLOM1 not compatible")
             print(f" Input: {alphaEMLOM1} Predicted: {alphaEMLOM1Pred}")
@@ -213,9 +213,9 @@ class GeneratorBase(abc.ABC):
             print(f" Input: {sin2thetaLO} Predicted: {sin2thetaLOPred}")
         # check VEV
         vev = ParameterClass.get_info("VEV").value
-        e2        = 4. *math.pi * alphaEMLO;
-        g1sq      = e2/(1.-sin2thetaLO);
-        g2sq      = e2/sin2thetaLO;
+        e2        = 4. *math.pi * alphaEMLOPred;
+        g1sq      = e2/(1.-sin2thetaLOPred);
+        g2sq      = e2/sin2thetaLOPred;
         vevLOPred = 2.* mZ/math.sqrt(g1sq+g2sq)
         if not self.isCompatible(vev, vevLOPred):
             print(f"WARNING: vev not compatible with sin2thetaLO")
