@@ -51,7 +51,7 @@ alphaEMMZ = Parameter(
 
 alphaEMLOM1 = Parameter(
     name="alphaEMLOM1",
-    value=1.325070e+02,
+    value=1.32184e+02,
     isParticleProperty=False,
     texname="\\text{aEWLOM1}"
 )
@@ -86,7 +86,7 @@ GFermi = Parameter(
 
 sin2thetaLO = Parameter(
     name="sin2thetaLO",
-    value=0.22276773,
+    value=0.223013,
     isParticleProperty=False,
     texname="sin ^{2}\\theta"
 )
