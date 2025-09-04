@@ -1,6 +1,7 @@
 import abc
 import importlib
 import os, stat
+import math
 import ReleaseSpecs
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
@@ -28,6 +29,8 @@ class GeneratorBase(abc.ABC):
         self.setDefaultModelParameters()
         # set the Generator specific parameters
         self.setModelParameters()
+        # check consistency: note that the ParameterSets have been defined, check with the particle masses
+        self.checkModelParameters()
 
         # define the output directory as function of the OutDir spec + generator name + process name
         self.outdir = (
@@ -185,6 +188,47 @@ class GeneratorBase(abc.ABC):
 
     def setModelParameters(self):
         raise NotImplementedError("setModelParameters")
+
+    def checkModelParameters(self):
+        # check relation ship between alphaEMLO and alphaEMLOM1
+        alphaEMLOM1 = ParameterClass.get_info("alphaEMLOM1").value
+        alphaEMLO   = ParameterClass.get_info("alphaEMLO").value
+        alphaEMLOM1Pred = 1./alphaEMLO
+        if not self.isCompatible(alphaEMLOM1, alphaEMLOM1Pred):
+            print(f"WARNING: alphaEMLO and alphaEMLOM1 not compatible")
+            print(f" Input: {alphaEMLOM1} Predicted: {alphaEMLOM1Pred}")
+        # check sin2theta
+        sin2thetaLO = ParameterClass.get_info("sin2thetaLO").value
+        mW          = ParameterClass.get_info("MW").value
+        mZ          = ParameterClass.get_info("MZ").value
+        sin2thetaLOPred = 1.- mW**2 / mZ**2
+        if not self.isCompatible(sin2thetaLO, sin2thetaLOPred):
+            print(f"WARNING: sin2thetaLO not compatible with MW, MZ")
+            print(f" Input: {sin2thetaLO} Predicted: {sin2thetaLOPred}")
+        # check VEV
+        vev = ParameterClass.get_info("VEV").value
+        e2        = 4. *math.pi * alphaEMLO;
+        g1sq      = e2/(1.-sin2thetaLO);
+        g2sq      = e2/sin2thetaLO;
+        vevLOPred = 2.* mZ/math.sqrt(g1sq+g2sq)
+        if not self.isCompatible(vev, vevLOPred):
+            print(f"WARNING: vev not compatible with sin2thetaLO")
+            print(f" Input: {vev} Predicted: {vevLOPred}")
+
+    def isCompatible(self, target, prediction):
+        # maximum relative deviation
+        maxRelDiff = 0.001
+        # do the safe math
+        relDelta = 1.
+        # if the target is zero, then take the absolute deviation, if not the relative deviation
+        if target > 0.:
+            relDelta = abs(target - prediction ) / target
+        else:
+            relDelta = abs(target - prediction )
+        # return compatibility or not
+        if relDelta > maxRelDiff:
+            return False
+        return True
 
     def addModelParameter(self, item):
         if not self.hasModelParameter(item):

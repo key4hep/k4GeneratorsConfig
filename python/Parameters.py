@@ -49,18 +49,18 @@ alphaEMMZ = Parameter(
     texname="\\alpha _{\\text{EW}}"
 )
 
-alphaEMEWSchemeM1 = Parameter(
-    name="alphaEMEWSchemeM1",
+alphaEMLOM1 = Parameter(
+    name="alphaEMLOM1",
     value=1.325070e+02,
     isParticleProperty=False,
-    texname="\\text{aEWEWSchemeM1}"
+    texname="\\text{aEWLOM1}"
 )
 
-alphaEMEWScheme = Parameter(
-    name="alphaEMEWScheme",
-    value=1/alphaEMEWSchemeM1.value,
+alphaEMLO = Parameter(
+    name="alphaEMLO",
+    value=1/alphaEMLOM1.value,
     isParticleProperty=False,
-    texname="\\alpha _{\\text{EW EWScheme}}"
+    texname="\\alpha _{\\text{aEW LO}}"
 )
 
 alphaEMM1 = Parameter(
