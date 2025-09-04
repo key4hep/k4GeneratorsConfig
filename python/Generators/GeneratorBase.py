@@ -195,7 +195,7 @@ class GeneratorBase(abc.ABC):
         mZ        = ParameterClass.get_info("MZ").value
         Gf        = ParameterClass.get_info("GFermi").value
         alphaEMLO = ParameterClass.get_info("alphaEMLO").value
-        alphaEMLOPred = math.sqrt(2.)/math.pi*Gf*mW**2*(1.-mW**2/mZ**2) 
+        alphaEMLOPred = math.sqrt(2.)/math.pi*Gf*mW**2*(1.-mW**2/mZ**2)
         if not self.isCompatible(alphaEMLO, alphaEMLOPred):
             print(f"WARNING: alphaEMLO and GF, MW, MZ not compatible")
             print(f" Input: {alphaEMLO} Predicted: {alphaEMLOPred}")
