@@ -190,17 +190,23 @@ class GeneratorBase(abc.ABC):
         raise NotImplementedError("setModelParameters")
 
     def checkModelParameters(self):
-        # check relation ship between alphaEMLO and alphaEMLOM1
+        # check alphaEM from MZ, MW and GFermi
+        mW        = ParameterClass.get_info("MW").value
+        mZ        = ParameterClass.get_info("MZ").value
+        Gf        = ParameterClass.get_info("GFermi").value
+        alphaEMLO = ParameterClass.get_info("alphaEMLO").value
+        alphaEMLOPred = math.sqrt(2.)/math.pi*Gf*mW**2*(1.-mW**2/mZ**2) 
+        if not self.isCompatible(alphaEMLO, alphaEMLOPred):
+            print(f"WARNING: alphaEMLO and GF, MW, MZ not compatible")
+            print(f" Input: {alphaEMLO} Predicted: {alphaEMLOPred}")
+        # check alphaEMLOM1 from alphaEMLO
         alphaEMLOM1 = ParameterClass.get_info("alphaEMLOM1").value
-        alphaEMLO   = ParameterClass.get_info("alphaEMLO").value
         alphaEMLOM1Pred = 1./alphaEMLO
         if not self.isCompatible(alphaEMLOM1, alphaEMLOM1Pred):
             print(f"WARNING: alphaEMLO and alphaEMLOM1 not compatible")
             print(f" Input: {alphaEMLOM1} Predicted: {alphaEMLOM1Pred}")
         # check sin2theta
         sin2thetaLO = ParameterClass.get_info("sin2thetaLO").value
-        mW          = ParameterClass.get_info("MW").value
-        mZ          = ParameterClass.get_info("MZ").value
         sin2thetaLOPred = 1.- mW**2 / mZ**2
         if not self.isCompatible(sin2thetaLO, sin2thetaLOPred):
             print(f"WARNING: sin2thetaLO not compatible with MW, MZ")
