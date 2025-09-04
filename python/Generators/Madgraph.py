@@ -36,7 +36,7 @@ class Madgraph(GeneratorBase):
         #self.addModelParameter('alphaEMMZM1')
         #self.addModelParameter('alphaEMM1')
         # for a coherent setting we need to use a derived value for alphaQED
-        #self.addModelParameter('alphaEMEWSchemeM1')
+        #self.addModelParameter('alphaEMLOM1')
         self.addModelParticleProperty(pdg_code=24, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
         self.addModelParticleProperty(pdg_code=24, property_type='width')
@@ -257,7 +257,7 @@ class Madgraph(GeneratorBase):
         return particle.get("name")
 
     def getParameterLabel(self, param):
-        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' , 'alphaEMEWSchemeM1' : 'aEWM1'}
+        parameterDict = { 'GFermi' : 'GF', 'alphaSMZ' : 'aS', 'alphaEMM1' : 'aEWM1' , 'alphaEMLOM1' : 'aEWM1'}
         # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Madgraph: parameter {param} has no translation in Madgraph Parameter Dictionary")
