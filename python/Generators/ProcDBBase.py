@@ -1,6 +1,6 @@
-import abc
+from abc import ABC, abstractmethod
 
-class ProcDBBase(abc.ABC):
+class ProcDBBase(ABC):
     """GeneratorBase class"""
 
     def __init__(self, procinfo):
@@ -11,6 +11,7 @@ class ProcDBBase(abc.ABC):
         self.procdict      = dict()
         self.particlesdict = dict()
 
+    @abstractmethod
     def execute(self):
         return
 
