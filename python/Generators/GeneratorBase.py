@@ -243,6 +243,55 @@ class GeneratorBase(ABC):
             return False
         return True
 
+    def checkModelParameters(self):
+        # retrieve the parameters
+        Gf          = ParameterClass.get_info("GFermi").value
+        mW          = ParameterClass.get_info("MW").value
+        mZ          = ParameterClass.get_info("MZ").value
+        sin2thetaLO = ParameterClass.get_info("sin2thetaLO").value
+        alphaEMLO   = ParameterClass.get_info("alphaEMLO").value
+        alphaEMLOM1 = ParameterClass.get_info("alphaEMLOM1").value
+        vev         = ParameterClass.get_info("VEV").value
+        # calculate the prediction from GF, MW, MZ
+        sin2thetaLOPred = 1.- mW**2 / mZ**2
+        alphaEMLOPred   = math.sqrt(2.)/math.pi*Gf*mW**2*sin2thetaLOPred
+        alphaEMLOM1Pred = 1./alphaEMLOPred
+        e2        = 4. *math.pi * alphaEMLOPred;
+        g1sq      = e2/(1.-sin2thetaLOPred);
+        g2sq      = e2/sin2thetaLOPred;
+        vevLOPred = 2.* mZ/math.sqrt(g1sq+g2sq)
+        # check compatibility of sin2theta with MW, MZ
+        if not self.isCompatible(sin2thetaLO, sin2thetaLOPred):
+            print(f"WARNING: sin2thetaLO not compatible with MW, MZ")
+            print(f" Input: {sin2thetaLO} Predicted: {sin2thetaLOPred}")
+        # check compatibility of alphaEMLO with GF, MW, MZ
+        if not self.isCompatible(alphaEMLO, alphaEMLOPred):
+            print(f"WARNING: alphaEMLO not compatible with GF, MW, MZ")
+            print(f" Input: {alphaEMLO} Predicted: {alphaEMLOPred}")
+        # check compatibility of alphaEMLOM1 with GF, MZ, MZ
+        if not self.isCompatible(alphaEMLOM1, alphaEMLOM1Pred):
+            print(f"WARNING: alphaEMLOM1 not compatible with GF, MW, MZ")
+            print(f" Input: {alphaEMLOM1} Predicted: {alphaEMLOM1Pred}")
+        # check VEV
+        if not self.isCompatible(vev, vevLOPred):
+            print(f"WARNING: vev not compatible with GF, MW, MZ")
+            print(f" Input: {vev} Predicted: {vevLOPred}")
+
+    def isCompatible(self, target, prediction):
+        # maximum relative deviation
+        maxRelDiff = 0.001
+        # do the safe math
+        relDelta = 1.
+        # if the target is zero, then take the absolute deviation, if not the relative deviation
+        if target > 0.:
+            relDelta = abs(target - prediction ) / target
+        else:
+            relDelta = abs(target - prediction )
+        # return compatibility or not
+        if relDelta > maxRelDiff:
+            return False
+        return True
+
     def addModelParameter(self, item):
         if not self.hasModelParameter(item):
             self.ModelInputParams.append({'type' : 'Parameter', 'name' : item})
