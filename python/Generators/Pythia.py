@@ -225,3 +225,6 @@ class Pythia(GeneratorBase):
     def getParticleOperator(self, pdg, prop):
         return f"{pdg}:{prop}"
 
+    def getModelName(self):
+        # not needed for Pythia
+        pass

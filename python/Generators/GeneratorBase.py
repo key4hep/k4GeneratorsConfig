@@ -1,4 +1,4 @@
-import abc
+from abc import ABC,abstractmethod
 import importlib
 import os, stat
 import math
@@ -8,7 +8,7 @@ from Parameters import Parameter as ParameterClass
 from Particles import Particle as ParticleClass
 from Selectors import SelectorKeys
 
-class GeneratorBase(abc.ABC):
+class GeneratorBase(ABC):
     """GeneratorBase class"""
 
     def __init__(self, procinfo, settings, name, inputFileExtension):
@@ -123,8 +123,9 @@ class GeneratorBase(abc.ABC):
             theModel = self.getModelName(self.procinfo.get('model'))
         return theModel
 
+    @abstractmethod
     def setSelectorsDict(self):
-        raise NotImplementedError("setSelectorsDict")
+        pass
 
     def validateSelectorsDict(self):
         # get the allowed keys
@@ -168,14 +169,17 @@ class GeneratorBase(abc.ABC):
         else:
             print(f"{key} is a {select.NParticle} Particle selector, not implemented in {self.name}")
 
+    @abstractmethod
     def add1ParticleSelector2Card(self, sel, name):
-        raise NotImplementedError(f"add1ParticleSelector not implemented in {self.name}")
+        pass
 
+    @abstractmethod
     def add2ParticleSelector2Card(self, sel, name):
-        raise NotImplementedError(f"add2ParticleSelector not implemented in {self.name}")
+        pass
 
+    @abstractmethod
     def getModelName(self):
-        raise NotImplementedError(f"getModelName not implemented in {self.name}")
+        pass
 
     def setDefaultModelParameters(self):
         self.ModelInputParams = []
@@ -186,8 +190,9 @@ class GeneratorBase(abc.ABC):
         self.addModelParticleProperty(pdg_code=25, property_type='mass')
         self.addModelParticleProperty(pdg_code=25, property_type='width')
 
+    @abstractmethod
     def setModelParameters(self):
-        raise NotImplementedError("setModelParameters")
+        pass
 
     def checkModelParameters(self):
         # retrieve the parameters
@@ -278,8 +283,9 @@ class GeneratorBase(abc.ABC):
                 particleList.append([item['pdg'], item['prop']])
         return particleList
 
+    @abstractmethod
     def execute(self):
-        raise NotImplementedError("execute")
+        pass
 
     def add2GeneratorDatacard(self,content):
         # data encapsulation: add to the content in the base class
@@ -293,8 +299,9 @@ class GeneratorBase(abc.ABC):
         # data encapsulation: reset the datacard content to ""
         self.__datacardContent = ""
 
+    @abstractmethod
     def getGeneratorCommand(self,key,value):
-        raise NotImplementedError("getGeneratorCommand")
+        pass
 
     def addOption2GeneratorDatacard(self,key,value,replace=True):
         # check if the key is already defined in the datacard, then we take the last one (TBC):
@@ -345,11 +352,13 @@ class GeneratorBase(abc.ABC):
             else:
                 print(f"Warning::GeneratorBase::prepareParameters: {param} not found")
 
+    @abstractmethod
     def getParameterLabel(self, param):
-        raise NotImplementedError("getParameterLabel")
+        pass
 
+    @abstractmethod
     def getParameterOperator(self, name):
-        raise NotImplementedError("getParameterOperator")
+        pass
 
     def prepareParticles(self,add2Datacard=True, writeParticleHeader=False):
         # three sources for the particles: YAML input, global and ProcDB
@@ -419,11 +428,13 @@ class GeneratorBase(abc.ABC):
                     else:
                         self.replaceOptionInGeneratorDatacard(command,value)
 
+    @abstractmethod
     def getParticleProperty(self, attr):
-        raise NotImplementedError("getParticleProperty")
+        pass
 
+    @abstractmethod
     def getParticleOperator(self, pdg, prop):
-        raise NotImplementedError("getParticleOperator")
+        pass
 
     def add2Key4hepScript(self,content):
         # data encapsulation: add to the content in the base class
