@@ -112,3 +112,27 @@ class Babayaga(GeneratorBase):
                 )
             else:
                 return f"Cant find babayaga id for pdg {pdg}"
+
+    def add2ParticleSelector2Card(self, sel, name):
+        # not used by Babayaga
+        pass
+
+    def getModelName(self):
+        # not used by Babayaga
+        pass
+
+    def getParameterLabel(self, param):
+        # not used by Babayaga
+        pass
+
+    def getParameterOperator(self, name):
+        # not used by Babayaga
+        pass
+
+    def getParticleOperator(self, pdg, prop):
+        # not used by Babayaga
+        pass
+
+    def getParticleProperty(self, attr):
+        # not used by Babayaga
+        pass

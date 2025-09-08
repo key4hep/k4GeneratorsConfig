@@ -14,10 +14,6 @@ class KKMC(GeneratorBase):
 
         self.add2GeneratorDatacard(self.readTemplateFile())
 
-    def setSelectorsDict(self):
-        # selectors not possible with KKMC
-        return
-
     def setModelParameters(self):
         # there are some parameters we cannot set
         self.removeModelParticleProperty(pdg_code=6, property_type='width')
@@ -127,3 +123,27 @@ class KKMC(GeneratorBase):
     def pdg_to_KKMC(self, pdg):
         apdg = abs(400 + int(pdg))
         return f"{apdg}"
+
+    def add1ParticleSelector2Card(self, sel, name):
+        # not used by KKMC
+        pass
+
+    def add2ParticleSelector2Card(self, sel, name):
+        # not used by KKMC
+        pass
+
+    def getGeneratorCommand(self, key, value):
+        # not used by KKMC
+        pass
+
+    def getModelName(self):
+        # not used by KKMC
+        pass
+
+    def getParameterOperator(self, name):
+        # not used by KKMC
+        pass
+
+    def setSelectorsDict(self):
+        # not used by KKMC
+        pass

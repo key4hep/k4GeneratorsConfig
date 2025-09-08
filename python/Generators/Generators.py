@@ -34,8 +34,6 @@ class Generators:
             except AttributeError as e:
                 print(f"{generatorName} class could not be loaded with getattr for {self.proc_info.get('_proclabel')} or class initialization did not work with message:")
                 print(e)
-            except NotImplementedError as e:
-                print(f"class {generatorName} does not implement the {e} method")
             except RuntimeError as e:
                 print(f"Error during runtime: {e}")
                 print(f"Datacard files and execution scripts not written for generator {generatorName}")
