@@ -19,7 +19,6 @@
 
 #include "edm4hep/Constants.h"
 #include "edm4hep/GeneratorEventParametersCollection.h"
-#include "edm4hep/GeneratorPdfInfoCollection.h"
 #include "edm4hep/GeneratorToolInfo.h"
 
 #include "edm4hep/EventHeaderCollection.h"
@@ -160,10 +159,6 @@ void WriterEDM4HEP::write_event(const GenEvent& evt) {
     }
   }
 
-  // add the event_scale
-  std::string name = "event_scale";
-  generatorParameters.setEventScale(retrieveDoubleAttribute(evt, name));
-
   // add SQRTS
   double sqrts = 0.;
   if (evt.beams().size() == 2) {
@@ -180,49 +175,23 @@ void WriterEDM4HEP::write_event(const GenEvent& evt) {
   // now we write to the structure:
   generatorParameters.setSqrts(sqrts);
 
-  // signal process ID
-  name = "signal_process_id";
-  generatorParameters.setSignalProcessId(retrieveIntAttribute(evt, name));
-
   // signal vertex ID
-  name = "signal_vertex_id";
-  bool convertOK = writeSignalVertex(evt, retrieveIntAttribute(evt, name), mapIDPart, generatorParameters);
+  bool convertOK =
+      writeSignalVertex(evt, retrieveIntAttribute(evt, "signal_vertex_id"), mapIDPart, generatorParameters);
   // inconsistent use of attributes, fallback for SHERPA
   if (!convertOK) {
-    name = "signal_process_vertex";
-    writeSignalVertex(evt, retrieveIntAttribute(evt, name), mapIDPart, generatorParameters);
+    writeSignalVertex(evt, retrieveIntAttribute(evt, "signal_process_vertex"), mapIDPart, generatorParameters);
   }
 
-  // add the alphaQED
-  name = "alphaQED";
-  generatorParameters.setAlphaQED(retrieveDoubleAttribute(evt, name));
+  // retrieve the pdf information
+  HepMC3::ConstGenPdfInfoPtr pdfinfo = evt.pdf_info();
 
-  // add alphaQCD
-  name = "alphaQCD";
-  generatorParameters.setAlphaQCD(retrieveDoubleAttribute(evt, name));
+  generatorParameters.setPartonIds({pdfinfo->parton_id[0], pdfinfo->parton_id[1]});
 
   // add the object to the collection:
   generatorParametersCollection.push_back(generatorParameters);
   // write the GeneratorEventParameters collection to the frame
   eventFrame.put(std::move(generatorParametersCollection), edm4hep::labels::GeneratorEventParameters);
-
-  // now the PDFs:
-  edm4hep::GeneratorPdfInfoCollection pdfCollection;
-  edm4hep::MutableGeneratorPdfInfo pdfEDM4HEP;
-  //
-  // retrieve the pdf information
-  HepMC3::ConstGenPdfInfoPtr pdfinfo = evt.pdf_info();
-  if (pdfinfo) {
-    // store for transfer
-    pdfEDM4HEP.setPartonId({pdfinfo->parton_id[0], pdfinfo->parton_id[1]});
-    pdfEDM4HEP.setX({pdfinfo->x[0], pdfinfo->x[1]});
-    pdfEDM4HEP.setXf({pdfinfo->xf[0], pdfinfo->xf[1]});
-    pdfEDM4HEP.setLhapdfId({pdfinfo->pdf_id[0], pdfinfo->pdf_id[1]});
-    pdfEDM4HEP.setScale(pdfinfo->scale);
-  }
-  //
-  pdfCollection.push_back(pdfEDM4HEP);
-  eventFrame.put(std::move(pdfCollection), edm4hep::labels::GeneratorPdfInfo);
 
   // LAST ITEM: write the collection of MCParticles to the frame mv empties the collection which we need for
   // processing!!
@@ -245,7 +214,7 @@ bool WriterEDM4HEP::writeSignalVertex(const GenEvent& evt, int hepmcVertexID,
       for (auto part : vtx->particles_in()) {
         unsigned int hepmcParticleID = part->id();
         if (mapHEPMC2EDM4HEP.find(hepmcParticleID) != mapHEPMC2EDM4HEP.end()) {
-          generatorParameters.addToSignalVertex(mapHEPMC2EDM4HEP[hepmcParticleID]);
+          generatorParameters.addToSignalVertexParticles(mapHEPMC2EDM4HEP[hepmcParticleID]);
         }
       }
     }
