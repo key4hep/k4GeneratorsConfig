@@ -168,7 +168,8 @@ Note that **Beamstrahlung** is conditional on **ISRmode** being on. The **Beamst
 ## Analysis
 Postgeneration analyses can be performed either using Rivet and/or key4hep
 ```
-    Tools: [key4hep, rivet]
-	RivetAnalysis: [MC_XS, MC_ZINC,...]
-	RivetPath: /path/to/analysis
+Analysis:
+  Tools: [key4hep, rivet]
+  RivetAnalysis: [MC_XS, MC_ZINC,...]
+  RivetPath: /path/to/analysis
 ```
