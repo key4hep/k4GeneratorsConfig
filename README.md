@@ -99,19 +99,15 @@ default: 0 (turned off)
 		  Muon:
 		     Initial: [11, -11]
 		     Final: [13, -13]
-		     Order: [2,0]
 		  MuonNeutrino:
 		     Initial: [11, -11]
 		     Final: [14, -14]
-		     Order: [2,0]
 		  Tau:
 		     Initial: [11, -11]
 		     Final: [15, -15]
-		     Order: [2,0]
 		  TauNeutrino:
 		     Initial: [11, -11]
 		     Final: [16, -16]
-		     Order: [2,0]
 
 
 ```
@@ -168,3 +164,11 @@ Here we summarise the settings available to a subset of generators.
 Beamstrahlung: ILC
 ```
 Note that **Beamstrahlung** is conditional on **ISRmode** being on. The **Beamstrahlung** and **SqrtS** variables are used to configure the settings of the generators. For **SqrtS** a vicinity search (within 10GeV) is performed. In case the requested setting does not exist, a replacement setting is used and printed as a warning.
+
+## Analysis
+Postgeneration analyses can be performed either using Rivet and/or key4hep
+```
+    Tools: [key4hep, rivet]
+	RivetAnalysis: [MC_XS, MC_ZINC,...]
+	RivetPath: /path/to/analysis
+```
