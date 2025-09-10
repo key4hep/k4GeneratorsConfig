@@ -160,8 +160,8 @@ Here we summarise the settings available to a subset of generators.
 
 - **Beam Polarization**: Polarized beams are available for Madgraph and Whizard. It can be set as follows
 ```
-		PositronPolarisation: 0.3
-		ElectronPolarisation: 0.8
+		PolarisationDensity: List of two integers: [-1 or 1, 1 or -1] (default: [-1, 1])
+		PolarisationFraction: List of two floats in the range [0.0, 1.0]
 ```
 - **Beamstrahlung**: is turned on by specifying the type of accelerator. Allowed values are: ILC, FCC, C3, CEPC, HALFHF.
 ```
