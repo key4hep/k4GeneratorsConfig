@@ -1,0 +1,8 @@
+# Identified Issues
+
+
+-  Configuration of a generator incomplete in [key4hep](https://github.com/key4hep/key4hep-spack/issues/721)
+-  Inconsistent cross-section from [Sherpa](https://gitlab.com/sherpa-team/sherpa/-/issues/655). Our automated
+   test discovered that Sherpa was underestimating the total cross-section. The bug was found and fixed in a subsequent [merge request](https://gitlab.com/sherpa-team/sherpa/-/merge_requests/1086).
+-  ISR/boost inconsistencies: identified by cross section comparisons due to the rejection of events at the
+   parton shower/hardronisation stage.
