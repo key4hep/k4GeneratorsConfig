@@ -28,7 +28,7 @@ k4GeneratorsConfig input.yaml
 ```
 
 This will create a directory containing the desired runcards. The directory can be set in the inputfile as:
-```yaml 
+```yaml
 OutDir: /path/to/out
 ```
 
