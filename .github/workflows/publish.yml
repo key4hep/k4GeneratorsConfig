@@ -3,10 +3,9 @@ name: publish
 
 on:
   push:
-  workflow_dispatch:
-  branches:
-    # only build on push to main
-    - main
+    branches:
+      # only build on push to main
+      - main
 
 
 jobs:
