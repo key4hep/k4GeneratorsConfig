@@ -1,0 +1,44 @@
+
+name: publish
+
+on:
+  push:
+  workflow_dispatch:
+  branches:
+    # only build on push to main
+    - main
+
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: 3.12
+    - name: Install Requirements
+      run: |
+        pip install --upgrade pip
+        pip install -r requirements.txt
+    - name: Sphinx build
+      run: |
+        sphinx-build -M html docs build
+    - name: Publish gh-pages
+      run: |
+        cd build/html
+        git init
+        git config --global user.email "k4Gen@k4hep.com"
+        git config --global user.name "k4Gen Bot"
+        git remote add upstream https://apricePhy:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git
+
+        touch .nojekyll
+        git add .nojekyll
+        git commit -m "Initial commit"
+        git branch -m gh-pages
+        touch .
+        git add -A .
+        git commit -m "Rebuild page at ${GITHUB_SHA}"
+        git push -f upstream gh-pages:gh-pages
