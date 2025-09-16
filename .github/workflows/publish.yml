@@ -5,6 +5,7 @@ on:
     branches:
       # only build on push to main
       - main
+      - doc-dev
   workflow_dispatch:
 
 
