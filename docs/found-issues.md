@@ -23,4 +23,3 @@ The generators are listed in alphabetical order.
 
 [x] [Issue](https://gitlab.com/sherpa-team/sherpa/-/issues/655): Inconsistent cross-section from Sherpa. Our automated
    test discovered that Sherpa was underestimating the total cross-section. The bug was found and fixed in a subsequent [merge request](https://gitlab.com/sherpa-team/sherpa/-/merge_requests/1086).
-
