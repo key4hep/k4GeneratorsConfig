@@ -22,6 +22,10 @@ extensions = [
     "sphinx.ext.mathjax"
 ]
 
+myst_enable_extensions = [
+    "tasklist",
+]
+
 source_suffix = {
     ".md": "markdown",
 }
