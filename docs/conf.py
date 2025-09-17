@@ -17,6 +17,7 @@ html_context = {
 extensions = [
     "sphinx_copybutton",
     "sphinx_markdown_tables",
+    "sphinx_markdown_checkbox",
     "sphinx_design",
     "myst_parser",
     "sphinx.ext.mathjax"
