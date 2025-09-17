@@ -13,7 +13,7 @@ The issues are ordered in inverse chronological order
 
 ## Generator Issues
 
-The generators are listed in alphabetical order. 
+The generators are listed in alphabetical order.
 
 ### Madgraph
 
