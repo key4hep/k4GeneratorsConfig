@@ -9,6 +9,8 @@ Generators:
   - Madgraph
 
 ```
+- **Model**: Name of the model (default: SM)
+
 - **SqrtS**: $\sqrt{s}$ in GeV.
 
 - **ISRMode**: Enable ISR via electron structure function:
@@ -17,13 +19,17 @@ ISRMode: 1
 ```
 default: 0 (turned off)
 
-- **OutputFormat**: Format in which the monte-carlo events will be written out to. Currently supported options are hepmc and evx
+- **RandomSeed**: Seed for the event generation
+
+- **OutputFormat**: Format in which the monte-carlo events will be written out to. Currently supported options are edm4hep, hepmc and lhe (default: edm4hep)
 
 - **OutDir**: The directory to which the run-cards will be saved. Current default is $PWD/Run-Cards.
 
 - **Events**: Number of Monte-Carlo events to be generated.
 
 - **EWParamDevThreshold**: threshold for issueing a warning if in the EW parameters at LO a relative deviation is larger
+
+- **NLO**: integer to turn on/off NLO with default: 0 (off)
 
 - **Processes**: A list of processes which runcards should be generated. Each process should have its own unique name. Under these headings you can
 				 specify the final states to be generated and at what order e.g [EW,QCD].
