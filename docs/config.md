@@ -23,6 +23,8 @@ default: 0 (turned off)
 
 - **Events**: Number of Monte-Carlo events to be generated.
 
+- **EWParamDevThreshold**: threshold for issueing a warning if in the EW parameters at LO a relative deviation is larger
+
 - **Processes**: A list of processes which runcards should be generated. Each process should have its own unique name. Under these headings you can
 				 specify the final states to be generated and at what order e.g [EW,QCD].
 ```yaml
