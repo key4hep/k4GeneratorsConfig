@@ -1,9 +1,8 @@
-
 project = "k4GeneratorsConfig"
 copyright = "2025, k4GeneratorsConfig"
 author = "k4GeneratorsConfig"
-# html_theme = "furo"
 html_theme = "sphinx_rtd_theme"
+bibtex_bibfiles = ["refs.bib"]
 master_doc = "index"  # without extension
 
 html_context = {
@@ -20,18 +19,19 @@ extensions = [
     "sphinx_markdown_checkbox",
     "sphinx_design",
     "myst_parser",
-    "sphinx.ext.mathjax"
+    "sphinx.ext.mathjax",
+    "sphinxcontrib.bibtex"
 ]
 
 myst_enable_extensions = [
     "tasklist",
+    "colon_fence",
+    "html_image",
+    "dollarmath"
 ]
 
 source_suffix = {
     ".md": "markdown",
 }
 
-
 myst_heading_anchors = 4
-
-myst_enable_extensions = ["colon_fence", "html_image", "dollarmath"]

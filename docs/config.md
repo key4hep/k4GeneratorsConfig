@@ -1,7 +1,7 @@
 # General Settings
 The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.
 
-- **Generators**: A list of generators whose runcards should be generated. One generator must be specified
+- **Generators**: A list of generators {cite}`Alwall:2014hca,Kilian:2007gr,Sherpa:2024mfk,Bierlich:2022pfr,Jadach:2022mbe,CarloniCalame:2000pz,Campbell:2022qmc,Bellm:2015jjp` whose runcards should be generated. One generator must be specified
 ```yaml
 Generators:
   - Sherpa
@@ -101,7 +101,7 @@ Beamstrahlung: ILC
 Note that **Beamstrahlung** is conditional on **ISRmode** being on. The **Beamstrahlung** and **SqrtS** variables are used to configure the settings of the generators. For **SqrtS** a vicinity search (within 10GeV) is performed. In case the requested setting does not exist, a replacement setting is used and printed as a warning.
 
 ## Analysis
-Postgeneration analyses can be performed either using Rivet and/or key4hep
+Postgeneration analyses can be performed either using Rivet {cite}`Bierlich:2024vqo, Bierlich:2019rhm` and/or key4hep {cite}`Ganis:2021vgv, Key4hep:2022xly`
 ```
 Analysis:
   Tools: [key4hep, rivet]

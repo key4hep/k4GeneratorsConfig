@@ -4,7 +4,7 @@ Welcome to k4GeneratorsConfig's documentation!
 =====================================
 
 
-A python based module for the automatic generation of inputfiles for  Monte-Carlo(MC) generators.
+A python based module {cite}`Price:2025fzg` for the automatic generation of inputfiles for Monte-Carlo (MC) generators.
 
 
 ```{toctree}
@@ -18,3 +18,8 @@ cmdline
 testing
 found-issues
 authors
+references
+
+
+
+
