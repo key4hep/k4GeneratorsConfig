@@ -1,5 +1,3 @@
-
-
 project = "k4GeneratorsConfig"
 copyright = "2025, k4GeneratorsConfig"
 author = "k4GeneratorsConfig"
@@ -27,8 +25,8 @@ extensions = [
 
 myst_enable_extensions = [
     "tasklist",
-    "colon_fence", 
-    "html_image", 
+    "colon_fence",
+    "html_image",
     "dollarmath"
 ]
 
