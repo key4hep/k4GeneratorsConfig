@@ -1,0 +1,243 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>General Settings &mdash; k4GeneratorsConfig  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+      <link rel="stylesheet" type="text/css" href="_static/design-style.1e8bd061cd6da7fc9cf755528e8ffc24.min.css?v=0a3b3ea7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=888ff710"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+      <script src="_static/design-tabs.js?v=36754332"></script>
+      <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Command Line Options" href="cmdline.html" />
+    <link rel="prev" title="Running the package" href="running.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            k4GeneratorsConfig
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Documentation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="running.html">Running the package</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">General Settings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#generator-specific-settings">Generator Specific Settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#analysis">Analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmdline.html">Command Line Options</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Running tests:</a></li>
+<li class="toctree-l1"><a class="reference internal" href="found-issues.html">Identified Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="authors.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">Referenecs</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">k4GeneratorsConfig</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">General Settings</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/config.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section class="tex2jax_ignore mathjax_ignore" id="general-settings">
+<h1>General Settings<a class="headerlink" href="#general-settings" title="Link to this heading"></a></h1>
+<p>The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.</p>
+<ul class="simple">
+<li><p><strong>Generators</strong>: A list of generators <span id="id1">[<a class="reference internal" href="references.html#id38" title="J. Alwall, R. Frederix, S. Frixione, V. Hirschi, F. Maltoni, O. Mattelaer, H. -S. Shao, T. Stelzer, P. Torrielli, and M. Zaro. The automated computation of tree-level and next-to-leading order differential cross sections, and their matching to parton shower simulations. JHEP, 07:079, 2014. arXiv:1405.0301, doi:10.1007/JHEP07(2014)079.">2</a>, <a class="reference internal" href="references.html#id18" title="Wolfgang Kilian, Thorsten Ohl, and Jurgen Reuter. WHIZARD: Simulating Multi-Particle Processes at LHC and ILC. Eur. Phys. J. C, 71:1742, 2011. arXiv:0708.4233, doi:10.1140/epjc/s10052-011-1742-y.">3</a>, <a class="reference internal" href="references.html#id20" title="Enrico Bothmann and others. Event generation with Sherpa 3. JHEP, 12:156, 2024. arXiv:2410.22148, doi:10.1007/JHEP12(2024)156.">4</a>, <a class="reference internal" href="references.html#id25" title="Christian Bierlich and others. A comprehensive guide to the physics and usage of PYTHIA 8.3. SciPost Phys. Codeb., 2022:8, 2022. arXiv:2203.11601, doi:10.21468/SciPostPhysCodeb.8.">5</a>, <a class="reference internal" href="references.html#id12" title="S. Jadach, B. F. L. Ward, Z. Was, S. A. Yost, and A. Siodmok. Multi-photon Monte Carlo event generator KKMCee for lepton and quark pair production in lepton colliders. Comput. Phys. Commun., 283:108556, 2023. arXiv:2204.11949, doi:10.1016/j.cpc.2022.108556.">6</a>, <a class="reference internal" href="references.html#id14" title="C. M. Carloni Calame, C. Lunardini, G. Montagna, O. Nicrosini, and F. Piccinini. Large angle Bhabha scattering and luminosity at flavor factories. Nucl. Phys. B, 584:459–479, 2000. arXiv:hep-ph/0003268, doi:10.1016/S0550-3213(00)00356-4.">7</a>, <a class="reference internal" href="references.html#id11" title="J. M. Campbell and others. Event generators for high-energy physics experiments. SciPost Phys., 16(5):130, 2024. arXiv:2203.11110, doi:10.21468/SciPostPhys.16.5.130.">8</a>, <a class="reference internal" href="references.html#id30" title="Johannes Bellm and others. Herwig 7.0/Herwig++ 3.0 release note. Eur. Phys. J. C, 76(4):196, 2016. arXiv:1512.01178, doi:10.1140/epjc/s10052-016-4018-8.">9</a>]</span> whose runcards should be generated. One generator must be specified</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Generators</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Sherpa</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Whizard</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Madgraph</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Model</strong>: Name of the model (default: SM)</p></li>
+<li><p><strong>SqrtS</strong>: <span class="math notranslate nohighlight">\(\sqrt{s}\)</span> in GeV.</p></li>
+<li><p><strong>ISRMode</strong>: Enable ISR via electron structure function:</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ISRMode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</pre></div>
+</div>
+<p>default: 0 (turned off)</p>
+<ul class="simple">
+<li><p><strong>RandomSeed</strong>: Seed for the event generation</p></li>
+<li><p><strong>OutputFormat</strong>: Format in which the monte-carlo events will be written out to. Currently supported options are edm4hep, hepmc and lhe (default: edm4hep)</p></li>
+<li><p><strong>OutDir</strong>: The directory to which the run-cards will be saved. Current default is $PWD/Run-Cards.</p></li>
+<li><p><strong>Events</strong>: Number of Monte-Carlo events to be generated.</p></li>
+<li><p><strong>EWParamDevThreshold</strong>: threshold for issueing a warning if in the EW parameters at LO a relative deviation is larger</p></li>
+<li><p><strong>NLO</strong>: integer to turn on/off NLO with default: 0 (off)</p></li>
+<li><p><strong>Processes</strong>: A list of processes which runcards should be generated. Each process should have its own unique name. Under these headings you can
+specify the final states to be generated and at what order e.g [EW,QCD].</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Processes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">Muon</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">Initial</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-11</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">Final</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">13</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-13</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">MuonNeutrino</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">Initial</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-11</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">Final</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">14</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-14</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">Tau</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">Initial</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-11</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">Final</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">15</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-15</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">TauNeutrino</span><span class="p">:</span>
+<span class="w">     </span><span class="nt">Initial</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">11</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-11</span><span class="p p-Indicator">]</span>
+<span class="w">     </span><span class="nt">Final</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">16</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">-16</span><span class="p p-Indicator">]</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>ParticleData</strong>: Here the user can set various particle properties such as mass and width. Note it is expected of the user to set a consistent input scheme.
+The particles are identified using the corresponding PDG number</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">ParticleData</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">25</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">mass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">125</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">11</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">mass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0005111</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<span class="w">  </span><span class="nt">23</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">mass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">91.1876</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.4952</span>
+<span class="w">  </span><span class="nt">24</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">mass</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80.379</span>
+<span class="w">    </span><span class="nt">width</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2.085</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Selectors</strong>: Some basic one and two particle phasespace cuts can be set. Each will need to be set with a minimum and maximum value as well as the flavour(s)
+it should be applied to.</p>
+<ul>
+<li><p><strong>One Particle Selectors</strong>:</p>
+<ul>
+<li><p><strong>PT</strong>: Cut on the transverse momenta</p></li>
+<li><p><strong>ETA</strong>: Cut on the pseduorapidity</p></li>
+<li><p><strong>Y</strong>: Cut on the Rapidity</p></li>
+<li><p><strong>ET</strong>: Cut on the Transverse energy</p></li>
+</ul>
+</li>
+<li><p><strong>Two Particle Selectors</strong>:</p>
+<ul>
+<li><p><strong>Mass</strong>: Cut on the invariant mass of two particles</p></li>
+<li><p><strong>Angle</strong>: Cut on the angular separation in radians</p></li>
+<li><p><strong>DEta</strong>: Cut on the pseudorapidity separation</p></li>
+<li><p><strong>DY</strong>: Cut on the rapidity separation</p></li>
+<li><p><strong>DPhi</strong>: Cut on the azimuthal separation in radians</p></li>
+<li><p><strong>DR</strong>: Cut on the R separation</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<section id="generator-specific-settings">
+<h2>Generator Specific Settings<a class="headerlink" href="#generator-specific-settings" title="Link to this heading"></a></h2>
+<p>Here we summarise the settings available to a subset of generators.</p>
+<ul class="simple">
+<li><p><strong>Beam Polarization</strong>: Polarized beams are available for Madgraph and Whizard. It can be set as follows</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">PositronPolarisation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.3</span>
+<span class="nt">ElectronPolarisation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.8</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Beamstrahlung</strong>: is turned on by specifying the type of accelerator. Allowed values are: ILC, FCC, C3, CEPC, HALFHF.</p></li>
+</ul>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">Beamstrahlung</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ILC</span>
+</pre></div>
+</div>
+<p>Note that <strong>Beamstrahlung</strong> is conditional on <strong>ISRmode</strong> being on. The <strong>Beamstrahlung</strong> and <strong>SqrtS</strong> variables are used to configure the settings of the generators. For <strong>SqrtS</strong> a vicinity search (within 10GeV) is performed. In case the requested setting does not exist, a replacement setting is used and printed as a warning.</p>
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading"></a></h2>
+<p>Postgeneration analyses can be performed either using Rivet <span id="id2">[<a class="reference internal" href="references.html#id4" title="Christian Bierlich, Andy Buckley, Jonathan Mark Butterworth, Christian Gutschow, Leif Lonnblad, Tomasz Procter, Peter Richardson, and Yoran Yeh. Robust independent validation of experiment and theory: Rivet version 4 release note. SciPost Phys. Codeb., 36:1, 2024. arXiv:2404.15984, doi:10.21468/SciPostPhysCodeb.36.">10</a>, <a class="reference internal" href="references.html#id3" title="Christian Bierlich and others. Robust Independent Validation of Experiment and Theory: Rivet version 3. SciPost Phys., 8:026, 2020. arXiv:1912.05451, doi:10.21468/SciPostPhys.8.2.026.">11</a>]</span> and/or key4hep <span id="id3">[<a class="reference internal" href="references.html#id16" title="Gerardo Ganis, Clément Helsens, and Valentin Völkl. Key4hep, a framework for future HEP experiments and its use in FCC. Eur. Phys. J. Plus, 137(1):149, 2022. arXiv:2111.09874, doi:10.1140/epjp/s13360-021-02213-1.">12</a>, <a class="reference internal" href="references.html#id50" title="Placido Fernandez Declara and others. The Key4hep turnkey software stack for future colliders. PoS, EPS-HEP2021:844, 2022. doi:10.22323/1.398.0844.">13</a>]</span></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Analysis</span><span class="p">:</span>
+  <span class="n">Tools</span><span class="p">:</span> <span class="p">[</span><span class="n">key4hep</span><span class="p">,</span> <span class="n">rivet</span><span class="p">]</span>
+  <span class="n">RivetAnalysis</span><span class="p">:</span> <span class="p">[</span><span class="n">MC_XS</span><span class="p">,</span> <span class="n">MC_ZINC</span><span class="p">,</span><span class="o">...</span><span class="p">]</span>
+  <span class="n">RivetPath</span><span class="p">:</span> <span class="o">/</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">analysis</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="running.html" class="btn btn-neutral float-left" title="Running the package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmdline.html" class="btn btn-neutral float-right" title="Command Line Options" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, k4GeneratorsConfig.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
