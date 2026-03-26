@@ -14,9 +14,10 @@ class MadgraphProcDB(ProcDBBase):
         finalState   = tag[1]
         if initialState == [-11,11] and len(finalState) == 2:
             isFermionPair = all( abs(pdg)<=16 for pdg in finalState)
+            pdg = abs(finalState[0])
             if isFermionPair:
-                self.write_Difermion()
+                self.write_Difermion(pdg)
 
-    def write_Difermion(self):
-        self.rundict['set pt_min_pdg'] = f"{{{self.process.final[0]}: 0 }}"
+    def write_Difermion(self,pdg):
+        self.rundict['set pt_min_pdg'] = f"{{{pdg}: 0 }}"
 
