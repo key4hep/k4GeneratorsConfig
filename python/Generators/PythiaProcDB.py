@@ -23,39 +23,39 @@ class PythiaProcDB(ProcDBBase):
         self.rundict['321:mayDecay']  = "true"
         self.rundict['130:mayDecay']  = "true"
 
-        # choose as function of generatorDBLabel
-        label = self.process.get_generatorDBLabel()
-        if label == "11_11_1_1":
+        # choose as function of DBTag
+        tag = self.process.get_DBTag()
+        if tag == [[-11,11],[-1,1]]:
             self.write_Difermion(1)
-        elif label == "11_11_2_2":
+        elif tag == [[-11,11],[-2,2]]:
             self.write_Difermion(2)
-        elif label == "11_11_3_3":
+        elif tag == [[-11,11],[-3,3]]:
             self.write_Difermion(3)
-        elif label == "11_11_4_4":
+        elif tag == [[-11,11],[-4,4]]:
             self.write_Difermion(4)
-        elif label == "11_11_5_5":
+        elif tag == [[-11,11],[-5,5]]:
             self.write_Difermion(5)
-        elif label == "11_11_6_6":
+        elif tag == [[-11,11],[-6,6]]:
             self.write_Ditop()
-        elif label == "11_11_12_12":
+        elif tag == [[-11,11],[-12,12]]:
             self.write_Difermion(12)
-        elif label == "11_11_13_13":
+        elif tag == [[-11,11],[-13,13]]:
             self.write_Difermion(13)
-        elif label == "11_11_14_14":
+        elif tag == [[-11,11],[-14,14]]:
             self.write_Difermion(14)
-        elif label == "11_11_15_15":
+        elif tag == [[-11,11],[-15,15]]:
             self.write_Difermion(15)
-        elif label == "11_11_16_16":
+        elif tag == [[-11,11],[-16,16]]:
             self.write_Difermion(16)
-        elif label == "11_11_22_22":
+        elif tag == [[-11,11],[22,22]]:
             self.write_Diphoton()
-        elif label == "11_11_23_23":
+        elif tag == [[-11,11],[23,23]]:
             self.write_ZZ()
-        elif label == "11_11_24_24":
+        elif tag == [[-11,11],[24,24]]:
             self.write_WW()
-        elif label == "11_11_23_25":
+        elif tag == [[-11,11],[23,25]]:
             self.write_run_ZH()
-        elif label == "11_11_12_12_25":
+        elif tag == [[-11,11],[-12,12,25]]:
             self.write_run_Hnunu()
 
     def write_Difermion(self, pdg):

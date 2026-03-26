@@ -8,9 +8,9 @@ class WhizardProcDB(ProcDBBase):
         self.process = process
 
     def execute(self):
-        # choose as function of generatorDBLabel
-        label = self.process.get_generatorDBLabel()
-        if label == "11_11_23_25":
+        # choose as function of DBTag
+        tag   = self.process.get_DBTag()
+        if tag == [ [-11,11], [23,25]]:
             self.write_ZH()
 
     def write_ZH(self):
