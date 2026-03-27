@@ -3,7 +3,7 @@ set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
 set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
-set(pyRUN_YAMLS "k4GeneratorsConfigRun --create")
+set(pyRUN_YAMLS "python3 run.py --create")
 set(RUN_YAMLS "${CMAKE_CURRENT_SOURCE_DIR}/createGeneratorDatacardsFromYaml.sh")
 set(CHECK_DATACARDS "${CMAKE_CURRENT_SOURCE_DIR}/checkGeneratorDatacards.sh")
 set(RUN_GENERATORS "${CMAKE_CURRENT_SOURCE_DIR}/runEventGeneration.sh")
