@@ -28,6 +28,7 @@ class Process:
         self._particlesOfProcessList = []
         # label to be used in the generatorDB
         self.generatorDBLabel = ""
+        self.generatorDBTag   = []
         self.procname = procname
 
         for arg in self._required_args:
@@ -59,25 +60,12 @@ class Process:
             self._finalStatePDGList.append(str(p))
             self._proclabel += f"{self._finalStateParticleDict[p].name} "
             self._particlesOfProcessList.append(self._finalStateParticleDict[p])
-        # generate the label for the generatorDB
-        # first the initial state
-        initialstate = [abs(self.initial[0]), abs(self.initial[1])]
-        #sort ascending
+        # now the new DBTag:
+        initialstate = [self.initial[0], self.initial[1]]
         initialstate.sort()
-        # add to label
-        for pdg in initialstate:
-            self.generatorDBLabel += f"_{str(abs(pdg))}"
-        # remove leading "_"
-        self.generatorDBLabel = self.generatorDBLabel[
-            (self.generatorDBLabel.index("_") + 1) :
-        ]
-        # now the final state
-        finalstate = [abs(part) for part in self.final]
-        # sort ascending
+        finalstate = self.final
         finalstate.sort()
-        # add to label
-        for pdg in finalstate:
-            self.generatorDBLabel += f"_{str(abs(pdg))}"
+        self._DBTag = [initialstate, finalstate]
 
     def get_beam_flavour(self, beam):
         if beam not in {1, 2}:
@@ -142,6 +130,9 @@ class Process:
 
     def get_generatorDBLabel(self):
         return self.generatorDBLabel
+
+    def get_DBTag(self):
+        return self._DBTag
 
     def print_info(self):
         print(f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV")

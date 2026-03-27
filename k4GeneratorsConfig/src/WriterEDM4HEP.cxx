@@ -138,7 +138,6 @@ void WriterEDM4HEP::write_event(const GenEvent& evt) {
   if (evt.weights().size() > 0) {
     evtHeader.setWeight(evt.weights()[0]);
   }
-
   // push to collection
   evtHeaderCollection.push_back(evtHeader);
 
@@ -186,7 +185,9 @@ void WriterEDM4HEP::write_event(const GenEvent& evt) {
   // retrieve the pdf information
   HepMC3::ConstGenPdfInfoPtr pdfinfo = evt.pdf_info();
 
-  generatorParameters.setPartonIds({pdfinfo->parton_id[0], pdfinfo->parton_id[1]});
+  if (pdfinfo) {
+    generatorParameters.setPartonIds({pdfinfo->parton_id[0], pdfinfo->parton_id[1]});
+  }
 
   // add the object to the collection:
   generatorParametersCollection.push_back(generatorParameters);

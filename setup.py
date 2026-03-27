@@ -8,14 +8,14 @@ long_description = (here / "README.md").read_text(encoding="utf-8")
 
 
 setup(
-    name="k4Generators",  # Required
+    name="k4GeneratorsConfig",  # Required
     version="alpha",  # Required
-    description="A python module for creating Monte-Carlo generator cards",  # Optional
+    description="A package for Monte-Carlo generator comparisons",  # Optional
     # long_description=long_description,  # Optional
     # long_description_content_type="text/markdown",  # Optional (see note above)
     # url="https://github.com/pypa/sampleproject",  # Optional
-    author="Alan Price",  # Optional
-    author_email="alan.price[at]cern.ch",  # Optional
+    author="Alan Price, Dirk Zerwas",  # Optional
+    author_email="alan.price[at]uj.edu.pl, dirk.zerwas[at]in2p3.fr",  # Optional
     classifiers=[  # Optional
         # How mature is this project? Common values are
         #   3 - Alpha

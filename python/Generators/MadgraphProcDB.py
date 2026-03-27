@@ -8,12 +8,16 @@ class MadgraphProcDB(ProcDBBase):
         self.process = process
 
     def execute(self):
-        # choose as function of generatorDBLabel
-        if self.process.get_generatorDBLabel().startswith("11_11") and len(self.process.final) == 2 :
-            if abs(self.process.final[0]) <= 16:
-                self.write_Difermion()
-        label = self.process.get_generatorDBLabel()
+        # choose as function of DBTag
+        tag = self.process.get_DBTag()
+        initialState = tag[0]
+        finalState   = tag[1]
+        if initialState == [-11,11] and len(finalState) == 2:
+            isFermionPair = all( abs(pdg)<=16 for pdg in finalState)
+            pdg = abs(finalState[0])
+            if isFermionPair:
+                self.write_Difermion(pdg)
 
-    def write_Difermion(self):
-        self.rundict['set pt_min_pdg'] = f"{{{self.process.final[0]}: 0 }}"
+    def write_Difermion(self,pdg):
+        self.rundict['set pt_min_pdg'] = f"{{{pdg}: 0 }}"
 
