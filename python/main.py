@@ -22,7 +22,7 @@ def make_output_directory(generators, output_directory, procname):
             os.makedirs(generator_directory)
 
 
-def main():
+def main(args=None):
     # parser = argparse.ArgumentParser(prog='k4gen',description='Process input YAML files.')
     parser = argparse.ArgumentParser(
         prog="k4GeneratorsConfig",
@@ -106,7 +106,7 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
         default=None,
         help="force the use of the version in default is latest, format: YYYY-MM-DD",
     )
-    args           = parser.parse_args()
+    args           = parser.parse_args(args)
     files          = args.inputfiles
     energies       = args.ecms
     ecmsfiles      = args.ecmsFiles

@@ -3,6 +3,7 @@ set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
 set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
+set(pyRUN_YAMLS "k4GeneratorsConfigRun --create")
 set(RUN_YAMLS "${CMAKE_CURRENT_SOURCE_DIR}/createGeneratorDatacardsFromYaml.sh")
 set(CHECK_DATACARDS "${CMAKE_CURRENT_SOURCE_DIR}/checkGeneratorDatacards.sh")
 set(RUN_GENERATORS "${CMAKE_CURRENT_SOURCE_DIR}/runEventGeneration.sh")
@@ -16,6 +17,14 @@ foreach(generator ${generatorList})
   list(APPEND RunList Run_${generator})
   message(${generator} " appended to the runlist ")
 endforeach()
+
+# add the first test: setting up the yaml files
+add_test(NAME pycreateGeneratorDatacards COMMAND $py{RUN_YAMLS} )
+set_tests_properties("pycreateGeneratorDatacards"
+  PROPERTIES
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  ENVIRONMENT ${TEST_ENVIRONMENT}
+)
 
 # add the first test: setting up the yaml files
 add_test(NAME createGeneratorDatacards COMMAND ${RUN_YAMLS} )

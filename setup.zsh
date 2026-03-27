@@ -30,3 +30,4 @@ fi
 
 # Set executable
 alias k4GeneratorsConfig="python3 ${K4GeneratorsConfigDir}/python/main.py"
+alias k4GeneratorsConfigRun="python3 ${K4GeneratorsConfigDir}/python/run.py"

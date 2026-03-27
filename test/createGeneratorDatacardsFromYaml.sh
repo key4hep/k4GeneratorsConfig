@@ -23,6 +23,7 @@ while getopts ${OPTSTRING} opt; do
       echo "Arguments are:"
       echo "-h for help"
       echo "-d YAMLDIRECTORY "
+      echo "-f YAMLFILE "
       exit 0
       ;;
     ?)
