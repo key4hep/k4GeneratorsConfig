@@ -1,5 +1,5 @@
 # generl settings:
-set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
+set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}" "PYTHONPATH=${PROJECT_SOURCE_DIR}/python:$ENV{PYTHONPATH}")
 set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
@@ -22,8 +22,8 @@ endforeach()
 add_test(NAME pycreateGeneratorDatacards COMMAND ${pyRUN_YAMLS} )
 set_tests_properties("pycreateGeneratorDatacards"
   PROPERTIES
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../python
-  ENVIRONMENT ${TEST_ENVIRONMENT}
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+  ENVIRONMENT ${TEST_ENVIRONMENT} 
 )
 
 # add the first test: setting up the yaml files
