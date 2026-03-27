@@ -22,8 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Enable verbose CTest output
-      run: echo "CTEST_OUTPUT_ON_FAILURE=1" >> $GITHUB_ENV
     - uses: key4hep/key4hep-actions/key4hep-build@main
       with:
         build_type: ${{ matrix.build_type }}
