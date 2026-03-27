@@ -28,10 +28,15 @@ jobs:
       with:
         build_type: ${{ matrix.build_type }}
         image: ${{ matrix.image }}
-        ctest_args: "-VV --output-on-failure"
     - uses: actions/upload-artifact@v4
       if: ${{ !cancelled() }}
       with:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
           test/output/*
+    - name: Show full CTest log on failure
+      if: failure()
+      run: |
+        echo "===== LastTest.log ====="
+        cat build/Testing/Temporary/LastTest.log || true
+
