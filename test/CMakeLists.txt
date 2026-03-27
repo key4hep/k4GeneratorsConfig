@@ -22,7 +22,7 @@ endforeach()
 add_test(NAME pycreateGeneratorDatacards COMMAND ${pyRUN_YAMLS} )
 set_tests_properties("pycreateGeneratorDatacards"
   PROPERTIES
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/python
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../python
   ENVIRONMENT ${TEST_ENVIRONMENT}
 )
 
