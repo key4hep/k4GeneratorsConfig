@@ -22,6 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Enable verbose CTest output
+      run: echo "CTEST_OUTPUT_ON_FAILURE=1" >> $GITHUB_ENV
     - uses: key4hep/key4hep-actions/key4hep-build@main
       with:
         build_type: ${{ matrix.build_type }}
@@ -32,3 +34,9 @@ jobs:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
           test/output/*
+    - name: Show full CTest log on failure
+      if: failure()
+      run: |
+        echo "===== LastTest.log ====="
+        cat build/Testing/Temporary/LastTest.log || true
+
