@@ -19,7 +19,7 @@ foreach(generator ${generatorList})
 endforeach()
 
 # add the first test: setting up the yaml files
-add_test(NAME pycreateGeneratorDatacards COMMAND $py{RUN_YAMLS} )
+add_test(NAME pycreateGeneratorDatacards COMMAND ${pyRUN_YAMLS} )
 set_tests_properties("pycreateGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
