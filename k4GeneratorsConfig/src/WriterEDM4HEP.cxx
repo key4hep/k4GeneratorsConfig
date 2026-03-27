@@ -185,7 +185,7 @@ void WriterEDM4HEP::write_event(const GenEvent& evt) {
   // retrieve the pdf information
   HepMC3::ConstGenPdfInfoPtr pdfinfo = evt.pdf_info();
 
-  if ( pdfinfo ){
+  if (pdfinfo){
     generatorParameters.setPartonIds({pdfinfo->parton_id[0], pdfinfo->parton_id[1]});
   }
 
