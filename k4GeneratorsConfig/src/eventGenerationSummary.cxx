@@ -29,8 +29,10 @@ int main(int argc, char** argv) {
     case 'h':
       std::cout << "Usage: xsectionSummary -h -w workdir -f filename -d rootdir -r rootfile" << std::endl;
       std::cout << "-h: print this help" << std::endl;
-      std::cout << "-w dirname: top directory to start the search for generators and processes (default: Run-Cards)" << std::endl;
-      std::cout << "-f filename: print the summary information to this file (default: GenerationSummary.dat)" << std::endl;
+      std::cout << "-w dirname: top directory to start the search for generators and processes (default: Run-Cards)"
+                << std::endl;
+      std::cout << "-f filename: print the summary information to this file (default: GenerationSummary.dat)"
+                << std::endl;
       std::cout << "-d rootdir: write the RootTree and figures to this directory (default: .)" << std::endl;
       std::cout << "-r footfile: write the RootTree to this file (default: eventGenerationSummary.root)" << std::endl;
       exit(0);
