@@ -125,7 +125,7 @@ class ParticleCollection:
         )
 
         globals()['ve__tilde__'] = ve.anti()
-        
+
         globals()['vm'] = Particle(
             pdg_code=14,
             name="vm",
