@@ -9,15 +9,13 @@ class Particle:
         "name",
         "antiname",
         "mass",
-        "width",
-        "texname",
-        "antitexname",
+        "width"
     ]
 
     def __init__(
-        self, pdg_code, name, antiname, mass, width, texname, antitexname, **options
+        self, pdg_code, name, antiname, mass, width, **options
     ):
-        args = (pdg_code, name, antiname, mass, width, texname, antitexname)
+        args = (pdg_code, name, antiname, mass, width)
         assert len(self._required_args) == len(args)
 
         for i, name in enumerate(self._required_args):
@@ -44,8 +42,6 @@ class Particle:
             self.name,
             self.mass,
             self.width,
-            self.antitexname,
-            self.texname,
         )
 
     @staticmethod
@@ -78,200 +74,177 @@ class Particle:
         print(f"{pdg} code not found")
 
 
-Photon = Particle(
-    pdg_code=22, name="a", antiname="a", mass=0, width=0, texname="a", antitexname="a"
-)
+class ParticleCollection:
+    """The default Particles are instantiated"""
 
-Z = Particle(
-    pdg_code=23,
-    name="Z",
-    antiname="Z",
-    mass=Param.MZ.value,
-    width=Param.WZ.value,
-    texname="Z",
-    antitexname="Z",
-)
+    def __init__(self):
 
-W__plus__ = Particle(
-    pdg_code=24,
-    name="W+",
-    antiname="W-",
-    spin=3,
-    color=1,
-    mass=Param.MW.value,
-    width=Param.WW.value,
-    texname="W+",
-    antitexname="W-",
-)
-W__minus__ = W__plus__.anti()
+        globals()['Photon'] = Particle(
+            pdg_code=22,
+            name="a",
+            antiname="a",
+            mass=0,
+            width=0
+        )
 
-
-g = Particle(
-    pdg_code=21,
-    name="g",
-    antiname="g",
-    mass=0,
-    width=0,
-    texname="g",
-    antitexname="g",
-)
-
-ve = Particle(
-    pdg_code=12,
-    name="ve",
-    antiname="ve~",
-    spin=2,
-    color=1,
-    mass=0,
-    width=0,
-    texname="ve",
-    antitexname="ve~",
-)
-
-ve__tilde__ = ve.anti()
-
-vm = Particle(
-    pdg_code=14,
-    name="vm",
-    antiname="vm~",
-    mass=0,
-    width=0,
-    texname="vm",
-    antitexname="vm~",
-)
-
-vm__tilde__ = vm.anti()
-
-vt = Particle(
-    pdg_code=16,
-    name="vt",
-    antiname="vt~",
-    mass=0,
-    width=0,
-    texname="vt",
-    antitexname="vt~",
-)
-
-vt__tilde__ = vt.anti()
-
-e__minus__ = Particle(
-    pdg_code=11,
-    name="e-",
-    antiname="e+",
-    mass=0.0,
-    width=0,
-    texname="e-",
-    antitexname="e+",
-)
-
-e__plus__ = e__minus__.anti()
-
-mu__minus__ = Particle(
-    pdg_code=13,
-    name="mu-",
-    antiname="mu+",
-    mass=0,
-    width=0,
-    texname="mu-",
-    antitexname="mu+",
-)
-
-mu__plus__ = mu__minus__.anti()
-
-ta__minus__ = Particle(
-    pdg_code=15,
-    name="ta-",
-    antiname="ta+",
-    mass=0,
-    width=0,
-    texname="ta-",
-    antitexname="ta+",
-)
-
-ta__plus__ = ta__minus__.anti()
-
-u = Particle(
-    pdg_code=2,
-    name="u",
-    antiname="u~",
-    mass=0,
-    width=0,
-    texname="u",
-    antitexname="u~",
-)
-
-u__tilde__ = u.anti()
-
-c = Particle(
-    pdg_code=4,
-    name="c",
-    antiname="c~",
-    mass=0,
-    width=0,
-    texname="c",
-    antitexname="c~",
-)
-
-c__tilde__ = c.anti()
-
-t = Particle(
-    pdg_code=6,
-    name="t",
-    antiname="t~",
-    mass=Param.MT.value,
-    width=Param.WT.value,
-    texname="t",
-    antitexname="t~",
-)
-
-t__tilde__ = t.anti()
-
-d = Particle(
-    pdg_code=1,
-    name="d",
-    antiname="d~",
-    mass=0,
-    width=0,
-    texname="d",
-    antitexname="d~",
-)
-
-d__tilde__ = d.anti()
-
-s = Particle(
-    pdg_code=3,
-    name="s",
-    antiname="s~",
-    spin=2,
-    color=3,
-    mass=0,
-    width=0,
-    texname="s",
-    antitexname="s~",
-)
-
-s__tilde__ = s.anti()
-
-b = Particle(
-    pdg_code=5,
-    name="b",
-    antiname="b~",
-    spin=2,
-    color=3,
-    mass=Param.MB.value,
-    width=0,
-    texname="b",
-    antitexname="b~",
-)
-
-b__tilde__ = b.anti()
-
-H = Particle(
-    pdg_code=25,
-    name="H",
-    antiname="H",
-    mass=Param.MH.value,
-    width=Param.WH.value,
-    texname="H",
-    antitexname="H",
-)
+        globals()['Z'] = Particle(
+            pdg_code=23,
+            name="Z",
+            antiname="Z",
+            mass=Param.MZ.value,
+            width=Param.WZ.value,
+        )
+        
+        globals()['W__plus__'] = Particle(
+            pdg_code=24,
+            name="W+",
+            antiname="W-",
+            spin=3,
+            color=1,
+            mass=Param.MW.value,
+            width=Param.WW.value,
+        )
+        globals()['W__minus__'] = W__plus__.anti()
+        
+        
+        globals()['g'] = Particle(
+            pdg_code=21,
+            name="g",
+            antiname="g",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['ve'] = Particle(
+            pdg_code=12,
+            name="ve",
+            antiname="ve~",
+            spin=2,
+            color=1,
+            mass=0,
+            width=0,
+        )
+        
+        globals()['ve__tilde__'] = ve.anti()
+        
+        globals()['vm'] = Particle(
+            pdg_code=14,
+            name="vm",
+            antiname="vm~",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['vm__tilde__'] = vm.anti()
+        
+        globals()['vt'] = Particle(
+            pdg_code=16,
+            name="vt",
+            antiname="vt~",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['vt__tilde__'] = vt.anti()
+        
+        globals()['e__minus__'] = Particle(
+            pdg_code=11,
+            name="e-",
+            antiname="e+",
+            mass=0.0,
+            width=0,
+        )
+        
+        globals()['e__plus__'] = e__minus__.anti()
+        
+        globals()['mu__minus__'] = Particle(
+            pdg_code=13,
+            name="mu-",
+            antiname="mu+",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['mu__plus__'] = mu__minus__.anti()
+        
+        globals()['ta__minus__'] = Particle(
+            pdg_code=15,
+            name="ta-",
+            antiname="ta+",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['ta__plus__'] = ta__minus__.anti()
+        
+        globals()['u'] = Particle(
+            pdg_code=2,
+            name="u",
+            antiname="u~",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['u__tilde__'] = u.anti()
+        
+        globals()['c'] = Particle(
+            pdg_code=4,
+            name="c",
+            antiname="c~",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['c__tilde__'] = c.anti()
+        
+        globals()['t'] = Particle(
+            pdg_code=6,
+            name="t",
+            antiname="t~",
+            mass=Param.MT.value,
+            width=Param.WT.value,
+        )
+        
+        globals()['t__tilde__'] = t.anti()
+        
+        globals()['d'] = Particle(
+            pdg_code=1,
+            name="d",
+            antiname="d~",
+            mass=0,
+            width=0,
+        )
+        
+        globals()['d__tilde__'] = d.anti()
+        
+        globals()['s'] = Particle(
+            pdg_code=3,
+            name="s",
+            antiname="s~",
+            spin=2,
+            color=3,
+            mass=0,
+            width=0,
+        )
+        
+        globals()['s__tilde__'] = s.anti()
+        
+        globals()['b'] = Particle(
+            pdg_code=5,
+            name="b",
+            antiname="b~",
+            spin=2,
+            color=3,
+            mass=Param.MB.value,
+            width=0,
+        )
+        
+        globals()['b__tilde__'] = b.anti()
+        
+        globals()['H'] = Particle(
+            pdg_code=25,
+            name="H",
+            antiname="H",
+            mass=Param.MH.value,
+            width=Param.WH.value,
+        )

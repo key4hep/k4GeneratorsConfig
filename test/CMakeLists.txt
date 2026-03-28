@@ -3,8 +3,7 @@ set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
 set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
-set(pyRUN_YAMLS "${PYTHON_EXECUTABLE} ${PROJECT_SOURCE_DIR}/python/run.py --create")
-set(RUN_YAMLS "${CMAKE_CURRENT_SOURCE_DIR}/createGeneratorDatacardsFromYaml.sh")
+set(RUN_YAMLS "${PROJECT_SOURCE_DIR}/python/run.py")
 set(CHECK_DATACARDS "${CMAKE_CURRENT_SOURCE_DIR}/checkGeneratorDatacards.sh")
 set(RUN_GENERATORS "${CMAKE_CURRENT_SOURCE_DIR}/runEventGeneration.sh")
 set(RUN_SUMMARY "${CMAKE_CURRENT_SOURCE_DIR}/runSummary.sh")
@@ -19,19 +18,11 @@ foreach(generator ${generatorList})
 endforeach()
 
 # add the first test: setting up the yaml files
-add_test(NAME pycreateGeneratorDatacards COMMAND ${pyRUN_YAMLS} )
+add_test(NAME pycreateGeneratorDatacards COMMAND python3 ${RUN_YAMLS} --create --workDir ../test/ci)
 set_tests_properties("pycreateGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   ENVIRONMENT ${TEST_ENVIRONMENT} 
-)
-
-# add the first test: setting up the yaml files
-add_test(NAME createGeneratorDatacards COMMAND ${RUN_YAMLS} )
-set_tests_properties("createGeneratorDatacards"
-  PROPERTIES
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  ENVIRONMENT ${TEST_ENVIRONMENT}
   FIXTURES_SETUP  "processYamls"
 )
 

@@ -11,6 +11,7 @@ from ReleaseSpecs import ReleaseSpec
 import Input as Settings
 import Process as process_module
 import Generators as generators_module
+from Particles import ParticleCollection
 
 def make_output_directory(generators, output_directory, procname):
     # Overwrite directory if it exists
@@ -164,6 +165,8 @@ Beamstrahlung        : string (name of accelerator: ILC, FCC, CLIC, C3, HALFHF)
 
 
 def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
+    # first step reset all particles:
+    ParticleCollection()
     if sqrts == 0:
         print("Generating and writing configuration files")
     else:
