@@ -99,7 +99,7 @@ class checkGeneratorDatacards(CIUtilsBase):
 
         # specific stuff:
         self.generatorDir = self._workDir+"/Run-Cards"
-        
+
         # retrieve all generators in the workdirector:
         generators = self.getGenerators(generator)
 
@@ -111,10 +111,10 @@ class checkGeneratorDatacards(CIUtilsBase):
             return os.listdir(self.generatorDir)
         else:
             return [generator]
-        
+
     def getProcesses(self, generator):
         return os.listdir(self.generatorDir+"/"+generator)
-        
+
     def getFileNames(self, directory):
         filenames = os.listdir(directory)
         filenames =[name for name in filenames if os.path.isfile(os.path.join(directory,name))]
@@ -143,10 +143,9 @@ class checkGeneratorDatacards(CIUtilsBase):
                         failure = True
         if failure:
             sys.exit("Failed comparison")
-        
 
 class runEventGeneration(CIUtilsBase):
-    """Check Generator Datacards"""
+    """Run Event Generation"""
 
     def __init__(self, workDirectory, outputDirectory):
         super().__init__(workDirectory, outputDirectory)

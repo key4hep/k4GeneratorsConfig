@@ -94,7 +94,7 @@ class ParticleCollection:
             mass=Param.MZ.value,
             width=Param.WZ.value,
         )
-        
+
         globals()['W__plus__'] = Particle(
             pdg_code=24,
             name="W+",
@@ -105,8 +105,7 @@ class ParticleCollection:
             width=Param.WW.value,
         )
         globals()['W__minus__'] = W__plus__.anti()
-        
-        
+
         globals()['g'] = Particle(
             pdg_code=21,
             name="g",
@@ -114,7 +113,7 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['ve'] = Particle(
             pdg_code=12,
             name="ve",
@@ -124,7 +123,7 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['ve__tilde__'] = ve.anti()
         
         globals()['vm'] = Particle(
@@ -134,9 +133,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['vm__tilde__'] = vm.anti()
-        
+
         globals()['vt'] = Particle(
             pdg_code=16,
             name="vt",
@@ -144,9 +143,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['vt__tilde__'] = vt.anti()
-        
+
         globals()['e__minus__'] = Particle(
             pdg_code=11,
             name="e-",
@@ -154,9 +153,9 @@ class ParticleCollection:
             mass=0.0,
             width=0,
         )
-        
+
         globals()['e__plus__'] = e__minus__.anti()
-        
+
         globals()['mu__minus__'] = Particle(
             pdg_code=13,
             name="mu-",
@@ -164,9 +163,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['mu__plus__'] = mu__minus__.anti()
-        
+
         globals()['ta__minus__'] = Particle(
             pdg_code=15,
             name="ta-",
@@ -174,9 +173,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['ta__plus__'] = ta__minus__.anti()
-        
+
         globals()['u'] = Particle(
             pdg_code=2,
             name="u",
@@ -184,9 +183,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['u__tilde__'] = u.anti()
-        
+
         globals()['c'] = Particle(
             pdg_code=4,
             name="c",
@@ -194,9 +193,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['c__tilde__'] = c.anti()
-        
+
         globals()['t'] = Particle(
             pdg_code=6,
             name="t",
@@ -204,9 +203,9 @@ class ParticleCollection:
             mass=Param.MT.value,
             width=Param.WT.value,
         )
-        
+
         globals()['t__tilde__'] = t.anti()
-        
+
         globals()['d'] = Particle(
             pdg_code=1,
             name="d",
@@ -214,9 +213,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['d__tilde__'] = d.anti()
-        
+
         globals()['s'] = Particle(
             pdg_code=3,
             name="s",
@@ -226,9 +225,9 @@ class ParticleCollection:
             mass=0,
             width=0,
         )
-        
+
         globals()['s__tilde__'] = s.anti()
-        
+
         globals()['b'] = Particle(
             pdg_code=5,
             name="b",
@@ -238,9 +237,9 @@ class ParticleCollection:
             mass=Param.MB.value,
             width=0,
         )
-        
+
         globals()['b__tilde__'] = b.anti()
-        
+
         globals()['H'] = Particle(
             pdg_code=25,
             name="H",

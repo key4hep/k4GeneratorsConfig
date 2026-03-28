@@ -22,7 +22,7 @@ add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --create --
 set_tests_properties("createGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-  ENVIRONMENT ${TEST_ENVIRONMENT} 
+  ENVIRONMENT ${TEST_ENVIRONMENT}
   FIXTURES_SETUP  "processYamls"
 )
 
