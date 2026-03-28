@@ -23,7 +23,7 @@ class CIUtilsBase(ABC):
 
         self._referenceDir = os.path.dirname(os.path.realpath(__file__))+"/../test/ref-results"
 
-        self._generatorDir = self._workDir+"/Run-Cards"
+        self._generatorDir = f"{self._workDir}/Run-Cards"
 
     def getGenerators(self, generator):
         if generator == "All":
@@ -32,12 +32,26 @@ class CIUtilsBase(ABC):
             return [generator]
 
     def getProcesses(self, generator):
-        return os.listdir(self._generatorDir+"/"+generator)
+        return os.listdir(f"{self._generatorDir}/{generator}")
 
     def getFileNames(self, directory):
         filenames = os.listdir(directory)
         filenames =[name for name in filenames if os.path.isfile(os.path.join(directory,name))]
         return filenames
+
+    def makeDirectory(self, dirname):
+        # Overwrite directory if it exists
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        else:
+            shutil.rmtree(dirname)
+            os.makedirs(dirname)
+
+    def makeOutputDirectory(self, generator, process):
+        if generator not in os.listdir(self._outDir):
+            self.makeDirectory(f"{self._outDir}/{generator}")
+        if process not in os.listdir(f"{self._outDir}/{generator}"):
+            self.makeDirectory(f"{self._outDir}/{generator}/{process}")
 
     def process(self, generators):
         # where do we start from
@@ -91,23 +105,18 @@ class createGeneratorDatacards(CIUtilsBase):
         generators = self.getGenerators("All")
         # now compare to reference
         self.process(generators)
-        
 
     def execute(self, generator, process):
 
-        if generator not in os.listdir(self._outDir):
-            self.makeDirectory(f"{self._outDir}/{generator}")
-        if process not in os.listdir(f"{self._outDir}/{generator}"):
-            self.makeDirectory(f"{self._outDir}/{generator}/{process}")
+        self.makeOutputDirectory(generator, process)
         outDir = f"{self._outDir}/{generator}/{process}"
 
-        genProc = "/"+generator+"/"+process
-        genProcDir = self._generatorDir+genProc
+        genProcDir = f"{self._generatorDir}/{generator}/{process}"
         fileNames = self.getFileNames(genProcDir)
 
         success = True
         for name in fileNames:
-            theFile = genProcDir+"/"+name
+            theFile = f"{genProcDir}/{name}"
             try:
                 shutil.copy(theFile, outDir)
             except:
@@ -115,14 +124,6 @@ class createGeneratorDatacards(CIUtilsBase):
                 success= False
 
         return success
-
-    def makeDirectory(self, dirname):
-        # Overwrite directory if it exists
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-        else:
-            shutil.rmtree(dirname)
-            os.makedirs(dirname)
 
     def prepareYamls(self, yamlFile):
         # move the yamls to the work directory
@@ -174,20 +175,20 @@ class checkGeneratorDatacards(CIUtilsBase):
         self.process(generators)
 
     def execute(self, generator, process):
-        genProc = "/"+generator+"/"+process
-        newDir = self._generatorDir+genProc
-        refDir = self._referenceDir+genProc
+        genProc = f"{generator}/{process}"
+        newDir = f"{self._generatorDir}/{genProc}"
+        refDir = f"{self._referenceDir}/{genProc}"
         fileNames = self.getFileNames(refDir)
 
         success = True
         for name in fileNames:
-            newFile = newDir+"/"+name
-            refFile = refDir+"/"+name
-            message = "Generator "+generator+" Process "+process+" File "+name
+            newFile = f"{newDir}/{name}"
+            refFile = f"{refDir}/{name}"
+            message = f"Generator {generator} Process {process} File {name}"
             if filecmp.cmp(refFile,newFile, shallow=False):
-                print(message+" identical")
+                print(f"{message} identical")
             else:
-                print(message+" differ")
+                print(f"{message} differ")
                 success = False
 
         return success
@@ -206,7 +207,7 @@ class runEventGeneration(CIUtilsBase):
 
     def execute(self, generator, process):
         # go to the directory
-        genProcDir = self._generatorDir+"/"+generator+"/"+process
+        genProcDir = f"{self._generatorDir}/{generator}/{process}"
         os.chdir(genProcDir)
         # retrieve the script
         scripts = [script for script in os.listdir(genProcDir) if script.startswith("Run_") and script.endswith(".sh")]
@@ -217,12 +218,23 @@ class runEventGeneration(CIUtilsBase):
         success = True
         for script in scripts:
             try:
-                result = subprocess.run("./"+script, capture_output=True, check=True)
-            except CalledProcessError:
+                result = subprocess.run(f"./{script}", capture_output=True, check=True)
+            except subprocess.CalledProcessError as e:
                 print(f"Execution error for {generator} in process {process}")
-                print(result.stdout)
-                print(result.stderr)
+                print(e.returncode)
+                print(e.output)
                 success = False
+
+        self.makeOutputDirectory(generator, process)
+        outDir = f"{self._outDir}/{generator}/{process}"
+        fileNames = [filename for filename in self.getFileNames(genProcDir) if filename.endswith(".edm4hep")]
+        for name in fileNames:
+            theFile = f"{genProcDir}/{name}"
+            try:
+                shutil.copy(theFile, outDir)
+            except:
+                print(f"{theFile} could not be copied to {outDir}")
+                success= False
 
         return success
 
@@ -233,13 +245,20 @@ class runSummary(CIUtilsBase):
         super().__init__(workDirectory, outputDirectory)
 
         print("Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions")
-        
+        # remember where we start from
+        cwd = os.getcwd()
+        os.chdir(self._workDir)
         try:
             result = subprocess.run(["eventGenerationSummary",
-                                     "-f", f"{self._outDir}}/GenerationSummary.dat",
-                                     "-d", "../output",
+                                     "-f", f"{self._outDir}/GenerationSummary.dat",
+                                     "-d", f"{self._outDir}"],
                                      capture_output=True, check=True)
-        except CalledProcessError:
+        except subprocess.CalledProcessError as e:
             print(f"Execution error eventGenerationSummary")
-            print(result.stdout)
-            print(result.stderr)
+            print(e.returncode)
+            print(e.output)
+        # return tu the starting point
+        os.chdir(cwd)
+
+    def execute(self, generator, process):
+        pass
