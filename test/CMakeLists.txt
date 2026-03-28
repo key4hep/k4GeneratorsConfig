@@ -3,7 +3,7 @@ set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
 set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
-set(RUN_YAMLS "${PROJECT_SOURCE_DIR}/python/run.py")
+set(EXECUTABLE "${PROJECT_SOURCE_DIR}/python/run.py")
 set(CHECK_DATACARDS "${CMAKE_CURRENT_SOURCE_DIR}/checkGeneratorDatacards.sh")
 set(RUN_GENERATORS "${CMAKE_CURRENT_SOURCE_DIR}/runEventGeneration.sh")
 set(RUN_SUMMARY "${CMAKE_CURRENT_SOURCE_DIR}/runSummary.sh")
@@ -18,7 +18,7 @@ foreach(generator ${generatorList})
 endforeach()
 
 # add the first test: setting up the yaml files
-add_test(NAME pycreateGeneratorDatacards COMMAND python3 ${RUN_YAMLS} --create --workDir ../test/ci)
+add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --create --workDir ../test/ci)
 set_tests_properties("pycreateGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -28,7 +28,7 @@ set_tests_properties("pycreateGeneratorDatacards"
 
 # add the second test: comparing the yaml files to the reference files
 function(check_generator_datacards generator)
-  add_test(NAME checkGeneratorDatacards_${generator} COMMAND ${CHECK_DATACARDS} -g ${generator})
+  add_test(NAME checkGeneratorDatacards_${generator} COMMAND ${CHECK_DATACARDS} --check --workDir ../test/ci --generator ${generator})
   set_tests_properties("checkGeneratorDatacards_${generator}"
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
