@@ -256,7 +256,7 @@ class runSummary(CIUtilsBase):
                                      capture_output=True, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Execution error eventGenerationSummary")
-            print(e.returncode.decode("utf-8"))
+            print(e.returncode)
             print(e.output.decode("utf-8"))
             sys.exit("Exception thrown by eventGenerationSummary")
 
