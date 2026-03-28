@@ -254,6 +254,8 @@ class runSummary(CIUtilsBase):
                                      "-f", f"{self._outDir}/GenerationSummary.dat",
                                      "-d", f"{self._outDir}"],
                                      capture_output=True, check=True)
+            if result.returncode != 0:
+                sys.exit("At least one process failed")
         except subprocess.CalledProcessError as e:
             print(f"Execution error eventGenerationSummary")
             print(e.returncode)
