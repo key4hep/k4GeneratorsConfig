@@ -4,8 +4,6 @@ set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
 set(EXECUTABLE "${PROJECT_SOURCE_DIR}/python/run.py")
-set(CHECK_DATACARDS "${CMAKE_CURRENT_SOURCE_DIR}/checkGeneratorDatacards.sh")
-set(RUN_GENERATORS "${CMAKE_CURRENT_SOURCE_DIR}/runEventGeneration.sh")
 set(RUN_SUMMARY "${CMAKE_CURRENT_SOURCE_DIR}/runSummary.sh")
 
 # the generators to be run
@@ -45,7 +43,7 @@ endforeach()
 
 # third test running the generators (define the function first then call it
 function(add_generator_run name generator)
-  add_test(NAME ${name}_${generator} COMMAND ${RUN_GENERATORS} -g ${generator} )
+  add_test(NAME ${name}_${generator} COMMAND python3 ${EXECUTABLE} --run --workDir ../test/ci --generator ${generator} )
   set_tests_properties(${name}_${generator}
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}

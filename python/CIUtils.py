@@ -1,6 +1,7 @@
 from abc import ABC,abstractmethod
 import os
 import sys
+import subprocess
 import shutil
 from pathlib import Path
 import filecmp
@@ -22,6 +23,37 @@ class CIUtilsBase(ABC):
 
         self._referenceDir = os.path.dirname(os.path.realpath(__file__))+"/../test/ref-results"
 
+        self._generatorDir = self._workDir+"/Run-Cards"
+
+    def getGenerators(self, generator):
+        if generator == "All":
+            return os.listdir(self._generatorDir)
+        else:
+            return [generator]
+
+    def getProcesses(self, generator):
+        return os.listdir(self._generatorDir+"/"+generator)
+
+    def process(self, generators):
+        # where do we start from
+        cwd = os.getcwd()
+
+        failure = False        
+        for generator in generators:
+            processes = self.getProcesses(generator)
+
+            for process in processes:
+                if not self.execute(generator, process):
+                    failure = True
+
+        if failure:
+            sys.exit("Failed")
+        # return to the starting point
+        os.chdir(cwd)
+
+    @abstractmethod
+    def execute(self, generator, process):
+        pass
 
 class createGeneratorDatacards(CIUtilsBase):
     """Generator Generator Datacards"""
@@ -47,8 +79,11 @@ class createGeneratorDatacards(CIUtilsBase):
         # prepare the Sqrts files:
         self.prepareECMS();
 
-        # process all yamls:
-        self.process();
+        # run all yamls:
+        self.run();
+
+    def execute(self, generator, process):
+        pass
 
     def makeDirectory(self, dirname):
         # Overwrite directory if it exists
@@ -78,7 +113,9 @@ class createGeneratorDatacards(CIUtilsBase):
         for filename in ecmsFiles:
             shutil.copy(os.path.join(self._yamlDir,filename),self._workDir)
 
-    def process(self):
+    def run(self):
+        # remember where we start from
+        cwd = os.getcwd()
         # go to the working directory
         os.chdir(self._workDir)
         # loop over all files
@@ -90,6 +127,8 @@ class createGeneratorDatacards(CIUtilsBase):
                 main([filename,'--ecmsFile',ecmsName])
             else:
                 main([filename])
+        # return tu the starting point
+        os.chdir(cwd)
 
 class checkGeneratorDatacards(CIUtilsBase):
     """Check Generator Datacards"""
@@ -97,8 +136,41 @@ class checkGeneratorDatacards(CIUtilsBase):
     def __init__(self, generator, workDirectory, outputDirectory):
         super().__init__(workDirectory, outputDirectory)
 
-        # specific stuff:
-        self.generatorDir = self._workDir+"/Run-Cards"
+        # retrieve all generators in the workdirector:
+        generators = self.getGenerators(generator)
+
+        # now compare to reference
+        self.process(generators)
+
+    def getFileNames(self, directory):
+        filenames = os.listdir(directory)
+        filenames =[name for name in filenames if os.path.isfile(os.path.join(directory,name))]
+        return filenames
+
+    def execute(self, generator, process):
+        genProc = "/"+generator+"/"+process
+        newDir = self._generatorDir+genProc
+        refDir = self._referenceDir+genProc
+        fileNames = self.getFileNames(refDir)
+
+        success = True
+        for name in fileNames:
+            newFile = newDir+"/"+name
+            refFile = refDir+"/"+name
+            message = "Generator "+generator+" Process "+process+" File "+name
+            if filecmp.cmp(refFile,newFile, shallow=False):
+                print(message+" identical")
+            else:
+                print(message+" differ")
+                success = False
+
+        return success
+
+class runEventGeneration(CIUtilsBase):
+    """Run Event Generation"""
+
+    def __init__(self, generator, workDirectory, outputDirectory):
+        super().__init__(workDirectory, outputDirectory)
 
         # retrieve all generators in the workdirector:
         generators = self.getGenerators(generator)
@@ -106,49 +178,27 @@ class checkGeneratorDatacards(CIUtilsBase):
         # now compare to reference
         self.process(generators)
 
-    def getGenerators(self, generator):
-        if generator == "All":
-            return os.listdir(self.generatorDir)
-        else:
-            return [generator]
+    def execute(self, generator, process):
+        # go to the directory
+        genProcDir = self._generatorDir+"/"+generator+"/"+process
+        os.chdir(genProcDir)
+        # retrieve the script
+        scripts = [script for script in os.listdir(genProcDir) if script.startswith("Run_") and script.endswith(".sh")]
+        if len(scripts) != 1:
+            print(f"Found more than one script for generator {generator} with process {process}")
+            return False
+        # execute
+        success = True
+        for script in scripts:
+            try:
+                result = subprocess.run("./"+script, capture_output=True, check=True)
+            except CalledProcessError:
+                print(f"Execution error for {generator} in process {process}")
+                print(result.stdout)
+                print(result.stderr)
+                success = False
 
-    def getProcesses(self, generator):
-        return os.listdir(self.generatorDir+"/"+generator)
-
-    def getFileNames(self, directory):
-        filenames = os.listdir(directory)
-        filenames =[name for name in filenames if os.path.isfile(os.path.join(directory,name))]
-        return filenames
-
-    def process(self, generators):
-        failure = False
-
-        for generator in generators:
-            processes = self.getProcesses(generator)
-
-            for proc in processes:
-                genProc = "/"+generator+"/"+proc
-                newDir = self.generatorDir+genProc
-                refDir = self._referenceDir+genProc
-                fileNames = self.getFileNames(refDir)
-
-                for name in fileNames:
-                    newFile = newDir+"/"+name
-                    refFile = refDir+"/"+name
-                    message = "Generator "+generator+" Process "+proc+" File "+name
-                    if filecmp.cmp(refFile,newFile, shallow=False):
-                        print(message+" identical")
-                    else:
-                        print(message+" differ")
-                        failure = True
-        if failure:
-            sys.exit("Failed comparison")
-
-class runEventGeneration(CIUtilsBase):
-    """Run Event Generation"""
-
-    def __init__(self, workDirectory, outputDirectory):
-        super().__init__(workDirectory, outputDirectory)
+        return success
 
 class runSummary(CIUtilsBase):
     """Run summary of all processes"""

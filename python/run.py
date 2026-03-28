@@ -8,8 +8,9 @@ import textwrap
 
 from CIUtils import createGeneratorDatacards
 from CIUtils import checkGeneratorDatacards
+from CIUtils import runEventGeneration
 
-def run():
+def run(arguments=None):
     parser = argparse.ArgumentParser(
         prog="k4GeneratorsConfig",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -71,19 +72,19 @@ The following options are available:
         help="directory where the output is stored default: k4GeneratorsConfig/test/output",
     )
 
-    args           = parser.parse_args()
+    args = parser.parse_args(arguments)
 
     if args.create:
-        createGeneratorDatacards(args.yamlDir,args.yamlFile,args.workDir,args.outputDir)
+        createGeneratorDatacards(args.yamlDir, args.yamlFile, args.workDir, args.outputDir)
 
     if args.check:
-        checkGeneratorDatacards(args.generator,args.workDir,args.outputDir)
+        checkGeneratorDatacards(args.generator, args.workDir, args.outputDir)
 
     if args.run:
-        runEventGeneration(args.workDir,args.outputDir)
+        runEventGeneration(args.generator, args.workDir, args.outputDir)
 
     if args.summary:
-        runSummary(args.workDir,args.outputDir)
+        runSummary(args.workDir, args.outputDir)
 
 if __name__ == "__main__":
     run()
