@@ -19,7 +19,7 @@ endforeach()
 
 # add the first test: setting up the yaml files
 add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --create --workDir ../test/ci)
-set_tests_properties("pycreateGeneratorDatacards"
+set_tests_properties("createGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   ENVIRONMENT ${TEST_ENVIRONMENT} 
@@ -28,7 +28,7 @@ set_tests_properties("pycreateGeneratorDatacards"
 
 # add the second test: comparing the yaml files to the reference files
 function(check_generator_datacards generator)
-  add_test(NAME checkGeneratorDatacards_${generator} COMMAND ${CHECK_DATACARDS} --check --workDir ../test/ci --generator ${generator})
+  add_test(NAME checkGeneratorDatacards_${generator} COMMAND python3 ${EXECUTABLE} --check --workDir ../test/ci --generator ${generator})
   set_tests_properties("checkGeneratorDatacards_${generator}"
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
