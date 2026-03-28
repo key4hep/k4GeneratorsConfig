@@ -7,12 +7,16 @@
 //
 int main(int argc, char** argv) {
 
+  std::string topDir = "Run-Cards";
   std::string filename = "GenerationSummary.dat";
   std::string dirRoot = ".";
   std::string fileRoot = "eventGenerationSummary.root";
   int c;
-  while ((c = getopt(argc, argv, "hf:d:r:")) != -1)
+  while ((c = getopt(argc, argv, "hw:f:d:r:")) != -1)
     switch (c) {
+    case 'w':
+      topDir = optarg;
+      break;
     case 'f':
       filename = optarg;
       break;
@@ -23,11 +27,12 @@ int main(int argc, char** argv) {
       fileRoot = optarg;
       break;
     case 'h':
-      std::cout << "Usage: xsectionSummary -h -f filename" << std::endl;
+      std::cout << "Usage: xsectionSummary -h -w workdir -f filename -d rootdir -r rootfile" << std::endl;
       std::cout << "-h: print this help" << std::endl;
-      std::cout << "-f filename: print the summary information to this file" << std::endl;
-      std::cout << "-d dirname: write the RootTree and figures to this directory" << std::endl;
-      std::cout << "-r filename: write the RootTree to this file" << std::endl;
+      std::cout << "-w dirname: top directory to start the search for generators and processes (default: Run-Cards)" << std::endl;
+      std::cout << "-f filename: print the summary information to this file (default: GenerationSummary.dat)" << std::endl;
+      std::cout << "-d rootdir: write the RootTree and figures to this directory (default: .)" << std::endl;
+      std::cout << "-r footfile: write the RootTree to this file (default: eventGenerationSummary.root)" << std::endl;
       exit(0);
     default:
       exit(0);
@@ -36,7 +41,7 @@ int main(int argc, char** argv) {
   // instantiate the collection as pointer
   k4GeneratorsConfig::eventGenerationCollections* evgenColls = new k4GeneratorsConfig::eventGenerationCollections();
   // execute the gathering of information including detailed output
-  evgenColls->Execute();
+  evgenColls->Execute(topDir);
   // do the root analysis
   evgenColls->Write2Root(dirRoot, fileRoot);
   // print the summary on screen

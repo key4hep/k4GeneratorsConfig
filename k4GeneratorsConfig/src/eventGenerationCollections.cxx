@@ -29,29 +29,29 @@ k4GeneratorsConfig::eventGenerationCollections::operator=(const eventGenerationC
   return *this;
 }
 k4GeneratorsConfig::eventGenerationCollections::~eventGenerationCollections() {}
-void k4GeneratorsConfig::eventGenerationCollections::Execute() {
+void k4GeneratorsConfig::eventGenerationCollections::Execute(std::string topDir) {
 
   // first make the collection
-  makeCollections();
+  makeCollections(topDir);
 
   // second order the collection according to the process
   orderCollections();
 }
-void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
+void k4GeneratorsConfig::eventGenerationCollections::makeCollections(std::string topDir) {
 
-  for (const auto& generators : std::filesystem::directory_iterator("Run-Cards")) {
-    std::filesystem::path generatorsPath = generators.path();
-    if (!std::filesystem::is_directory(generatorsPath))
+  for (const auto& generator : std::filesystem::directory_iterator(topDir)) {
+    std::filesystem::path generatorPath = generator.path();
+    if (!std::filesystem::is_directory(generatorPath))
       continue;
 
-    for (const auto& procs : std::filesystem::directory_iterator(generatorsPath.string())) {
-      std::filesystem::path processPath = procs.path();
+    for (const auto& process : std::filesystem::directory_iterator(generatorPath.string())) {
+      std::filesystem::path processPath = process.path();
       if (!std::filesystem::is_directory(processPath))
         continue;
 
       k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
-      for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
-        std::filesystem::path filenamePath = files.path();
+      for (const auto& filename : std::filesystem::directory_iterator(processPath.string())) {
+        std::filesystem::path filenamePath = filename.path();
         if (!std::filesystem::is_regular_file(filenamePath))
           continue;
         // take care of the total cross section extracted from the EDM4HEP file
@@ -61,7 +61,7 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
           xsec->setProcess(processPath.filename().string());
           xsec->setFile(filenamePath.string());
           // in some cases the generator name is not available, therefore derive from the filename
-          xsec->setGenerator(generatorsPath.filename().string());
+          xsec->setGenerator(generatorPath.filename().string());
           std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
           m_xsectionCollection.push_back(*xsec);
           if (xsec->isValid())
@@ -84,7 +84,7 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
           diffDist->setFile(filenamePath.string());
           diffDist->setSQRTS(xsec->SQRTS());
           // in some cases the generator name is not available, therefore derive from the filename
-          diffDist->setGenerator(generatorsPath.filename().string());
+          diffDist->setGenerator(generatorPath.filename().string());
           std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
                     << std::endl;
           m_analysisHistosCollection.push_back(*diffDist);

@@ -14,8 +14,8 @@ public:
   eventGenerationCollections& operator=(const eventGenerationCollections&);
   ~eventGenerationCollections();
 
-  void Execute();
-  void makeCollections();
+  void Execute(std::string);
+  void makeCollections(std::string);
   void orderCollections();
   bool compareLength(xsection, xsection);
   bool compareLexical(xsection, xsection);
