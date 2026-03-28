@@ -9,6 +9,7 @@ import textwrap
 from CIUtils import createGeneratorDatacards
 from CIUtils import checkGeneratorDatacards
 from CIUtils import runEventGeneration
+from CIUtils import runSummary
 
 def run(arguments=None):
     parser = argparse.ArgumentParser(

@@ -4,7 +4,6 @@ set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
 set(EXECUTABLE "${PROJECT_SOURCE_DIR}/python/run.py")
-set(RUN_SUMMARY "${CMAKE_CURRENT_SOURCE_DIR}/runSummary.sh")
 
 # the generators to be run
 set(generatorList Babayaga KKMC Madgraph Pythia Sherpa Whizard )
@@ -58,7 +57,7 @@ foreach(generator ${generatorList})
 endforeach()
 
 # third test (after all others have been run: gather the xsections
-add_test(NAME xsectionRuns COMMAND ${RUN_SUMMARY} )
+add_test(NAME xsectionRuns COMMAND python3 ${EXECUTABLE} --summary --workDir ../test/ci )
 set_tests_properties("xsectionRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
