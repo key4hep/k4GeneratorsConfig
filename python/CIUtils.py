@@ -260,6 +260,8 @@ class runSummary(CIUtilsBase):
             print(f"Execution error eventGenerationSummary")
             print(e.returncode)
             print(e.output)
+            sys.exit("Exception thrown by eventGenerationSummary")
+
         # return tu the starting point
         os.chdir(cwd)
 
