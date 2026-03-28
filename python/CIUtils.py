@@ -38,7 +38,7 @@ class CIUtilsBase(ABC):
         # where do we start from
         cwd = os.getcwd()
 
-        failure = False        
+        failure = False
         for generator in generators:
             processes = self.getProcesses(generator)
 
