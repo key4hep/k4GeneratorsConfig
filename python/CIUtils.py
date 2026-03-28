@@ -10,20 +10,20 @@ from main import main
 
 class CIUtilsBase(ABC):
     """Generator Generator Datacards"""
-    def __init__(self, workDirectory, outputDirectory):
+    def __init__(self, args):
 
         # consistent processing of names
-        self._workDir = os.path.dirname(os.path.realpath(__file__))+"/"+workDirectory
-        if workDirectory.startswith("/"):
+        self._workDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.workDir
+        if args.workDir.startswith("/"):
             self._workDir = args.workDir
 
-        self._outDir = os.path.dirname(os.path.realpath(__file__))+"/"+outputDirectory
-        if outputDirectory.startswith("/"):
-            self.outdir = outputDirectory
+        self._outDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.outputDir
+        if args.outputDir.startswith("/"):
+            self.outdir = args.outputDir
 
-        self._referenceDir = os.path.dirname(os.path.realpath(__file__))+"/../test/ref-results"
+        self._referenceDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.refDir
 
-        self._generatorDir = f"{self._workDir}/Run-Cards"
+        self._generatorDir = f"{self._workDir}/{args.generatorDirName}"
 
     def getGenerators(self, generator):
         if generator == "All":
@@ -77,23 +77,23 @@ class CIUtilsBase(ABC):
 class createGeneratorDatacards(CIUtilsBase):
     """Generator Generator Datacards"""
 
-    def __init__(self, yamlDirectory, yamlFile, workDirectory, outputDirectory):
-        super().__init__(workDirectory, outputDirectory)
+    def __init__(self, args):
+        super().__init__(args)
 
         # specific members for DC creation
-        self._yamlDir = os.path.dirname(os.path.realpath(__file__))+"/"+yamlDirectory
-        if yamlDirectory.startswith("/"):
-            self._yamlDir = yamlDirectory
+        self._yamlDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.yamlDir
+        if args.yamlDir.startswith("/"):
+            self._yamlDir = args.yamlDir
 
         self._yamlFiles = []
 
         # make the directory for the work
-        self.makeDirectory(workDirectory)
+        self.makeDirectory(args.workDir)
         # make the output directory for the output
-        self.makeDirectory(outputDirectory)
+        self.makeDirectory(args.outputDir)
 
         # prepare yamls:
-        self.prepareYamls(yamlFile);
+        self.prepareYamls(args.yamlFile);
 
         # prepare the Sqrts files:
         self.prepareECMS();
@@ -165,11 +165,11 @@ class createGeneratorDatacards(CIUtilsBase):
 class checkGeneratorDatacards(CIUtilsBase):
     """Check Generator Datacards"""
 
-    def __init__(self, generator, workDirectory, outputDirectory):
-        super().__init__(workDirectory, outputDirectory)
+    def __init__(self, args):
+        super().__init__(args)
 
         # retrieve all generators in the workdirector:
-        generators = self.getGenerators(generator)
+        generators = self.getGenerators(args.generator)
 
         # now compare to reference
         self.process(generators)
@@ -196,11 +196,11 @@ class checkGeneratorDatacards(CIUtilsBase):
 class runEventGeneration(CIUtilsBase):
     """Run Event Generation"""
 
-    def __init__(self, generator, workDirectory, outputDirectory):
-        super().__init__(workDirectory, outputDirectory)
+    def __init__(self, args):
+        super().__init__(args)
 
         # retrieve all generators in the workdirector:
-        generators = self.getGenerators(generator)
+        generators = self.getGenerators(args.generator)
 
         # now compare to reference
         self.process(generators)
@@ -241,8 +241,8 @@ class runEventGeneration(CIUtilsBase):
 class runSummary(CIUtilsBase):
     """Run summary of all processes"""
 
-    def __init__(self, workDirectory, outputDirectory):
-        super().__init__(workDirectory, outputDirectory)
+    def __init__(self, args):
+        super().__init__(args)
 
         print("Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions")
         # remember where we start from
@@ -250,7 +250,7 @@ class runSummary(CIUtilsBase):
         os.chdir(self._workDir)
         try:
             result = subprocess.run(["eventGenerationSummary",
-                                     "-w", f"{self._generatorDir",
+                                     "-w", f"{self._generatorDir}",
                                      "-f", f"{self._outDir}/GenerationSummary.dat",
                                      "-d", f"{self._outDir}"],
                                      capture_output=True, check=True)
