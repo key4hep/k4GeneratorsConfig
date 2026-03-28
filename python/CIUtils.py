@@ -250,6 +250,7 @@ class runSummary(CIUtilsBase):
         os.chdir(self._workDir)
         try:
             result = subprocess.run(["eventGenerationSummary",
+                                     "-w", f"{self._generatorDir",
                                      "-f", f"{self._outDir}/GenerationSummary.dat",
                                      "-d", f"{self._outDir}"],
                                      capture_output=True, check=True)
