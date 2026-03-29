@@ -13,11 +13,11 @@ class CIUtilsBase(ABC):
     def __init__(self, args):
 
         # consistent processing of names
-        self._workDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.workDir
+        self._workDir = os.getcwd()+"/"+args.workDir
         if args.workDir.startswith('/'):
             self._workDir = args.workDir
 
-        self._outDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.outputDir
+        self._outDir = os.getcwd()+"/"+args.outputDir
         if args.outputDir.startswith('/'):
             self.outdir = args.outputDir
 

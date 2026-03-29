@@ -70,20 +70,20 @@ The following options are available:
     parser.add_argument(
         "--workDir",
         type=str,
-        default="../test/work",
-        help="path to work directory (default: k4GeneratorsConfig/test/work)"
+        default="work",
+        help="path to work directory (default: ./work)"
     )
     parser.add_argument(
         "--outputDir",
         type=str,
-        default="../test/output",
-        help="path to the output (default: k4GeneratorsConfig/test/output)"
+        default="output",
+        help="path to the output (default: ./output)"
     )
     parser.add_argument(
         "--generatorDirName",
         type=str,
         default="Run-Cards",
-        help="relative path to the Generator directories (default: outputDir/generatorDirName)"
+        help="relative path to the Generator directories in outputDir (default: outputDir/Run-Cards)"
     )
 
     args = parser.parse_args(arguments)
