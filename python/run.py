@@ -34,10 +34,11 @@ The following options are available:
         help="path to the yamlFiles (default: k4GeneratorsConfig/examples)"
     )
     parser.add_argument(
-        "--yamlFile",
+        "--yamlFiles",
         type=str,
-        default="None",
-        help="name of the ONLY file to be processed (default: all are processed)"
+        nargs="+",
+        default="",
+        help="yamlfiles to be processed (default: all are processed)"
     )
     parser.add_argument(
         "--check",

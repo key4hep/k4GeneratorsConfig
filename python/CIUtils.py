@@ -9,16 +9,16 @@ import filecmp
 from main import main
 
 class CIUtilsBase(ABC):
-    """Generator Generator Datacards"""
+    """Base class for all k4GeneratorConfig operations"""
     def __init__(self, args):
 
         # consistent processing of names
         self._workDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.workDir
-        if args.workDir.startswith("/"):
+        if args.workDir.startswith('/'):
             self._workDir = args.workDir
 
         self._outDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.outputDir
-        if args.outputDir.startswith("/"):
+        if args.outputDir.startswith('/'):
             self.outdir = args.outputDir
 
         self._referenceDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.refDir
@@ -82,7 +82,7 @@ class createGeneratorDatacards(CIUtilsBase):
 
         # specific members for DC creation
         self._yamlDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.yamlDir
-        if args.yamlDir.startswith("/"):
+        if args.yamlDir.startswith('/'):
             self._yamlDir = args.yamlDir
 
         self._yamlFiles = []
@@ -93,7 +93,7 @@ class createGeneratorDatacards(CIUtilsBase):
         self.makeDirectory(args.outputDir)
 
         # prepare yamls:
-        self.prepareYamls(args.yamlFile);
+        self.prepareYamls(args.yamlFiles);
 
         # prepare the Sqrts files:
         self.prepareECMS();
@@ -125,17 +125,23 @@ class createGeneratorDatacards(CIUtilsBase):
 
         return success
 
-    def prepareYamls(self, yamlFile):
+    def prepareYamls(self, yamlFiles):
         # move the yamls to the work directory
         # the yaml file is not specified copy all yaml files to the work directory:
-        if yamlFile == "None":
+        if len(yamlFiles) == 0:
             self._yamlFiles = [filename for filename in os.listdir(self._yamlDir) if filename.endswith('.yaml')]
         else:
-            self._yamlFiles =[self.yamlDir+"/"+yamlFile]
+            # check that all files end with .yaml
+            if not all([yamlfile.endswith('.yaml') for yamlfile in yamlFiles]):
+                sys.exit(f"prepareYamls::unknown file extension in input list: {yamlFiles}\nExpect .yaml")
+            self._yamlFiles =[self._yamlDir+"/"+yamlFile for yamlFile in yamlFiles]
 
         # copy the yaml files
         for filename in self._yamlFiles:
-            shutil.copy(os.path.join(self._yamlDir,filename),self._workDir)
+            try:
+                shutil.copy(os.path.join(self._yamlDir,filename),self._workDir)
+            except FileNotFoundError as e:
+                sys.exit(f"prepareYamls::file not found: {e.filename}")
 
     def prepareECMS(self):
         # move the ECMS files to the work directory
@@ -210,7 +216,7 @@ class runEventGeneration(CIUtilsBase):
         genProcDir = f"{self._generatorDir}/{generator}/{process}"
         os.chdir(genProcDir)
         # retrieve the script
-        scripts = [script for script in os.listdir(genProcDir) if script.startswith("Run_") and script.endswith(".sh")]
+        scripts = [script for script in os.listdir(genProcDir) if script.startswith('Run_') and script.endswith('.sh')]
         if len(scripts) != 1:
             print(f"Found more than one script for generator {generator} with process {process}")
             return False
@@ -227,7 +233,7 @@ class runEventGeneration(CIUtilsBase):
 
         self.makeOutputDirectory(generator, process)
         outDir = f"{self._outDir}/{generator}/{process}"
-        fileNames = [filename for filename in self.getFileNames(genProcDir) if filename.endswith(".edm4hep")]
+        fileNames = [filename for filename in self.getFileNames(genProcDir) if filename.endswith('.edm4hep')]
         for name in fileNames:
             theFile = f"{genProcDir}/{name}"
             try:
