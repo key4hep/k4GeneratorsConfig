@@ -74,7 +74,7 @@ class CIUtilsBase(ABC):
     def execute(self, generator, process):
         pass
 
-class createGeneratorDatacards(CIUtilsBase):
+class makeGeneratorDatacards(CIUtilsBase):
     """Generator Generator Datacards"""
 
     def __init__(self, args):
@@ -199,7 +199,7 @@ class checkGeneratorDatacards(CIUtilsBase):
 
         return success
 
-class runEventGeneration(CIUtilsBase):
+class generate(CIUtilsBase):
     """Run Event Generation"""
 
     def __init__(self, args):
@@ -244,8 +244,8 @@ class runEventGeneration(CIUtilsBase):
 
         return success
 
-class runSummary(CIUtilsBase):
-    """Run summary of all processes"""
+class summary(CIUtilsBase):
+    """Make a summary of all processes"""
 
     def __init__(self, args):
         super().__init__(args)

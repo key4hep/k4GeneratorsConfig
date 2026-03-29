@@ -6,10 +6,10 @@ import sys
 import argparse
 import textwrap
 
-from CIUtils import createGeneratorDatacards
+from CIUtils import makeGeneratorDatacards
 from CIUtils import checkGeneratorDatacards
-from CIUtils import runEventGeneration
-from CIUtils import runSummary
+from CIUtils import generate
+from CIUtils import summary
 
 def run(arguments=None):
     parser = argparse.ArgumentParser(
@@ -23,9 +23,9 @@ The following options are available:
         ),
     )
     parser.add_argument(
-        "--create",
+        "--make",
         action='store_true',
-        help="create the generator datacards from the yaml files"
+        help="make the generator datacards from the yaml files"
     )
     parser.add_argument(
         "--yamlDir",
@@ -58,9 +58,9 @@ The following options are available:
         help="generator to be run (default: All processed)"
     )
     parser.add_argument(
-        "--run",
+        "--generate",
         action='store_true',
-        help="run the event generation step"
+        help="run the event generation"
     )
     parser.add_argument(
         "--summary",
@@ -88,17 +88,17 @@ The following options are available:
 
     args = parser.parse_args(arguments)
 
-    if args.create:
-        createGeneratorDatacards(args)
+    if args.make:
+        makeGeneratorDatacards(args)
 
     if args.check:
         checkGeneratorDatacards(args)
 
-    if args.run:
-        runEventGeneration(args)
+    if args.generate:
+        generate(args)
 
     if args.summary:
-        runSummary(args)
+        summary(args)
 
 if __name__ == "__main__":
     run()
