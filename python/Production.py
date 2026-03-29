@@ -187,11 +187,11 @@ class checkGeneratorDatacards(ProductionBase):
         fileNames = self.getFileNames(newDir)
 
         success = True
-        # check that all files were created (new) and are available for comparison (ref) 
+        # check that all files were created (new) and are available for comparison (ref)
         if len(fileNames) != len(self.getFileNames(refDir)):
             print(f"Number of files for Generator {generator} process {process} differ between reference {len(fileNames)} and creation {len(self.getFileNames(refDir))}")
             success = False
-            
+
         for name in fileNames:
             newFile = f"{newDir}/{name}"
             # new file must exist
