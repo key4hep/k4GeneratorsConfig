@@ -6,10 +6,10 @@ import sys
 import argparse
 import textwrap
 
-from CIUtils import makeGeneratorDatacards
-from CIUtils import checkGeneratorDatacards
-from CIUtils import generate
-from CIUtils import summary
+from Production import makeGeneratorDatacards
+from Production import checkGeneratorDatacards
+from Production import generate
+from Production import summary
 
 def k4GeneratorsConfig(arguments=None):
     parser = argparse.ArgumentParser(

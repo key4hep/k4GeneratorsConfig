@@ -8,7 +8,7 @@ import filecmp
 
 from main import main
 
-class CIUtilsBase(ABC):
+class ProductionBase(ABC):
     """Base class for all k4GeneratorConfig operations"""
     def __init__(self, args):
 
@@ -74,7 +74,7 @@ class CIUtilsBase(ABC):
     def execute(self, generator, process):
         pass
 
-class makeGeneratorDatacards(CIUtilsBase):
+class makeGeneratorDatacards(ProductionBase):
     """Generator Generator Datacards"""
 
     def __init__(self, args):
@@ -168,7 +168,7 @@ class makeGeneratorDatacards(CIUtilsBase):
         # return tu the starting point
         os.chdir(cwd)
 
-class checkGeneratorDatacards(CIUtilsBase):
+class checkGeneratorDatacards(ProductionBase):
     """Check Generator Datacards"""
 
     def __init__(self, args):
@@ -184,12 +184,30 @@ class checkGeneratorDatacards(CIUtilsBase):
         genProc = f"{generator}/{process}"
         newDir = f"{self._generatorDir}/{genProc}"
         refDir = f"{self._referenceDir}/{genProc}"
-        fileNames = self.getFileNames(refDir)
+        fileNames = self.getFileNames(newDir)
 
         success = True
+        # check that all files were created (new) and are available for comparison (ref) 
+        if len(fileNames) != len(self.getFileNames(refDir)):
+            print(f"Number of files for Generator {generator} process {process} differ between reference {len(fileNames)} and creation {len(self.getFileNames(refDir))}")
+            success = False
+            
         for name in fileNames:
             newFile = f"{newDir}/{name}"
+            # new file must exist
+            if  not os.path.isfile(newFile):
+                print(f"File {newFile} not found")
+                success = False
+                continue
+
             refFile = f"{refDir}/{name}"
+            # reference file must exist
+            if not os.path.isfile(refFile):
+                print(f"File {refFile} not found")
+                continue
+                success = False
+
+            # both files exist, so we can compare
             message = f"Generator {generator} Process {process} File {name}"
             if filecmp.cmp(refFile,newFile, shallow=False):
                 print(f"{message} identical")
@@ -199,7 +217,7 @@ class checkGeneratorDatacards(CIUtilsBase):
 
         return success
 
-class generate(CIUtilsBase):
+class generate(ProductionBase):
     """Run Event Generation"""
 
     def __init__(self, args):
@@ -244,7 +262,7 @@ class generate(CIUtilsBase):
 
         return success
 
-class summary(CIUtilsBase):
+class summary(ProductionBase):
     """Make a summary of all processes"""
 
     def __init__(self, args):
