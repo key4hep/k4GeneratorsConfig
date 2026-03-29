@@ -42,4 +42,4 @@ if (! -d "${K4GeneratorsConfigDir}/install/") then
 endif
 
 # Set executable
-alias k4GeneratorsConfigRun "python3 ${K4GeneratorsConfigDir}/python/run.py"
+alias k4GeneratorsConfigRun "python3 ${K4GeneratorsConfigDir}/python/k4GeneratorsConfig.py"

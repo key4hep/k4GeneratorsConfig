@@ -11,7 +11,7 @@ from CIUtils import checkGeneratorDatacards
 from CIUtils import generate
 from CIUtils import summary
 
-def run(arguments=None):
+def k4GeneratorsConfig(arguments=None):
     parser = argparse.ArgumentParser(
         prog="k4GeneratorsConfig",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -101,5 +101,5 @@ The following options are available:
         summary(args)
 
 if __name__ == "__main__":
-    run()
+    k4GeneratorsConfig()
 

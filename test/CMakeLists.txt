@@ -3,7 +3,7 @@ set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
 set(TEST_TIMEOUT 3500)
 
 # we split the execution into four steps:
-set(EXECUTABLE "${PROJECT_SOURCE_DIR}/python/run.py")
+set(EXECUTABLE "${PROJECT_SOURCE_DIR}/python/k4GeneratorsConfig.py")
 
 # the generators to be run
 set(generatorList Babayaga KKMC Madgraph Pythia Sherpa Whizard )
@@ -15,7 +15,7 @@ foreach(generator ${generatorList})
 endforeach()
 
 # add the first test: setting up the yaml files
-add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --create )
+add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --make )
 set_tests_properties("createGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -42,7 +42,7 @@ endforeach()
 
 # third test running the generators (define the function first then call it
 function(add_generator_run name generator)
-  add_test(NAME ${name}_${generator} COMMAND python3 ${EXECUTABLE} --run  --generator ${generator} )
+  add_test(NAME ${name}_${generator} COMMAND python3 ${EXECUTABLE} --generate  --generator ${generator} )
   set_tests_properties(${name}_${generator}
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
