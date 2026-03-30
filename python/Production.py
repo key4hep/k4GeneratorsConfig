@@ -81,46 +81,46 @@ class makeGeneratorDatacards(ProductionBase):
     def __init__(self, args):
         super().__init__(args)
 
-        # the sqrts argument can be a list of sqrts or a list of strings
-        sqrtsGlobal = []
-        try:
-            all(float(val) for val in args.sqrts)
-            # write the values to a file
-            try:
-                sqrtsFileName = f"{self._workDir}/sqrts.yaml"
-                sqrtsFile = open(sqrtsFileName,"x")
-                sqrtsList = "ecms:"
-                for sqrts in args.sqrts:
-                    sqrtsList += f" {sqrts},"
-                sqrtsList = sqrtsList[:-1]
-                sqrtsFile.write(sqrtsList)
-                sqrtsFile.close()
-            except FileExistsError as e:
-                sys.exit(f"Command line specification --sqrts with a {args.sqrts} triggers writing of {self._workDir}/sqrts.yaml, but file exists")
-            sqrtsGlobal = [sqrtsFileName]
-        except ValueError as e:
-            if len(args.sqrts) == 1:
-                if Path(args.sqrts[0]).stem+Path(args.sqrts[0]).suffix == "sqrts.yaml" and os.path.isfile(args.sqrts[0]):
-                    sqrtsGlobal = [os.path.abspath(args.sqrts[0])]
-
-        # specific members for DC creation
-        self._yamlFiles  = []
-        self._sqrtsFiles = []
-
         # make the directory for the work, protect against "./"
         self.makeDirectory(args.workDir, not (os.path.abspath(args.workDir) == os.getcwd() ))
         # make the output directory for the output
         self.makeDirectory(args.outputDir, not (os.path.abspath(args.outputDir) == os.getcwd() ))
 
+        # the sqrts argument can be a list of sqrts or a list of strings
+        sqrtsGlobalFileName = str("")
+        try:
+            all(float(val) for val in args.sqrts)
+            # write the values to a file
+            try:
+                sqrtsGlobalFileName = f"{self._workDir}/sqrts.yaml"
+                sqrtsFile = open(sqrtsGlobalFileName,"x")
+                sqrtsList = "ecms: [ "
+                for sqrts in args.sqrts:
+                    sqrtsList += f" {sqrts},"
+                sqrtsList.rstrip(",")
+                sqrtsList += "]"
+                sqrtsFile.write(sqrtsList)
+                sqrtsFile.close()
+            except FileExistsError as e:
+                sys.exit(f"Command line specification --sqrts with a {args.sqrts} triggers writing of {sqrtsGlobalFileName}, but file exists")
+        except ValueError as e:
+            if len(args.sqrts) == 1:
+                if Path(args.sqrts[0]).stem+Path(args.sqrts[0]).suffix == "sqrts.yaml" and os.path.isfile(args.sqrts[0]):
+                    sqrtsGlobalFileName = os.path.abspath(args.sqrts[0])
+
+        # specific members for DC creation
+        self._yamlFiles  = []
+        self._sqrtsFiles = []
+
         # prepare yamls:
         self.prepareYamls(args.yaml);
 
         # prepare the Sqrts files if global is not set
-        if len(sqrtsGlobal) == 0:
+        if not sqrtsGlobalFileName:
             self.prepareSQRTS(args.sqrts);
 
         # run all yamls:
-        self.run(sqrtsGlobal);
+        self.run(sqrtsGlobalFileName);
 
         # move the output to storage
         generators = self.getGenerators("All")
@@ -181,15 +181,20 @@ class makeGeneratorDatacards(ProductionBase):
         os.chdir(self._workDir)
         # loop over all files
         for filename in self._yamlFiles:
+
+            # check SQRTS: priority: global then comparison with filenames for specific processes 
             processName = Path(filename).stem
-            sqrtsName   = f"{Path(filename).parent}sqrts{processName}.yaml"
+            sqrtsName   = f"{Path(filename).parent}/sqrts{processName}.yaml"
+            if sqrtsGlobal:
+                sqrtsName = sqrtsGlobal
+            else:
+                if not any( name == sqrtsName for name in self._sqrtsFiles):
+                    sqrtsName = ""
+            # the name is overidden if there is a global name specified:
             message     = f"Processing : {processName} from file {filename}"
             sqrtsSpecified = False
-            for name in self._sqrtsFiles:
-                if name == sqrtsName:
-                    sqrtsSpecified = True
             # everything is prepared, we can run now
-            if sqrtsName in self._sqrtsFiles and os.path.isfile(sqrtsName):
+            if sqrtsName and os.path.isfile(sqrtsName):
                 print(f"{message} with {sqrtsName}")
                 main([filename,'--ecmsFile',sqrtsName])
             else:
