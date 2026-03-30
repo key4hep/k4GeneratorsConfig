@@ -122,7 +122,7 @@ class makeGeneratorDatacards(ProductionBase):
 
         # args modifiable:
         self.Yaml2DatacardArgs = args
-        
+
         # run all yamls:
         self.run(sqrtsGlobalFileName);
 
@@ -158,7 +158,7 @@ class makeGeneratorDatacards(ProductionBase):
                 self._yamlFiles.append(os.path.abspath(yaml))
             elif os.path.isdir(yaml):
                 yamlDirs.append(os.path.abspath(yaml))
-                
+
         # now we have a list of directories and a list of yaml files, extend the list of yaml files in the directories
         for yamlDir in yamlDirs:
             for filename in os.listdir(yamlDir):
@@ -188,7 +188,7 @@ class makeGeneratorDatacards(ProductionBase):
         # loop over all files
         for filename in self._yamlFiles:
 
-            # check SQRTS: priority: global then comparison with filenames for specific processes 
+            # check SQRTS: priority: global then comparison with filenames for specific processes
             processName = Path(filename).stem
             sqrtsName   = f"{Path(filename).parent}/sqrts{processName}.yaml"
             if sqrtsGlobal:
