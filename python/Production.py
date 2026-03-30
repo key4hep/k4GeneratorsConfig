@@ -88,25 +88,24 @@ class makeGeneratorDatacards(ProductionBase):
 
         # the sqrts argument can be a list of sqrts or a list of strings
         sqrtsGlobalFileName = str("")
-        try:
-            all(float(val) for val in args.sqrts)
-            # write the values to a file
+        if len(args.sqrts) > 0:
             try:
-                sqrtsGlobalFileName = f"{self._workDir}/sqrts.yaml"
-                sqrtsFile = open(sqrtsGlobalFileName,"x")
-                sqrtsList = "ecms: [ "
-                for sqrts in args.sqrts:
-                    sqrtsList += f" {sqrts},"
-                sqrtsList.rstrip(",")
-                sqrtsList += "]"
-                sqrtsFile.write(sqrtsList)
-                sqrtsFile.close()
-            except FileExistsError as e:
-                sys.exit(f"Command line specification --sqrts with a {args.sqrts} triggers writing of {sqrtsGlobalFileName}, but file exists")
-        except ValueError as e:
-            if len(args.sqrts) == 1:
-                if Path(args.sqrts[0]).stem+Path(args.sqrts[0]).suffix == "sqrts.yaml" and os.path.isfile(args.sqrts[0]):
-                    sqrtsGlobalFileName = os.path.abspath(args.sqrts[0])
+                all(float(val) for val in args.sqrts)
+                # write the values to a file
+                try:
+                    sqrtsGlobalFileName = f"{self._workDir}/sqrts.yaml"
+                    sqrtsFile = open(sqrtsGlobalFileName,"x")
+                    sqrtsList = "ecms: [ "
+                    for sqrts in args.sqrts:
+                        sqrtsList += f" {sqrts},"
+                    sqrtsFile.write(sqrtsList.rstrip(",") + "]")
+                    sqrtsFile.close()
+                except FileExistsError as e:
+                    sys.exit(f"Command line specification --sqrts with a {args.sqrts} triggers writing of {sqrtsGlobalFileName}, but file exists")
+            except ValueError as e:
+                if len(args.sqrts) == 1:
+                    if Path(args.sqrts[0]).stem+Path(args.sqrts[0]).suffix == "sqrts.yaml" and os.path.isfile(args.sqrts[0]):
+                        sqrtsGlobalFileName = os.path.abspath(args.sqrts[0])
 
         # specific members for DC creation
         self._yamlFiles  = []
@@ -150,29 +149,31 @@ class makeGeneratorDatacards(ProductionBase):
         # check whether this is a list of directories or mixed or files
         yamlDirs = []
         for yaml in yamlList:
-            if os.path.isfile(yaml) and yaml.endswith('.yaml') and not yaml.startswith('sqrts'):
+            if os.path.isfile(yaml) and yaml.endswith('.yaml') and not Path(yaml).stem.startswith('sqrts'):
                 self._yamlFiles.append(os.path.abspath(yaml))
             elif os.path.isdir(yaml):
                 yamlDirs.append(os.path.abspath(yaml))
                 
         # now we have a list of directories and a list of yaml files, extend the list of yaml files in the directories
         for yamlDir in yamlDirs:
-            self._yamlFiles.extend(f"{yamlDir}/{filename}" for filename in os.listdir(yamlDir)
-                                   if filename.endswith('.yaml') and not filename.startswith('sqrts'))
+            for filename in os.listdir(yamlDir):
+                if filename.endswith('.yaml') and not filename.startswith('sqrts'):
+                    self._yamlFiles.append(f"{yamlDir}/{filename}")
 
     def prepareSQRTS(self, sqrtsList):
         # check whether this is a list of directories or mixed or files
         sqrtsDirs = []
         for sqrts in sqrtsList:
-            if os.path.isfile(sqrts) and yaml.startswith('sqrts') and sqrts.endswith('.yaml'):
-                self._sqrtsFiles.extend(os.path.abspath(sqrts))
+            if os.path.isfile(sqrts) and Path(sqrts).stem.startswith('sqrts') and sqrts.endswith('.yaml'):
+                self._sqrtsFiles.append(os.path.abspath(sqrts))
             elif os.path.isdir(sqrts):
-                sqrtsDirs.extend(os.path.abspath(sqrts))
+                sqrtsDirs.append(os.path.abspath(sqrts))
 
         # now we have a list of directories and a list of sqrts files, extend the list of sqrts files in the directories
         for sqrtsDir in sqrtsDirs:
-            self._sqrtsFiles.extend(f"{sqrtsDir}/{filename}" for filename in os.listdir(sqrtsDir)
-                                    if filename.startswith('sqrts') and filename.endswith('.yaml'))
+            for filename in os.listdir(sqrtsDir):
+                if filename.startswith('sqrts') and filename.endswith('.yaml'):
+                    self._sqrtsFiles.append(f"{sqrtsDir}/{filename}")
 
     def run(self, sqrtsGlobal):
         # remember where we start from
