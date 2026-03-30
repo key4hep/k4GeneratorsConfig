@@ -39,13 +39,14 @@ class ProductionBase(ABC):
         filenames =[name for name in filenames if os.path.isfile(os.path.join(directory,name))]
         return filenames
 
-    def makeDirectory(self, dirname):
+    def makeDirectory(self, dirname, overwrite=True):
         # Overwrite directory if it exists
         if not os.path.exists(dirname):
             os.makedirs(dirname)
         else:
-            shutil.rmtree(dirname)
-            os.makedirs(dirname)
+            if overwrite:
+                shutil.rmtree(dirname)
+                os.makedirs(dirname)
 
     def makeOutputDirectory(self, generator, process):
         if generator not in os.listdir(self._outDir):
@@ -80,26 +81,46 @@ class makeGeneratorDatacards(ProductionBase):
     def __init__(self, args):
         super().__init__(args)
 
+        # the sqrts argument can be a list of sqrts or a list of strings
+        sqrtsGlobal = []
+        try:
+            all(float(val) for val in args.sqrts)
+            # write the values to a file
+            try:
+                sqrtsFileName = f"{self._workDir}/sqrts.yaml"
+                sqrtsFile = open(sqrtsFileName,"x")
+                sqrtsList = "ecms:"
+                for sqrts in args.sqrts:
+                    sqrtsList += f" {sqrts},"
+                sqrtsList = sqrtsList[:-1]
+                sqrtsFile.write(sqrtsList)
+                sqrtsFile.close()
+            except FileExistsError as e:
+                sys.exit(f"Command line specification --sqrts with a {args.sqrts} triggers writing of {self._workDir}/sqrts.yaml, but file exists")
+            sqrtsGlobal = [sqrtsFileName]
+        except ValueError as e:
+            if len(args.sqrts) == 1:
+                if Path(args.sqrts[0]).stem+Path(args.sqrts[0]).suffix == "sqrts.yaml" and os.path.isfile(args.sqrts[0]):
+                    sqrtsGlobal = [os.path.abspath(args.sqrts[0])]
+
         # specific members for DC creation
-        self._yamlDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.yamlDir
-        if args.yamlDir.startswith('/'):
-            self._yamlDir = args.yamlDir
+        self._yamlFiles  = []
+        self._sqrtsFiles = []
 
-        self._yamlFiles = []
-
-        # make the directory for the work
-        self.makeDirectory(args.workDir)
+        # make the directory for the work, protect against "./"
+        self.makeDirectory(args.workDir, not (os.path.abspath(args.workDir) == os.getcwd() ))
         # make the output directory for the output
-        self.makeDirectory(args.outputDir)
+        self.makeDirectory(args.outputDir, not (os.path.abspath(args.outputDir) == os.getcwd() ))
 
         # prepare yamls:
-        self.prepareYamls(args.yamlFiles);
+        self.prepareYamls(args.yaml);
 
-        # prepare the Sqrts files:
-        self.prepareECMS();
+        # prepare the Sqrts files if global is not set
+        if len(sqrtsGlobal) == 0:
+            self.prepareSQRTS(args.sqrts);
 
         # run all yamls:
-        self.run();
+        self.run(sqrtsGlobal);
 
         # move the output to storage
         generators = self.getGenerators("All")
@@ -125,33 +146,35 @@ class makeGeneratorDatacards(ProductionBase):
 
         return success
 
-    def prepareYamls(self, yamlFiles):
-        # move the yamls to the work directory
-        # the yaml file is not specified copy all yaml files to the work directory:
-        if len(yamlFiles) == 0:
-            self._yamlFiles = [filename for filename in os.listdir(self._yamlDir) if filename.endswith('.yaml')]
-        else:
-            # check that all files end with .yaml
-            if not all([yamlfile.endswith('.yaml') for yamlfile in yamlFiles]):
-                sys.exit(f"prepareYamls::unknown file extension in input list: {yamlFiles}\nExpect .yaml")
-            self._yamlFiles =[self._yamlDir+"/"+yamlFile for yamlFile in yamlFiles]
+    def prepareYamls(self, yamlList):
+        # check whether this is a list of directories or mixed or files
+        yamlDirs = []
+        for yaml in yamlList:
+            if os.path.isfile(yaml) and yaml.endswith('.yaml') and not yaml.startswith('sqrts'):
+                self._yamlFiles.append(os.path.abspath(yaml))
+            elif os.path.isdir(yaml):
+                yamlDirs.append(os.path.abspath(yaml))
+                
+        # now we have a list of directories and a list of yaml files, extend the list of yaml files in the directories
+        for yamlDir in yamlDirs:
+            self._yamlFiles.extend(f"{yamlDir}/{filename}" for filename in os.listdir(yamlDir)
+                                   if filename.endswith('.yaml') and not filename.startswith('sqrts'))
 
-        # copy the yaml files
-        for filename in self._yamlFiles:
-            try:
-                shutil.copy(os.path.join(self._yamlDir,filename),self._workDir)
-            except FileNotFoundError as e:
-                sys.exit(f"prepareYamls::file not found: {e.filename}")
+    def prepareSQRTS(self, sqrtsList):
+        # check whether this is a list of directories or mixed or files
+        sqrtsDirs = []
+        for sqrts in sqrtsList:
+            if os.path.isfile(sqrts) and yaml.startswith('sqrts') and sqrts.endswith('.yaml'):
+                self._sqrtsFiles.extend(os.path.abspath(sqrts))
+            elif os.path.isdir(sqrts):
+                sqrtsDirs.extend(os.path.abspath(sqrts))
 
-    def prepareECMS(self):
-        # move the ECMS files to the work directory
-        ecmsFiles = [filename for filename in os.listdir(self._yamlDir) if filename.endswith('.dat') and filename.startswith('ecms')]
+        # now we have a list of directories and a list of sqrts files, extend the list of sqrts files in the directories
+        for sqrtsDir in sqrtsDirs:
+            self._sqrtsFiles.extend(f"{sqrtsDir}/{filename}" for filename in os.listdir(sqrtsDir)
+                                    if filename.startswith('sqrts') and filename.endswith('.yaml'))
 
-        # copy the yaml files
-        for filename in ecmsFiles:
-            shutil.copy(os.path.join(self._yamlDir,filename),self._workDir)
-
-    def run(self):
+    def run(self, sqrtsGlobal):
         # remember where we start from
         cwd = os.getcwd()
         # go to the working directory
@@ -159,13 +182,20 @@ class makeGeneratorDatacards(ProductionBase):
         # loop over all files
         for filename in self._yamlFiles:
             processName = Path(filename).stem
-            ecmsName = "ecms"+processName+".dat"
-            print("Processing : "+processName)
-            if os.path.isfile(ecmsName):
-                main([filename,'--ecmsFile',ecmsName])
+            sqrtsName   = f"{Path(filename).parent}sqrts{processName}.yaml"
+            message     = f"Processing : {processName} from file {filename}"
+            sqrtsSpecified = False
+            for name in self._sqrtsFiles:
+                if name == sqrtsName:
+                    sqrtsSpecified = True
+            # everything is prepared, we can run now
+            if sqrtsName in self._sqrtsFiles and os.path.isfile(sqrtsName):
+                print(f"{message} with {sqrtsName}")
+                main([filename,'--ecmsFile',sqrtsName])
             else:
+                print(f"{message}")
                 main([filename])
-        # return tu the starting point
+        # return to the starting point
         os.chdir(cwd)
 
 class checkGeneratorDatacards(ProductionBase):

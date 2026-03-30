@@ -28,17 +28,53 @@ The following options are available:
         help="make the generator datacards from the yaml files"
     )
     parser.add_argument(
-        "--yamlDir",
+        "--yaml",
+        nargs="*",
         type=str,
-        default="../examples",
-        help="path to the yamlFiles (default: k4GeneratorsConfig/examples)"
+        default=[os.path.dirname(os.path.realpath(__file__))+'/../examples'],
+        help="yamlFiles and director(y/ies) with yaml files (default: k4GeneratorsConfig/examples)"
     )
     parser.add_argument(
-        "--yamlFiles",
+        "--sqrts",
+        nargs="*",
         type=str,
-        nargs="+",
-        default="",
-        help="yamlfiles to be processed (default: all are processed)"
+        default=[],
+        help="either a space separated list of center of mass energies OR file(s) and director(y/ies) with sqrts lists in yaml format (name : sqrtsPROCESS.dat containing eg, sqrts:[91.,240.]),  sqrts.yaml as single argument will be applied to all processes",
+    )
+    parser.add_argument(
+        "--seed",
+        nargs=1,
+        type=int,
+        default=4711,
+        help="initial random number seed, increment for each file",
+    )
+    parser.add_argument(
+        "--nevts",
+        type=int,
+        default=-1,
+        help="Number of events to be generated",
+    )
+    parser.add_argument(
+        "--parameterTag",
+        type=str,
+        default="latest",
+        help="parameter tag in Parameters.yaml (default: latest)",
+    )
+    parser.add_argument(
+        "--parameterTagFile",
+        type=str,
+        default=os.path.dirname(os.path.realpath(__file__))+'ParameterSets.yaml',
+        help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in directory: k4GeneratorsConfig/python",
+    )
+    parser.add_argument(
+        "--key4hepUseNightlies",
+        action='store_true',
+        help="configures the key4hepscripts to use nightlies instead of releases",
+    )
+    parser.add_argument(
+        "--key4hepVersion",
+        default=None,
+        help="force the use of the version : YYYY-MM-DD (default: latest)",
     )
     parser.add_argument(
         "--check",
@@ -48,7 +84,7 @@ The following options are available:
     parser.add_argument(
         "--refDir",
         type=str,
-        default="../test/ref-results",
+        default=os.path.dirname(os.path.realpath(__file__))+'../test/ref-results',
         help="path to the reference files (default: k4GeneratorsConfig/test/ref-results)"
     )
     parser.add_argument(
@@ -85,8 +121,19 @@ The following options are available:
         default="Run-Cards",
         help="relative path to the Generator directories in outputDir (default: outputDir/Run-Cards)"
     )
+    parser.add_argument(
+        "--all",
+        action='store_true',
+        help="activates --make --generate --summary"
+    )
 
     args = parser.parse_args(arguments)
+    # --all overrides --make --generate --summary
+    if args.all:
+        args.make     = True
+        args.generate = True
+        args.summary  = True
+        print("k4GeneratorsConfig will make generator datacards, generate events, make a summary")
 
     if args.make:
         makeGeneratorDatacards(args)
