@@ -6,7 +6,7 @@ import shutil
 from pathlib import Path
 import filecmp
 
-from main import main
+from Yaml2Datacard import Yaml2Datacard
 
 class ProductionBase(ABC):
     """Base class for all k4GeneratorConfig operations"""
@@ -19,9 +19,11 @@ class ProductionBase(ABC):
 
         self._outDir = os.getcwd()+"/"+args.outputDir
         if args.outputDir.startswith('/'):
-            self.outdir = args.outputDir
+            self._outdir = args.outputDir
 
-        self._referenceDir = os.path.dirname(os.path.realpath(__file__))+"/"+args.refDir
+        self._referenceDir = os.getcwd()+"/"+args.refDir
+        if args.refDir.startswith('/'):
+            self._referenceDir = args.refDir
 
         self._generatorDir = f"{self._workDir}/{args.generatorDirName}"
 
@@ -118,6 +120,9 @@ class makeGeneratorDatacards(ProductionBase):
         if not sqrtsGlobalFileName:
             self.prepareSQRTS(args.sqrts);
 
+        # args modifiable:
+        self.Yaml2DatacardArgs = args
+        
         # run all yamls:
         self.run(sqrtsGlobalFileName);
 
@@ -191,16 +196,14 @@ class makeGeneratorDatacards(ProductionBase):
             else:
                 if not any( name == sqrtsName for name in self._sqrtsFiles):
                     sqrtsName = ""
-            # the name is overidden if there is a global name specified:
-            message     = f"Processing : {processName} from file {filename}"
-            sqrtsSpecified = False
             # everything is prepared, we can run now
+            self.Yaml2DatacardArgs.inputfiles = [filename]
+            message     = f"Processing : {processName} from file {self.Yaml2DatacardArgs.inputfiles}"
             if sqrtsName and os.path.isfile(sqrtsName):
-                print(f"{message} with {sqrtsName}")
-                main([filename,'--ecmsFile',sqrtsName])
-            else:
-                print(f"{message}")
-                main([filename])
+                self.Yaml2DatacardArgs.sqrts      = sqrtsName
+                message += f"{message} with {self.Yaml2DatacardArgs.sqrts}"
+            print(message)
+            Yaml2Datacard(self.Yaml2DatacardArgs)
         # return to the starting point
         os.chdir(cwd)
 

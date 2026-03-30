@@ -63,7 +63,7 @@ The following options are available:
     parser.add_argument(
         "--parameterTagFile",
         type=str,
-        default=os.path.dirname(os.path.realpath(__file__))+'ParameterSets.yaml',
+        default=os.path.dirname(os.path.realpath(__file__))+'/ParameterSets.yaml',
         help="name of file containing the parameter sets of the requested parameterTag, default: ParameterSets.yaml in directory: k4GeneratorsConfig/python",
     )
     parser.add_argument(
@@ -84,7 +84,7 @@ The following options are available:
     parser.add_argument(
         "--refDir",
         type=str,
-        default=os.path.dirname(os.path.realpath(__file__))+'../test/ref-results',
+        default=os.path.dirname(os.path.realpath(__file__))+'/../test/ref-results',
         help="path to the reference files (default: k4GeneratorsConfig/test/ref-results)"
     )
     parser.add_argument(
