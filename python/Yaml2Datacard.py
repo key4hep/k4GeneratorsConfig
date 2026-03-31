@@ -16,7 +16,7 @@ from Particles import ParticleCollection
 
 class Yaml2Datacard:
     """Convert Input files into generator datacards"""
-    
+
     def __init__(self,args):
 
         ReleaseSpec.set_info("key4hepUseNightlies",args.key4hepUseNightlies)
