@@ -17,8 +17,6 @@ class ProcessReader:
             self.load_file()
 
         for key, value in self.settings.items():
-            print(key)
-            print(value)
             if key.lower() == "events":
                 try:
                     if "k" in value:

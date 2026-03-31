@@ -95,7 +95,7 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
         # If no directory set in input, use default
         output_dir = "Run-Cards"
 
-    process_instances = {}
+    processesDict = {}
     rndmIncrement = 0
     for key, value in processes.items():
         make_output_directory(processReader.get_generators(), output_dir, key)
@@ -107,13 +107,13 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
             rndmIncrement += 1
         param = ProcessParameters(processReader)
         # instantiate the class for each process
-        process_instances[key] = Process(
+        processesDict[key] = Process(
             value, key, param, yamlParticleData, OutDir=output_dir
         )
         # increment counter for randomseed
-    for process_instance in process_instances.values():
-        process_instance.prepareProcess()
-        generators.runGeneratorConfiguration(process_instance)
+    for process in processesDict.values():
+        process.prepareProcess()
+        generators.runGeneratorConfiguration(process)
 
     return rndmIncrement
 
