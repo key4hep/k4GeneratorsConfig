@@ -161,9 +161,9 @@ class makeGeneratorDatacards(ProductionBase):
 
         # now we have a list of directories and a list of yaml files, extend the list of yaml files in the directories
         for yamlDir in yamlDirs:
-            for filename in os.listdir(yamlDir):
-                if filename.endswith('.yaml') and not filename.startswith('sqrts'):
-                    self._yamlFiles.append(f"{yamlDir}/{filename}")
+            self._yamlFiles.extend([f"{yamlDir}/{filename}"
+                                   for filename in os.listdir(yamlDir)
+                                   if filename.endswith('.yaml') and not filename.startswith('sqrts')])
 
     def prepareSQRTS(self, sqrtsList):
         # check whether this is a list of directories or mixed or files
@@ -176,9 +176,9 @@ class makeGeneratorDatacards(ProductionBase):
 
         # now we have a list of directories and a list of sqrts files, extend the list of sqrts files in the directories
         for sqrtsDir in sqrtsDirs:
-            for filename in os.listdir(sqrtsDir):
-                if filename.startswith('sqrts') and filename.endswith('.yaml'):
-                    self._sqrtsFiles.append(f"{sqrtsDir}/{filename}")
+            self._sqrtsFiles.extend([f"{sqrtsDir}/{filename}"
+                                    for filename in os.listdir(sqrtsDir)
+                                    if filename.startswith('sqrts') and filename.endswith('.yaml')])
 
     def run(self, sqrtsGlobal):
         # remember where we start from
@@ -197,11 +197,13 @@ class makeGeneratorDatacards(ProductionBase):
                 if not any( name == sqrtsName for name in self._sqrtsFiles):
                     sqrtsName = ""
             # everything is prepared, we can run now
-            self.Yaml2DatacardArgs.inputfiles = [filename]
-            message     = f"Processing : {processName} from file {self.Yaml2DatacardArgs.inputfiles}"
+            self.Yaml2DatacardArgs.yaml = filename
+            message     = f"Processing : {processName} from file {self.Yaml2DatacardArgs.yaml}"
             if sqrtsName and os.path.isfile(sqrtsName):
                 self.Yaml2DatacardArgs.sqrts      = sqrtsName
-                message += f"{message} with {self.Yaml2DatacardArgs.sqrts}"
+                message += f" with {self.Yaml2DatacardArgs.sqrts}"
+            else:
+                self.Yaml2DatacardArgs.sqrts      = ""
             print(message)
             Yaml2Datacard(self.Yaml2DatacardArgs)
         # return to the starting point

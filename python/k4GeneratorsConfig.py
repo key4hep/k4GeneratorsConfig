@@ -12,16 +12,7 @@ from Production import generate
 from Production import summary
 
 def k4GeneratorsConfig(arguments=None):
-    parser = argparse.ArgumentParser(
-        prog="k4GeneratorsConfig",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        description=textwrap.dedent(
-            """\
-The following options are available:
-------------------------------------
-    """
-        ),
-    )
+    parser = argparse.ArgumentParser(prog="k4GeneratorsConfig")
     parser.add_argument(
         "--make",
         action='store_true',

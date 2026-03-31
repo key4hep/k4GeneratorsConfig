@@ -50,9 +50,8 @@ def Yaml2Datacard(args=None):
 
     # so additionally we read the argument sqrtsFile
     energies = []
-    for ecmsfile in args.sqrts:
-        # open and read ecms file and append the energies to the command line arguments
-        ecmSettings = Settings.ECMSInput(ecmsfile)
+    if args.sqrts:
+        ecmSettings = Settings.ECMSInput(args.sqrts)
         energies.extend(ecmSettings.energies())
 
     # now we read the global settings
@@ -66,15 +65,14 @@ def Yaml2Datacard(args=None):
     # now execute file processes
     rndmSeed = args.seed
     if len(energies) == 0:
-        executeFiles(args.inputfiles, 0, rndmSeed, args.nevts)
+        executeFiles(args.yaml, 0, rndmSeed, args.nevts)
     else:
         for sqrts in energies:
-            rndmIncrement = executeFiles(args.inputfiles, sqrts, rndmSeed, args.nevts)
+            rndmIncrement = executeFiles(args.yaml, sqrts, rndmSeed, args.nevts)
             # offset for next round by number of yaml files
             rndmSeed = rndmSeed + rndmIncrement
 
-
-def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
+def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
     # first step reset all particles:
     ParticleCollection()
     if sqrts == 0:
@@ -82,41 +80,40 @@ def executeFiles(files, sqrts, rndmSeedFallback=4711, events=-1):
     else:
         print("Generating and writing configuration files for ECM= ", sqrts)
 
-    for yaml_file in files:
-        # read the input file
-        settings = Settings.Input(yaml_file, sqrts)
-        # set the number of events if present
-        if events != -1:
-            settings.set("events", events)
-        settings.gens()
-        processes        = settings.get_processes(sqrts)
-        yamlParticleData = settings.get_particle_data()
-        generators       = generators_module.Generators(settings)
-        try:
-            output_dir = getattr(settings, "outdir", "Run-Cards")
-        except KeyError:
-            # If no directory set in input, use default
-            output_dir = "Run-Cards"
+    # read the input file
+    settings = Settings.Input(yaml, sqrts)
+    # set the number of events if present
+    if events != -1:
+        settings.set("events", events)
+    settings.gens()
+    processes        = settings.get_processes(sqrts)
+    yamlParticleData = settings.get_particle_data()
+    generators       = generators_module.Generators(settings)
+    try:
+        output_dir = getattr(settings, "outdir", "Run-Cards")
+    except KeyError:
+        # If no directory set in input, use default
+        output_dir = "Run-Cards"
 
-        process_instances = {}
-        rndmIncrement = 0
-        for key, value in processes.items():
-            make_output_directory(settings.gens(), output_dir, key)
-            try:
-                randomseed = value["randomseed"]
-            except:
-                randomseed = rndmSeedFallback + rndmIncrement
-                value["randomseed"] = randomseed
-                rndmIncrement += 1
-            param = process_module.ProcessParameters(settings)
-            # instantiate the class for each process
-            process_instances[key] = process_module.Process(
-                value, key, param, yamlParticleData, OutDir=output_dir
-            )
-            # increment counter for randomseed
-        for process_instance in process_instances.values():
-            process_instance.prepareProcess()
-            generators.runGeneratorConfiguration(process_instance)
+    process_instances = {}
+    rndmIncrement = 0
+    for key, value in processes.items():
+        make_output_directory(settings.gens(), output_dir, key)
+        try:
+            randomseed = value["randomseed"]
+        except:
+            randomseed = rndmSeedFallback + rndmIncrement
+            value["randomseed"] = randomseed
+            rndmIncrement += 1
+        param = process_module.ProcessParameters(settings)
+        # instantiate the class for each process
+        process_instances[key] = process_module.Process(
+            value, key, param, yamlParticleData, OutDir=output_dir
+        )
+        # increment counter for randomseed
+    for process_instance in process_instances.values():
+        process_instance.prepareProcess()
+        generators.runGeneratorConfiguration(process_instance)
 
     return rndmIncrement
 

@@ -64,7 +64,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/python
 install(PROGRAMS ${PROJECT_SOURCE_DIR}/python/main.py DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
 
 install(CODE "execute_process(COMMAND bash -c \"set -e
-    link_target=${CMAKE_INSTALL_PREFIX}/python/main.py
+    link_target=${CMAKE_INSTALL_PREFIX}/python/k4GeneratorsConfig.py
     link_name=${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_BINDIR}/k4GeneratorsConfig
     rm -f $link_name
     ln -s $link_target $link_name
