@@ -61,7 +61,7 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/python
   PATTERN __pycache__ EXCLUDE  # Or pythons caches
 )
 # Install main as an executable
-install(PROGRAMS ${PROJECT_SOURCE_DIR}/python/main.py DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
+install(PROGRAMS ${PROJECT_SOURCE_DIR}/python/k4GeneratorsConfig.py DESTINATION ${CMAKE_INSTALL_PREFIX}/python)
 
 install(CODE "execute_process(COMMAND bash -c \"set -e
     link_target=${CMAKE_INSTALL_PREFIX}/python/k4GeneratorsConfig.py
