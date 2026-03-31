@@ -5,7 +5,7 @@ class Generators:
 
     def __init__(self, settings):
         self.settings = settings
-        self.generator_list = settings.gens()
+        self.generator_list = settings.get_generators()
 
     def set_process_info(self, proc_info):
         self.proc_info = proc_info

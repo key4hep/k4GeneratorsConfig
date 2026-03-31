@@ -59,7 +59,7 @@ class ProcessReader:
         except:
             return None
 
-    def gens(self):
+    def get_generators(self):
         if not self.is_set("generators"):
             raise ValueError("No Generators set!")
         return getattr(self, "generators")

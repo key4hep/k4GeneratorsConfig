@@ -81,16 +81,16 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
         print("Generating and writing configuration files for ECM= ", sqrts)
 
     # read the input file
-    reader = Reader.ProcessReader(yaml, sqrts)
+    processReader = Reader.ProcessReader(yaml, sqrts)
     # set the number of events if present
     if events != -1:
-        reader.set("events", events)
-    reader.gens()
-    processes        = reader.get_processes(sqrts)
-    yamlParticleData = reader.get_particle_data()
-    generators       = Generators(reader)
+        processReader.set("events", events)
+    processReader.get_generators()
+    processes        = processReader.get_processes(sqrts)
+    yamlParticleData = processReader.get_particle_data()
+    generators       = Generators(processReader)
     try:
-        output_dir = getattr(reader, "outdir", "Run-Cards")
+        output_dir = getattr(processReader, "outdir", "Run-Cards")
     except KeyError:
         # If no directory set in input, use default
         output_dir = "Run-Cards"
@@ -98,14 +98,14 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
     process_instances = {}
     rndmIncrement = 0
     for key, value in processes.items():
-        make_output_directory(reader.gens(), output_dir, key)
+        make_output_directory(processReader.get_generators(), output_dir, key)
         try:
             randomseed = value["randomseed"]
         except:
             randomseed = rndmSeedFallback + rndmIncrement
             value["randomseed"] = randomseed
             rndmIncrement += 1
-        param = ProcessParameters(reader)
+        param = ProcessParameters(processReader)
         # instantiate the class for each process
         process_instances[key] = Process(
             value, key, param, yamlParticleData, OutDir=output_dir
