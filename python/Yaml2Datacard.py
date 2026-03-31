@@ -8,9 +8,10 @@ from datetime import datetime
 
 import ReleaseSpecs
 from ReleaseSpecs import ReleaseSpec
-import Input as Settings
-import Process as process_module
-import Generators as generators_module
+import YamlInputReader as Reader
+from Process import Process
+from Process import ProcessParameters
+from Generators import Generators
 from Particles import ParticleCollection
 
 def make_output_directory(generators, output_directory, procname):
@@ -21,7 +22,6 @@ def make_output_directory(generators, output_directory, procname):
         generator_directory = os.path.join(output_directory, generator, procname)
         if not os.path.exists(generator_directory):
             os.makedirs(generator_directory)
-
 
 def Yaml2Datacard(args=None):
 
@@ -48,16 +48,16 @@ def Yaml2Datacard(args=None):
     # store for future use:
     ReleaseSpec.set_info("key4hepReleaseDate",args.key4hepVersion)
 
-    # so additionally we read the argument sqrtsFile
+    # sqrts choices from file
     energies = []
     if args.sqrts:
-        ecmSettings = Settings.ECMSInput(args.sqrts)
+        ecmSettings = Reader.SQRTSReader(args.sqrts)
         energies.extend(ecmSettings.energies())
 
     # now we read the global settings
     try:
         # make sure that we follow a symlink to the real location of the parametersets should replace that by share?
-        parameterSet = Settings.ParameterSets(args.parameterTagFile, args.parameterTag)
+        parameterSet = Reader.ParameterSetReader(args.parameterTagFile, args.parameterTag)
     except FileNotFoundError as e:
         print(f"ERROR: File {e} with parameters for tag {args.parameterTag} not found")
         exit()
@@ -81,16 +81,16 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
         print("Generating and writing configuration files for ECM= ", sqrts)
 
     # read the input file
-    settings = Settings.Input(yaml, sqrts)
+    reader = Reader.ProcessReader(yaml, sqrts)
     # set the number of events if present
     if events != -1:
-        settings.set("events", events)
-    settings.gens()
-    processes        = settings.get_processes(sqrts)
-    yamlParticleData = settings.get_particle_data()
-    generators       = generators_module.Generators(settings)
+        reader.set("events", events)
+    reader.gens()
+    processes        = reader.get_processes(sqrts)
+    yamlParticleData = reader.get_particle_data()
+    generators       = Generators(reader)
     try:
-        output_dir = getattr(settings, "outdir", "Run-Cards")
+        output_dir = getattr(reader, "outdir", "Run-Cards")
     except KeyError:
         # If no directory set in input, use default
         output_dir = "Run-Cards"
@@ -98,16 +98,16 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
     process_instances = {}
     rndmIncrement = 0
     for key, value in processes.items():
-        make_output_directory(settings.gens(), output_dir, key)
+        make_output_directory(reader.gens(), output_dir, key)
         try:
             randomseed = value["randomseed"]
         except:
             randomseed = rndmSeedFallback + rndmIncrement
             value["randomseed"] = randomseed
             rndmIncrement += 1
-        param = process_module.ProcessParameters(settings)
+        param = ProcessParameters(reader)
         # instantiate the class for each process
-        process_instances[key] = process_module.Process(
+        process_instances[key] = Process(
             value, key, param, yamlParticleData, OutDir=output_dir
         )
         # increment counter for randomseed
