@@ -14,16 +14,16 @@ from Process import ProcessParameters
 from Generators import Generators
 from Particles import ParticleCollection
 
-def make_output_directory(generators, output_directory, procname):
-    # Overwrite directory if it exists
-    if not os.path.exists(output_directory):
-        os.makedirs(output_directory)
+def makeDirectories4GeneratorsProcess(generatorDir, generators, procname):
+    # do not overwrite directory if it exists
+    if not os.path.exists(generatorDir):
+        os.makedirs(generatorDir)
     for generator in generators:
-        generator_directory = os.path.join(output_directory, generator, procname)
-        if not os.path.exists(generator_directory):
-            os.makedirs(generator_directory)
+        process_directory = os.path.join(generatorDir, generator, procname)
+        if not os.path.exists(process_directory):
+            os.makedirs(process_directory)
 
-def Yaml2Datacard(args=None):
+def Yaml2Datacard(args):
 
     ReleaseSpec.set_info("key4hepUseNightlies",args.key4hepUseNightlies)
     if ReleaseSpecs.key4hepUseNightlies.value:
@@ -89,16 +89,12 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
     processes        = processReader.get_processes(sqrts)
     yamlParticleData = processReader.get_particle_data()
     generators       = Generators(processReader)
-    try:
-        output_dir = getattr(processReader, "outdir", "Run-Cards")
-    except KeyError:
-        # If no directory set in input, use default
-        output_dir = "Run-Cards"
+    generatorDir = getattr(processReader, "outdir", "Run-Cards")
 
     processesDict = {}
     rndmIncrement = 0
     for key, value in processes.items():
-        make_output_directory(processReader.get_generators(), output_dir, key)
+        makeDirectories4GeneratorsProcess(generatorDir, processReader.get_generators(), key)
         try:
             randomseed = value["randomseed"]
         except:
@@ -108,7 +104,7 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
         param = ProcessParameters(processReader)
         # instantiate the class for each process
         processesDict[key] = Process(
-            value, key, param, yamlParticleData, OutDir=output_dir
+            value, key, param, yamlParticleData, OutDir=generatorDir
         )
         # increment counter for randomseed
     for process in processesDict.values():
