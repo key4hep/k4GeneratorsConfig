@@ -49,10 +49,10 @@ def Yaml2Datacard(args):
     ReleaseSpec.set_info("key4hepReleaseDate",args.key4hepVersion)
 
     # sqrts choices from file
-    energies = []
+    energies = [0.]
     if args.sqrts:
-        ecmSettings = Reader.SQRTSReader(args.sqrts)
-        energies.extend(ecmSettings.energies())
+        sqrtsReader = Reader.SQRTSReader(args.sqrts)
+        energies = sqrtsReader.energies()
 
     # now we read the global settings
     try:
@@ -62,30 +62,22 @@ def Yaml2Datacard(args):
         print(f"ERROR: File {e} with parameters for tag {args.parameterTag} not found")
         exit()
 
-    # now execute file processes
+    # execute file processes
     rndmSeed = args.seed
-    if len(energies) == 0:
-        executeFiles(args, 0, rndmSeed)
-    else:
-        for sqrts in energies:
-            rndmIncrement = executeFiles(args, sqrts, rndmSeed)
-            # offset for next round by number of yaml files
-            rndmSeed = rndmSeed + rndmIncrement
+    for sqrts in energies:
+        rndmIncrement = executeFiles(args, sqrts, rndmSeed)
+        # offset for next round by number of yaml files
+        rndmSeed = rndmSeed + rndmIncrement
 
-def executeFiles(args, sqrts, rndmSeedFallback=4711):
+def executeFiles(args, sqrts, rndmSeedFallback):
     # first step reset all particles:
     ParticleCollection()
-    if sqrts == 0:
-        print("Generating and writing configuration files")
-    else:
-        print("Generating and writing configuration files for ECM= ", sqrts)
-
     # read the input file
     processReader = Reader.ProcessReader(args.yaml, sqrts)
     # set the number of events if present
     if args.nevts != -1:
         processReader.set("events", events)
-    processReader.get_generators()
+
     processes        = processReader.get_processes(sqrts)
     yamlParticleData = processReader.get_particle_data()
     generators       = Generators(processReader)
