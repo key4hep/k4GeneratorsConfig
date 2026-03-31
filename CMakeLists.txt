@@ -57,7 +57,7 @@ install(DIRECTORY ${PROJECT_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}/ DESTINATION ${C
 
 install(DIRECTORY ${PROJECT_SOURCE_DIR}/python
   DESTINATION ${CMAKE_INSTALL_PREFIX}
-  REGEX test_.*\\.py|main.py$ EXCLUDE  # Don't install python unittests
+  REGEX test_.*\\.py|k4GeneratorsConfig.py$ EXCLUDE  # Don't install python unittests
   PATTERN __pycache__ EXCLUDE  # Or pythons caches
 )
 # Install main as an executable
