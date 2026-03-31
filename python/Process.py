@@ -33,6 +33,7 @@ class Process:
 
         for arg in self._required_args:
             setattr(self, arg, params.settings.get(arg))
+
         for setting in dir(params):
             if not setting.startswith("__"):
                 setattr(self, setting, getattr(params, setting))
@@ -63,7 +64,7 @@ class Process:
         # now the new DBTag:
         initialstate = [self.initial[0], self.initial[1]]
         initialstate.sort()
-        finalstate = self.final
+        finalstate = [x for x in self.final]
         finalstate.sort()
         self._DBTag = [initialstate, finalstate]
 
