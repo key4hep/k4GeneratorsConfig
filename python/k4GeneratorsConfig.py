@@ -106,11 +106,13 @@ def k4GeneratorsConfig(arguments=None):
         default="output",
         help="path to the output (default: ./output)"
     )
+    generatorDirDefault = "Run-Cards"
     parser.add_argument(
-        "--generatorDirName",
+        "--generatorDir",
         type=str,
-        default="Run-Cards",
-        help="relative path to the Generator directories in outputDir (default: outputDir/Run-Cards)"
+        #default="Run-Cards",
+        default=argparse.SUPPRESS,
+        help=f"relative path to the Generator directories in outputDir (default: OUTPUTDIR/{generatorDirDefault})"
     )
     parser.add_argument(
         "--all",
@@ -119,6 +121,13 @@ def k4GeneratorsConfig(arguments=None):
     )
 
     args = parser.parse_args(arguments)
+    try:
+        check = args.generatorDir
+        args.generatorDirOverwrite = True
+    except AttributeError:
+        # argument was not given, set the default and make it known:
+        args.generatorDir          = generatorDirDefault
+        args.generatorDirOverwrite = False
     # --all overrides --make --generate --summary
     if args.all:
         args.make     = True

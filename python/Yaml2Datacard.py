@@ -65,14 +65,14 @@ def Yaml2Datacard(args):
     # now execute file processes
     rndmSeed = args.seed
     if len(energies) == 0:
-        executeFiles(args.yaml, 0, rndmSeed, args.nevts)
+        executeFiles(args, 0, rndmSeed)
     else:
         for sqrts in energies:
-            rndmIncrement = executeFiles(args.yaml, sqrts, rndmSeed, args.nevts)
+            rndmIncrement = executeFiles(args, sqrts, rndmSeed)
             # offset for next round by number of yaml files
             rndmSeed = rndmSeed + rndmIncrement
 
-def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
+def executeFiles(args, sqrts, rndmSeedFallback=4711):
     # first step reset all particles:
     ParticleCollection()
     if sqrts == 0:
@@ -81,16 +81,18 @@ def executeFiles(yaml, sqrts, rndmSeedFallback=4711, events=-1):
         print("Generating and writing configuration files for ECM= ", sqrts)
 
     # read the input file
-    processReader = Reader.ProcessReader(yaml, sqrts)
+    processReader = Reader.ProcessReader(args.yaml, sqrts)
     # set the number of events if present
-    if events != -1:
+    if args.nevts != -1:
         processReader.set("events", events)
     processReader.get_generators()
     processes        = processReader.get_processes(sqrts)
     yamlParticleData = processReader.get_particle_data()
     generators       = Generators(processReader)
-    generatorDir = getattr(processReader, "outdir", "Run-Cards")
-
+    #
+    generatorDir = getattr(processReader, "outdir", args.generatorDir)
+    if args.generatorDirOverwrite:
+        generatorDir = args.generatorDir
     processesDict = {}
     rndmIncrement = 0
     for key, value in processes.items():

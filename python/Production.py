@@ -25,7 +25,7 @@ class ProductionBase(ABC):
         if args.refDir.startswith('/'):
             self._referenceDir = args.refDir
 
-        self._generatorDir = f"{self._workDir}/{args.generatorDirName}"
+        self._generatorDir = f"{self._workDir}/{args.generatorDir}"
 
     def getGenerators(self, generator):
         if generator == "All":
