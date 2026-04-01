@@ -127,7 +127,7 @@ class k4GeneratorsConfig():
 
     def checkArguments(self, args):
 
-        # OPTION: outputDir 
+        # OPTION: outputDir
         # differentiate between option being given or not
         try:
             check = args.outputDir
