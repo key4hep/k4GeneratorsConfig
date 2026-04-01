@@ -33,7 +33,14 @@ jobs:
       with:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
-          test/Run-Cards/*
+          test/Run-Cards/*.dat
+          test/Run-Cards/*.root
+          test/Run-Cards/*/*/*.dat
+          test/Run-Cards/*/*/*.sin
+          test/Run-Cards/*/*/*.cmnd
+          test/Run-Cards/*/*/*.selectors
+          test/Run-Cards/*/*/Run*.sh
+          test/Run-Cards/*/*/*.edm4hep
     - name: Show full CTest log on failure
       if: failure()
       run: |
