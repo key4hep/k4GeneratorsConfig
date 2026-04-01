@@ -94,25 +94,12 @@ def k4GeneratorsConfig(arguments=None):
         action='store_true',
         help="compare the results of the event generation process by process and produce summary output in outputDir"
     )
-    parser.add_argument(
-        "--workDir",
-        type=str,
-        default="work",
-        help="path to work directory (default: ./work)"
-    )
+    outputDirDefault = "Run-Cards"
     parser.add_argument(
         "--outputDir",
         type=str,
-        default="output",
-        help="path to the output (default: ./output)"
-    )
-    generatorDirDefault = "Run-Cards"
-    parser.add_argument(
-        "--generatorDir",
-        type=str,
-        #default="Run-Cards",
         default=argparse.SUPPRESS,
-        help=f"relative path to the Generator directories in outputDir (default: OUTPUTDIR/{generatorDirDefault})"
+        help=f"path to output directory (default: ./{outputDirDefault}, if specified, overrides the outdir key in yaml)"
     )
     parser.add_argument(
         "--all",
@@ -122,12 +109,12 @@ def k4GeneratorsConfig(arguments=None):
 
     args = parser.parse_args(arguments)
     try:
-        check = args.generatorDir
-        args.generatorDirOverwrite = True
+        check = args.outputDir
+        args.outputDirOverride = True
     except AttributeError:
         # argument was not given, set the default and make it known:
-        args.generatorDir          = generatorDirDefault
-        args.generatorDirOverwrite = False
+        args.outputDir          = outputDirDefault
+        args.outputDirOverride = False
     # --all overrides --make --generate --summary
     if args.all:
         args.make     = True

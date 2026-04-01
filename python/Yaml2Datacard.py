@@ -64,47 +64,61 @@ class Yaml2Datacard:
             rndmSeed = rndmSeed + rndmIncrement
 
     def executeFiles(self, args, sqrts, rndmSeedFallback):
+        # remember where we started from:
+        cwd = os.getcwd()
         # first step reset all particles:
         ParticleCollection()
         # read the input file
-        processReader = Reader.ProcessReader(args.yaml, sqrts)
+        self.processReader = Reader.ProcessReader(args.yaml, sqrts)
         # set the number of events if present
         if args.nevts != -1:
-            processReader.set("events", events)
-
-        processes        = processReader.get_processes(sqrts)
-        yamlParticleData = processReader.get_particle_data()
-        generators       = Generators(processReader)
+            self.processReader.set("events", events)
+        # the datacard outputDir may differ
+        self.processOutputDir(args)
+        # now extract information
+        processes        = self.processReader.get_processes(sqrts)
+        yamlParticleData = self.processReader.get_particle_data()
+        generators       = Generators(self.processReader)
         #
-        generatorDir = getattr(processReader, "outdir", args.generatorDir)
-        if args.generatorDirOverwrite:
-            generatorDir = args.generatorDir
-
         rndmIncrement = 0
         for key, value in processes.items():
-            self.makeDirectories4GeneratorsProcess(generatorDir, processReader.get_generators(), key)
+            self.makeDirectories4GeneratorsProcess(self.processReader.get_generators(), key)
             try:
                 randomseed = value["randomseed"]
             except:
                 randomseed = rndmSeedFallback + rndmIncrement
                 value["randomseed"] = randomseed
                 rndmIncrement += 1
-            param = ProcessParameters(processReader)
+            param = ProcessParameters(self.processReader)
             # instantiate the class for each process
             process = Process(
-                value, key, param, yamlParticleData, OutDir=generatorDir
+                value, key, param, yamlParticleData, OutDir=self.outputDir
             )
             process.prepareProcess()
             generators.runGeneratorConfiguration(process)
+        # at the end back to the starting point dir for the next file
+        if (cwd != os.getcwd()):
+            os.chdir(cwd)
 
         return rndmIncrement
 
-    def makeDirectories4GeneratorsProcess(self, generatorDir, generators, procname):
+    def processOutputDir(self, args):
+        # the output directory
+        self.outputDir = getattr(self.processReader, "outdir", args.outputDir)
+        if args.outputDirOverride:
+            self.outputDir = args.outputDir
+        # the attribute always has to be reset to be sure....
+        setattr(self.processReader, "outdir", args.outputDir)
+        # all the preparatory work has been done in args.outputDir
+        # create the new directory if it does not exist
+        if not args.outputDirOverride and not os.path.exists(self.outputDir):
+            os.makedirs(self.outputDir)
+            os.chdir(self.outputDir)
+
+    def makeDirectories4GeneratorsProcess(self, generators, procname):
         # do not overwrite directory if it exists
-        if not os.path.exists(generatorDir):
-            os.makedirs(generatorDir)
         for generator in generators:
-            process_directory = os.path.join(generatorDir, generator, procname)
+            process_directory = os.path.join(generator, procname)
             if not os.path.exists(process_directory):
                 os.makedirs(process_directory)
 

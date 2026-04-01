@@ -13,28 +13,22 @@ class ProductionBase(ABC):
     def __init__(self, args):
 
         # consistent processing of names
-        self._workDir = os.getcwd()+"/"+args.workDir
-        if args.workDir.startswith('/'):
-            self._workDir = args.workDir
-
-        self._outDir = os.getcwd()+"/"+args.outputDir
+        self._outputDir = os.getcwd()+"/"+args.outputDir
         if args.outputDir.startswith('/'):
-            self._outdir = args.outputDir
+            self._outputDir = args.outputDir
 
         self._referenceDir = os.getcwd()+"/"+args.refDir
         if args.refDir.startswith('/'):
             self._referenceDir = args.refDir
 
-        self._generatorDir = f"{self._workDir}/{args.generatorDir}"
-
     def getGenerators(self, generator):
         if generator == "All":
-            return os.listdir(self._generatorDir)
+            return os.listdir(self._outputDir)
         else:
             return [generator]
 
     def getProcesses(self, generator):
-        return os.listdir(f"{self._generatorDir}/{generator}")
+        return os.listdir(f"{self._outputDir}/{generator}")
 
     def getFileNames(self, directory):
         filenames = os.listdir(directory)
@@ -49,12 +43,6 @@ class ProductionBase(ABC):
             if overwrite:
                 shutil.rmtree(dirname)
                 os.makedirs(dirname)
-
-    def makeOutputDirectory(self, generator, process):
-        if generator not in os.listdir(self._outDir):
-            self.makeDirectory(f"{self._outDir}/{generator}")
-        if process not in os.listdir(f"{self._outDir}/{generator}"):
-            self.makeDirectory(f"{self._outDir}/{generator}/{process}")
 
     def process(self, generators):
         # where do we start from
@@ -71,7 +59,8 @@ class ProductionBase(ABC):
         if failure:
             sys.exit("Failed")
         # return to the starting point
-        os.chdir(cwd)
+        if (cwd != os.getcwd()):
+            os.chdir(cwd)
 
     @abstractmethod
     def execute(self, generator, process):
@@ -84,8 +73,6 @@ class makeGeneratorDatacards(ProductionBase):
         super().__init__(args)
 
         # make the directory for the work, protect against "./"
-        self.makeDirectory(args.workDir, not (os.path.abspath(args.workDir) == os.getcwd() ))
-        # make the output directory for the output
         self.makeDirectory(args.outputDir, not (os.path.abspath(args.outputDir) == os.getcwd() ))
 
         # the sqrts argument can be a list of sqrts or a list of strings
@@ -95,7 +82,7 @@ class makeGeneratorDatacards(ProductionBase):
                 all(float(val) for val in args.sqrts)
                 # write the values to a file
                 try:
-                    sqrtsGlobalFileName = f"{self._workDir}/sqrts.yaml"
+                    sqrtsGlobalFileName = f"{self._outputDir}/sqrts.yaml"
                     sqrtsFile = open(sqrtsGlobalFileName,"x")
                     sqrtsList = "ecms: [ "
                     for sqrts in args.sqrts:
@@ -120,35 +107,14 @@ class makeGeneratorDatacards(ProductionBase):
         if not sqrtsGlobalFileName:
             self.prepareSQRTS(args.sqrts);
 
-        # args modifiable:
+        # args to transfer:
         self.Yaml2DatacardArgs = args
 
         # run all yamls:
         self.run(sqrtsGlobalFileName);
 
-        # move the output to storage
-        generators = self.getGenerators("All")
-        # now compare to reference
-        self.process(generators)
-
     def execute(self, generator, process):
-
-        self.makeOutputDirectory(generator, process)
-        outDir = f"{self._outDir}/{generator}/{process}"
-
-        genProcDir = f"{self._generatorDir}/{generator}/{process}"
-        fileNames = self.getFileNames(genProcDir)
-
-        success = True
-        for name in fileNames:
-            theFile = f"{genProcDir}/{name}"
-            try:
-                shutil.copy(theFile, outDir)
-            except:
-                print(f"{theFile} could not be copied to {outDir}")
-                success= False
-
-        return success
+        pass
 
     def prepareYamls(self, yamlList):
         # check whether this is a list of directories or mixed or files
@@ -184,7 +150,7 @@ class makeGeneratorDatacards(ProductionBase):
         # remember where we start from
         cwd = os.getcwd()
         # go to the working directory
-        os.chdir(self._workDir)
+        os.chdir(self._outputDir)
         # loop over all files
         for filename in self._yamlFiles:
 
@@ -223,8 +189,8 @@ class checkGeneratorDatacards(ProductionBase):
 
     def execute(self, generator, process):
         genProc = f"{generator}/{process}"
-        newDir = f"{self._generatorDir}/{genProc}"
-        refDir = f"{self._referenceDir}/{genProc}"
+        newDir = f"{self._outputDir}/{genProc}"
+        refDir = f"{self._outputDir}/{genProc}"
         fileNames = self.getFileNames(newDir)
 
         success = True
@@ -272,7 +238,7 @@ class generate(ProductionBase):
 
     def execute(self, generator, process):
         # go to the directory
-        genProcDir = f"{self._generatorDir}/{generator}/{process}"
+        genProcDir = f"{self._outputDir}/{generator}/{process}"
         os.chdir(genProcDir)
         # retrieve the script
         scripts = [script for script in os.listdir(genProcDir) if script.startswith('Run_') and script.endswith('.sh')]
@@ -290,17 +256,6 @@ class generate(ProductionBase):
                 print(e.output)
                 success = False
 
-        self.makeOutputDirectory(generator, process)
-        outDir = f"{self._outDir}/{generator}/{process}"
-        fileNames = [filename for filename in self.getFileNames(genProcDir) if filename.endswith('.edm4hep')]
-        for name in fileNames:
-            theFile = f"{genProcDir}/{name}"
-            try:
-                shutil.copy(theFile, outDir)
-            except:
-                print(f"{theFile} could not be copied to {outDir}")
-                success= False
-
         return success
 
 class summary(ProductionBase):
@@ -312,12 +267,12 @@ class summary(ProductionBase):
         print("Extracting the cross sections by reading EDM4HEP files and superposing the differential distributions")
         # remember where we start from
         cwd = os.getcwd()
-        os.chdir(self._workDir)
+        os.chdir(self._outputDir)
         try:
             result = subprocess.run(["eventGenerationSummary",
-                                     "-w", f"{self._generatorDir}",
-                                     "-f", f"{self._outDir}/GenerationSummary.dat",
-                                     "-d", f"{self._outDir}"],
+                                     "-w", f"{self._outputDir}",
+                                     "-f", f"{self._outputDir}/GenerationSummary.dat",
+                                     "-d", f"{self._outputDir}"],
                                      capture_output=True, check=True)
         except subprocess.CalledProcessError as e:
             print(f"Execution error eventGenerationSummary")
@@ -326,7 +281,8 @@ class summary(ProductionBase):
             sys.exit("Exception thrown by eventGenerationSummary")
 
         # return tu the starting point
-        os.chdir(cwd)
+        if (cwd != os.getcwd()):
+            os.chdir(cwd)
 
     def execute(self, generator, process):
         pass

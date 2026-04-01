@@ -33,7 +33,7 @@ jobs:
       with:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
         path: |
-          test/output/*
+          test/Run-Cards/*
     - name: Show full CTest log on failure
       if: failure()
       run: |

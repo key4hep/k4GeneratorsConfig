@@ -32,9 +32,9 @@ class GeneratorBase(ABC):
         # check consistency: note that the ParameterSets have been defined, check with the particle masses
         self.checkModelParameters()
 
-        # define the output directory as function of the OutDir spec + generator name + process name
+        # define OutDir as generator name + process name, we assume that we are in the working directory
         self.outdir = (
-            f"{procinfo.get('OutDir')}/{self.name}/{self.procinfo.get('procname')}"
+            f"{self.name}/{self.procinfo.get('procname')}"
         )
 
         # configure the filenames
