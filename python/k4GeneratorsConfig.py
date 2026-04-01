@@ -94,7 +94,7 @@ def k4GeneratorsConfig(arguments=None):
         action='store_true',
         help="compare the results of the event generation process by process and produce summary output in outputDir"
     )
-    outputDirDefault = "Run-Cards"
+    outputDirDefault = "work"
     parser.add_argument(
         "--outputDir",
         type=str,

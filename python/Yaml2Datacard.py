@@ -111,8 +111,9 @@ class Yaml2Datacard:
         setattr(self.processReader, "outdir", args.outputDir)
         # all the preparatory work has been done in args.outputDir
         # create the new directory if it does not exist
-        if not args.outputDirOverride and not os.path.exists(self.outputDir):
-            os.makedirs(self.outputDir)
+        if not args.outputDirOverride:
+            if not os.path.exists(self.outputDir):
+                os.makedirs(self.outputDir)
             os.chdir(self.outputDir)
 
     def makeDirectories4GeneratorsProcess(self, generators, procname):
