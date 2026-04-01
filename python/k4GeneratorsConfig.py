@@ -147,6 +147,18 @@ class k4GeneratorsConfig():
             message = f"k4GeneratorsConfig::ERROR --outputDir {args.outputDir} not allowed \nPlease specify a directory other than the working directory"
             sys.exit(message)
 
+        # OPTION all or make&&generate&&summary
+        if ( args.all or
+             (args.make and args.check) or
+             (args.make and args.generate) or
+             (args.make and args.summary) ):
+            if not args.outputDirOverride:
+                message = f"k4GeneratorsConfig::ERROR\n"
+                message += f"--make and (--check and/or --generate and/or --summary) requested\n"
+                message += f"yamlFiles may define multiple outputDirectory, functionality not foreseen\n"
+                message += f"BUT: --outputDir {args.outputDir} not defined \nPlease define a common output directory"
+                sys.exit(message)
+
 if __name__ == "__main__":
     k4GeneratorsConfig()
 

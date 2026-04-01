@@ -64,5 +64,3 @@ set_tests_properties("xsectionRuns"
       ENVIRONMENT ${TEST_ENVIRONMENT}
       DEPENDS "${RunList}"
 )
-
-#add_test(NAME Finalize COMMAND ${CMAKE_BINARY_DIR}/bin/eventGenerationSummary -f ${CMAKE_SOURCE_DIR}/test/xsectionSummary.dat)
