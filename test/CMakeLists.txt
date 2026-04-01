@@ -15,7 +15,7 @@ foreach(generator ${generatorList})
 endforeach()
 
 # add the first test: setting up the yaml files
-add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --make --workDir Run-Cards )
+add_test(NAME createGeneratorDatacards COMMAND python3 ${EXECUTABLE} --make --outputDir Run-Cards )
 set_tests_properties("createGeneratorDatacards"
   PROPERTIES
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -25,7 +25,7 @@ set_tests_properties("createGeneratorDatacards"
 
 # add the second test: comparing the yaml files to the reference files
 function(check_generator_datacards generator)
-  add_test(NAME checkGeneratorDatacards_${generator} COMMAND python3 ${EXECUTABLE} --check  --generator ${generator}  --workDir Run-Cards )
+  add_test(NAME checkGeneratorDatacards_${generator} COMMAND python3 ${EXECUTABLE} --check  --generator ${generator}  --outputDir Run-Cards )
   set_tests_properties("checkGeneratorDatacards_${generator}"
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -42,7 +42,7 @@ endforeach()
 
 # third test running the generators (define the function first then call it
 function(add_generator_run name generator)
-  add_test(NAME ${name}_${generator} COMMAND python3 ${EXECUTABLE} --generate  --generator ${generator}  --workDir Run-Cards )
+  add_test(NAME ${name}_${generator} COMMAND python3 ${EXECUTABLE} --generate  --generator ${generator}  --outputDir Run-Cards )
   set_tests_properties(${name}_${generator}
     PROPERTIES
     WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -57,7 +57,7 @@ foreach(generator ${generatorList})
 endforeach()
 
 # third test (after all others have been run: gather the xsections
-add_test(NAME xsectionRuns COMMAND python3 ${EXECUTABLE} --summary  --workDir Run-Cards )
+add_test(NAME xsectionRuns COMMAND python3 ${EXECUTABLE} --summary  --outputDir Run-Cards )
 set_tests_properties("xsectionRuns"
     PROPERTIES
       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
