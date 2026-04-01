@@ -112,8 +112,12 @@ class Yaml2Datacard:
         # all the preparatory work has been done in args.outputDir
         # create the new directory if it does not exist
         if not args.outputDirOverride:
-            if not os.path.exists(self.outputDir):
-                os.makedirs(self.outputDir)
+            try:
+                if not os.path.exists(self.outputDir):
+                    os.makedirs(self.outputDir)
+            except PermissionError:
+                message = f"Yaml2Datacard::processOutputDir::ERROR:\n{self.outputDir} cannot be created (full path: {os.path.abspath(self.outputDir)})"
+                sys.exit(message)
             os.chdir(self.outputDir)
 
     def makeDirectories4GeneratorsProcess(self, generators, procname):
@@ -121,7 +125,11 @@ class Yaml2Datacard:
         for generator in generators:
             process_directory = os.path.join(generator, procname)
             if not os.path.exists(process_directory):
-                os.makedirs(process_directory)
+                try:
+                    os.makedirs(process_directory)
+                except PermissionError:
+                    message = f"Yaml2Datacard::makeDirectories4GeneratorsProcess::ERROR:\n{process_directory} cannot be created (full path: {os.path.abspath(process_directory)})"
+                    sys.exit(message)
 
 if __name__ == "__main__":
     Yaml2Datacard()

@@ -5,6 +5,7 @@ import subprocess
 import shutil
 from pathlib import Path
 import filecmp
+import difflib
 
 from Yaml2Datacard import Yaml2Datacard
 
@@ -37,12 +38,16 @@ class ProductionBase(ABC):
 
     def makeDirectory(self, dirname, overwrite=True):
         # Overwrite directory if it exists
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-        else:
-            if overwrite:
-                shutil.rmtree(dirname)
+        try:
+            if not os.path.exists(dirname):
                 os.makedirs(dirname)
+            else:
+                if overwrite:
+                    shutil.rmtree(dirname)
+                    os.makedirs(dirname)
+        except PermissionError:
+            message = f"k4GeneratorsConfig::ERROR:\n{dirname} cannot be created (full path: {os.path.abspath(dirname)})"
+            sys.exit(message)
 
     def process(self, generators):
         # where do we start from
@@ -190,7 +195,7 @@ class checkGeneratorDatacards(ProductionBase):
     def execute(self, generator, process):
         genProc = f"{generator}/{process}"
         newDir = f"{self._outputDir}/{genProc}"
-        refDir = f"{self._outputDir}/{genProc}"
+        refDir = f"{self._referenceDir}/{genProc}"
         fileNames = self.getFileNames(newDir)
 
         success = True
@@ -200,26 +205,31 @@ class checkGeneratorDatacards(ProductionBase):
             success = False
 
         for name in fileNames:
-            newFile = f"{newDir}/{name}"
+            filenameGenerated = f"{newDir}/{name}"
             # new file must exist
-            if  not os.path.isfile(newFile):
-                print(f"File {newFile} not found")
+            if  not os.path.isfile(filenameGenerated):
+                print(f"File {filenameGenerated} not found")
                 success = False
                 continue
 
-            refFile = f"{refDir}/{name}"
+            filenameRef = f"{refDir}/{name}"
             # reference file must exist
-            if not os.path.isfile(refFile):
-                print(f"File {refFile} not found")
+            if not os.path.isfile(filenameRef):
+                print(f"File {filenameRef} not found")
                 continue
                 success = False
 
             # both files exist, so we can compare
             message = f"Generator {generator} Process {process} File {name}"
-            if filecmp.cmp(refFile,newFile, shallow=False):
-                print(f"{message} identical")
+            if filecmp.cmp(filenameRef, filenameGenerated, shallow=False):
+                print(f"OK: {message}")
             else:
-                print(f"{message} differ")
+                print(f"NOTOK: {message}")
+                # if that's the case make a detailed comparison
+                fileRef       = open(filenameGenerated, "r").readlines()
+                fileGenerated = open(filenameRef, "r").readlines()
+                print("".join(line for line in difflib.Differ().compare(fileRef,fileGenerated)
+                              if line[0] == "-" or line[0] == "+"))
                 success = False
 
         return success
