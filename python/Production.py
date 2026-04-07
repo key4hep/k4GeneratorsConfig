@@ -1,4 +1,5 @@
 from abc import ABC,abstractmethod
+from datetime import datetime
 import os
 import sys
 import subprocess
@@ -37,15 +38,16 @@ class ProductionBase(ABC):
         filenames =[name for name in filenames if os.path.isfile(os.path.join(directory,name))]
         return filenames
 
-    def makeDirectory(self, dirname, overwrite=True):
+    def makeDirectory(self, dirname):
         # Overwrite directory if it exists
         try:
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
             else:
-                if overwrite:
-                    shutil.rmtree(dirname)
-                    os.makedirs(dirname)
+                # copy to a directory with the same name+date added to dir name
+                shutil.copytree(dirname, dirname+str(datetime.today()).replace(' ','_').replace(':','_').replace('.','_'))
+                shutil.rmtree(dirname)
+                os.makedirs(dirname)
         except PermissionError:
             message = f"k4GeneratorsConfig::ERROR:\n{dirname} cannot be created (full path: {os.path.abspath(dirname)})"
             sys.exit(message)
@@ -79,7 +81,7 @@ class makeGeneratorDatacards(ProductionBase):
         super().__init__(args)
 
         # make the directory for the work, protect against "./"
-        self.makeDirectory(args.outputDir, not (os.path.abspath(args.outputDir) == os.getcwd() ))
+        self.makeDirectory(args.outputDir)
 
         # the sqrts argument can be a list of sqrts or a list of strings
         sqrtsGlobalFileName = str("")
