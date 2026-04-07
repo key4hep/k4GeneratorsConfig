@@ -177,7 +177,7 @@ class makeGeneratorDatacards(ProductionBase):
             else:
                 self.Yaml2DatacardArgs.sqrts      = ""
             print(message)
-            Yaml2Datacard(self.Yaml2DatacardArgs)
+            Yaml2Datacard(self.Yaml2DatacardArgs).processFile()
         # return to the starting point
         os.chdir(cwd)
 
