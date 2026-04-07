@@ -264,7 +264,7 @@ void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& 
       output << failure->first << " : " << failure->second << " Failures ";
       unsigned int successCount = 0;
       if ((success = m_validCounter.find(failure->first)) != m_validCounter.end()) {
-	successCount = success->second; 
+	successCount = success->second;
       }
       output << " / " << successCount + failure->second << " Runs" << std::endl;
     }
