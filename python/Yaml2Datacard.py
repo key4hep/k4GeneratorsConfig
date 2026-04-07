@@ -96,7 +96,7 @@ class Yaml2Datacard:
 
             # increment for next sqrts
             rndmSeed += 1
-            
+
             # at the end back to the starting point dir for the next file
             if (cwd != os.getcwd()):
                 os.chdir(cwd)
