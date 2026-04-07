@@ -148,33 +148,31 @@ bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(analysisHist
   return false;
 }
 void k4GeneratorsConfig::eventGenerationCollections::addSuccess(std::string generator) {
-  if ( m_validCounter.find(generator) != m_validCounter.end() ){
+  if (m_validCounter.find(generator) != m_validCounter.end()) {
     m_validCounter[generator]++;
-  }
-  else {
+  } else {
     m_validCounter[generator] = 1;
   }
 }
 void k4GeneratorsConfig::eventGenerationCollections::addFailure(std::string generator) {
-  if ( m_invalidCounter.find(generator) != m_invalidCounter.end() ){
+  if (m_invalidCounter.find(generator) != m_invalidCounter.end()) {
     m_invalidCounter[generator]++;
-  }
-  else {
+  } else {
     m_invalidCounter[generator] = 1;
   }
 }
 unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() const {
   unsigned int validTotal = 0;
-  std::map<std::string,unsigned int>::const_iterator imap;
-  for (imap = m_validCounter.begin(); imap != m_validCounter.end(); imap++){
+  std::map<std::string, unsigned int>::const_iterator imap;
+  for (imap = m_validCounter.begin(); imap != m_validCounter.end(); imap++) {
     validTotal += imap->second;
   }
   return validTotal;
 }
 unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() const {
   unsigned int invalidTotal = 0;
-  std::map<std::string,unsigned int>::const_iterator imap;
-  for (imap = m_invalidCounter.begin(); imap != m_invalidCounter.end(); imap++){
+  std::map<std::string, unsigned int>::const_iterator imap;
+  for (imap = m_invalidCounter.begin(); imap != m_invalidCounter.end(); imap++) {
     invalidTotal += imap->second;
   }
   return invalidTotal;
@@ -256,21 +254,18 @@ void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& 
   output << std::endl;
   // last thing the invalids
   output << "Number of runs           : " << NbOfFailures() + NbOfSuccesses() << std::endl;
-  output << "Number of failed runs    : " << NbOfFailures()  << std::endl;
+  output << "Number of failed runs    : " << NbOfFailures() << std::endl;
   output << "Number of successful runs: " << NbOfSuccesses() << std::endl;
   // details only for failures:
-  if ( NbOfFailures() > 0 ) {
-    output << std::endl
-	   << "Details in Failures:"
-	   << std::endl;
-    std::map<std::string,unsigned int>::const_iterator failure, success;
-    for (failure = m_invalidCounter.begin(); failure != m_invalidCounter.end(); failure++){
+  if (NbOfFailures() > 0) {
+    output << std::endl << "Details in Failures:" << std::endl;
+    std::map<std::string, unsigned int>::const_iterator failure, success;
+    for (failure = m_invalidCounter.begin(); failure != m_invalidCounter.end(); failure++) {
       output << failure->first << " : " << failure->second << " Failures ";
-      if ( (success = m_validCounter.find(failure->first)) != m_validCounter.end() ){
-	output << success->second;
-      }
-      else {
-	output << " 0 ";
+      if ((success = m_validCounter.find(failure->first)) != m_validCounter.end()) {
+        output << success->second;
+      } else {
+        output << " 0 ";
       }
       output << "Successes" << std::endl;
     }
