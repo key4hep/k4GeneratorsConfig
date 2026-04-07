@@ -1,8 +1,8 @@
 #ifndef K4GENERATORSCONFIG_EVENTGENERATIONCOLLECTIONS_H
 #define K4GENERATORSCONFIG_EVENTGENERATIONCOLLECTIONS_H
 
-#include <vector>
 #include <map>
+#include <vector>
 
 #include "analysisHistos.h"
 #include "xsection.h"
@@ -39,8 +39,8 @@ public:
 private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;
   std::vector<k4GeneratorsConfig::analysisHistos> m_analysisHistosCollection;
-  std::map<std::string,unsigned int> m_validCounter;
-  std::map<std::string,unsigned int> m_invalidCounter;
+  std::map<std::string, unsigned int> m_validCounter;
+  std::map<std::string, unsigned int> m_invalidCounter;
 };
 } // namespace k4GeneratorsConfig
 
