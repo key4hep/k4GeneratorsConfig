@@ -111,7 +111,7 @@ class k4GeneratorsConfig():
         # decode the arguments
         args = parser.parse_args(arguments)
         # check the arguments
-        self.checkArguments(args)
+        self.processArguments(args)
         # make the GeneratorDatacards
         if args.make:
             makeGeneratorDatacards(args)
@@ -125,8 +125,7 @@ class k4GeneratorsConfig():
         if args.summary:
             summary(args)
 
-    def checkArguments(self, args):
-
+    def processArguments(self, args):
         # OPTION: outputDir
         # differentiate between option being given or not
         try:
@@ -136,12 +135,14 @@ class k4GeneratorsConfig():
             # argument was not given, set the default and make it known:
             args.outputDir          = self.outputDirDefault
             args.outputDirOverride = False
-            # --all overrides --make --generate --summary
-            if args.all:
-                args.make     = True
-                args.generate = True
-                args.summary  = True
-                print("k4GeneratorsConfig will make generator datacards, generate events, make a summary")
+
+        # --all overrides --make --generate --summary
+        if args.all:
+            args.make     = True
+            args.generate = True
+            args.summary  = True
+            print("k4GeneratorsConfig will make generator datacards, generate events, make a summary")
+
         # outputDir should never be cwd
         if ( os.path.abspath(args.outputDir) == os.path.abspath(os.getcwd()) ):
             message = f"k4GeneratorsConfig::ERROR --outputDir {args.outputDir} not allowed \nPlease specify a directory other than the working directory"
