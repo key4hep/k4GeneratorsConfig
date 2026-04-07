@@ -2,6 +2,7 @@
 #define K4GENERATORSCONFIG_EVENTGENERATIONCOLLECTIONS_H
 
 #include <vector>
+#include <map>
 
 #include "analysisHistos.h"
 #include "xsection.h"
@@ -21,8 +22,11 @@ public:
   bool compareLexical(xsection, xsection);
   bool compareLexical(analysisHistos, analysisHistos);
 
-  unsigned int NbOfSuccesses();
-  unsigned int NbOfFailures();
+  void addSuccess(std::string);
+  void addFailure(std::string);
+
+  unsigned int NbOfSuccesses() const;
+  unsigned int NbOfFailures() const;
 
   void Write2Root(std::string, std::string);
 
@@ -35,8 +39,8 @@ public:
 private:
   std::vector<k4GeneratorsConfig::xsection> m_xsectionCollection;
   std::vector<k4GeneratorsConfig::analysisHistos> m_analysisHistosCollection;
-  unsigned int m_validCounter;
-  unsigned int m_invalidCounter;
+  std::map<std::string,unsigned int> m_validCounter;
+  std::map<std::string,unsigned int> m_invalidCounter;
 };
 } // namespace k4GeneratorsConfig
 
