@@ -84,8 +84,8 @@ class Yaml2Datacard:
                     randomseed = value["randomseed"]
                 except:
                     # random seed not present, fall to external setting and increment for next round
-                    value["randomseed"] = rndmseed
-                    rndmseed += 1
+                    value["randomseed"] = rndmSeed
+                    rndmSeed += 1
                 param = ProcessParameters(self.processReader)
                 # instantiate the class for each process
                 process = Process(
@@ -95,7 +95,7 @@ class Yaml2Datacard:
                 generators.runGeneratorConfiguration(process)
 
             # increment for next sqrts
-            rndmseed += 1
+            rndmSeed += 1
             
             # at the end back to the starting point dir for the next file
             if (cwd != os.getcwd()):
