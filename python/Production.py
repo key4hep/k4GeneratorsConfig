@@ -3,6 +3,7 @@ import os
 import sys
 import subprocess
 import shutil
+import copy
 from pathlib import Path
 import filecmp
 import difflib
@@ -112,8 +113,8 @@ class makeGeneratorDatacards(ProductionBase):
         if not sqrtsGlobalFileName:
             self.prepareSQRTS(args.sqrts);
 
-        # args to transfer:
-        self.Yaml2DatacardArgs = args
+        # args to transfer: avoid overwrite
+        self.Yaml2DatacardArgs = copy.deepcopy(args)
 
         # run all yamls:
         self.run(sqrtsGlobalFileName);

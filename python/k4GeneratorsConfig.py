@@ -5,6 +5,7 @@ import shutil
 import sys
 import argparse
 import textwrap
+import copy
 
 from Production import makeGeneratorDatacards
 from Production import checkGeneratorDatacards
@@ -113,51 +114,53 @@ class k4GeneratorsConfig():
         # check the arguments
         self.processArguments(args)
         # make the GeneratorDatacards
-        if args.make:
-            makeGeneratorDatacards(args)
+        if self.args.make:
+            makeGeneratorDatacards(self.args)
         # compare to the reference
-        if args.check:
-            checkGeneratorDatacards(args)
+        if self.args.check:
+            checkGeneratorDatacards(self.args)
         # run the event generation
-        if args.generate:
-            generate(args)
+        if self.args.generate:
+            generate(self.args)
         # produce the summary
-        if args.summary:
-            summary(args)
+        if self.args.summary:
+            summary(self.args)
 
     def processArguments(self, args):
+        # make a deep copy of the arguments:
+        self.args = copy.deepcopy(args)
         # OPTION: outputDir
         # differentiate between option being given or not
         try:
-            check = args.outputDir
-            args.outputDirOverride = True
+            check = self.args.outputDir
+            self.args.outputDirOverride = True
         except AttributeError:
             # argument was not given, set the default and make it known:
-            args.outputDir          = self.outputDirDefault
-            args.outputDirOverride = False
+            self.args.outputDir          = self.outputDirDefault
+            self.args.outputDirOverride = False
 
         # --all overrides --make --generate --summary
-        if args.all:
-            args.make     = True
-            args.generate = True
-            args.summary  = True
+        if self.args.all:
+            self.args.make     = True
+            self.args.generate = True
+            self.args.summary  = True
             print("k4GeneratorsConfig will make generator datacards, generate events, make a summary")
 
         # outputDir should never be cwd
-        if ( os.path.abspath(args.outputDir) == os.path.abspath(os.getcwd()) ):
-            message = f"k4GeneratorsConfig::ERROR --outputDir {args.outputDir} not allowed \nPlease specify a directory other than the working directory"
+        if ( os.path.abspath(self.args.outputDir) == os.path.abspath(os.getcwd()) ):
+            message = f"k4GeneratorsConfig::ERROR --outputDir {self.args.outputDir} not allowed \nPlease specify a directory other than the working directory"
             sys.exit(message)
 
         # OPTION all or make&&generate&&summary
-        if ( args.all or
-             (args.make and args.check) or
-             (args.make and args.generate) or
-             (args.make and args.summary) ):
-            if not args.outputDirOverride:
+        if ( self.args.all or
+             (self.args.make and self.args.check) or
+             (self.args.make and self.args.generate) or
+             (self.args.make and self.args.summary) ):
+            if not self.args.outputDirOverride:
                 message = f"k4GeneratorsConfig::ERROR\n"
                 message += f"--make and (--check and/or --generate and/or --summary) requested\n"
                 message += f"yamlFiles may define multiple outputDirectory, functionality not foreseen\n"
-                message += f"BUT: --outputDir {args.outputDir} not defined \nPlease define a common output directory"
+                message += f"BUT: --outputDir {self.args.outputDir} not defined \nPlease define a common output directory"
                 sys.exit(message)
 
 if __name__ == "__main__":
