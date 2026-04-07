@@ -258,16 +258,15 @@ void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& 
   output << "Number of successful runs: " << NbOfSuccesses() << std::endl;
   // details only for failures:
   if (NbOfFailures() > 0) {
-    output << std::endl << "Details in Failures:" << std::endl;
+    output << std::endl << "Detail of Failures:" << std::endl;
     std::map<std::string, unsigned int>::const_iterator failure, success;
     for (failure = m_invalidCounter.begin(); failure != m_invalidCounter.end(); failure++) {
       output << failure->first << " : " << failure->second << " Failures ";
+      unsigned int successCount = 0;
       if ((success = m_validCounter.find(failure->first)) != m_validCounter.end()) {
-        output << success->second;
-      } else {
-        output << " 0 ";
+	successCount = success->second; 
       }
-      output << "Successes" << std::endl;
+      output << " / " << successCount + failure->second << " Runs" << std::endl;
     }
   }
 }
