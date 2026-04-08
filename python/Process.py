@@ -27,7 +27,6 @@ class Process:
         # all particles in process list
         self._particlesOfProcessList = []
         # label to be used in the generatorDB
-        self.generatorDBLabel = ""
         self.generatorDBTag   = []
         self.procname = procname
 
@@ -128,9 +127,6 @@ class Process:
         if self.get("beamstrahlung") is not None:
             circe = CirceHelper(self.beamstrahlung, self.sqrts)
             return circe.getFile()
-
-    def get_generatorDBLabel(self):
-        return self.generatorDBLabel
 
     def get_DBTag(self):
         return self._DBTag
