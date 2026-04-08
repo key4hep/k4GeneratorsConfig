@@ -73,7 +73,7 @@ class Madgraph(GeneratorBase):
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
         # temporary fix: increase LHE event size
-        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.get("events")*1.002))
+        self.addOption2GeneratorDatacard("set nevents", int(self.settings.get_nevents()*1.002))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -236,12 +236,12 @@ class Madgraph(GeneratorBase):
     def fill_PythiaCMND(self):
         # append the analysis to the content
         # for the errors allow 1 permil failures
-        allowedErrors = int(self.procinfo.get("events")*0.001)
+        allowedErrors = int(self.settings.get_nevents()*0.001)
         content  = f"Main:timesAllowErrors = {allowedErrors}\n"
         content += "Check:epTolErr = 0.01\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
-        content += "Main:numberOfEvents = {0}\n".format(self.procinfo.get("events"))
+        content += "Main:numberOfEvents = {0}\n".format(self.settings.get_nevents())
         self.add2OptionalFile(content)
 
     def getModelName(self, model):

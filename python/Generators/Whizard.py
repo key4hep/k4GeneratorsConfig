@@ -74,7 +74,7 @@ class Whizard(GeneratorBase):
 
         self.add2GeneratorDatacard(f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n")
 
-        self.addOption2GeneratorDatacard("n_events", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("n_events", self.settings.get_nevents())
         self.addOption2GeneratorDatacard("sqrts", self.procinfo.get("sqrts"))
         if self.procinfo.get("decay"):
             self.add_decay()
@@ -95,7 +95,7 @@ class Whizard(GeneratorBase):
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
 
-        if self.procinfo.eventmode == "unweighted":
+        if self.procinfo.get("eventmode") == "unweighted":
             self.addOption2GeneratorDatacard("?unweighted", "true")
         else:
             self.addOption2GeneratorDatacard("?unweighted", "false")

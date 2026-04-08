@@ -11,7 +11,6 @@ import ReleaseSpecs
 from ReleaseSpecs import ReleaseSpec
 import YamlInputReader as Reader
 from Process import Process
-from Process import ProcessParameters
 from Generators import Generators
 from Particles import ParticleCollection
 
@@ -73,23 +72,30 @@ class Yaml2Datacard:
                 self.processReader.set("events", events)
             # the datacard outputDir may differ
             self.processOutputDir()
-            # now extract information
+            # extract information
             processes        = self.processReader.get_processes(sqrts)
             yamlParticleData = self.processReader.get_particle_data()
             generators       = Generators(self.processReader)
             #
             for key, value in processes.items():
+
+                # make the combination of generator directories and in each generator director the process directory
                 self.makeDirectories4GeneratorsProcess(self.processReader.get_generators(), key)
-                try:
-                    randomseed = value["randomseed"]
-                except:
-                    # random seed not present, fall to external setting and increment for next round
+
+                # the command line seed supersedes the seed read from file
+                if self.args.seedOverride:
                     value["randomseed"] = rndmSeed
-                    rndmSeed += 1
-                param = ProcessParameters(self.processReader)
+                else:
+                    # check for seed in the file/process
+                    try:
+                        randomseed = value["randomseed"]
+                    except:
+                        # random seed not present, fall to external default setting and increment for next round
+                        value["randomseed"] = rndmSeed
+                        rndmSeed += 1
                 # instantiate the class for each process
                 process = Process(
-                    value, key, param, yamlParticleData, OutDir=self.outputDir
+                    key, value, self.processReader, yamlParticleData, OutDir=self.outputDir
                 )
                 process.prepareProcess()
                 generators.runGeneratorConfiguration(process)

@@ -57,13 +57,13 @@ class KKMC(GeneratorBase):
         self.replaceOptionInGeneratorDatacard("_besdelta", 0)
         # TODO add bes
         self.replaceOptionInGeneratorDatacard("_besmode", 0)
-        self.replaceOptionInGeneratorDatacard("_ewmode", self.procinfo.get("ewmode"))
+        self.replaceOptionInGeneratorDatacard("_ewmode", self.settings.get_ew_mode())
         self.replaceOptionInGeneratorDatacard("_isrmode", self.procinfo.get("isrmode"))
         self.replaceOptionInGeneratorDatacard("_fsrmode", self.settings.get("fsrmode", 0))
         self.replaceOptionInGeneratorDatacard("_FINALSTATES", f"  {self.finalstate}              1")
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
-        if self.procinfo.eventmode == "unweighted":
+        if self.procinfo.get("eventmode") == "unweighted":
             self.replaceOptionInGeneratorDatacard("_wgtmode", "0")
         else:
             self.replaceOptionInGeneratorDatacard("_wgtmode", "1")
@@ -88,7 +88,7 @@ class KKMC(GeneratorBase):
         key4hepRun += "KKMCee -c  {0} --nevts {2} -o {1}.hepmc3\n".format(
             self.GeneratorDatacardName,
             self.GeneratorDatacardBase,
-            self.procinfo.get("events"),
+            self.settings.get_nevents(),
         )
         outformat = self.procinfo.get_output_format()
         if outformat == "edm4hep":

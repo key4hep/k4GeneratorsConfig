@@ -17,7 +17,7 @@ class Process:
         "beamstrahlung",
     ]
 
-    def __init__(self, args, procname, params, particleData, **options):
+    def __init__(self, procname, args, inputFileRead, particleData, **options):
         # list of particles filled from the input yaml file
         self._inputParticlesList = []
         if particleData is not None:
@@ -28,14 +28,15 @@ class Process:
         self._particlesOfProcessList = []
         # label to be used in the generatorDB
         self.generatorDBTag   = []
+
+        # process identifier
         self.procname = procname
 
-        for arg in self._required_args:
-            setattr(self, arg, params.settings.get(arg))
+        # inputReader
+        self.settings = inputFileRead
 
-        for setting in dir(params):
-            if not setting.startswith("__"):
-                setattr(self, setting, getattr(params, setting))
+        for arg in self._required_args:
+            setattr(self, arg, self.settings.get(arg))
 
         for option, value in options.items():
             setattr(self, option, value)
@@ -88,7 +89,10 @@ class Process:
         try:
             return getattr(self, name)
         except:
-            return None
+            try:
+                return self.settings.get(name)
+            except:
+                return None
 
     def get_args(self):
         return self._required_args
@@ -109,16 +113,16 @@ class Process:
         return self.get("nlo")
 
     def get_output_format(self):
-        return self.output_format
+        return self.settings.get_output_format()
 
     def get_PythiaTune(self):
-        return self.PythiaTune
+        return self.settings.get_PythiaTune()
 
     def get_PolarisationDensity(self):
-        return self.PolarisationDensity
+        return self.settings.get_PolarisationDensity()
 
     def get_PolarisationFraction(self):
-        return self.PolarisationFraction
+        return self.settings.get_PolarisationFraction()
 
     def get_rndmSeed(self):
         return self.get("randomseed")
@@ -136,16 +140,3 @@ class Process:
         print("Particles are defined with the following parameters")
         for part in self._particlesOfProcessList:
             part.print_info()
-
-
-class ProcessParameters:
-    def __init__(self, settings):
-        self.settings      = settings
-        self.model         = settings.get_model()
-        self.events        = settings.get_event_number()
-        self.output_format = settings.get_output_format()
-        self.PythiaTune    = settings.get_PythiaTune()
-        self.PolarisationDensity    = settings.get_PolarisationDensity()
-        self.PolarisationFraction   = settings.get_PolarisationFraction()
-        self.eventmode     = settings.get_weighted_mode()
-        self.ewmode        = settings.get_ew_mode()

@@ -53,7 +53,7 @@ class Sherpa(GeneratorBase):
             self.addOption2GeneratorDatacard("YFS_MODE", "FULL")
         else:
             self.addOption2GeneratorDatacard("YFS_MODE", "None")
-        self.addOption2GeneratorDatacard("EVENTS", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("EVENTS", self.settings.get_nevents())
         self.add2GeneratorDatacard("\n")
 
         # now add the model checking for overlap
@@ -67,7 +67,7 @@ class Sherpa(GeneratorBase):
         for key in self.procDB.getDictRun():
             self.addOption2GeneratorDatacard(key,self.procDB.getDictRun()[key])
 
-        self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.eventmode)
+        self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.get("eventmode"))
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
                 for key, value in self.gen_settings["run"].items():

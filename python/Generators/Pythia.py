@@ -72,7 +72,7 @@ class Pythia(GeneratorBase):
         else:
             self.addOption2GeneratorDatacard("PartonLevel:FSR", "off")
 
-        self.addOption2GeneratorDatacard("Main:numberOfEvents", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("Main:numberOfEvents", self.settings.get_nevents())
         self.add2GeneratorDatacard("\n")
 
         # now add the model parameters

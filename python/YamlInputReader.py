@@ -128,7 +128,7 @@ class ProcessReader:
     def get_model(self):
         return self.get("model", "SM")
 
-    def get_event_number(self):
+    def get_nevents(self):
         return self.get("events", 0)
 
     def get_isr_mode(self):

@@ -44,7 +44,6 @@ class k4GeneratorsConfig():
         self.seedDefault = 4711
         parser.add_argument(
             "--seed",
-            nargs=1,
             type=int,
             default=argparse.SUPPRESS,
             help="If specified overrides the random number seed in the yamlFile, incremented for each process and each sqrts of a yaml file, default: yaml file",
@@ -199,11 +198,15 @@ class k4GeneratorsConfig():
                 self.args.sqrts = self.sqrtsDefault
         try:
             check = self.args.seed
+            self.args.seedOverride = True
+            if check <= 0:
+                sys.exit(f"k4GeneratorsConfig::ERROR --seed {self.args.seed} specified, must be >0")
             if not args.make and not args.all:
                 print(f"{message} --seed {self.args.seed} has no effect")
         except AttributeError as e:
             if args.make or args.all:
                 self.args.seed = self.seedDefault
+                self.args.seedOverride = False
         try:
             check = self.args.nevts
             if not args.make and not args.all:
