@@ -135,6 +135,9 @@ class Process:
     def get_DBTag(self):
         return self._DBTag
 
+    def get_DBTag(self):
+        return self._DBTag
+
     def print_info(self):
         print(f"Creating Runcards for {self._proclabel} at {self.sqrts} GeV")
         print("Particles are defined with the following parameters")
