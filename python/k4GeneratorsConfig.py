@@ -16,7 +16,7 @@ class k4GeneratorsConfig():
     def __init__(self,arguments=None):
         # define all command line arguments
         parser = argparse.ArgumentParser(prog="k4GeneratorsConfig")
-        
+
         parser.add_argument(
             "--make",
             action='store_true',
