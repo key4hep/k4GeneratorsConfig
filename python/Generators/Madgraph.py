@@ -5,8 +5,8 @@ from Particles import Particle as part
 class Madgraph(GeneratorBase):
     """Madgraph class"""
 
-    def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings, "Madgraph", "dat")
+    def __init__(self, procinfo):
+        super().__init__(procinfo, "Madgraph", "dat")
 
         self.version = "x.y.z"
 
@@ -73,7 +73,7 @@ class Madgraph(GeneratorBase):
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
         # temporary fix: increase LHE event size
-        self.addOption2GeneratorDatacard("set nevents", int(self.settings.get_nevents()*1.002))
+        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.settings.get_nevents()*1.002))
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
@@ -93,7 +93,7 @@ class Madgraph(GeneratorBase):
 
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key, self.procDB.getDict()[key])
-        # if self.settings.get_block("selectors"):
+        # if self.procinfo.settings.get_block("selectors"):
         self.writeAllSelectors()
         # else:
         #     self.add_default_Selectors()
@@ -236,12 +236,12 @@ class Madgraph(GeneratorBase):
     def fill_PythiaCMND(self):
         # append the analysis to the content
         # for the errors allow 1 permil failures
-        allowedErrors = int(self.settings.get_nevents()*0.001)
+        allowedErrors = int(self.procinfo.settings.get_nevents()*0.001)
         content  = f"Main:timesAllowErrors = {allowedErrors}\n"
         content += "Check:epTolErr = 0.01\n"
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
-        content += "Main:numberOfEvents = {0}\n".format(self.settings.get_nevents())
+        content += "Main:numberOfEvents = {0}\n".format(self.procinfo.settings.get_nevents())
         self.add2OptionalFile(content)
 
     def getModelName(self, model):

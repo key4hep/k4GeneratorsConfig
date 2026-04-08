@@ -11,11 +11,10 @@ from Selectors import SelectorKeys
 class GeneratorBase(ABC):
     """GeneratorBase class"""
 
-    def __init__(self, procinfo, settings, name, inputFileExtension):
+    def __init__(self, procinfo, name, inputFileExtension):
 
         # general settings of the class
         self.procinfo = procinfo
-        self.settings = settings
         self.name = name
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
@@ -80,7 +79,7 @@ class GeneratorBase(ABC):
         self.prepareAnalysisContent()
 
         # the generator settings are stored in a public member:
-        self.gen_settings = settings.get_block(self.name.lower())
+        self.gen_settings = self.procinfo.settings.get_block(self.name.lower())
         if self.gen_settings is not None:
             self.gen_settings = {k.lower(): v for k, v in self.gen_settings.items()}
 
@@ -110,7 +109,7 @@ class GeneratorBase(ABC):
 
         self.procDBparameters  = dict()
         self.procDBparticles  = dict()
-        if self.settings.get("usedefaults", True):
+        if self.procinfo.settings.get("usedefaults", True):
             self.procDB.execute()
             self.procDBparameters  = self.procDB.getDictParameters()
             self.procDBparticles   = self.procDB.getDictParticles()
@@ -136,9 +135,9 @@ class GeneratorBase(ABC):
                 raise ValueError(f"{self.name} {key} not found in SelectorKeys list")
 
     def writeAllSelectors(self):
-        selectors = getattr(self.settings, "selectors")
+        selectors = getattr(self.procinfo.settings, "selectors")
         try:
-            procselectors = getattr(self.settings, "procselectors")
+            procselectors = getattr(self.procinfo.settings, "procselectors")
             for proc, sel in procselectors.items():
                 if proc != self.procinfo.get("procname"):
                     continue
@@ -231,8 +230,8 @@ class GeneratorBase(ABC):
     def isCompatible(self, target, prediction):
         # maximum relative deviation
         RelDiffThreshold = 0.001
-        if self.settings.get("EWParamDevThreshold".lower()) is not None:
-            RelDiffThreshold = self.settings.get("EWParamDevThreshold".lower())
+        if self.procinfo.settings.get("EWParamDevThreshold".lower()) is not None:
+            RelDiffThreshold = self.procinfo.settings.get("EWParamDevThreshold".lower())
         # do the safe math
         relDelta = 1.
         # if the target is zero, then take the absolute deviation, if not the relative deviation
@@ -521,10 +520,10 @@ class GeneratorBase(ABC):
 
     def prepareAnalysisContent(self):
         # analysis is conditioned on the output format
-        outformat = self.settings.get_output_format()
+        outformat = self.procinfo.settings.get_output_format()
         # write the EDM4HEP analysis part based on the final state
         analysis = "\n"
-        if outformat == "edm4hep" and self.settings.key4HEPAnalysisON():
+        if outformat == "edm4hep" and self.procinfo.settings.key4HEPAnalysisON():
             analysis += f"key4HEPAnalysis -i {self.GeneratorDatacardBase}.edm4hep -o {self.GeneratorDatacardBase}.root -p "
 
             for pdg in self.procinfo.get_finalstate_pdgList():
@@ -533,10 +532,10 @@ class GeneratorBase(ABC):
             analysis +="\n"
 
         # write the RIVET analysis
-        if (outformat == "edm4hep" or outformat == "hepmc3") and self.settings.rivetON():
-            yodaout = self.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
+        if (outformat == "edm4hep" or outformat == "hepmc3") and self.procinfo.settings.rivetON():
+            yodaout = self.procinfo.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
             analysis += f"rivet"
-            for ana in self.settings.analysisname:
+            for ana in self.procinfo.settings.analysisname:
                 analysis += f" -a {ana}"
             analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get_output_format()}\n"
 

@@ -3,15 +3,15 @@ from .GeneratorBase import GeneratorBase
 class Pythia(GeneratorBase):
     """Pythia class"""
 
-    def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings, "Pythia", "dat")
+    def __init__(self, procinfo):
+        super().__init__(procinfo, "Pythia", "dat")
 
         self.version = "x.y.z"
 
         self.executable = "pythiaRunner -f"
 
         self.setOptionalFileNameAndExtension(self.GeneratorDatacardBase,"selectors")
-        if settings.get_block("selectors"):
+        if self.procinfo.settings.get_block("selectors"):
             self.writeAllSelectors()
 
     def setSelectorsDict(self):
@@ -72,7 +72,7 @@ class Pythia(GeneratorBase):
         else:
             self.addOption2GeneratorDatacard("PartonLevel:FSR", "off")
 
-        self.addOption2GeneratorDatacard("Main:numberOfEvents", self.settings.get_nevents())
+        self.addOption2GeneratorDatacard("Main:numberOfEvents", self.procinfo.settings.get_nevents())
         self.add2GeneratorDatacard("\n")
 
         # now add the model parameters

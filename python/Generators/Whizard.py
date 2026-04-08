@@ -3,8 +3,8 @@ from .GeneratorBase import GeneratorBase
 class Whizard(GeneratorBase):
     """Whizard class"""
 
-    def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings, "Whizard", "sin")
+    def __init__(self, procinfo):
+        super().__init__(procinfo, "Whizard", "sin")
 
         self.version = "x.y.z"
 
@@ -74,7 +74,7 @@ class Whizard(GeneratorBase):
 
         self.add2GeneratorDatacard(f"process proc = {self.whiz_beam1}, {self.whiz_beam2} => {self.finalstate}\n")
 
-        self.addOption2GeneratorDatacard("n_events", self.settings.get_nevents())
+        self.addOption2GeneratorDatacard("n_events", self.procinfo.settings.get_nevents())
         self.addOption2GeneratorDatacard("sqrts", self.procinfo.get("sqrts"))
         if self.procinfo.get("decay"):
             self.add_decay()
@@ -100,7 +100,7 @@ class Whizard(GeneratorBase):
         else:
             self.addOption2GeneratorDatacard("?unweighted", "false")
 
-        if self.settings.get_block("selectors"):
+        if self.procinfo.settings.get_block("selectors"):
             self.CutKeyWdPresent = False
             self.aCutIsPresent   = False
             self.writeAllSelectors()

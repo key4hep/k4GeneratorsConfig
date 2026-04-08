@@ -22,7 +22,7 @@ class Generators:
                 # get the ClassObject
                 generatorClass = getattr(generator,generatorName)
                 # execute the object
-                generatorObj = generatorClass(self.proc_info, self.proc_info.settings)
+                generatorObj = generatorClass(self.proc_info)
                 # execute the generator
                 generatorObj.execute()
                 # finalize the generator
