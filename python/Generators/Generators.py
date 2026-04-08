@@ -4,7 +4,6 @@ class Generators:
     """Generator class"""
 
     def __init__(self, settings):
-        self.settings = settings
         self.generator_list = settings.get_generators()
 
     def set_process_info(self, proc_info):
@@ -23,7 +22,7 @@ class Generators:
                 # get the ClassObject
                 generatorClass = getattr(generator,generatorName)
                 # execute the object
-                generatorObj = generatorClass(self.proc_info, self.settings)
+                generatorObj = generatorClass(self.proc_info, self.proc_info.settings)
                 # execute the generator
                 generatorObj.execute()
                 # finalize the generator
