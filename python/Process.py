@@ -1,3 +1,4 @@
+import copy
 from Particles import Particle
 from Generators.CirceHelper import CirceHelper
 
@@ -17,7 +18,7 @@ class Process:
         "beamstrahlung",
     ]
 
-    def __init__(self, procname, args, inputFileRead, particleData, **options):
+    def __init__(self, procname, process, inputFileRead, particleData, **options):
         # list of particles filled from the input yaml file
         self._inputParticlesList = []
         if particleData is not None:
@@ -32,17 +33,18 @@ class Process:
         # process identifier
         self.procname = procname
 
-        # inputReader
-        self.settings = inputFileRead
-
         for arg in self._required_args:
-            setattr(self, arg, self.settings.get(arg))
+            setattr(self, arg, inputFileRead.get(arg))
 
         for option, value in options.items():
             setattr(self, option, value)
 
-        for key, value in args.items():
+        for key, value in process.items():
             setattr(self, key, value)
+
+        # inputReader as deep copy without the process stuff
+        self.settings = copy.deepcopy(inputFileRead)
+        delattr(self.settings, "processes")
 
     def prepareProcess(self):
         # beam particles
