@@ -4,7 +4,7 @@ import Selectors
 import Parameters as ParameterModule
 from Parameters import Parameter as ParameterClass
 
-class Input:
+class ProcessReader:
     """Class for loading YAML files"""
 
     def __init__(self, file, sqrts):
@@ -59,7 +59,7 @@ class Input:
         except:
             return None
 
-    def gens(self):
+    def get_generators(self):
         if not self.is_set("generators"):
             raise ValueError("No Generators set!")
         return getattr(self, "generators")
@@ -128,7 +128,7 @@ class Input:
     def get_model(self):
         return self.get("model", "SM")
 
-    def get_event_number(self):
+    def get_nevents(self):
         return self.get("events", 0)
 
     def get_isr_mode(self):
@@ -217,7 +217,7 @@ class Input:
         if self.anatools is not None:
             return "key4hep" in self.anatools
 
-class ECMSInput:
+class SQRTSReader:
     """Class for loading YAML files with center of mass energies"""
 
     def __init__(self, file):
@@ -238,7 +238,7 @@ class ECMSInput:
             ecmsList.extend(value)
         return ecmsList
 
-class ParameterSets:
+class ParameterSetReader:
     """Class for loading YAML files with the parameter settings"""
 
     def __init__(self, file, tag):

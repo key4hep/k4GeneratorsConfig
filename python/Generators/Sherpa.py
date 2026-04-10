@@ -3,8 +3,8 @@ from .GeneratorBase import GeneratorBase
 class Sherpa(GeneratorBase):
     """Sherpa class"""
 
-    def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings, "Sherpa", "dat")
+    def __init__(self, procinfo):
+        super().__init__(procinfo, "Sherpa", "dat")
 
         self.version = "3"
         self.executable = "Sherpa -f"
@@ -53,7 +53,7 @@ class Sherpa(GeneratorBase):
             self.addOption2GeneratorDatacard("YFS_MODE", "FULL")
         else:
             self.addOption2GeneratorDatacard("YFS_MODE", "None")
-        self.addOption2GeneratorDatacard("EVENTS", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("EVENTS", self.procinfo.settings.get_nevents())
         self.add2GeneratorDatacard("\n")
 
         # now add the model checking for overlap
@@ -67,7 +67,7 @@ class Sherpa(GeneratorBase):
         for key in self.procDB.getDictRun():
             self.addOption2GeneratorDatacard(key,self.procDB.getDictRun()[key])
 
-        self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.eventmode)
+        self.addOption2GeneratorDatacard("EVENT_GENERATION_MODE", self.procinfo.get("eventmode"))
         if self.gen_settings is not None:
             if "run" in self.gen_settings.keys():
                 for key, value in self.gen_settings["run"].items():
@@ -159,7 +159,7 @@ class Sherpa(GeneratorBase):
         if self.procinfo.get("decay"):
             self.write_decay()
         # writing selectors depends on the presence of the block
-        if self.settings.get_block("selectors"):
+        if self.procinfo.settings.get_block("selectors"):
             self.add2GeneratorDatacard("\nSELECTORS:\n")
             self.writeAllSelectors()
 

@@ -3,8 +3,8 @@ from .GeneratorBase import GeneratorBase
 class Babayaga(GeneratorBase):
     """Babayaga class"""
 
-    def __init__(self, procinfo, settings):
-        super().__init__(procinfo, settings, "Babayaga", "dat")
+    def __init__(self, procinfo):
+        super().__init__(procinfo, "Babayaga", "dat")
 
         self.version = "x.y.z"
 
@@ -49,7 +49,7 @@ class Babayaga(GeneratorBase):
             self.addOption2GeneratorDatacard("ord", "alpha")
             self.addOption2GeneratorDatacard("EWKc", "on")
 
-        self.addOption2GeneratorDatacard("nev", self.procinfo.get("events"))
+        self.addOption2GeneratorDatacard("nev", self.procinfo.settings.get_nevents())
         self.addOption2GeneratorDatacard("ecms", self.procinfo.get("sqrts"))
 
         # output format only hepm2 or hepmc3, the actual version is detected by the linked library, so strip the number
@@ -60,12 +60,12 @@ class Babayaga(GeneratorBase):
         for key in self.procDB.getDict():
             self.addOption2GeneratorDatacard(key,self.procDB.getDict()[key])
 
-        if self.procinfo.eventmode == "unweighted":
+        if self.procinfo.get("eventmode") == "unweighted":
             self.addOption2GeneratorDatacard("mode", "unweighted")
         else:
             self.addOption2GeneratorDatacard("mode", "weighted")
 
-        if self.settings.get_block("selectors"):
+        if self.procinfo.settings.get_block("selectors"):
             self.writeAllSelectors()
 
     def add_decay(self):

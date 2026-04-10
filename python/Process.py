@@ -1,3 +1,4 @@
+import copy
 from Particles import Particle
 from Generators.CirceHelper import CirceHelper
 
@@ -17,7 +18,7 @@ class Process:
         "beamstrahlung",
     ]
 
-    def __init__(self, args, procname, params, particleData, **options):
+    def __init__(self, procname, process, inputFileRead, particleData, **options):
         # list of particles filled from the input yaml file
         self._inputParticlesList = []
         if particleData is not None:
@@ -27,21 +28,23 @@ class Process:
         # all particles in process list
         self._particlesOfProcessList = []
         # label to be used in the generatorDB
-        self.generatorDBLabel = ""
         self.generatorDBTag   = []
+
+        # process identifier
         self.procname = procname
 
         for arg in self._required_args:
-            setattr(self, arg, params.settings.get(arg))
-        for setting in dir(params):
-            if not setting.startswith("__"):
-                setattr(self, setting, getattr(params, setting))
+            setattr(self, arg, inputFileRead.get(arg))
 
         for option, value in options.items():
             setattr(self, option, value)
 
-        for key, value in args.items():
+        for key, value in process.items():
             setattr(self, key, value)
+
+        # inputReader as deep copy without the process stuff
+        self.settings = copy.deepcopy(inputFileRead)
+        delattr(self.settings, "processes")
 
     def prepareProcess(self):
         # beam particles
@@ -63,7 +66,7 @@ class Process:
         # now the new DBTag:
         initialstate = [self.initial[0], self.initial[1]]
         initialstate.sort()
-        finalstate = self.final
+        finalstate = [x for x in self.final]
         finalstate.sort()
         self._DBTag = [initialstate, finalstate]
 
@@ -88,7 +91,10 @@ class Process:
         try:
             return getattr(self, name)
         except:
-            return None
+            try:
+                return self.settings.get(name)
+            except:
+                return None
 
     def get_args(self):
         return self._required_args
@@ -109,16 +115,16 @@ class Process:
         return self.get("nlo")
 
     def get_output_format(self):
-        return self.output_format
+        return self.settings.get_output_format()
 
     def get_PythiaTune(self):
-        return self.PythiaTune
+        return self.settings.get_PythiaTune()
 
     def get_PolarisationDensity(self):
-        return self.PolarisationDensity
+        return self.settings.get_PolarisationDensity()
 
     def get_PolarisationFraction(self):
-        return self.PolarisationFraction
+        return self.settings.get_PolarisationFraction()
 
     def get_rndmSeed(self):
         return self.get("randomseed")
@@ -128,8 +134,8 @@ class Process:
             circe = CirceHelper(self.beamstrahlung, self.sqrts)
             return circe.getFile()
 
-    def get_generatorDBLabel(self):
-        return self.generatorDBLabel
+    def get_DBTag(self):
+        return self._DBTag
 
     def get_DBTag(self):
         return self._DBTag
@@ -139,16 +145,3 @@ class Process:
         print("Particles are defined with the following parameters")
         for part in self._particlesOfProcessList:
             part.print_info()
-
-
-class ProcessParameters:
-    def __init__(self, settings):
-        self.settings      = settings
-        self.model         = settings.get_model()
-        self.events        = settings.get_event_number()
-        self.output_format = settings.get_output_format()
-        self.PythiaTune    = settings.get_PythiaTune()
-        self.PolarisationDensity    = settings.get_PolarisationDensity()
-        self.PolarisationFraction   = settings.get_PolarisationFraction()
-        self.eventmode     = settings.get_weighted_mode()
-        self.ewmode        = settings.get_ew_mode()

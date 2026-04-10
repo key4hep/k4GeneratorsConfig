@@ -5,7 +5,7 @@
 #include <iostream>
 #include <sys/stat.h>
 
-k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections() : m_validCounter(0), m_invalidCounter(0) {}
+k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections() {}
 k4GeneratorsConfig::eventGenerationCollections::eventGenerationCollections(
     const eventGenerationCollections& theOriginal) {
   if (this != &theOriginal) {
@@ -29,29 +29,29 @@ k4GeneratorsConfig::eventGenerationCollections::operator=(const eventGenerationC
   return *this;
 }
 k4GeneratorsConfig::eventGenerationCollections::~eventGenerationCollections() {}
-void k4GeneratorsConfig::eventGenerationCollections::Execute() {
+void k4GeneratorsConfig::eventGenerationCollections::Execute(std::string topDir) {
 
   // first make the collection
-  makeCollections();
+  makeCollections(topDir);
 
   // second order the collection according to the process
   orderCollections();
 }
-void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
+void k4GeneratorsConfig::eventGenerationCollections::makeCollections(std::string topDir) {
 
-  for (const auto& generators : std::filesystem::directory_iterator("Run-Cards")) {
-    std::filesystem::path generatorsPath = generators.path();
-    if (!std::filesystem::is_directory(generatorsPath))
+  for (const auto& generator : std::filesystem::directory_iterator(topDir)) {
+    std::filesystem::path generatorPath = generator.path();
+    if (!std::filesystem::is_directory(generatorPath))
       continue;
 
-    for (const auto& procs : std::filesystem::directory_iterator(generatorsPath.string())) {
-      std::filesystem::path processPath = procs.path();
+    for (const auto& process : std::filesystem::directory_iterator(generatorPath.string())) {
+      std::filesystem::path processPath = process.path();
       if (!std::filesystem::is_directory(processPath))
         continue;
 
       k4GeneratorsConfig::xsection* xsec = new k4GeneratorsConfig::xsection();
-      for (const auto& files : std::filesystem::directory_iterator(processPath.string())) {
-        std::filesystem::path filenamePath = files.path();
+      for (const auto& filename : std::filesystem::directory_iterator(processPath.string())) {
+        std::filesystem::path filenamePath = filename.path();
         if (!std::filesystem::is_regular_file(filenamePath))
           continue;
         // take care of the total cross section extracted from the EDM4HEP file
@@ -61,13 +61,13 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
           xsec->setProcess(processPath.filename().string());
           xsec->setFile(filenamePath.string());
           // in some cases the generator name is not available, therefore derive from the filename
-          xsec->setGenerator(generatorsPath.filename().string());
+          xsec->setGenerator(generatorPath.filename().string());
           std::cout << "Generator " << xsec->Generator() << " has been processed" << std::endl;
           m_xsectionCollection.push_back(*xsec);
           if (xsec->isValid())
-            m_validCounter++;
+            addSuccess(xsec->Generator());
           if (!xsec->isValid())
-            m_invalidCounter++;
+            addFailure(xsec->Generator());
         }
       }
       // we need to keep xsec alive for the analysisHistos distributions
@@ -84,7 +84,7 @@ void k4GeneratorsConfig::eventGenerationCollections::makeCollections() {
           diffDist->setFile(filenamePath.string());
           diffDist->setSQRTS(xsec->SQRTS());
           // in some cases the generator name is not available, therefore derive from the filename
-          diffDist->setGenerator(generatorsPath.filename().string());
+          diffDist->setGenerator(generatorPath.filename().string());
           std::cout << "Generator " << diffDist->Generator() << " has been processed for analysisHistos distributions"
                     << std::endl;
           m_analysisHistosCollection.push_back(*diffDist);
@@ -147,8 +147,36 @@ bool k4GeneratorsConfig::eventGenerationCollections::compareLexical(analysisHist
 
   return false;
 }
-unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() { return m_validCounter; }
-unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() { return m_invalidCounter; }
+void k4GeneratorsConfig::eventGenerationCollections::addSuccess(std::string generator) {
+  if (m_validCounter.find(generator) != m_validCounter.end()) {
+    m_validCounter[generator]++;
+  } else {
+    m_validCounter[generator] = 1;
+  }
+}
+void k4GeneratorsConfig::eventGenerationCollections::addFailure(std::string generator) {
+  if (m_invalidCounter.find(generator) != m_invalidCounter.end()) {
+    m_invalidCounter[generator]++;
+  } else {
+    m_invalidCounter[generator] = 1;
+  }
+}
+unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfSuccesses() const {
+  unsigned int validTotal = 0;
+  std::map<std::string, unsigned int>::const_iterator imap;
+  for (imap = m_validCounter.begin(); imap != m_validCounter.end(); imap++) {
+    validTotal += imap->second;
+  }
+  return validTotal;
+}
+unsigned int k4GeneratorsConfig::eventGenerationCollections::NbOfFailures() const {
+  unsigned int invalidTotal = 0;
+  std::map<std::string, unsigned int>::const_iterator imap;
+  for (imap = m_invalidCounter.begin(); imap != m_invalidCounter.end(); imap++) {
+    invalidTotal += imap->second;
+  }
+  return invalidTotal;
+}
 void k4GeneratorsConfig::eventGenerationCollections::Write2Root(std::string dirname, std::string filename) {
 
   eventGenerationCollections2Root out(dirname, filename);
@@ -225,7 +253,20 @@ void k4GeneratorsConfig::eventGenerationCollections::PrintSummary(std::ostream& 
   }
   output << std::endl;
   // last thing the invalids
-  output << "Number of runs           : " << m_invalidCounter + m_validCounter << std::endl;
-  output << "Number of failed runs    : " << m_invalidCounter << std::endl;
-  output << "Number of successful runs: " << m_validCounter << std::endl;
+  output << "Number of runs           : " << NbOfFailures() + NbOfSuccesses() << std::endl;
+  output << "Number of failed runs    : " << NbOfFailures() << std::endl;
+  output << "Number of successful runs: " << NbOfSuccesses() << std::endl;
+  // details only for failures:
+  if (NbOfFailures() > 0) {
+    output << std::endl << "Detail of Failures:" << std::endl;
+    std::map<std::string, unsigned int>::const_iterator failure, success;
+    for (failure = m_invalidCounter.begin(); failure != m_invalidCounter.end(); failure++) {
+      output << failure->first << " : " << failure->second << " Failures ";
+      unsigned int successCount = 0;
+      if ((success = m_validCounter.find(failure->first)) != m_validCounter.end()) {
+        successCount = success->second;
+      }
+      output << " / " << successCount + failure->second << " Runs" << std::endl;
+    }
+  }
 }
