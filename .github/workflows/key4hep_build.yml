@@ -32,9 +32,6 @@ jobs:
       if: ${{ !cancelled() }}
       with:
         name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
-        path: |
-          test/Run-Cards/*.dat
-          test/Run-Cards/*.root
     - name: Show full CTest log on failure
       if: failure()
       run: |
