@@ -113,7 +113,7 @@ class k4GeneratorsConfig():
             help="compare the results of the event generation process by process and produce summary output in outputDir"
         )
 
-        self.outputDirDefault = "work"
+        self.outputDirDefault = "Run-Cards"
         parser.add_argument(
             "--outputDir",
             type=str,
