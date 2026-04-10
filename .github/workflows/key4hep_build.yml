@@ -28,13 +28,6 @@ jobs:
       with:
         build_type: ${{ matrix.build_type }}
         image: ${{ matrix.image }}
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: k4GeneratorsConfig_report_${{ matrix.build_type }}_${{ matrix.image }}
-        path: |
-          test/Run-Cards/*.dat
-          test/Run-Cards/*.root
     - name: Show full CTest log on failure
       if: failure()
       run: |
