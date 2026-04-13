@@ -4,7 +4,7 @@ BEAM_ENERGIES: 125.0
 POLARIZATIONS:
   BEAM_1: -0.8
   BEAM_2: 0.3
-ME_Generators: [Amegic]
+ME_GENERATORS: [Amegic]
 MODEL: SM
 PDF_LIBRARY: None
 YFS_MODE: None
