@@ -10,6 +10,8 @@ SqrtS: 250.
 Model: SM
 ISRMode: 1
 
+Beamstrahlung: ILC
+
 Processes:
   Muon250:
      Final: [13, -13]

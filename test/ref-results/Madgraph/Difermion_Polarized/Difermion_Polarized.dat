@@ -35,9 +35,6 @@ set WH 0.00407
 set MW 80.379
 set WW 2.085
 set nevents 10020
-set pdlabel ilc500ll
-set lpp1 3
-set lpp2 -3
 set polbeam1 -80.0
 set polbeam2 30.0
 set pt_min_pdg {13: 0 }

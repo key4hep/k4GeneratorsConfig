@@ -6,13 +6,13 @@ POLARIZATION:
   BEAM_2: 0.3
 ME_Generators: [Amegic]
 MODEL: SM
-PDF_LIBRARY: PDFESherpa
+PDF_LIBRARY: None
 YFS_MODE: None
 EVENTS: 10000
 
 ALPHAS(MZ): 0.1184
 GF: 1.16637e-05
-EVENT_OUTPUT: HepMC3_GenEvent[Difermion_Polarized_ISR_BSTilc.hepmc3]
+EVENT_OUTPUT: HepMC3_GenEvent[Difermion_Polarized.hepmc3]
 EW_SCHEME: 3
 EVENT_GENERATION_MODE: unweighted
 
