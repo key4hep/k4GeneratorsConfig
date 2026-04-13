@@ -45,7 +45,7 @@ class Sherpa(GeneratorBase):
         # check for polarization
         polFraction = self.procinfo.get_PolarisationFraction();
         if any(item != 0. for item in polFraction):
-            self.add2GeneratorDatacard("POLARIZATION:\n")
+            self.add2GeneratorDatacard("POLARIZATIONS:\n")
             polDensity = self.procinfo.get_PolarisationDensity();
             self.addOption2GeneratorDatacard("  BEAM_1", polFraction[0]*polDensity[0])
             self.addOption2GeneratorDatacard("  BEAM_2", polFraction[1]*polDensity[1])
