@@ -1,6 +1,7 @@
 Generators:
   - Whizard
   - Madgraph
+  - Sherpa
 
 OutputFormat: edm4hep
 OutDir: Run-Cards
@@ -10,11 +11,9 @@ EventMode: unweighted
 PolarisationDensity: [-1, 1]
 PolarisationFraction: [ 0.8, 0.3 ]
 
-Beamstrahlung: ILC
-
 SqrtS: 250
 Model: SM
-ISRMode: 1
+ISRMode: 0
 
 Processes:
   Difermion_Polarized:

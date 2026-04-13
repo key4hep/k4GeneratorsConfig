@@ -49,6 +49,7 @@ class Sherpa(GeneratorBase):
             polDensity = self.procinfo.get_PolarisationDensity();
             self.addOption2GeneratorDatacard("  BEAM_1", polFraction[0]*polDensity[0])
             self.addOption2GeneratorDatacard("  BEAM_2", polFraction[1]*polDensity[1])
+            self.addOption2GeneratorDatacard("ME_Generators", "[Amegic]")
 
         self.addOption2GeneratorDatacard("MODEL", self.getModel())
 
