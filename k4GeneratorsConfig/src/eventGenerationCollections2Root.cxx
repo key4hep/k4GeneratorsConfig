@@ -555,20 +555,20 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
       TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
       // now build the legend:
-      TLegend* topLegend = new TLegend(0.1,0.0,0.4,0.4);
+      TLegend* topLegend = new TLegend(0.1, 0.0, 0.4, 0.4);
       std::ostringstream title;
       title << m_procSqrtsList[proc].first << " #sqrt{s} =" << m_procSqrtsList[proc].second << "GeV";
-      topLegend->SetHeader(title.str().c_str(),"C");
+      topLegend->SetHeader(title.str().c_str(), "C");
       // we need to get the histo from the top
       TList* topPadPrimitives = topPad->GetListOfPrimitives();
       // move to the bottom pad
       TVirtualPad* bottomPad = m_cnvAnalysisHistos[proc][ihisto]->cd(2);
       bottomPad->cd();
-      // fetch the histograms TH1D      
+      // fetch the histograms TH1D
       for (auto obj : *topPadPrimitives) {
         if (obj->InheritsFrom(TH1D::Class())) {
           // subtract and divide
-	  TH1D* theOriginal = (TH1D*)obj;
+          TH1D* theOriginal = (TH1D*)obj;
           TH1D* theDelta = new TH1D(*theOriginal);
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
@@ -578,14 +578,15 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           message << m_procSqrtsList[proc].first << " " << theDelta->GetTitle() << " "
                   << theDelta->GetXaxis()->GetTitle() << " Chi2/dof = " << chi2;
           m_log.push_back(message.str());
-	  // now we should try to update the title of the histo (obj) in the top pad (delta is a copy)
-	  // prepare the title including the chi2:
-	  std::ostringstream ss;
-	  std::string theOriginalTitle(theOriginal->GetTitle());
-	  theOriginalTitle.erase(theOriginalTitle.find(" "));
-	  ss << theOriginalTitle << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint << chi2;
-	  // update the legend entry
-	  topLegend->AddEntry(theOriginal,ss.str().c_str());
+          // now we should try to update the title of the histo (obj) in the top pad (delta is a copy)
+          // prepare the title including the chi2:
+          std::ostringstream ss;
+          std::string theOriginalTitle(theOriginal->GetTitle());
+          theOriginalTitle.erase(theOriginalTitle.find(" "));
+          ss << theOriginalTitle << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint
+             << chi2;
+          // update the legend entry
+          topLegend->AddEntry(theOriginal, ss.str().c_str());
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
