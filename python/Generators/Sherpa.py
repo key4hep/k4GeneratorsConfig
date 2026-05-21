@@ -45,12 +45,12 @@ class Sherpa(GeneratorBase):
         # check for polarization
         polFraction = self.procinfo.get_PolarisationFraction();
         if any(item != 0. for item in polFraction):
-            self.add2GeneratorDatacard("POLARIZATION:\n")
+            self.add2GeneratorDatacard("POLARIZATIONS:\n")
             polDensity = self.procinfo.get_PolarisationDensity();
             self.addOption2GeneratorDatacard("  BEAM_1", polFraction[0]*polDensity[0])
             self.addOption2GeneratorDatacard("  BEAM_2", polFraction[1]*polDensity[1])
-            # we need to ensure that AMEGIC is there
-            self.addOption2GeneratorDatacard("ME_Generators", "[Amegic]")
+            self.addOption2GeneratorDatacard("ME_GENERATORS", "[Amegic]")
+>>>>>>> 483f9b1a7c3e2ee50c66da5ab790f46c15b574bf
 
         self.addOption2GeneratorDatacard("MODEL", self.getModel())
 
