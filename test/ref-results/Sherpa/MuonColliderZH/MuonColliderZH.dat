@@ -8,7 +8,7 @@ EVENTS: 10000
 
 ALPHAS(MZ): 0.1184
 GF: 1.16637e-05
-EVENT_OUTPUT: HepMC3_GenEvent[MuonColliderZH250.hepmc3]
+EVENT_OUTPUT: HepMC3_GenEvent[MuonColliderZH.hepmc3]
 EW_SCHEME: 3
 EVENT_GENERATION_MODE: unweighted
 

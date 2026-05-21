@@ -4,6 +4,7 @@
 #include "TCanvas.h"
 #include "TGaxis.h"
 #include "TLegend.h"
+#include "TLegendEntry.h"
 #include "TMultiGraph.h"
 #include "TStyle.h"
 
@@ -553,25 +554,38 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
     // check that it's the correct process
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
       TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
-      topPad->BuildLegend();
+      // now build the legend:
+      TLegend* topLegend = new TLegend(0.1,0.0,0.4,0.4);
+      std::ostringstream title;
+      title << m_procSqrtsList[proc].first << " #sqrt{s} =" << m_procSqrtsList[proc].second << "GeV";
+      topLegend->SetHeader(title.str().c_str(),"C");
       // we need to get the histo from the top
-      TList* padPrimitives = topPad->GetListOfPrimitives();
+      TList* topPadPrimitives = topPad->GetListOfPrimitives();
       // move to the bottom pad
       TVirtualPad* bottomPad = m_cnvAnalysisHistos[proc][ihisto]->cd(2);
       bottomPad->cd();
-      // fetch the histograms TH1D
-      for (auto obj : *padPrimitives) {
+      // fetch the histograms TH1D      
+      for (auto obj : *topPadPrimitives) {
         if (obj->InheritsFrom(TH1D::Class())) {
           // subtract and divide
-          TH1D* theDelta = new TH1D(*(TH1D*)obj);
+	  TH1D* theOriginal = (TH1D*)obj;
+          TH1D* theDelta = new TH1D(*theOriginal);
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
           // calculate the compatbility before operations and output text
           double chi2 = calculateChi2(m_procSqrtsList[proc].first, theDelta, analysisHistosAverage[proc][ihisto]);
           std::stringstream message;
           message << m_procSqrtsList[proc].first << " " << theDelta->GetTitle() << " "
-                  << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
+                  << theDelta->GetXaxis()->GetTitle() << " Chi2/dof = " << chi2;
           m_log.push_back(message.str());
+	  // now we should try to update the title of the histo (obj) in the top pad (delta is a copy)
+	  // prepare the title including the chi2:
+	  std::ostringstream ss;
+	  std::string theOriginalTitle(theOriginal->GetTitle());
+	  theOriginalTitle.erase(theOriginalTitle.find(" "));
+	  ss << theOriginalTitle << " #chi^{2}/dof = " << std::scientific << std::setprecision(2) << std::showpoint << chi2;
+	  // update the legend entry
+	  topLegend->AddEntry(theOriginal,ss.str().c_str());
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
@@ -588,6 +602,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           theDelta->GetYaxis()->SetLabelSize(0.1);
         }
       }
+      // done with all histograms, draw
+      topPad->cd();
+      topLegend->Draw("SAME");
       // done, save the canvas
       name << m_dirname << "/" << m_procSqrtsList[proc].first
            << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]

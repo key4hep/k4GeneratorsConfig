@@ -13,7 +13,7 @@ SqrtS: 250.
 Model: SM
 
 Processes:
-  MuonColliderZH250:
+  MuonColliderZH:
      Initial: [13, -13]
      Final: [23, 25]
      ISRMode: 0
