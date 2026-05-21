@@ -583,7 +583,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
 	  std::ostringstream ss;
 	  std::string theOriginalTitle(theOriginal->GetTitle());
 	  theOriginalTitle.erase(theOriginalTitle.find(" "));
-	  ss << theOriginalTitle << " #chi^{2}/dof = " << std::scientific << std::setprecision(2) << std::showpoint << chi2;
+	  ss << theOriginalTitle << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint << chi2;
 	  // update the legend entry
 	  topLegend->AddEntry(theOriginal,ss.str().c_str());
           // subtract average and divide
