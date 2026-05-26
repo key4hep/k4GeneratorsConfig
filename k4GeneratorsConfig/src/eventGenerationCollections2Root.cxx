@@ -272,7 +272,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
     desc.str("");
   }
   // the global chi2 is for each process and each generator
-  m_xsectionChi2.resize(m_procGenList.size(),0.);
+  m_xsectionChi2.resize(m_procGenList.size(), 0.);
 
   // the RMS does not need the loop over the generators
   for (auto proc : m_processesList) {
@@ -285,7 +285,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
     desc.clear();
     desc.str("");
   }
-  
+
   // to calculate per Process and Sqrts average cross section, RMS and number of entries
   // structure for the average and RMS of the cross section per Process and sqrts
   std::vector<double> xsectionMean4Process;
@@ -364,8 +364,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
               lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
               m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision,
                                                                  relDeltaError);
-	      // now we update the chi2: the error on the RMS*sqrt(2) is taken as error (relRMSError is the error on the relRMS)
-	      m_xsectionChi2[indexProcGen] += pow(relDelta/(relRMSError*sqrt(2.)),2);
+              // now we update the chi2: the error on the RMS*sqrt(2) is taken as error (relRMSError is the error on the
+              // relRMS)
+              m_xsectionChi2[indexProcGen] += pow(relDelta / (relRMSError * sqrt(2.)), 2);
             }
           }
         }
@@ -416,10 +417,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
         mg->Add(m_xsectionGraphs[indexProcGen], "AP");
         label.clear();
         label.str("");
-	label << m_generatorsList[gen] << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint
-	   << m_xsectionChi2[indexProcGen];
-	// update the legend entry
-	topLegend->AddEntry(m_xsectionGraphs[indexProcGen], label.str().c_str());
+        label << m_generatorsList[gen] << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2)
+              << std::showpoint << m_xsectionChi2[indexProcGen];
+        // update the legend entry
+        topLegend->AddEntry(m_xsectionGraphs[indexProcGen], label.str().c_str());
         label.clear();
         label.str("");
       }
@@ -590,22 +591,19 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           // extract the generator string
           std::string theGenerator(theOriginal->GetTitle());
           theGenerator.erase(theGenerator.find(" "));
-	  // output to file:
+          // output to file:
           std::stringstream message;
-          message << m_procSqrtsList[proc].first
-		  << "::Generator:" << theGenerator
-		  << " sqrt(s)=" << m_procSqrtsList[proc].second << "GeV "
-                  << theDelta->GetXaxis()->GetTitle()
-		  << " Chi2/dof = " << chi2;
+          message << m_procSqrtsList[proc].first << "::Generator:" << theGenerator
+                  << " sqrt(s)=" << m_procSqrtsList[proc].second << "GeV " << theDelta->GetXaxis()->GetTitle()
+                  << " Chi2/dof = " << chi2;
           m_log.push_back(message.str());
           // now we should try to update the title of the histo (obj) in the top pad (delta is a copy)
-          label << theGenerator
-		<< " #chi^{2}/^{}dof = "
-		<< std::scientific << std::setprecision(2) << std::showpoint << chi2;
+          label << theGenerator << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint
+                << chi2;
           // update the legend entry
           topLegend->AddEntry(theOriginal, label.str().c_str());
-	  label.clear();
-	  label.str("");
+          label.clear();
+          label.str("");
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
@@ -627,8 +625,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
       topLegend->Draw("SAME");
       // done, save the canvas
       label << m_dirname << "/" << m_procSqrtsList[proc].first
-           << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]
-           << ".png";
+            << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]
+            << ".png";
       m_cnvAnalysisHistos[proc][ihisto]->Print(label.str().c_str());
       label.clear();
       label.str("");
@@ -650,8 +648,8 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::s
   unsigned int nbOfPoints = 0;
   // loop over all bins inclusing underflow and overflow
   for (int i = 0; i < histo->GetNbinsX() + 2; i++) {
-    if (histo->GetBinError(i) != 0. ) {
-      double deltaChi2 = (histo->GetBinContent(i) - refHisto->GetBinContent(i))/histo->GetBinError(i);
+    if (histo->GetBinError(i) != 0.) {
+      double deltaChi2 = (histo->GetBinContent(i) - refHisto->GetBinContent(i)) / histo->GetBinError(i);
       deltaChi2 *= deltaChi2;
       chi2 += deltaChi2;
       nbOfPoints++;
