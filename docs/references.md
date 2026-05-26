@@ -1,4 +1,4 @@
-Referenecs
+References
 =====================================
 
 ```{bibliography}
