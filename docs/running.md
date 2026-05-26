@@ -1,5 +1,4 @@
 # Running
-=====================================
 
 All command line options are documented [here](cmdline.md)
 

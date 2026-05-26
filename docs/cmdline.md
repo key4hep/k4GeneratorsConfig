@@ -1,5 +1,4 @@
 # Command Line Options
-=====================================
 
 The command line options are specific to the type of execution requested with the exception of:
 
