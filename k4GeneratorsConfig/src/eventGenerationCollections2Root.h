@@ -68,6 +68,7 @@ private:
   std::vector<TGraphErrors*> m_xsectionGraphs;
   std::vector<TGraphErrors*> m_xsectionRMSGraphs;
   std::vector<TGraphErrors*> m_xsectionDeltaGraphs;
+  std::vector<double> m_xsectionChi2;
 
   // for the differential distributions
   std::vector<std::vector<TCanvas*>> m_cnvAnalysisHistos;

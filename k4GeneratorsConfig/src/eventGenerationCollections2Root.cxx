@@ -4,6 +4,7 @@
 #include "TCanvas.h"
 #include "TGaxis.h"
 #include "TLegend.h"
+#include "TLegendEntry.h"
 #include "TMultiGraph.h"
 #include "TStyle.h"
 
@@ -270,6 +271,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
     desc.clear();
     desc.str("");
   }
+  // the global chi2 is for each process and each generator
+  m_xsectionChi2.resize(m_procGenList.size(), 0.);
+
   // the RMS does not need the loop over the generators
   for (auto proc : m_processesList) {
     name << proc << "RMS";
@@ -360,6 +364,9 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
               lastPoint = m_xsectionDeltaGraphs[indexProcGen]->GetN() - 1;
               m_xsectionDeltaGraphs[indexProcGen]->SetPointError(lastPoint, m_sqrtsList[isqrts] * m_sqrtsPrecision,
                                                                  relDeltaError);
+              // now we update the chi2: the error on the RMS*sqrt(2) is taken as error (relRMSError is the error on the
+              // relRMS), normalize to number of sqrts points
+              m_xsectionChi2[indexProcGen] += pow(relDelta / (relRMSError * sqrt(2.)), 2) / m_sqrtsList.size();
             }
           }
         }
@@ -380,7 +387,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
 }
 void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigures() {
 
-  std::stringstream name, desc;
+  std::stringstream label, desc;
   // produce a png
   TCanvas* c1 = new TCanvas("c1", "CrossSectionsCanvas");
   TPad* topPad = new TPad("topPad", "Cross Section versus sqrts", 0.0, 0.3, 1.0, 1.0, 0);
@@ -394,20 +401,28 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     // top pad
     topPad->cd();
     topPad->SetBottomMargin(0);
+    TLegend* topLegend = new TLegend(0.60, 0.60, 0.9, 0.9);
+    topLegend->SetHeader(m_procSqrtsList[iProc].first.c_str(), "C");
     // the cross sections with the graph
     TMultiGraph* mg = new TMultiGraph();
     for (unsigned int gen = 0; gen < m_generatorsList.size(); gen++) {
       unsigned int indexProcGen = ProcGenID(m_processesList[iProc], m_generatorsList[gen]);
       if (indexProcGen < m_procGenList.size()) {
-        name << m_processesList[iProc] << " " << m_generatorsList[gen];
-        m_xsectionGraphs[indexProcGen]->SetName(name.str().c_str());
+        label << m_processesList[iProc] << " " << m_generatorsList[gen];
+        m_xsectionGraphs[indexProcGen]->SetName(label.str().c_str());
         m_xsectionGraphs[indexProcGen]->SetStats(kFALSE);
         m_xsectionGraphs[indexProcGen]->SetMarkerStyle(20 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionGraphs[indexProcGen]->SetMarkerColor(2 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionGraphs[indexProcGen]->SetMarkerSize(1.25);
         mg->Add(m_xsectionGraphs[indexProcGen], "AP");
-        name.clear();
-        name.str("");
+        label.clear();
+        label.str("");
+        label << m_generatorsList[gen] << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2)
+              << std::showpoint << m_xsectionChi2[indexProcGen];
+        // update the legend entry
+        topLegend->AddEntry(m_xsectionGraphs[indexProcGen], label.str().c_str());
+        label.clear();
+        label.str("");
       }
     }
     // draw and set the stuff for the multigraphs
@@ -418,8 +433,8 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mg->GetYaxis()->SetLabelSize(0.05);
     // x axis turn off the labels
     mg->GetXaxis()->SetLabelSize(0);
-    // build the legend of the pad
-    topPad->BuildLegend(0.65, 0.65, 0.9, 0.9);
+    // add the Legend to the figure
+    topLegend->Draw("SAME");
 
     // the lower part with the RMS/average
     bottomPad->cd();
@@ -449,10 +464,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgRMS->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
-    name << m_dirname << "/" << m_processesList[iProc] << "wRMS.png";
-    c1->Print(name.str().c_str());
-    name.clear();
-    name.str("");
+    label << m_dirname << "/" << m_processesList[iProc] << "wRMS.png";
+    c1->Print(label.str().c_str());
+    label.clear();
+    label.str("");
 
     // now we do a second figure where we update only the bottom
     bottomPad->cd();
@@ -463,15 +478,15 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     for (unsigned int gen = 0; gen < m_generatorsList.size(); gen++) {
       unsigned int indexProcGen = ProcGenID(m_processesList[iProc], m_generatorsList[gen]);
       if (indexProcGen < m_procGenList.size()) {
-        name << m_processesList[iProc] << " " << m_generatorsList[gen];
-        m_xsectionDeltaGraphs[indexProcGen]->SetName(name.str().c_str());
+        label << m_processesList[iProc] << " " << m_generatorsList[gen];
+        m_xsectionDeltaGraphs[indexProcGen]->SetName(label.str().c_str());
         m_xsectionDeltaGraphs[indexProcGen]->SetStats(kFALSE);
         m_xsectionDeltaGraphs[indexProcGen]->SetMarkerStyle(20 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionDeltaGraphs[indexProcGen]->SetMarkerColor(2 + m_generatorColorOffset[m_generatorsList[gen]]);
         m_xsectionDeltaGraphs[indexProcGen]->SetMarkerSize(1.25);
         mgDelta->Add(m_xsectionDeltaGraphs[indexProcGen], "AP");
-        name.clear();
-        name.str("");
+        label.clear();
+        label.str("");
       }
     }
     mgDelta->Draw("AP");
@@ -488,10 +503,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgDelta->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
-    name << m_dirname << "/" << m_processesList[iProc] << "wDelta.png";
-    c1->Print(name.str().c_str());
-    name.clear();
-    name.str("");
+    label << m_dirname << "/" << m_processesList[iProc] << "wDelta.png";
+    c1->Print(label.str().c_str());
+    label.clear();
+    label.str("");
 
     // delete the pointers
     delete mg;
@@ -507,7 +522,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
   if (m_cnvAnalysisHistos.size() == 0)
     return;
 
-  std::stringstream name;
+  std::stringstream label;
   // first process the histogram averaging
   std::vector<std::vector<TH1D*>> analysisHistosAverage;
   analysisHistosAverage.resize(m_procSqrtsList.size());
@@ -525,13 +540,13 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           TH1D* generatorHisto = new TH1D(*(TH1D*)obj);
           if (generatorAverageHisto == nullptr) {
             // to avoid memory leaks add the proc number
-            name << generatorHisto->GetName() << proc;
-            generatorAverageHisto = new TH1D(name.str().c_str(), generatorHisto->GetTitle(),
+            label << generatorHisto->GetName() << proc;
+            generatorAverageHisto = new TH1D(label.str().c_str(), generatorHisto->GetTitle(),
                                              generatorHisto->GetNbinsX(), generatorHisto->GetBinLowEdge(1),
                                              generatorHisto->GetBinLowEdge(generatorHisto->GetNbinsX() + 1));
             generatorAverageHisto->GetXaxis()->SetTitle(generatorHisto->GetXaxis()->GetTitle());
-            name.clear();
-            name.str("");
+            label.clear();
+            label.str("");
           }
           if (!(generatorAverageHisto->GetSumw2N() > 0))
             generatorAverageHisto->Sumw2(kTRUE);
@@ -553,25 +568,42 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
     // check that it's the correct process
     for (unsigned int ihisto = 0; ihisto < m_cnvAnalysisHistos[proc].size(); ihisto++) {
       TVirtualPad* topPad = m_cnvAnalysisHistos[proc][ihisto]->cd(1);
-      topPad->BuildLegend();
+      // now build the legend:
+      TLegend* topLegend = new TLegend(0.1, 0.0, 0.4, 0.4);
+      std::ostringstream title;
+      title << m_procSqrtsList[proc].first << " #sqrt{s} =" << m_procSqrtsList[proc].second << "GeV";
+      topLegend->SetHeader(title.str().c_str(), "C");
       // we need to get the histo from the top
-      TList* padPrimitives = topPad->GetListOfPrimitives();
+      TList* topPadPrimitives = topPad->GetListOfPrimitives();
       // move to the bottom pad
       TVirtualPad* bottomPad = m_cnvAnalysisHistos[proc][ihisto]->cd(2);
       bottomPad->cd();
       // fetch the histograms TH1D
-      for (auto obj : *padPrimitives) {
+      for (auto obj : *topPadPrimitives) {
         if (obj->InheritsFrom(TH1D::Class())) {
           // subtract and divide
-          TH1D* theDelta = new TH1D(*(TH1D*)obj);
+          TH1D* theOriginal = (TH1D*)obj;
+          TH1D* theDelta = new TH1D(*theOriginal);
           if (!(theDelta->GetSumw2N() > 0))
             theDelta->Sumw2(kTRUE);
           // calculate the compatbility before operations and output text
           double chi2 = calculateChi2(m_procSqrtsList[proc].first, theDelta, analysisHistosAverage[proc][ihisto]);
+          // extract the generator string
+          std::string theGenerator(theOriginal->GetTitle());
+          theGenerator.erase(theGenerator.find(" "));
+          // output to file:
           std::stringstream message;
-          message << m_procSqrtsList[proc].first << " " << theDelta->GetTitle() << " "
-                  << theDelta->GetXaxis()->GetTitle() << " Chi2 = " << chi2;
+          message << m_procSqrtsList[proc].first << "::Generator:" << theGenerator
+                  << " sqrt(s)=" << m_procSqrtsList[proc].second << "GeV " << theDelta->GetXaxis()->GetTitle()
+                  << " Chi2/dof = " << chi2;
           m_log.push_back(message.str());
+          // now we should try to update the title of the histo (obj) in the top pad (delta is a copy)
+          label << theGenerator << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint
+                << chi2;
+          // update the legend entry
+          topLegend->AddEntry(theOriginal, label.str().c_str());
+          label.clear();
+          label.str("");
           // subtract average and divide
           theDelta->Add(analysisHistosAverage[proc][ihisto], -1.);
           theDelta->Divide(analysisHistosAverage[proc][ihisto]);
@@ -588,13 +620,16 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           theDelta->GetYaxis()->SetLabelSize(0.1);
         }
       }
+      // done with all histograms, draw
+      topPad->cd();
+      topLegend->Draw("SAME");
       // done, save the canvas
-      name << m_dirname << "/" << m_procSqrtsList[proc].first
-           << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]
-           << ".png";
-      m_cnvAnalysisHistos[proc][ihisto]->Print(name.str().c_str());
-      name.clear();
-      name.str("");
+      label << m_dirname << "/" << m_procSqrtsList[proc].first
+            << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]
+            << ".png";
+      m_cnvAnalysisHistos[proc][ihisto]->Print(label.str().c_str());
+      label.clear();
+      label.str("");
     }
   }
 }
@@ -613,12 +648,9 @@ double k4GeneratorsConfig::eventGenerationCollections2Root::calculateChi2(std::s
   unsigned int nbOfPoints = 0;
   // loop over all bins inclusing underflow and overflow
   for (int i = 0; i < histo->GetNbinsX() + 2; i++) {
-    if (histo->GetBinError(i) != 0. || refHisto->GetBinError(i) != 0.) {
-      double deltaChi2 = histo->GetBinContent(i) - refHisto->GetBinContent(i);
+    if (histo->GetBinError(i) != 0.) {
+      double deltaChi2 = (histo->GetBinContent(i) - refHisto->GetBinContent(i)) / histo->GetBinError(i);
       deltaChi2 *= deltaChi2;
-      // to be checked whether we say "ref" has not error?
-      deltaChi2 /=
-          (histo->GetBinError(i) * histo->GetBinError(i) + refHisto->GetBinError(i) * refHisto->GetBinError(i));
       chi2 += deltaChi2;
       nbOfPoints++;
     }
