@@ -52,7 +52,7 @@ The generation of the events is triggered by `--summary`
 | --summary             | flag             | false   | compare the results of the event generation process by process and produce summary output in outputDir |
 
 
-## Short cuts
+## Short cut
 
 The for convenience `--all` triggers `--make --generate --summary`
 
