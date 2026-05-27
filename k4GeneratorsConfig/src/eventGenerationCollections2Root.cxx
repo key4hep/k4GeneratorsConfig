@@ -366,7 +366,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeXsectionGraphs() 
                                                                  relDeltaError);
               // now we update the chi2: the error on the RMS*sqrt(2) is taken as error (relRMSError is the error on the
               // relRMS), normalize to number of sqrts points
-              m_xsectionChi2[indexProcGen] += pow(relDelta / (relRMSError * sqrt(2.)), 2)/m_sqrtsList.size();
+              m_xsectionChi2[indexProcGen] += pow(relDelta / (relRMSError * sqrt(2.)), 2) / m_sqrtsList.size();
             }
           }
         }
