@@ -12,7 +12,7 @@ class MadgraphProcDB(ProcDBBase):
         tag = self.process.get_DBTag()
         initialState = tag[0]
         finalState   = tag[1]
-        if initialState == [-11,11] and len(finalState) == 2:
+        if (initialState == [-11,11] or initialState == [-13,13]) and len(finalState) == 2:
             isFermionPair = all( abs(pdg)<=16 for pdg in finalState)
             pdg = abs(finalState[0])
             if isFermionPair:

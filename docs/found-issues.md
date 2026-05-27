@@ -1,4 +1,4 @@
-# Identified Issues
+# Known Issues
 
 The issues are ordered in inverse chronological order
 

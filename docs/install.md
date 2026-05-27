@@ -36,3 +36,16 @@ cd /path/to/out
 ./Run_PROCESSNAME.sh
 ```
 ⚠️ **Warning**: Always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
+
+## Key4hep with local modifications
+
+Setting up with
+```bash
+source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
+cd build
+cmake ../CMakeLists.txt -DCMAKE_INSTALL_PREFIX=../install
+make install
+k4_local_repo
+```
+will extract the global paths and set the executables to the local install directory instead of the release. The runscripts therefore will run automatically with the executables modified in the local repository.
+

@@ -17,6 +17,10 @@ mW = 80.379
 sample_format = hepmc
 ?hepmc_output_cross_section = true
 ?write_raw = false
+?resonance_history = true
+
+resonance_on_shell_limit = 16
+resonance_on_shell_turnoff = 2
 ?unweighted = true
 compile
 simulate (proc) { iterations = 5:5000}
