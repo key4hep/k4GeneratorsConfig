@@ -8,7 +8,7 @@ The command line options are specific to the type of execution requested with th
 
 which is used as the location of the generator datacards and run scripts to be produced and/or to be run.
 
-## Making
+## Make
 
 The creation of datacards is triggered by `--make`
 
@@ -24,7 +24,7 @@ The creation of datacards is triggered by `--make`
 | --key4hepVersion      | string (date)    | ---     | Specific Key4HEP release in YYYY-MM-DD format |
 | --key4hepUseNightlies | flag             | false   | Use nightly Key4HEP builds instead of stable releases |
 
-## Comparing
+## Compare
 
 The comparison of datacards is triggered by `--check`
 
@@ -34,7 +34,7 @@ The comparison of datacards is triggered by `--check`
 |  --refDir             | string           | k4GeneratorsConfig/test/ref-results | path to the reference files |
 | --generator           | string           | All     | generator to be run      |
 
-## Generating
+## Generate
 
 The generation of the events is triggered by `--generate`
 
@@ -43,7 +43,7 @@ The generation of the events is triggered by `--generate`
 | --generate            | flag             | false   | run the event generation |
 | --generator           | string           | All     | generator to be run      |
 
-## Summarizing
+## Summarize
 
 The generation of the events is triggered by `--summary`
 
