@@ -4,6 +4,7 @@ The following are a list of user settings that are common to all event generator
 ## General Settings
 
 - **Generators**: A list of generators {cite}`Alwall:2014hca,Bahr:2008pv,Kilian:2007gr,Sherpa:2024mfk,Bierlich:2022pfr,Jadach:2022mbe,CarloniCalame:2000pz,Campbell:2022qmc,Bellm:2015jjp` whose runcards should be generated. One generator must be specified from the currently supported set of:
+
 ```yaml
 Generators:
   - Babayaga
