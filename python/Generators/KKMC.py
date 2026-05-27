@@ -48,7 +48,7 @@ class KKMC(GeneratorBase):
         if len(finalstate) != 2:
             print("WARNING: KKMC is only for e+e- -> f fbar")
             sys.exit()
-        if abs(int(finalstate[0])) != abs(int(finalstate[1])):
+        if abs(int(finalstate[0])) != abs(int(finalstate[1])) or abs(int(finalstate[0])) > 16 or (abs(int(finalstate[0])) > 5 and abs(int(finalstate[0])) < 11):
             print(f"WARNING: Final states {finalstate} not allowed in KKMC")
             sys.exit()
         self.finalstate = self.pdg_to_KKMC(finalstate[0])

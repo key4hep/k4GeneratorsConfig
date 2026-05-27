@@ -25,6 +25,10 @@ class PythiaProcDB(ProcDBBase):
 
         # choose as function of DBTag
         tag = self.process.get_DBTag()
+        # allow for e+e- and mu+mu- initial state
+        if tag[0] == [-11.11] or tag[0] == [-13,13]:
+            tag[0] = [-11,11]
+        # tag prepared compare
         if tag == [[-11,11],[-1,1]]:
             self.write_Difermion(1)
         elif tag == [[-11,11],[-2,2]]:
@@ -57,6 +61,8 @@ class PythiaProcDB(ProcDBBase):
             self.write_run_ZH()
         elif tag == [[-11,11],[-12,12,25]]:
             self.write_run_Hnunu()
+        else:
+            print(f"WARNING: Process {tag} not implemented in PythiaProcDB")
 
     def write_Difermion(self, pdg):
         self.procdict['WeakSingleBoson:ffbar2gmZ'] = "on"
