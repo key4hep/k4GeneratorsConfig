@@ -1,4 +1,5 @@
 from abc import ABC,abstractmethod
+import sys
 import importlib
 import os, stat
 import math
@@ -18,6 +19,10 @@ class GeneratorBase(ABC):
         self.name = name
         self.procDBName = f"{name}ProcDB"
         self.inputFileExtension    = inputFileExtension
+
+        # basic checks
+        self.canDoBeamstrahlung(["Madgraph", "Whizard"])
+        self.canDoPolarisation(["Sherpa", "Madgraph", "Whizard"])
 
         # set the Selectors Dictionary
         self.selectorsDict = dict()
@@ -113,6 +118,20 @@ class GeneratorBase(ABC):
             self.procDB.execute()
             self.procDBparameters  = self.procDB.getDictParameters()
             self.procDBparticles   = self.procDB.getDictParticles()
+
+    def canDoBeamstrahlung(self, list):
+        if self.procinfo.get("beamstrahlung") is not None:
+            if self.name not in list:
+                print(f"WARNING: Generator {self.name} not available for Beamstrahlung")
+                sys.exit()
+
+    def canDoPolarisation(self, list):
+        # Check Polarisation
+        polFraction = self.procinfo.get_PolarisationFraction();
+        if any(item != 0. for item in polFraction):
+            if self.name not in list:
+                print(f"WARNING: Generator {self.name} not available for Polarisation")
+                sys.exit()
 
     def getModel(self):
         theModel = ""
