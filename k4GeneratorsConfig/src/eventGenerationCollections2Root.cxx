@@ -417,7 +417,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
         mg->Add(m_xsectionGraphs[indexProcGen], "AP");
         label.clear();
         label.str("");
-        label << m_generatorsList[gen] << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2)
+        label << m_generatorsList[gen] << " #chi^{2}/^{}ndf = " << std::scientific << std::setprecision(2)
               << std::showpoint << m_xsectionChi2[indexProcGen];
         // update the legend entry
         topLegend->AddEntry(m_xsectionGraphs[indexProcGen], label.str().c_str());
@@ -595,10 +595,10 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
           std::stringstream message;
           message << m_procSqrtsList[proc].first << "::Generator:" << theGenerator
                   << " sqrt(s)=" << m_procSqrtsList[proc].second << "GeV " << theDelta->GetXaxis()->GetTitle()
-                  << " Chi2/dof = " << chi2;
+                  << " Chi2/ndf = " << chi2;
           m_log.push_back(message.str());
           // now we should try to update the title of the histo (obj) in the top pad (delta is a copy)
-          label << theGenerator << " #chi^{2}/^{}dof = " << std::scientific << std::setprecision(2) << std::showpoint
+          label << theGenerator << " #chi^{2}/^{}ndf = " << std::scientific << std::setprecision(2) << std::showpoint
                 << chi2;
           // update the legend entry
           topLegend->AddEntry(theOriginal, label.str().c_str());
