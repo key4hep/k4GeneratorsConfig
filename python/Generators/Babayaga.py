@@ -1,3 +1,4 @@
+import sys
 from .GeneratorBase import GeneratorBase
 
 class Babayaga(GeneratorBase):
@@ -36,7 +37,12 @@ class Babayaga(GeneratorBase):
             )
             return
 
-        self.finalstate = "".join(map(self.pdg_to_babayaga, self.procinfo.get_finalstate_pdgList()))
+        allowedFinalState = [ 11, 13, 22]
+        finalstate = self.procinfo.get_finalstate_pdgList()
+        if len(finalstate) != 2 or abs(int(finalstate[0])) != abs(int(finalstate[1])) or abs(int(finalstate[0])) not in allowedFinalState:
+            print(f"ERROR:Final state requested for Babayaga {finalstate[0]},{finalstate[1]} not possible")
+            sys.exit()
+        self.finalstate = "".join(map(self.pdg_to_babayaga, finalstate))
         self.add2GeneratorDatacard(f"fs {self.finalstate}\n")
 
         self.addOption2GeneratorDatacard("seed", self.procinfo.get_rndmSeed())

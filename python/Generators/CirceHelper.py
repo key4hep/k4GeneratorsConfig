@@ -29,7 +29,7 @@ class CirceHelper:
             for item in self.circeData[accel]:
                 for ecm in item.keys():
                     if float(sqrts) == float(ecm):
-                        # use the key that is presnet to avoid problems
+                        # use the key that is present to avoid problems
                         filename = item[ecm]
             if filename is not None:
                 self.File = filename
