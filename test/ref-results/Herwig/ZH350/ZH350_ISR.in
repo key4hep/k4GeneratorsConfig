@@ -1,0 +1,22 @@
+set Seed 42
+set EventHandler:BeamA /Herwig/Particles/e-
+set EventHandler:BeamB /Herwig/Particles/e+
+cd /Herwig/Generatorsset EventGenerator:EventHandler:LuminosityFunction:Energy 350
+set EventGenerator:NumberOfEvents 10000
+
+set /Herwig/Shower/SplittingGenerator:ISR Yes
+set /Herwig/Shower/SplittingGenerator:FSR No
+set LOAlphaS:input_alpha_s 0.1184
+set EW/AlphaEM 137.035999139
+set EW/Sin2ThetaW 0.23155
+set ZMass 91.1876
+set ZWidth 2.4952
+set TopMass 172
+set TopWidth 1.50833649
+set HiggsMass 125
+set hWidth 0.00407
+set WWidth 2.085
+set WMass 80.379
+cd /Herwig/MatrixElements  
+read snippets/EECollider.in  
+insert SubProcess:MatrixElements 0 MEee2ZH

@@ -28,7 +28,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
   TGaxis::SetExponentOffset(-0.08, -0.12, "y");
 
   // define the generator colors (as offset)
-  std::vector<std::string> genNames = {"Madgraph", "Sherpa", "Whizard", "KKMC", "Pythia", "Babayaga"};
+  std::vector<std::string> genNames = {"Madgraph", "Sherpa", "Whizard", "KKMC", "Pythia", "Babayaga", "Herwig"};
   for (unsigned int i = 0; i < genNames.size(); i++) {
     m_generatorColorOffset[genNames[i]] = i;
   }
