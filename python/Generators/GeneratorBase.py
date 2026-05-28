@@ -1,4 +1,5 @@
 from abc import ABC,abstractmethod
+import sys
 import importlib
 import os, stat
 import math
@@ -12,6 +13,8 @@ class GeneratorBase(ABC):
     """GeneratorBase class"""
 
     def __init__(self, procinfo, name, inputFileExtension):
+        # BST positive list
+        BSTList = ["Madgraph","Whizard"]
 
         # general settings of the class
         self.procinfo = procinfo
@@ -50,6 +53,10 @@ class GeneratorBase(ABC):
                     "_BST" + self.procinfo.beamstrahlung.lower()
                 )
                 self.key4hepScript += "_BST" + self.procinfo.beamstrahlung.lower()
+                # also do a positive check
+                if self.name not in BSTList:
+                    print(f"WARNING: Generator {self.name} not available for Beasmtrahlung")
+                    sys.exit()
 
         # take care of the extensions of the filenames
         self.GeneratorDatacardName = (
