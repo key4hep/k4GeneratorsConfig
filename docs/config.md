@@ -1,19 +1,25 @@
-# General Settings
+# Settings
 The following are a list of user settings that are common to all event generators. Note that the input key is case-insensitive.
 
-- **Generators**: A list of generators {cite}`Alwall:2014hca,Kilian:2007gr,Sherpa:2024mfk,Bierlich:2022pfr,Jadach:2022mbe,CarloniCalame:2000pz,Campbell:2022qmc,Bellm:2015jjp` whose runcards should be generated. One generator must be specified
+## General Settings
+
+- **Generators**: A list of generators {cite}`Alwall:2014hca,Bahr:2008pv,Kilian:2007gr,Sherpa:2024mfk,Bierlich:2022pfr,Jadach:2022mbe,CarloniCalame:2000pz,Campbell:2022qmc,Bellm:2015jjp` whose runcards should be generated. One generator must be specified from the currently supported set of:
+
 ```yaml
 Generators:
+  - Babayaga
+  - Herwig
+  - Madgraph
+  - Pythia
   - Sherpa
   - Whizard
-  - Madgraph
 
 ```
 - **Model**: Name of the model (default: SM)
 
 - **SqrtS**: $\sqrt{s}$ in GeV.
 
-- **ISRMode**: Enable ISR via electron structure function:
+- **ISRMode**: Enable Initial State Radiation (ISR):
 ```yaml
 ISRMode: 1
 ```
@@ -32,7 +38,7 @@ default: 0 (turned off)
 - **NLO**: integer to turn on/off NLO with default: 0 (off)
 
 - **Processes**: A list of processes which runcards should be generated. Each process should have its own unique name. Under these headings you can
-				 specify the final states to be generated and at what order e.g [EW,QCD].
+				 specify the initial and final states, a list of pdg codes, to be generated and at what order e.g [EW,QCD].
 ```yaml
 Processes:
   Muon:
@@ -49,7 +55,11 @@ Processes:
      Final: [16, -16]
 ```
 
-- **ParticleData**: Here the user can set various particle properties such as mass and width. Note it is expected of the user to set a consistent input scheme.
+## Particle Data
+
+Particle properties can be modified with respect to the default:
+
+- **ParticleData**: The user can set various particle properties such as mass and width. Note it is expected of the user to set a consistent input scheme.
 					The particles are identified using the corresponding PDG number
 
 ```yaml
@@ -68,6 +78,9 @@ ParticleData:
     width: 2.085
 ```
 
+## Phase Space
+
+By default, no restrictions are applied on the available phase space. If necessary:
 - **Selectors**: Some basic one and two particle phasespace cuts can be set. Each will need to be set with a minimum and maximum value as well as the flavour(s)
 				it should be applied to.
   - **One Particle Selectors**:
@@ -89,7 +102,7 @@ ParticleData:
 Here we summarise the settings available to a subset of generators.
 
 
-- **Beam Polarization**: Polarized beams are available for Madgraph and Whizard. It can be set as follows
+- **Beam Polarization**: Polarized beams are available for Madgraph, Sherpa and Whizard. It can be set as follows
 ```yaml
 PositronPolarisation: 0.3
 ElectronPolarisation: 0.8

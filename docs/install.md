@@ -21,19 +21,10 @@ source /path/to/k4GeneratorsConfig/setup.(tc)(z)sh
 ```
 The setup script will check that python3 is available on your machine.
 
-Once you have written your own inputfile(`input.yaml`), as seen in the [examples](https://github.com/key4hep/k4GeneratorsConfig/tree/main/examples), execute the following:
 
-```
-k4GeneratorsConfig input.yaml
-```
+## Key4hep
 
-This will create a directory containing the desired runcards. The directory can be set in the inputfile as:
-```yaml
-OutDir: /path/to/out
-```
-
-## Generating events: after the git clone
-The commands above create input files for all generators as well as a run script. This run script contains a conversion to the EDM4HEP format. It is therefore necessary to compile the converter provided in this package against the KEY4HEP release you will be using. The first command can be omitted if you are in the BASH shell:
+The package is part of Key4hep, to compile the code:
 ```bash
 bash
 source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
@@ -45,3 +36,16 @@ cd /path/to/out
 ./Run_PROCESSNAME.sh
 ```
 ⚠️ **Warning**: Always run this scheme as cmake and make set up the environment variables correctly for the execution of the generation step
+
+## Key4hep with local modifications
+
+Setting up with
+```bash
+source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
+cd build
+cmake ../CMakeLists.txt -DCMAKE_INSTALL_PREFIX=../install
+make install
+k4_local_repo
+```
+will extract the global paths and set the executables to the local install directory instead of the release. The runscripts therefore will run automatically with the executables modified in the local repository.
+

@@ -1,0 +1,37 @@
+#************************************************************
+#*                        MadGraph 5                        *
+#*                                                          *
+#*                *                       *                 *
+#*                  *        * *        *                   *
+#*                    * * * * 5 * * * *                     *
+#*                  *        * *        *                   *
+#*                *                       *                 *
+#*                                                          *
+#*                                                          *
+#*    The MadGraph Development Team - Please visit us at    *
+#*    https://server06.fynu.ucl.ac.be/projects/madgraph     *
+#*                                                          *
+#************************************************************
+#*                                                          *
+#*               Command File for MadGraph 5                *
+#*                                                          *
+#*     run as ./bin/mg5_aMC  filename                       *
+#*                                                          *
+#************************************************************"
+import model loop_qcd_qed_sm_Gmu-full
+generate mu- mu+ > Z H 
+output Output
+launch 
+set iseed 4711
+set EBEAM 125.0
+set aS 0.1184
+set GF 1.16637e-05
+set MZ 91.1876
+set WZ 2.4952
+set Mt 172
+set Wt 1.50833649
+set MH 125
+set WH 0.00407
+set MW 80.379
+set WW 2.085
+set nevents 10020
