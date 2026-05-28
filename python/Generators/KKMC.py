@@ -106,6 +106,10 @@ class KKMC(GeneratorBase):
             return ""
         return parameterDict[param]
 
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
+
     def getParticleProperty(self, d):
         name = None
         if d == "mass":

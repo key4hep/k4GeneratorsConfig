@@ -111,6 +111,9 @@ class Herwig(GeneratorBase):
     def getParameterOperator(self, name):
         return f"set {name}"
 
+    def getParticlePropertyUnit(self):
+        return "*GeV"
+
     def getParticleProperty(self, d):
         name = None
         if d == "mass":
@@ -120,10 +123,8 @@ class Herwig(GeneratorBase):
         return name
 
     def getParticleOperator(self, pdg, prop):
-        pdgString = self.pdg_to_herwig(abs(int(pdg)), signed=False)
-        if pdgString == "Higgs" and prop == "Width":
-            pdgString = "h"
-        return f"set {pdgString}{prop}"
+        pdgString = self.pdg_to_herwig(abs(int(pdg)))
+        return f"set /Herwig/Particles/{pdgString}:Nominal{prop}"
 
     def getModelName(self):
         # not needed for Herwig
@@ -132,7 +133,12 @@ class Herwig(GeneratorBase):
     def pdg_to_herwig(self, pdg, signed=True):
         apdg = abs(pdg)
         if type(pdg) is int:
-            particle_mapping = {6: "Top", 11: "e", 23: "Z", 25: "Higgs", 24: "W"}
+            particle_mapping = {1: "d", 52: "u", 3: "s", 4: "c", 5: "b", 6: "t",
+                                11: "e", 13: "mu", 15: "tau",
+                                12: "nu_e", 14: "nu_mu", 16: "nu_tau",
+                                21: "g",
+                                22: "gamma", 23: "Z0", 24: "W",
+                                25: "h0"}
             particle = particle_mapping.get(apdg,"ERROR")
             if not signed:
                 return particle

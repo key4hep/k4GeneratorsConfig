@@ -9,14 +9,14 @@ set /Herwig/Shower/SplittingGenerator:FSR No
 set LOAlphaS:input_alpha_s 0.1184
 set EW/AlphaEM 137.035999139
 set EW/Sin2ThetaW 0.23155
-set ZMass 91.1876
-set ZWidth 2.4952
-set TopMass 172
-set TopWidth 1.50833649
-set HiggsMass 125
-set hWidth 0.00407
-set WWidth 2.085
-set WMass 80.379
+set /Herwig/Particles/Z0:NominalMass 91.1876
+set /Herwig/Particles/Z0:NominalWidth 2.4952
+set /Herwig/Particles/t:NominalMass 172
+set /Herwig/Particles/t:NominalWidth 1.50833649
+set /Herwig/Particles/h0:NominalMass 125
+set /Herwig/Particles/h0:NominalWidth 0.00407
+set /Herwig/Particles/W+:NominalWidth 2.085
+set /Herwig/Particles/W+:NominalMass 80.379
 cd /Herwig/MatrixElements  
 read snippets/EECollider.in  
 insert SubProcess:MatrixElements 0 MEee2ZH

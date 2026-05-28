@@ -270,6 +270,10 @@ class Madgraph(GeneratorBase):
     def getGeneratorCommand(self,key,value):
         return f"{key} {value}"
 
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
+
     def getParticleProperty(self, d):
         if d == "mass":
             return "M"

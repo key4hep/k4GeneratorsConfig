@@ -209,6 +209,10 @@ class Sherpa(GeneratorBase):
     def getGeneratorCommand(self,key,value):
         return f"{key}: {value}"
 
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
+
     def getParticleProperty(self, d):
         name = None
         d = d.lower()

@@ -323,7 +323,7 @@ class GeneratorBase(ABC):
     def getGeneratorCommand(self,key,value):
         pass
 
-    def addOption2GeneratorDatacard(self,key,value,replace=True):
+    def addOption2GeneratorDatacard(self,key,value,unit="",replace=True):
         # check if the key is already defined in the datacard, then we take the last one (TBC):
         if replace is True:
             if key in self.__datacardContent:
@@ -440,13 +440,18 @@ class GeneratorBase(ABC):
             for attr in particle:
                 value = particle[attr]
                 prop  = self.getParticleProperty(attr)
+                unit  = self.getParticlePropertyUnit()
                 # writing out
                 if prop is not None:
                     command = self.getParticleOperator(pdg,prop)
                     if add2Datacard is True:
-                        self.addOption2GeneratorDatacard(command, value,replace=False)
+                        self.addOption2GeneratorDatacard(command, value, unit, replace=False)
                     else:
                         self.replaceOptionInGeneratorDatacard(command,value)
+
+    @abstractmethod
+    def getParticlePropertyUnit(self):
+        pass
 
     @abstractmethod
     def getParticleProperty(self, attr):
