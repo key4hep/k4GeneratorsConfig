@@ -40,9 +40,9 @@ class HerwigProcDB(ProcDBBase):
         elif tag == [[-11,11],[-16,16]]:
             self.write_Difermion(16)
         elif tag == [[-11,11],[23,23]]:
-            self.write_ZZ()
+            self.write_WeakBosonPair(23)
         elif tag == [[-11,11],[24,24]]:
-            self.write_WW()
+            self.write_WeakBosonPair(24)
         elif tag == [[-11,11],[23,25]]:
             self.write_run_ZH()
         elif tag == [[-11,11],[-12,12,25]]:
@@ -51,17 +51,24 @@ class HerwigProcDB(ProcDBBase):
             print(f"WARNING: Process {tag} not implemented in HerwigProcDB")
 
     def write_Difermion(self, pdg):
+        MatrixElement = None
         if pdg < 6:
-            self.procdict['insert SubProcess:MatrixElements 0'] = "MEee2gZ2qq"
+            MatrixElement = "MEee2gZ2qq"
         elif pdg > 10 and pdg < 17:
-            self.procdict['insert SubProcess:MatrixElements 0'] = "MEee2gZ2ll"
+            MatrixElement = "MEee2gZ2ll"
 
-    def write_ZZ(self):
-        self.procdict['insert SubProcess:MatrixElements 0'] = "MEee2VV"
+        # set the matrix element etc:
+        if MatrixElement is not None:
+            self.procdict['insert SubProcess:MatrixElements 0'] = MatrixElement
+            self.procdict[f"set {MatrixElement}:MinimumFlavour"] = f"{pdg}"
+            self.procdict[f"set {MatrixElement}:MaximumFlavour"] = f"{pdg}"
 
-    def write_WW(self):
-        self.procdict['insert SubProcess:MatrixElements 0'] = "MEee2VV"
-
+    def write_WeakBosonPair(self, pdg):
+        MatrixElement = "MEee2VV"
+        self.procdict['insert SubProcess:MatrixElements 0'] = MatrixElement
+        self.procdict[f"set {MatrixElement}:MinimumFlavour"] = f"{pdg}"
+        self.procdict[f"set {MatrixElement}:MaximumFlavour"] = f"{pdg}"
+        
     def write_run_ZH(self):
         self.procdict['insert SubProcess:MatrixElements 0'] = "MEee2ZH"
 
