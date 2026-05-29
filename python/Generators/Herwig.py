@@ -30,9 +30,9 @@ class Herwig(GeneratorBase):
         #self.fill_decay()
 
     def fill_run(self):
-        
-        initialState = [self.procinfo.get_beam_flavour(1), self.procinfo.get_beam_flavour(2)] 
-        if initialState == [11,-11]:
+
+        initialState = [self.procinfo.get_beam_flavour(1), self.procinfo.get_beam_flavour(2)]
+        if initialState[0]*initialState[1] == -121:
             self.add2GeneratorDatacard("read snippets/EECollider.in\n")
 
         beamA = self.pdg_to_herwig(initialState[0])
