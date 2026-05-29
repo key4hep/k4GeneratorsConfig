@@ -27,7 +27,8 @@ class Herwig(GeneratorBase):
     def fill_datacard(self):
         # prepare the datacard
         self.fill_run()
-        #self.fill_decay()
+        # as a last step we need to add the writing out of the EventGenerator
+        self.add2GeneratorDatacard(f"saverun {self.GeneratorDatacardBase} EventGenerator\n")
 
     def fill_run(self):
 
@@ -38,8 +39,8 @@ class Herwig(GeneratorBase):
         beamA = self.pdg_to_herwig(initialState[0])
         beamB = self.pdg_to_herwig(initialState[1])
 
-        self.addOption2GeneratorDatacard("set EventHandler:BeamA", f"/Herwig/Particles/{beamA}")
-        self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}")
+        self.addOption2GeneratorDatacard("set EventHandler:BeamA", f"/Herwig/Particles/{beamA}*GeV")
+        self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}*GeV")
 
         self.add2GeneratorDatacard("cd /Herwig/Generators\n")
         self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:LuminosityFunction:Energy",self.procinfo.get("sqrts"))
@@ -67,7 +68,7 @@ class Herwig(GeneratorBase):
         self.prepareParticles()
 
         # add the procDB settings
-        self.add2GeneratorDatacard("cd /Herwig/MatrixElements")
+        self.add2GeneratorDatacard("cd /Herwig/MatrixElements\n")
         for key in self.procDB.getDict():
             value = self.procDB.getDict()[key]
             self.addOption2GeneratorDatacard(key,value)
@@ -76,6 +77,11 @@ class Herwig(GeneratorBase):
         if self.gen_settings is not None:
             for key, value in self.gen_settings.items():
                 self.addOption2GeneratorDatacard(key, value)
+
+        # activate writing out the HepMC file
+        self.add2GeneratorDatacard("cd /Herwig/Analysis\n")
+        self.add2GeneratorDatacard("insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 HepMCFile\n")
+
 
     def fill_decay(self):
         #if self.procinfo.get("decay"):

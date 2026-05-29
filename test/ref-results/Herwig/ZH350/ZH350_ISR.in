@@ -1,6 +1,6 @@
 read snippets/EECollider.in
-set EventHandler:BeamA /Herwig/Particles/e-
-set EventHandler:BeamB /Herwig/Particles/e+
+set EventHandler:BeamA /Herwig/Particles/e-*GeV
+set EventHandler:BeamB /Herwig/Particles/e+*GeV
 cd /Herwig/Generators
 set EventGenerator:EventHandler:LuminosityFunction:Energy 350
 set EventGenerator:NumberOfEvents 10000
@@ -18,4 +18,8 @@ set /Herwig/Particles/h0:NominalMass 125
 set /Herwig/Particles/h0:NominalWidth 0.00407
 set /Herwig/Particles/W+:NominalWidth 2.085
 set /Herwig/Particles/W+:NominalMass 80.379
-cd /Herwig/MatrixElementsinsert SubProcess:MatrixElements 0 MEee2ZH
+cd /Herwig/MatrixElements
+insert SubProcess:MatrixElements 0 MEee2ZH
+cd /Herwig/Analysis
+insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 HepMCFile
+saverun ZH350_ISR EventGenerator
