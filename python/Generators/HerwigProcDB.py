@@ -65,7 +65,7 @@ class HerwigProcDB(ProcDBBase):
         self.procdict['insert SubProcess:MatrixElements 0'] = MatrixElement
         self.procdict[f"set {MatrixElement}:MinimumFlavour"] = f"{pdg}"
         self.procdict[f"set {MatrixElement}:MaximumFlavour"] = f"{pdg}"
-        
+
     def write_run_ZH(self):
         self.procdict['insert SubProcess:MatrixElements 0'] = "MEee2ZH"
 
