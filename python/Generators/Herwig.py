@@ -30,18 +30,23 @@ class Herwig(GeneratorBase):
         #self.fill_decay()
 
     def fill_run(self):
-        self.addOption2GeneratorDatacard("set Seed", self.procinfo.get_rndmSeed())
+        
+        initialState = [self.procinfo.get_beam_flavour(1), self.procinfo.get_beam_flavour(2)] 
+        if initialState == [11,-11]:
+            self.add2GeneratorDatacard("read snippets/EECollider.in\n")
 
-        beamA = self.pdg_to_herwig(self.procinfo.get_beam_flavour(1))
-        beamB = self.pdg_to_herwig(self.procinfo.get_beam_flavour(2))
+        beamA = self.pdg_to_herwig(initialState[0])
+        beamB = self.pdg_to_herwig(initialState[1])
+
         self.addOption2GeneratorDatacard("set EventHandler:BeamA", f"/Herwig/Particles/{beamA}")
         self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}")
 
-        self.add2GeneratorDatacard("cd /Herwig/Generators")
+        self.add2GeneratorDatacard("cd /Herwig/Generators\n")
         self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:LuminosityFunction:Energy",self.procinfo.get("sqrts"))
 
         self.addOption2GeneratorDatacard("set EventGenerator:NumberOfEvents", self.procinfo.settings.get_nevents())
-        self.add2GeneratorDatacard("\n")
+
+        self.addOption2GeneratorDatacard("set EventGenerator/RandomNumberGenerator/Seed", self.procinfo.get_rndmSeed())
 
         # ISR
         if self.procinfo.get("isrmode"):
@@ -62,6 +67,7 @@ class Herwig(GeneratorBase):
         self.prepareParticles()
 
         # add the procDB settings
+        self.add2GeneratorDatacard("cd /Herwig/MatrixElements")
         for key in self.procDB.getDict():
             value = self.procDB.getDict()[key]
             self.addOption2GeneratorDatacard(key,value)

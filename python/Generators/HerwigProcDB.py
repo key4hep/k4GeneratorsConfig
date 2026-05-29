@@ -11,10 +11,7 @@ class HerwigProcDB(ProcDBBase):
     def execute(self):
         # general stuff
         # choose as function of DBTag
-        self.rundict['cd /Herwig/MatrixElements'] = " "
         tag = copy.deepcopy(self.process.get_DBTag())
-        if tag[0] == [-11,11]:
-            self.rundict['read snippets/EECollider.in'] = " "
         # allow for e+e- and mu+mu- initial state
         if tag[0] == [-11.11] or tag[0] == [-13,13]:
             tag[0] = [-11,11]

@@ -1,9 +1,10 @@
-set Seed 4711
+read snippets/EECollider.in
 set EventHandler:BeamA /Herwig/Particles/e-
 set EventHandler:BeamB /Herwig/Particles/e+
-cd /Herwig/Generatorsset EventGenerator:EventHandler:LuminosityFunction:Energy 250.0
+cd /Herwig/Generators
+set EventGenerator:EventHandler:LuminosityFunction:Energy 250.0
 set EventGenerator:NumberOfEvents 10000
-
+set EventGenerator/RandomNumberGenerator/Seed 4711
 set /Herwig/Shower/SplittingGenerator:ISR Yes
 set /Herwig/Shower/SplittingGenerator:FSR No
 set LOAlphaS:input_alpha_s 0.1184
@@ -17,6 +18,4 @@ set /Herwig/Particles/h0:NominalMass 125
 set /Herwig/Particles/h0:NominalWidth 0.00407
 set /Herwig/Particles/W+:NominalWidth 2.085
 set /Herwig/Particles/W+:NominalMass 80.379
-cd /Herwig/MatrixElements  
-read snippets/EECollider.in  
-insert SubProcess:MatrixElements 0 MEee2ZH
+cd /Herwig/MatrixElementsinsert SubProcess:MatrixElements 0 MEee2ZH
