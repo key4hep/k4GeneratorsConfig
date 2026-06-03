@@ -43,7 +43,7 @@ class Herwig(GeneratorBase):
         self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}")
 
         self.add2GeneratorDatacard("cd /Herwig/Generators\n")
-        self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:LuminosityFunction:Energy",str(self.procinfo.get("sqrts"))+"*GeV")
+        self.addOption2GeneratorDatacard("set /Herwig/EventHandlers/Luminosity:Energy",str(self.procinfo.get("sqrts"))+"*GeV")
 
         self.addOption2GeneratorDatacard("set EventGenerator:NumberOfEvents", self.procinfo.settings.get_nevents())
 
@@ -112,10 +112,26 @@ class Herwig(GeneratorBase):
         return parameterDict[param]
 
     def setSelectorsDict(self):
-        pass
+        # set up the correspondance between the yamlInput and the Sherpa convention
+        self.selectorsDict['eta']   = "Eta"
+        self.selectorsDict['pt']   = "KT"
+        self.selectorsDict['et']   = "KT"
 
     def add1ParticleSelector2Card(self, sel, name):
-        pass
+        # if the unit is deg or rad, we need to change it:
+        unit = ""
+        if sel.get_unit() == "rad" or sel.get_unit() == "deg":
+            unit = "eta"
+        Min, Max = sel.get_MinMax(unit)
+        f1 = sel.get_Flavours()
+        for f in f1:
+            particle = self.pdg_to_herwig(f)
+            sname = f"set /Herwig/Cuts/{particle}:Min{name}Cut {Min}"
+            if f"set /Herwig/Cuts/{f}:Min{name}Cut" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+            sname = f"set /Herwig/Cuts/{f}:Max{name}Cut {Max}"
+            if f"set /Herwig/Cuts/{f}:Max{name}Cut" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
 
     def add2ParticleSelector2Card(self, sel, name):
         pass
