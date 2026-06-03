@@ -39,11 +39,11 @@ class Herwig(GeneratorBase):
         beamA = self.pdg_to_herwig(initialState[0])
         beamB = self.pdg_to_herwig(initialState[1])
 
-        self.addOption2GeneratorDatacard("set EventHandler:BeamA", f"/Herwig/Particles/{beamA}*GeV")
-        self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}*GeV")
+        self.addOption2GeneratorDatacard("set EventHandler:BeamA", f"/Herwig/Particles/{beamA}")
+        self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}")
 
         self.add2GeneratorDatacard("cd /Herwig/Generators\n")
-        self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:LuminosityFunction:Energy",self.procinfo.get("sqrts"))
+        self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:LuminosityFunction:Energy",str(self.procinfo.get("sqrts"))+"*GeV")
 
         self.addOption2GeneratorDatacard("set EventGenerator:NumberOfEvents", self.procinfo.settings.get_nevents())
 
