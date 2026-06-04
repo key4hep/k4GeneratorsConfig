@@ -112,7 +112,7 @@ class Herwig(GeneratorBase):
     def getParameterLabel(self, param):
         parameterDict = { 'alphaEMM1' : 'EW/AlphaEM',
                           'sin2theta' : 'EW/Sin2ThetaW',
-                          'alphaSMZ' : 'LOAlphaS:input_alpha_s'}
+                          'alphaSMZ' : '/Herwig/DipoleShower/NLOAlphaS:input_alpha_s'}
         # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Herwig: parameter {param} has no translation in Herwig Parameter Dictionary")
