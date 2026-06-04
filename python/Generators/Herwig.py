@@ -12,7 +12,8 @@ class Herwig(GeneratorBase):
 
     def setModelParameters(self):
         # no alphaS and MZ, these are default
-        self.addModelParameter('alphaEMM1')
+        self.addModelParameter('GFermi')
+        self.addModelParameter('alphaEM')
         self.addModelParameter('sin2theta')
         self.addModelParticleProperty(pdg_code=23, property_type='mass')
         self.addModelParticleProperty(pdg_code=23, property_type='width')
@@ -110,9 +111,10 @@ class Herwig(GeneratorBase):
         return f"{key} {value}"
 
     def getParameterLabel(self, param):
-        parameterDict = { 'alphaEMM1' : 'EW/AlphaEM',
-                          'sin2theta' : 'EW/Sin2ThetaW',
-                          'alphaSMZ' : '/Herwig/DipoleShower/NLOAlphaS:input_alpha_s'}
+        parameterDict = { 'GFermi' : '/Herwig/Model:EW/FermiConstant',
+                          'alphaEM' : '/Herwig/Model:EW/AlphaEM',
+                          'sin2theta' : '/Herwig/Model:EW/Sin2ThetaW',
+                          'alphaSMZ' : '/Herwig/Model:QCD/AlphaS'}
         # alphas could be SigmaProcess:alphaSvalue
         if param not in parameterDict.keys():
             print(f"Warning::Herwig: parameter {param} has no translation in Herwig Parameter Dictionary")
