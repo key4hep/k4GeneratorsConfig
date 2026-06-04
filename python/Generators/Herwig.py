@@ -39,27 +39,30 @@ class Herwig(GeneratorBase):
         beamA = self.pdg_to_herwig(initialState[0])
         beamB = self.pdg_to_herwig(initialState[1])
 
-        self.addOption2GeneratorDatacard("set EventHandler:BeamA", f"/Herwig/Particles/{beamA}")
-        self.addOption2GeneratorDatacard("set EventHandler:BeamB", f"/Herwig/Particles/{beamB}")
-
         self.add2GeneratorDatacard("cd /Herwig/Generators\n")
+        self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:BeamA", f"/Herwig/Particles/{beamA}")
+        self.addOption2GeneratorDatacard("set EventGenerator:EventHandler:BeamB", f"/Herwig/Particles/{beamB}")
         self.addOption2GeneratorDatacard("set /Herwig/EventHandlers/Luminosity:Energy",str(self.procinfo.get("sqrts"))+"*GeV")
-
         self.addOption2GeneratorDatacard("set EventGenerator:NumberOfEvents", self.procinfo.settings.get_nevents())
 
-        self.addOption2GeneratorDatacard("set EventGenerator/RandomNumberGenerator/Seed", self.procinfo.get_rndmSeed())
+        self.addOption2GeneratorDatacard("set EventGenerator:RandomNumberGenerator:Seed", self.procinfo.get_rndmSeed())
 
         # ISR
         if self.procinfo.get("isrmode"):
-            self.addOption2GeneratorDatacard("set /Herwig/Shower/SplittingGenerator:ISR", "Yes")
+            print("ISR NOT Implemented")
+            #self.addOption2GeneratorDatacard(f"set /Herwig/Particles/{beamA}:PDF", "/Herwig/Partons/DefaultPDF")
+            #self.addOption2GeneratorDatacard(f"set /Herwig/Particles/{beamB}:PDF", "/Herwig/Partons/DefaultPDF")
         else:
-            self.addOption2GeneratorDatacard("set /Herwig/Shower/SplittingGenerator:ISR", "No")
+            self.addOption2GeneratorDatacard(f"set /Herwig/Particles/{beamA}:PDF", "/Herwig/Partons/NoPDF")
+            self.addOption2GeneratorDatacard(f"set /Herwig/Particles/{beamB}:PDF", "/Herwig/Partons/NoPDF")
 
         # FSR
         if self.procinfo.get("fsrmode"):
-            self.addOption2GeneratorDatacard("set /Herwig/Shower/SplittingGenerator:FSR", "Yes")
+            print("FSR on to be implemented for Herwig")
+            #self.addOption2GeneratorDatacard("set /Herwig/Shower/SplittingGenerator:FSR", "Yes")
         else:
-            self.addOption2GeneratorDatacard("set /Herwig/Shower/SplittingGenerator:FSR", "No")
+            print("FSR on to be implemented for Herwig")
+            #self.addOption2GeneratorDatacard("set /Herwig/Shower/SplittingGenerator:FSR", "No")
 
         # now add the model parameters
         self.prepareParameters()
@@ -79,8 +82,12 @@ class Herwig(GeneratorBase):
                 self.addOption2GeneratorDatacard(key, value)
 
         # activate writing out the HepMC file
-        self.add2GeneratorDatacard("cd /Herwig/Analysis\n")
-        self.add2GeneratorDatacard("insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 HepMCFile\n")
+        self.add2GeneratorDatacard("cd /Herwig/Generators\n")
+        self.add2GeneratorDatacard("insert EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile\n")
+        self.add2GeneratorDatacard(f"set /Herwig/Analysis/HepMCFile:PrintEvent {self.procinfo.settings.get_nevents()}\n")
+        self.add2GeneratorDatacard("set /Herwig/Analysis/HepMCFile:Format GenEvent\n")
+        self.add2GeneratorDatacard("set /Herwig/Analysis/HepMCFile:Units GeV_mm\n")
+        self.add2GeneratorDatacard(f"set /Herwig/Analysis/HepMCFile:Filename {self.GeneratorDatacardBase}.hepmc\n")
 
 
     def fill_decay(self):
@@ -90,11 +97,12 @@ class Herwig(GeneratorBase):
 
     def fill_key4hepScript(self):
         key4hepRun = ""
+        key4hepRun += self.executable + " init\n"
         key4hepRun += self.executable + " read " + self.GeneratorDatacardName + "\n"
         key4hepRun += self.executable + " run " + self.GeneratorDatacardBase + ".run\n"
 
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3 {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 
@@ -145,14 +153,14 @@ class Herwig(GeneratorBase):
     def getParticleProperty(self, d):
         name = None
         if d == "mass":
-            name = "Mass"
+            name = "NominalMass"
         if d == "width":
             name = "Width"
         return name
 
     def getParticleOperator(self, pdg, prop):
         pdgString = self.pdg_to_herwig(abs(int(pdg)))
-        return f"set /Herwig/Particles/{pdgString}:Nominal{prop}"
+        return f"set /Herwig/Particles/{pdgString}:{prop}"
 
     def getModelName(self):
         # not needed for Herwig
