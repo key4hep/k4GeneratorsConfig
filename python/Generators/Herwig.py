@@ -128,8 +128,18 @@ class Herwig(GeneratorBase):
     def setSelectorsDict(self):
         # set up the correspondance between the yamlInput and the Sherpa convention
         self.selectorsDict['eta']   = "Eta"
-        self.selectorsDict['pt']   = "KT"
-        self.selectorsDict['et']   = "KT"
+        self.selectorsDict['pt']   = "pt"
+        self.selectorsDict['et']   = "pt"
+        #self.selectorsDict['rapidity'] = "Rapidity"
+        #self.selectorsDict['theta'] = "Eta"
+
+        self.selectorsDict['mass']     = "Mass"
+        #self.selectorsDict['angle']    = "Angle"
+        self.selectorsDict['deltaeta']      = "DeltaR"
+        self.selectorsDict['deltarapidity'] = "DeltaY"
+        #self.selectorsDict['deltaphi']      = "DeltaPhi"
+        #self.selectorsDict['deltar']        = "DeltaR"
+
 
     def add1ParticleSelector2Card(self, sel, name):
         # if the unit is deg or rad, we need to change it:
@@ -139,16 +149,58 @@ class Herwig(GeneratorBase):
         Min, Max = sel.get_MinMax(unit)
         f1 = sel.get_Flavours()
         for f in f1:
-            particle = self.pdg_to_herwig(f)
-            sname = f"set /Herwig/Cuts/{particle}:Min{name}Cut {Min}"
-            if f"set /Herwig/Cuts/{f}:Min{name}Cut" not in self.getGeneratorDatacard():
+            particle = self.pdg_to_herwig4cuts(f)
+            sname = f"insert Cuts:OneCuts 0 {particle}Cut"
+            if sname not in self.getGeneratorDatacard():
                 self.add2GeneratorDatacard(f"{sname}\n")
-            sname = f"set /Herwig/Cuts/{f}:Max{name}Cut {Max}"
-            if f"set /Herwig/Cuts/{f}:Max{name}Cut" not in self.getGeneratorDatacard():
+            sname = f"set /Herwig/Cuts/{particle}Cut:{name}Min {Min}"
+            if f"set /Herwig/Cuts/{particle}Cut:{name}Min" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+            sname = f"set /Herwig/Cuts/{particle}Cut:{name}Max {Max}"
+            if f"set /Herwig/Cuts/{particle}Cut:{name}Cut" not in self.getGeneratorDatacard():
                 self.add2GeneratorDatacard(f"{sname}\n")
 
     def add2ParticleSelector2Card(self, sel, name):
-        pass
+        Min, Max = sel.get_MinMax()
+        flavs = sel.get_Flavours()
+        if len(flavs) == 2:
+            f1 = flavs[0]
+            f2 = flavs[1]
+            if (
+                str(f1) not in self.procinfo.get_finalstate_pdgString()
+                or str(f2) not in self.procinfo.get_finalstate_pdgString()
+            ):
+                return
+            particle = self.pdg_to_herwig4cuts(f1)
+            sname = f"insert Cuts:MultiCuts 0 /Herwig/Cuts/{particle}{name}Cut"
+            if sname not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+            sname = f"set /Herwig/Cuts/{particle}{name}Cut:{name}Min {Min}"
+            if f"set /Herwig/Cuts/{particle}{name}Cut:{name}Min" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+            sname = f"set /Herwig/Cuts/{particle}{name}Cut:{name}Max {Max}"
+            if f"set /Herwig/Cuts/{particle}{name}Cut:{name}Max" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+        else:
+            for fl in flavs:
+                f1 = fl[0]
+                f2 = fl[1]
+                if (
+                    str(f1) not in self.procinfo.get_finalstate_pdgString()
+                    or str(f2) not in self.procinfo.get_finalstate_pdgString()
+                ):
+                    continue
+            particle = self.pdg_to_herwig4cuts(f1)
+            sname = f"insert Cuts:MultiCuts 0 /Herwig/Cuts/{particle}{name}Cut"
+            if sname not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+            sname = f"set /Herwig/Cuts/{particle}{name}Cut:{name}Min {Min}"
+            if f"set /Herwig/Cuts/{particle}{name}Cut:{name}Min" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+            sname = f"set /Herwig/Cuts/{particle}{name}Cut:{name}Max {Max}"
+            if f"set /Herwig/Cuts/{particle}{name}Cut:{name}Max" not in self.getGeneratorDatacard():
+                self.add2GeneratorDatacard(f"{sname}\n")
+
 
     def getParameterOperator(self, name):
         return f"set {name}"
@@ -210,3 +262,18 @@ class Herwig(GeneratorBase):
                         return f"{particle}-"
             else:
                 return f"Cant find Herwig id for pdg {pdg}"
+
+    def pdg_to_herwig4cuts(self, pdg, signed=True):
+        apdg = abs(pdg)
+        if type(pdg) is int:
+            particle_mapping = {5: "BottomQuark", 6: "TopQuark",
+                                11: "ChargedLepton", 13: "ChargedLepton", 15: "ChargedLepton",
+                                12: "Lepton", 14: "Lepton", 16: "Lepton",
+                                22: "Photon", 23: "ZBoson", 24: "WBoson",
+                                25: "HiggsBoson"}
+            particle = particle_mapping.get(apdg,"ERROR")
+            if particle != "ERROR":
+                return particle
+            else:
+                return f"Cant find Herwig cuts id for pdg {pdg}"
+            
