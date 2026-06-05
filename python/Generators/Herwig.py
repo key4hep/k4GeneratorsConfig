@@ -263,7 +263,7 @@ class Herwig(GeneratorBase):
             else:
                 return f"Cant find Herwig id for pdg {pdg}"
 
-    def pdg_to_herwig4cuts(self, pdg, signed=True):
+    def pdg_to_herwig4cuts(self, pdg):
         apdg = abs(pdg)
         if type(pdg) is int:
             particle_mapping = {5: "BottomQuark", 6: "TopQuark",
@@ -276,4 +276,3 @@ class Herwig(GeneratorBase):
                 return particle
             else:
                 return f"Cant find Herwig cuts id for pdg {pdg}"
-            
