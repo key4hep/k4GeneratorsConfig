@@ -98,6 +98,9 @@ class Herwig(GeneratorBase):
 
     def fill_key4hepScript(self):
         key4hepRun = ""
+        key4hepRun += "export HERWIGPATH=$(dirname $(which Herwig))/../share/Herwig/\n"
+        key4hepRun += "cp ${HERWIGPATH}/defaults/*.in .\n"
+        key4hepRun += "ln -sf ${HERWIGPATH}/snippets snippets\n"
         key4hepRun += self.executable + " init\n"
         key4hepRun += self.executable + " read " + self.GeneratorDatacardName + "\n"
         key4hepRun += self.executable + " run " + self.GeneratorDatacardBase + ".run\n"
