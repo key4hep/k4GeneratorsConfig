@@ -6,7 +6,7 @@ set(TEST_TIMEOUT 3500)
 set(EXECUTABLE "${PROJECT_SOURCE_DIR}/python/k4GeneratorsConfig.py")
 
 # the generators to be run
-set(generatorList Babayaga KKMC Madgraph Pythia Sherpa Whizard )
+set(generatorList Babayaga Herwig KKMC Madgraph Pythia Sherpa Whizard )
 
 # generate the run list for the dependencies
 foreach(generator ${generatorList})
