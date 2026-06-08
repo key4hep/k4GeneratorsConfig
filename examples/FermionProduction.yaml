@@ -4,6 +4,7 @@ Generators:
   - Madgraph
   - KKMC
   - Pythia
+  - Herwig
 
 OutputFormat: edm4hep
 OutDir: Run-Cards

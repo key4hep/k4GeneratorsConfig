@@ -2,9 +2,9 @@ read snippets/EECollider.in
 cd /Herwig/Generators
 set EventGenerator:EventHandler:BeamA /Herwig/Particles/e-
 set EventGenerator:EventHandler:BeamB /Herwig/Particles/e+
-set /Herwig/EventHandlers/Luminosity:Energy 250.0*GeV
+set /Herwig/EventHandlers/Luminosity:Energy 350*GeV
 set EventGenerator:NumberOfEvents 10000
-set EventGenerator:RandomNumberGenerator:Seed 4711
+set EventGenerator:RandomNumberGenerator:Seed 4714
 set /Herwig/Model:QCD/AlphaS 0.1184
 set /Herwig/Model:EW/FermiConstant 1.16637e-05
 set /Herwig/Model:EW/AlphaEM 0.007297352566354976
@@ -16,13 +16,14 @@ set /Herwig/Particles/t:Width 1.50833649
 set /Herwig/Particles/h0:NominalMass 125
 set /Herwig/Particles/h0:Width 0.00407
 set /Herwig/Particles/W+:Width 2.085
-set /Herwig/Particles/W+:NominalMass 80.379
 cd /Herwig/MatrixElements
-insert SubProcess:MatrixElements 0 MEee2ZH
+insert SubProcess:MatrixElements 0 MEee2gZ2ll
+set MEee2gZ2ll:MinimumFlavour 13
+set MEee2gZ2ll:MaximumFlavour 13
 cd /Herwig/Generators
 insert EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile
 set /Herwig/Analysis/HepMCFile:PrintEvent 10000
 set /Herwig/Analysis/HepMCFile:Format GenEvent
 set /Herwig/Analysis/HepMCFile:Units GeV_mm
-set /Herwig/Analysis/HepMCFile:Filename ZH250_ISR.hepmc2
-saverun ZH250_ISR EventGenerator
+set /Herwig/Analysis/HepMCFile:Filename Muon350_ISR.hepmc2
+saverun Muon350_ISR EventGenerator

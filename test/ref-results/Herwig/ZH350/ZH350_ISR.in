@@ -1,25 +1,28 @@
 read snippets/EECollider.in
-set EventHandler:BeamA /Herwig/Particles/e-*GeV
-set EventHandler:BeamB /Herwig/Particles/e+*GeV
 cd /Herwig/Generators
-set EventGenerator:EventHandler:LuminosityFunction:Energy 350
+set EventGenerator:EventHandler:BeamA /Herwig/Particles/e-
+set EventGenerator:EventHandler:BeamB /Herwig/Particles/e+
+set /Herwig/EventHandlers/Luminosity:Energy 350*GeV
 set EventGenerator:NumberOfEvents 10000
-set EventGenerator/RandomNumberGenerator/Seed 42
-set /Herwig/Shower/SplittingGenerator:ISR Yes
-set /Herwig/Shower/SplittingGenerator:FSR No
-set LOAlphaS:input_alpha_s 0.1184
-set EW/AlphaEM 137.035999139
-set EW/Sin2ThetaW 0.23155
+set EventGenerator:RandomNumberGenerator:Seed 42
+set /Herwig/Model:QCD/AlphaS 0.1184
+set /Herwig/Model:EW/FermiConstant 1.16637e-05
+set /Herwig/Model:EW/AlphaEM 0.007297352566354976
+set /Herwig/Model:EW/Sin2ThetaW 0.23155
 set /Herwig/Particles/Z0:NominalMass 91.1876
-set /Herwig/Particles/Z0:NominalWidth 2.4952
+set /Herwig/Particles/Z0:Width 2.4952
 set /Herwig/Particles/t:NominalMass 172
-set /Herwig/Particles/t:NominalWidth 1.50833649
+set /Herwig/Particles/t:Width 1.50833649
 set /Herwig/Particles/h0:NominalMass 125
-set /Herwig/Particles/h0:NominalWidth 0.00407
-set /Herwig/Particles/W+:NominalWidth 2.085
+set /Herwig/Particles/h0:Width 0.00407
+set /Herwig/Particles/W+:Width 2.085
 set /Herwig/Particles/W+:NominalMass 80.379
 cd /Herwig/MatrixElements
 insert SubProcess:MatrixElements 0 MEee2ZH
-cd /Herwig/Analysis
-insert /Herwig/Generators/EventGenerator:AnalysisHandlers 0 HepMCFile
+cd /Herwig/Generators
+insert EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile
+set /Herwig/Analysis/HepMCFile:PrintEvent 10000
+set /Herwig/Analysis/HepMCFile:Format GenEvent
+set /Herwig/Analysis/HepMCFile:Units GeV_mm
+set /Herwig/Analysis/HepMCFile:Filename ZH350_ISR.hepmc2
 saverun ZH350_ISR EventGenerator
