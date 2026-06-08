@@ -18,8 +18,6 @@ set /Herwig/Particles/h0:Width 0.00407
 set /Herwig/Particles/W+:Width 2.085
 cd /Herwig/MatrixElements
 insert SubProcess:MatrixElements 0 MEee2gZ2ll
-set MEee2gZ2ll:MinimumFlavour 13
-set MEee2gZ2ll:MaximumFlavour 13
 cd /Herwig/Generators
 insert EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile
 set /Herwig/Analysis/HepMCFile:PrintEvent 10000

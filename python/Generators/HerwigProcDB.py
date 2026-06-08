@@ -28,16 +28,10 @@ class HerwigProcDB(ProcDBBase):
             self.write_Difermion(5)
         elif tag == [[-11,11],[-6,6]]:
             self.write_Difermion(6)
-        elif tag == [[-11,11],[-12,12]]:
-            self.write_Difermion(12)
         elif tag == [[-11,11],[-13,13]]:
             self.write_Difermion(13)
-        elif tag == [[-11,11],[-14,14]]:
-            self.write_Difermion(14)
         elif tag == [[-11,11],[-15,15]]:
             self.write_Difermion(15)
-        elif tag == [[-11,11],[-16,16]]:
-            self.write_Difermion(16)
         elif tag == [[-11,11],[23,23]]:
             self.write_WeakBosonPair(23)
         elif tag == [[-11,11],[24,24]]:
