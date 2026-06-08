@@ -22,7 +22,7 @@ import model loop_qcd_qed_sm_Gmu-full
 generate e- e+ > vm vm~ 
 output Output
 launch 
-set iseed 4712
+set iseed 4711
 set EBEAM 45.6
 set aS 0.1184
 set GF 1.16637e-05

@@ -4,7 +4,7 @@ set EventGenerator:EventHandler:BeamA /Herwig/Particles/e-
 set EventGenerator:EventHandler:BeamB /Herwig/Particles/e+
 set /Herwig/EventHandlers/Luminosity:Energy 350*GeV
 set EventGenerator:NumberOfEvents 10000
-set EventGenerator:RandomNumberGenerator:Seed 4716
+set EventGenerator:RandomNumberGenerator:Seed 4714
 set /Herwig/Particles/e-:PDF /Herwig/Partons/NoPDF
 set /Herwig/Particles/e+:PDF /Herwig/Partons/NoPDF
 set /Herwig/Model:QCD/AlphaS 0.1184
