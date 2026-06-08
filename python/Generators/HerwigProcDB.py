@@ -26,6 +26,8 @@ class HerwigProcDB(ProcDBBase):
             self.write_Difermion(4)
         elif tag == [[-11,11],[-5,5]]:
             self.write_Difermion(5)
+        elif tag == [[-11,11],[-6,6]]:
+            self.write_Difermion(6)
         elif tag == [[-11,11],[-12,12]]:
             self.write_Difermion(12)
         elif tag == [[-11,11],[-13,13]]:
@@ -49,7 +51,7 @@ class HerwigProcDB(ProcDBBase):
 
     def write_Difermion(self, pdg):
         MatrixElement = None
-        if pdg < 6:
+        if pdg < 7:
             MatrixElement = "MEee2gZ2qq"
         elif pdg > 10 and pdg < 17:
             MatrixElement = "MEee2gZ2ll"
@@ -57,8 +59,11 @@ class HerwigProcDB(ProcDBBase):
         # set the matrix element etc:
         if MatrixElement is not None:
             self.procdict['insert SubProcess:MatrixElements 0'] = MatrixElement
-            self.procdict[f"set {MatrixElement}:MinimumFlavour"] = f"{pdg}"
-            self.procdict[f"set {MatrixElement}:MaximumFlavour"] = f"{pdg}"
+            if  pdg < 7:
+                self.procdict[f"set {MatrixElement}:MinimumFlavour"] = f"{pdg}"
+                self.procdict[f"set {MatrixElement}:MaximumFlavour"] = f"{pdg}"
+            else:
+                print("FermionPair selection for leptons not implemented")
 
     def write_WeakBosonPair(self, pdg):
         MatrixElement = "MEee2VV"
