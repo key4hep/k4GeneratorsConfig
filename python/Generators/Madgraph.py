@@ -1,3 +1,4 @@
+import math
 from .GeneratorBase import GeneratorBase
 from Particles import Particle as part
 
@@ -12,6 +13,9 @@ class Madgraph(GeneratorBase):
 
         self.add_header()
         self.executable = "mg5_aMC"
+
+        self.NbEventsSurplusFactor = 1.002
+        self.maxEventsPerRun    = 1000000
 
         self.setOptionalFileNameAndExtension(f"pythia{self.GeneratorDatacardBase}","cmnd")
         self.fill_PythiaCMND()
@@ -63,7 +67,15 @@ class Madgraph(GeneratorBase):
         self.addOption2GeneratorDatacard("generate", self.proc)
         # self.addOption2GeneratorDatacard("output", self.outdir+f"/{self.procinfo.get('procname')}")
         self.addOption2GeneratorDatacard("output", "Output")
-        self.addOption2GeneratorDatacard("launch", None)
+        # multi run for > 1M events
+        nevents = int(self.procinfo.settings.get_nevents()*self.NbEventsSurplusFactor)
+        if nevents <= self.maxEventsPerRun:
+            self.addOption2GeneratorDatacard("launch", None)
+        else:
+            nruns = math.ceil(nevents/self.maxEventsPerRun)
+            self.addOption2GeneratorDatacard("launch", "-i")
+            self.addOption2GeneratorDatacard("multi_run",nruns)
+        # the run_card parameters
         self.addOption2GeneratorDatacard("set iseed", self.procinfo.get_rndmSeed())
         self.addOption2GeneratorDatacard("set EBEAM", self.procinfo.get("sqrts") / 2.0)
 
@@ -73,7 +85,7 @@ class Madgraph(GeneratorBase):
         # now add the particles checking for overlap with ProcDB
         self.prepareParticles()
         # temporary fix: increase LHE event size
-        self.addOption2GeneratorDatacard("set nevents", int(self.procinfo.settings.get_nevents()*1.002))
+        self.addOption2GeneratorDatacard("set nevents", nevents)
         if self.procinfo.get("isrmode"):
             if self.procinfo.get("beamstrahlung") is not None:
                 # if self.gen_settings is None:
