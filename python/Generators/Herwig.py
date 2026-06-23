@@ -1,7 +1,7 @@
 from .GeneratorBase import GeneratorBase
 
 class Herwig(GeneratorBase):
-    """Pythia class"""
+    """Herwig class"""
 
     def __init__(self, procinfo):
         super().__init__(procinfo, "Herwig", "in")
