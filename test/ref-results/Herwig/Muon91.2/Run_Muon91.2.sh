@@ -4,8 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 export HERWIGPATH=$(dirname $(which Herwig))/../share/Herwig/
-Herwig --append-read ${HERWIGPATH}/defaults init
-Herwig --append-read ${HERWIGPATH} read Muon91.2.in
+Herwig --repo ${HERWIGPATH}/HerwigDefaults.rpo read Muon91.2.in
 Herwig run Muon91.2.run
 convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Muon91.2.hepmc2 Muon91.2.edm4hep
 

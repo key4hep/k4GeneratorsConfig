@@ -99,8 +99,9 @@ class Herwig(GeneratorBase):
     def fill_key4hepScript(self):
         key4hepRun = ""
         key4hepRun += "export HERWIGPATH=$(dirname $(which Herwig))/../share/Herwig/\n"
-        key4hepRun += self.executable + " --append-read ${HERWIGPATH}/defaults init\n"
-        key4hepRun += self.executable + " --append-read ${HERWIGPATH} read " + self.GeneratorDatacardName + "\n"
+        #key4hepRun += self.executable + " --append-read ${HERWIGPATH}/defaults init\n"
+        #key4hepRun += self.executable + " --append-read ${HERWIGPATH} read " + self.GeneratorDatacardName + "\n"
+        key4hepRun += self.executable + " --repo ${HERWIGPATH}/HerwigDefaults.rpo read " + self.GeneratorDatacardName + "\n"
         key4hepRun += self.executable + " run " + self.GeneratorDatacardBase + ".run\n"
 
         if self.procinfo.get_output_format() == "edm4hep":

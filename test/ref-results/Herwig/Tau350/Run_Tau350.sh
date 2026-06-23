@@ -4,8 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 export HERWIGPATH=$(dirname $(which Herwig))/../share/Herwig/
-Herwig --append-read ${HERWIGPATH}/defaults init
-Herwig --append-read ${HERWIGPATH} read Tau350.in
+Herwig --repo ${HERWIGPATH}/HerwigDefaults.rpo read Tau350.in
 Herwig run Tau350.run
 convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Tau350.hepmc2 Tau350.edm4hep
 

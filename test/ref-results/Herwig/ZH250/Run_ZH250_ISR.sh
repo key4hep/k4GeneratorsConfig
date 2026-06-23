@@ -4,8 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 export HERWIGPATH=$(dirname $(which Herwig))/../share/Herwig/
-Herwig --append-read ${HERWIGPATH}/defaults init
-Herwig --append-read ${HERWIGPATH} read ZH250_ISR.in
+Herwig --repo ${HERWIGPATH}/HerwigDefaults.rpo read ZH250_ISR.in
 Herwig run ZH250_ISR.run
 convertHepMC2EDM4HEP -i hepmc2 -o edm4hep ZH250_ISR.hepmc2 ZH250_ISR.edm4hep
 
