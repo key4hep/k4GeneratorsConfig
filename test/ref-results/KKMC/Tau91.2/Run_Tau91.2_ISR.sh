@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -e
 if [ -z "${KEY4HEP_STACK}" ]; then
     source /cvmfs/sw.hsf.org/key4hep/setup.sh
 fi

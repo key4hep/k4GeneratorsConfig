@@ -520,6 +520,7 @@ class GeneratorBase(ABC):
     def prepareKey4hepScript(self):
         # set up for key4hep run of event generation
         key4hep_config = "#!/usr/bin/env bash\n"
+        key4hep_config += "set -e\n"
         key4hep_config += 'if [ -z "${KEY4HEP_STACK}" ]; then\n'
         # add the server extension for nightlies
         nightlies =""
