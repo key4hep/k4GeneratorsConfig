@@ -3,8 +3,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
     source /cvmfs/sw.hsf.org/key4hep/setup.sh
 fi
 
-export HERWIGPATH=$(dirname $(which Herwig))/../share/Herwig/
-Herwig --repo ${HERWIGPATH}/HerwigDefaults.rpo read ZH350_ISR.in
+Herwig read ZH350_ISR.in
 Herwig run ZH350_ISR.run
 convertHepMC2EDM4HEP -i hepmc2 -o edm4hep ZH350_ISR.hepmc2 ZH350_ISR.edm4hep
 
