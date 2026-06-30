@@ -22,3 +22,7 @@ The generators are listed in alphabetical order.
 ### Sherpa
 
 - [x] [Issue](https://gitlab.com/sherpa-team/sherpa/-/issues/655): Inconsistent cross-section from Sherpa. Our automated test discovered that Sherpa was underestimating the total cross-section. The bug was found and fixed in a subsequent [merge request](https://gitlab.com/sherpa-team/sherpa/-/merge_requests/1086).
+
+### Whizard
+
+- [ ] [Issue](https://github.com/key4hep/k4GeneratorsConfig/issues/86): Whizard slows down to a stop for more than 2M events.
