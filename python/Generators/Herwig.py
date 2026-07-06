@@ -88,7 +88,7 @@ class Herwig(GeneratorBase):
         self.add2GeneratorDatacard(f"set /Herwig/Analysis/HepMCFile:PrintEvent {self.procinfo.settings.get_nevents()}\n")
         self.add2GeneratorDatacard("set /Herwig/Analysis/HepMCFile:Format GenEvent\n")
         self.add2GeneratorDatacard("set /Herwig/Analysis/HepMCFile:Units GeV_mm\n")
-        self.add2GeneratorDatacard(f"set /Herwig/Analysis/HepMCFile:Filename {self.GeneratorDatacardBase}.hepmc2\n")
+        self.add2GeneratorDatacard(f"set /Herwig/Analysis/HepMCFile:Filename {self.GeneratorDatacardBase}.hepmc\n")
 
 
     def fill_decay(self):
@@ -102,7 +102,7 @@ class Herwig(GeneratorBase):
         key4hepRun += self.executable + " run " + self.GeneratorDatacardBase + ".run\n"
 
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.GeneratorDatacardBase}.hepmc2 {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc2 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 

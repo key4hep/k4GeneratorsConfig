@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard Top350_ISR.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Top350_ISR.edm4hep
+mv proc.hepmc Top350_ISR.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Top350_ISR.hepmc Top350_ISR.edm4hep
 
 key4HEPAnalysis -i Top350_ISR.edm4hep -o Top350_ISR.root -p 6,-6

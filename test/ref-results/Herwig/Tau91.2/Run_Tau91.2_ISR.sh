@@ -5,6 +5,6 @@ fi
 
 Herwig read Tau91.2_ISR.in
 Herwig run Tau91.2_ISR.run
-convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Tau91.2_ISR.hepmc2 Tau91.2_ISR.edm4hep
+convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Tau91.2_ISR.hepmc Tau91.2_ISR.edm4hep
 
 key4HEPAnalysis -i Tau91.2_ISR.edm4hep -o Tau91.2_ISR.root -p 15,-15

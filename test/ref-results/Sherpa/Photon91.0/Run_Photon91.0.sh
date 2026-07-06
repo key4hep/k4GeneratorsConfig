@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f Photon91.0.dat
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Photon91.0.hepmc3 Photon91.0.edm4hep
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Photon91.0.hepmc Photon91.0.edm4hep
 
 key4HEPAnalysis -i Photon91.0.edm4hep -o Photon91.0.root -p 22,22

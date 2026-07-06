@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 Sherpa -f MuonColliderZH.dat
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonColliderZH.hepmc3 MuonColliderZH.edm4hep
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonColliderZH.hepmc MuonColliderZH.edm4hep
 
 key4HEPAnalysis -i MuonColliderZH.edm4hep -o MuonColliderZH.root -p 23,25

@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard ZHDecay350.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc ZHDecay350.edm4hep
+mv proc.hepmc ZHDecay350.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay350.hepmc ZHDecay350.edm4hep
 
 key4HEPAnalysis -i ZHDecay350.edm4hep -o ZHDecay350.root -p 23,25

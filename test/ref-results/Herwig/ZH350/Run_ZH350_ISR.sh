@@ -5,6 +5,6 @@ fi
 
 Herwig read ZH350_ISR.in
 Herwig run ZH350_ISR.run
-convertHepMC2EDM4HEP -i hepmc2 -o edm4hep ZH350_ISR.hepmc2 ZH350_ISR.edm4hep
+convertHepMC2EDM4HEP -i hepmc2 -o edm4hep ZH350_ISR.hepmc ZH350_ISR.edm4hep
 
 key4HEPAnalysis -i ZH350_ISR.edm4hep -o ZH350_ISR.root -p 23,25

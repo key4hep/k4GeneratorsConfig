@@ -23,5 +23,5 @@ insert EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile
 set /Herwig/Analysis/HepMCFile:PrintEvent 10000
 set /Herwig/Analysis/HepMCFile:Format GenEvent
 set /Herwig/Analysis/HepMCFile:Units GeV_mm
-set /Herwig/Analysis/HepMCFile:Filename Tau91.2_ISR.hepmc2
+set /Herwig/Analysis/HepMCFile:Filename Tau91.2_ISR.hepmc
 saverun Tau91.2_ISR EventGenerator

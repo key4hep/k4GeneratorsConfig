@@ -5,6 +5,6 @@ fi
 
 Herwig read Tau350.in
 Herwig run Tau350.run
-convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Tau350.hepmc2 Tau350.edm4hep
+convertHepMC2EDM4HEP -i hepmc2 -o edm4hep Tau350.hepmc Tau350.edm4hep
 
 key4HEPAnalysis -i Tau350.edm4hep -o Tau350.root -p 15,-15

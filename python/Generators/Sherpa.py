@@ -68,7 +68,7 @@ class Sherpa(GeneratorBase):
         self.prepareParameters()
 
         # output to hepmc3
-        eoutname = f"HepMC3_GenEvent[{self.GeneratorDatacardBase}.hepmc3]"
+        eoutname = f"HepMC3_GenEvent[{self.GeneratorDatacardBase}.hepmc]"
         self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         # run settings
@@ -181,7 +181,7 @@ class Sherpa(GeneratorBase):
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3 {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
         elif self.procinfo.get_output_format() == "lhe":
             print("Sherpa is not configured for LHE, using hepmc3")
 
