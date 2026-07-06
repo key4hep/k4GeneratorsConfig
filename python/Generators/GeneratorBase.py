@@ -557,11 +557,14 @@ class GeneratorBase(ABC):
 
         # write the RIVET analysis
         if (outformat == "edm4hep" or outformat == "hepmc3") and self.procinfo.settings.rivetON():
+            # first we add the RIVET_ANALYSIS_PATH setting
+            analysis += f"export RIVET_ANALYSIS_PATH={self.procinfo.settings.rivetpath}\n"
+            # now the actual rivet command
             yodaout = self.procinfo.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
             analysis += f"rivet"
             for ana in self.procinfo.settings.analysisname:
                 analysis += f" -a {ana}"
-            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get_output_format()}\n"
+            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.hepmc3\n"
 
         # add to the text to the data member
         self.add2Analysis(analysis)
