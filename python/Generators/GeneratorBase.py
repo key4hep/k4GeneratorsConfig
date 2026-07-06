@@ -564,7 +564,7 @@ class GeneratorBase(ABC):
             analysis += f"rivet"
             for ana in self.procinfo.settings.analysisname:
                 analysis += f" -a {ana}"
-            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.hepmc3\n"
+            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.hepmc\n"
 
         # add to the text to the data member
         self.add2Analysis(analysis)
