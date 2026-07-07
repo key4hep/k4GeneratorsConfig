@@ -1,0 +1,43 @@
+RANDOM_SEED: 42
+BEAMS: [11, -11]
+BEAM_ENERGIES: 175.0
+MODEL: SM
+PDF_LIBRARY: PDFESherpa
+YFS: {MODE: Off}
+ME_QED: {ENABLED: false}
+EVENTS: 10000
+
+ALPHAS(MZ): 0.1184
+GF: 1.16637e-05
+EVENT_OUTPUT: HepMC3_GenEvent[ZH350_ISR.hepmc]
+EW_SCHEME: 3
+EVENT_GENERATION_MODE: unweighted
+
+PARTICLE_DATA:
+  23: 
+    Width: 2.4952
+    Mass: 91.1876
+  25: 
+    Width: 0.00407
+    Mass: 125
+  15: 
+    Massive: 1
+  5: 
+    Massive: 1
+  4: 
+    Massive: 1
+  6: 
+    Mass: 172
+    Width: 1.50833649
+  24: 
+    Width: 2.085
+    Mass: 80.379
+
+
+PROCESSES:
+- 11 -11 -> 23 25:
+    Order: {QCD: 0, EW: 2}
+
+SELECTORS:
+  - [PT, 23, 40, 175]
+  - [PT, 25, 40, 175]

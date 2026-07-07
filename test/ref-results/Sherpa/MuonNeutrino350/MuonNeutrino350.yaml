@@ -1,0 +1,34 @@
+RANDOM_SEED: 4712
+BEAMS: [11, -11]
+BEAM_ENERGIES: 175.0
+MODEL: SM
+PDF_LIBRARY: None
+YFS: {MODE: Off}
+ME_QED: {ENABLED: false}
+EVENTS: 10000
+
+ALPHAS(MZ): 0.1184
+GF: 1.16637e-05
+EVENT_OUTPUT: HepMC3_GenEvent[MuonNeutrino350.hepmc]
+EVENT_GENERATION_MODE: unweighted
+EW_SCHEME: 3
+
+PARTICLE_DATA:
+  23: 
+    Mass: 91.1876
+    Width: 2.4952
+  6: 
+    Mass: 172
+    Width: 1.50833649
+  25: 
+    Mass: 125
+    Width: 0.00407
+  24: 
+    Width: 2.085
+
+
+PROCESSES:
+- 11 -11 -> 14 -14:
+    Order: {QCD: 0, EW: 2}
+
+SELECTORS:
