@@ -58,9 +58,10 @@ class Sherpa(GeneratorBase):
         else:
             self.addOption2GeneratorDatacard("PDF_LIBRARY", "None")
         if self.procinfo.get("fsrmode"):
-            self.addOption2GeneratorDatacard("YFS_MODE", "FULL")
+            self.addOption2GeneratorDatacard("YFS", "{MODE: Full}")
         else:
-            self.addOption2GeneratorDatacard("YFS_MODE", "None")
+            self.addOption2GeneratorDatacard("YFS", "{MODE: Off}")
+            self.addOption2GeneratorDatacard("ME_QED", "{ENABLED: false}")
         self.addOption2GeneratorDatacard("EVENTS", self.procinfo.settings.get_nevents())
         self.add2GeneratorDatacard("\n")
 
