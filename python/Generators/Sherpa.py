@@ -4,10 +4,10 @@ class Sherpa(GeneratorBase):
     """Sherpa class"""
 
     def __init__(self, procinfo):
-        super().__init__(procinfo, "Sherpa", "dat")
+        super().__init__(procinfo, "Sherpa", "yaml")
 
         self.version = "3"
-        self.executable = "Sherpa -f"
+        self.executable = "Sherpa"
 
     def setSelectorsDict(self):
         # set up the correspondance between the yamlInput and the Sherpa convention
