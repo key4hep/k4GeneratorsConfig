@@ -254,6 +254,11 @@ class Madgraph(GeneratorBase):
         content += "Main:WriteHepMC = on\n"
         content += "Beams:frameType = 4\n"
         content += "Main:numberOfEvents = {0}\n".format(self.procinfo.settings.get_nevents())
+        # need to set FSR for PYTHIA?
+        if self.procinfo.get("fsrmode"):
+            content += "PartonLevel:FSR = on\n"
+        else:
+            content += "PartonLevel:FSR = off\n"
         self.add2OptionalFile(content)
 
     def getModelName(self, model):
