@@ -560,11 +560,14 @@ class GeneratorBase(ABC):
             # first we add the RIVET_ANALYSIS_PATH setting
             analysis += f"export RIVET_ANALYSIS_PATH={self.procinfo.settings.rivetpath}\n"
             # now the actual rivet command
-            yodaout = self.procinfo.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
+            yodaFile = ""
+            if self.procinfo.settings.yodaoutput is not None:
+                yodaFile += f"{self.procinfo.settings.yodaoutput}/{self.name}"
+            yodaFile += f"{self.GeneratorDatacardBase}.yoda"
             analysis += f"rivet"
             for ana in self.procinfo.settings.analysisname:
                 analysis += f" -a {ana}"
-            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.hepmc\n"
+            analysis+=f" -o {yodaFile} {self.GeneratorDatacardBase}.hepmc\n"
 
         # add to the text to the data member
         self.add2Analysis(analysis)
