@@ -86,9 +86,7 @@ class Pythia(GeneratorBase):
         outformat = self.procinfo.get_output_format()
         if  outformat == "hepmc3" or outformat == "edm4hep":
             self.addOption2GeneratorDatacard("Main:WriteHepMC", "on")
-            outputFile = "{0}.hepmc3".format(
-                self.GeneratorDatacardBase
-            )
+            outputFile = f"{self.GeneratorDatacardBase}.hepmc"
             self.addOption2GeneratorDatacard("Main:HepMCFile", outputFile)
 
         # add the procDB settings
@@ -190,7 +188,7 @@ class Pythia(GeneratorBase):
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3 {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 
@@ -213,6 +211,10 @@ class Pythia(GeneratorBase):
         else:
             return f"ParticleData:{name}"
         # return f"SigmaProcess:{name}"
+
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
 
     def getParticleProperty(self, d):
         name = None

@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard bottom91.2.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc bottom91.2.edm4hep
+mv proc.hepmc bottom91.2.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep bottom91.2.hepmc bottom91.2.edm4hep
 
 key4HEPAnalysis -i bottom91.2.edm4hep -o bottom91.2.root -p 2,-2

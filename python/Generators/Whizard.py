@@ -182,8 +182,9 @@ class Whizard(GeneratorBase):
             key4hepRun += f"wget https://whizard.hepforge.org/circe_files/{accel}/{self.procinfo.get_BeamstrahlungFile()}\n"
         # back to normal
         key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
+        key4hepRun += f"mv proc.hepmc {self.GeneratorDatacardBase}.hepmc\n"
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
 
         self.add2Key4hepScript(key4hepRun)
 
@@ -209,6 +210,10 @@ class Whizard(GeneratorBase):
 
     def getGeneratorCommand(self,key,value):
         return f"{key} = {value}"
+
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
 
     def getParticleProperty(self, d):
         name = None
