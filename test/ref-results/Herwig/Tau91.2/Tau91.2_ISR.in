@@ -1,0 +1,27 @@
+read snippets/EECollider.in
+cd /Herwig/Generators
+set EventGenerator:EventHandler:BeamA /Herwig/Particles/e-
+set EventGenerator:EventHandler:BeamB /Herwig/Particles/e+
+set /Herwig/EventHandlers/Luminosity:Energy 91.2*GeV
+set EventGenerator:NumberOfEvents 10000
+set EventGenerator:RandomNumberGenerator:Seed 4712
+set /Herwig/Model:QCD/AlphaS 0.1184
+set /Herwig/Model:EW/FermiConstant 1.16637e-05
+set /Herwig/Model:EW/AlphaEM 0.007297352566354976
+set /Herwig/Model:EW/Sin2ThetaW 0.23155
+set /Herwig/Particles/Z0:NominalMass 91.1876
+set /Herwig/Particles/Z0:Width 2.4952
+set /Herwig/Particles/t:NominalMass 172
+set /Herwig/Particles/t:Width 1.50833649
+set /Herwig/Particles/h0:NominalMass 125
+set /Herwig/Particles/h0:Width 0.00407
+set /Herwig/Particles/W+:Width 2.085
+cd /Herwig/MatrixElements
+insert SubProcess:MatrixElements 0 MEee2gZ2ll
+cd /Herwig/Generators
+insert EventGenerator:AnalysisHandlers 0 /Herwig/Analysis/HepMCFile
+set /Herwig/Analysis/HepMCFile:PrintEvent 10000
+set /Herwig/Analysis/HepMCFile:Format GenEvent
+set /Herwig/Analysis/HepMCFile:Units GeV_mm
+set /Herwig/Analysis/HepMCFile:Filename Tau91.2_ISR.hepmc
+saverun Tau91.2_ISR EventGenerator

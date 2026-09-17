@@ -204,9 +204,7 @@ class ProcessReader:
                 try:
                     self.yodaoutput = self.anasettings["yodaoutdir"]
                 except:
-                    self.yodaoutput = os.getcwd()+"/yodafiles"
-                    if not os.path.isdir(self.yodaoutput):
-                        os.mkdir(self.yodaoutput)
+                    self.yodaoutput = None
 
     def rivetON(self):
         if self.anatools is not None:

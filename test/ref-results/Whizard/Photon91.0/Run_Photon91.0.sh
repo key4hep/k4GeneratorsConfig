@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard Photon91.0.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Photon91.0.edm4hep
+mv proc.hepmc Photon91.0.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Photon91.0.hepmc Photon91.0.edm4hep
 
 key4HEPAnalysis -i Photon91.0.edm4hep -o Photon91.0.root -p 22,22

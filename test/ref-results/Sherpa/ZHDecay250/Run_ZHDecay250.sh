@@ -3,7 +3,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
     source /cvmfs/sw.hsf.org/key4hep/setup.sh
 fi
 
-Sherpa -f ZHDecay250.dat
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay250.hepmc3 ZHDecay250.edm4hep
+Sherpa ZHDecay250.yaml
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep ZHDecay250.hepmc ZHDecay250.edm4hep
 
 key4HEPAnalysis -i ZHDecay250.edm4hep -o ZHDecay250.root -p 23,25

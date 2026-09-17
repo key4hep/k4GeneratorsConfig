@@ -85,14 +85,14 @@ class KKMC(GeneratorBase):
 
     def fill_key4hepScript(self):
         key4hepRun = ""
-        key4hepRun += "KKMCee -c  {0} --nevts {2} -o {1}.hepmc3\n".format(
+        key4hepRun += "KKMCee -c  {0} --nevts {2} -o {1}.hepmc\n".format(
             self.GeneratorDatacardName,
             self.GeneratorDatacardBase,
             self.procinfo.settings.get_nevents(),
         )
         outformat = self.procinfo.get_output_format()
         if outformat == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3 {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
         elif outformat == "lhe":
             print("KKMC cannot provide LHE files, hepmc3 files will be produced")
 
@@ -105,6 +105,10 @@ class KKMC(GeneratorBase):
             print(f"Warning::KKMC: parameter {param} has no translation in KKMC Parameter Dictionary")
             return ""
         return parameterDict[param]
+
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
 
     def getParticleProperty(self, d):
         name = None

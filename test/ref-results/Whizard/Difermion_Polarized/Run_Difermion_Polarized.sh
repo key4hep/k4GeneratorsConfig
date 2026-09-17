@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard Difermion_Polarized.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Difermion_Polarized.edm4hep
+mv proc.hepmc Difermion_Polarized.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Difermion_Polarized.hepmc Difermion_Polarized.edm4hep
 
 key4HEPAnalysis -i Difermion_Polarized.edm4hep -o Difermion_Polarized.root -p 13,-13

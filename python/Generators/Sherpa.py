@@ -4,10 +4,10 @@ class Sherpa(GeneratorBase):
     """Sherpa class"""
 
     def __init__(self, procinfo):
-        super().__init__(procinfo, "Sherpa", "dat")
+        super().__init__(procinfo, "Sherpa", "yaml")
 
         self.version = "3"
-        self.executable = "Sherpa -f"
+        self.executable = "Sherpa"
 
     def setSelectorsDict(self):
         # set up the correspondance between the yamlInput and the Sherpa convention
@@ -58,9 +58,10 @@ class Sherpa(GeneratorBase):
         else:
             self.addOption2GeneratorDatacard("PDF_LIBRARY", "None")
         if self.procinfo.get("fsrmode"):
-            self.addOption2GeneratorDatacard("YFS_MODE", "FULL")
+            self.addOption2GeneratorDatacard("YFS", "{MODE: Full}")
         else:
-            self.addOption2GeneratorDatacard("YFS_MODE", "None")
+            self.addOption2GeneratorDatacard("YFS", "{MODE: Off}")
+            self.addOption2GeneratorDatacard("ME_QED", "{ENABLED: false}")
         self.addOption2GeneratorDatacard("EVENTS", self.procinfo.settings.get_nevents())
         self.add2GeneratorDatacard("\n")
 
@@ -68,7 +69,7 @@ class Sherpa(GeneratorBase):
         self.prepareParameters()
 
         # output to hepmc3
-        eoutname = f"HepMC3_GenEvent[{self.GeneratorDatacardBase}.hepmc3]"
+        eoutname = f"HepMC3_GenEvent[{self.GeneratorDatacardBase}.hepmc]"
         self.addOption2GeneratorDatacard("EVENT_OUTPUT", eoutname)
 
         # run settings
@@ -181,7 +182,7 @@ class Sherpa(GeneratorBase):
             key4hepRun += self.executable + " " + self.GeneratorDatacardName + "\n"
 
         if self.procinfo.get_output_format() == "edm4hep":
-            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc3 {self.GeneratorDatacardBase}.edm4hep\n"
+            key4hepRun += f"convertHepMC2EDM4HEP -i hepmc3 -o edm4hep {self.GeneratorDatacardBase}.hepmc {self.GeneratorDatacardBase}.edm4hep\n"
         elif self.procinfo.get_output_format() == "lhe":
             print("Sherpa is not configured for LHE, using hepmc3")
 
@@ -208,6 +209,10 @@ class Sherpa(GeneratorBase):
 
     def getGeneratorCommand(self,key,value):
         return f"{key}: {value}"
+
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
 
     def getParticleProperty(self, d):
         name = None
