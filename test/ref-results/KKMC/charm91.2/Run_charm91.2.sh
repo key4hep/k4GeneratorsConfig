@@ -3,7 +3,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
     source /cvmfs/sw-nightlies.hsf.org/key4hep/setup.sh
 fi
 
-KKMCee -c  charm91.2.dat -o charm91.2.hepmc3
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep charm91.2.hepmc3 charm91.2.edm4hep
+KKMCee -c  charm91.2.dat -o charm91.2.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep charm91.2.hepmc charm91.2.edm4hep
 
 key4HEPAnalysis -i charm91.2.edm4hep -o charm91.2.root -p 4,-4

@@ -139,6 +139,10 @@ class Babayaga(GeneratorBase):
         # not used by Babayaga
         pass
 
+    def getParticlePropertyUnit(self):
+        # not used
+        pass
+
     def getParticleProperty(self, attr):
         # not used by Babayaga
         pass

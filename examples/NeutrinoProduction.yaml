@@ -15,30 +15,14 @@ Model: SM
 ISRMode: 0
 
 Processes:
-  Muon91.2:
-     Final: [13, -13]
 
   MuonNeutrino91.2:
      Final: [14, -14]
      ISRMode: 1
 
-  Tau91.2:
-     Final: [15, -15]
-     ISRMode: 1
-
-  Muon350:
-     Final: [13, -13]
-     SqrtS: 350
-     ISRMode: 1
-
   MuonNeutrino350:
      Final: [14, -14]
      SqrtS: 350
-
-  Tau350:
-     Final: [15, -15]
-     SqrtS: 350
-
 
 Selectors:
   Process:

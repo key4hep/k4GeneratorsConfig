@@ -323,7 +323,7 @@ class GeneratorBase(ABC):
     def getGeneratorCommand(self,key,value):
         pass
 
-    def addOption2GeneratorDatacard(self,key,value,replace=True):
+    def addOption2GeneratorDatacard(self,key,value,unit="",replace=True):
         # check if the key is already defined in the datacard, then we take the last one (TBC):
         if replace is True:
             if key in self.__datacardContent:
@@ -440,13 +440,18 @@ class GeneratorBase(ABC):
             for attr in particle:
                 value = particle[attr]
                 prop  = self.getParticleProperty(attr)
+                unit  = self.getParticlePropertyUnit()
                 # writing out
                 if prop is not None:
                     command = self.getParticleOperator(pdg,prop)
                     if add2Datacard is True:
-                        self.addOption2GeneratorDatacard(command, value,replace=False)
+                        self.addOption2GeneratorDatacard(command, value, unit, replace=False)
                     else:
                         self.replaceOptionInGeneratorDatacard(command,value)
+
+    @abstractmethod
+    def getParticlePropertyUnit(self):
+        pass
 
     @abstractmethod
     def getParticleProperty(self, attr):
@@ -552,11 +557,17 @@ class GeneratorBase(ABC):
 
         # write the RIVET analysis
         if (outformat == "edm4hep" or outformat == "hepmc3") and self.procinfo.settings.rivetON():
-            yodaout = self.procinfo.settings.yodaoutput + f"/{self.procinfo.get('procname')}.yoda"
+            # first we add the RIVET_ANALYSIS_PATH setting
+            analysis += f"export RIVET_ANALYSIS_PATH={self.procinfo.settings.rivetpath}\n"
+            # now the actual rivet command
+            yodaFile = ""
+            if self.procinfo.settings.yodaoutput is not None:
+                yodaFile += f"{self.procinfo.settings.yodaoutput}/{self.name}"
+            yodaFile += f"{self.GeneratorDatacardBase}.yoda"
             analysis += f"rivet"
             for ana in self.procinfo.settings.analysisname:
                 analysis += f" -a {ana}"
-            analysis+=f" -o {yodaout} {self.procinfo.get('procname')}.{self.procinfo.get_output_format()}\n"
+            analysis+=f" -o {yodaFile} {self.GeneratorDatacardBase}.hepmc\n"
 
         # add to the text to the data member
         self.add2Analysis(analysis)

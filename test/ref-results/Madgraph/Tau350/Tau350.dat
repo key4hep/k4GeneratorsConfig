@@ -22,7 +22,7 @@ import model loop_qcd_qed_sm_Gmu-full
 generate e- e+ > ta- ta+ 
 output Output
 launch 
-set iseed 4716
+set iseed 4714
 set EBEAM 175.0
 set aS 0.1184
 set GF 1.16637e-05
