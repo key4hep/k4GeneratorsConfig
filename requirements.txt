@@ -59,7 +59,7 @@ pycmarkgfm==1.2.1
     # via sphinx-markdown-checkbox
 pycparser==3.0
     # via cffi
-pygments==2.19.2
+pygments==2.20.0
     # via sphinx
 pyyaml==6.0.3
     # via
