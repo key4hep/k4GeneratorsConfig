@@ -5,6 +5,7 @@ on:
     branches:
       # only build on push to main
       - main
+  pull_request:
   workflow_dispatch:
 
 
@@ -26,6 +27,8 @@ jobs:
       run: |
         sphinx-build -M html docs build
     - name: Publish gh-pages
+      # Only deploy on pushes to main (or manual trigger), never for PRs
+      if: github.event_name != 'pull_request'
       run: |
         cd build/html
         git init
