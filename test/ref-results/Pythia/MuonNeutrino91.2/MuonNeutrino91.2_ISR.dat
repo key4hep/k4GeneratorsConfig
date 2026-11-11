@@ -1,5 +1,5 @@
 Random:setSeed = on
-Random:seed = 4712
+Random:seed = 4711
 Beams:eCM = 91.2
 Beams:idA = 11
 Beams:idB = -11
@@ -22,7 +22,7 @@ StandardModel:sin2thetaWbar = 0.23155
 24:mWidth = 2.085
 Main:SelectorsFile = MuonNeutrino91.2_ISR.selectors
 Main:WriteHepMC = on
-Main:HepMCFile = MuonNeutrino91.2_ISR.hepmc3
+Main:HepMCFile = MuonNeutrino91.2_ISR.hepmc
 Main:timesAllowErrors = 5
 Init:showChangedSettings = on
 Init:showChangedParticleData = on

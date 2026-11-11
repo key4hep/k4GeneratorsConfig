@@ -28,7 +28,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::Init() {
   TGaxis::SetExponentOffset(-0.08, -0.12, "y");
 
   // define the generator colors (as offset)
-  std::vector<std::string> genNames = {"Madgraph", "Sherpa", "Whizard", "KKMC", "Pythia", "Babayaga"};
+  std::vector<std::string> genNames = {"Madgraph", "Sherpa", "Whizard", "KKMC", "Pythia", "Babayaga", "Herwig"};
   for (unsigned int i = 0; i < genNames.size(); i++) {
     m_generatorColorOffset[genNames[i]] = i;
   }
@@ -464,7 +464,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgRMS->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
-    label << m_dirname << "/" << m_processesList[iProc] << "wRMS.png";
+    label << m_dirname << "/" << m_processesList[iProc] << "wRMS.pdf";
     c1->Print(label.str().c_str());
     label.clear();
     label.str("");
@@ -503,7 +503,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeCrossSectionFigur
     mgDelta->GetYaxis()->SetLabelSize(0.1);
 
     // generate a name and write a png
-    label << m_dirname << "/" << m_processesList[iProc] << "wDelta.png";
+    label << m_dirname << "/" << m_processesList[iProc] << "wDelta.pdf";
     c1->Print(label.str().c_str());
     label.clear();
     label.str("");
@@ -571,7 +571,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
       // now build the legend:
       TLegend* topLegend = new TLegend(0.1, 0.0, 0.4, 0.4);
       std::ostringstream title;
-      title << m_procSqrtsList[proc].first << " #sqrt{s} =" << m_procSqrtsList[proc].second << "GeV";
+      title << m_procSqrtsList[proc].first << " #sqrt{s} =" << m_procSqrtsList[proc].second << " GeV";
       topLegend->SetHeader(title.str().c_str(), "C");
       // we need to get the histo from the top
       TList* topPadPrimitives = topPad->GetListOfPrimitives();
@@ -626,7 +626,7 @@ void k4GeneratorsConfig::eventGenerationCollections2Root::writeAnalysisHistosFig
       // done, save the canvas
       label << m_dirname << "/" << m_procSqrtsList[proc].first
             << (unsigned int)(m_procSqrtsList[proc].second * m_EnergyUnitCnv) << m_cnvAnalysisHistosNames[proc][ihisto]
-            << ".png";
+            << ".pdf";
       m_cnvAnalysisHistos[proc][ihisto]->Print(label.str().c_str());
       label.clear();
       label.str("");
