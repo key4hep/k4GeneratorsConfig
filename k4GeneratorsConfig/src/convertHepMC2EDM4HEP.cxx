@@ -67,6 +67,8 @@ enum formats {
   proto
 };
 
+namespace {
+
 template <class T>
 std::shared_ptr<Reader> get_input_file(const char* name, const bool input_is_stdin, const bool use_compression) {
   std::string n(name);
@@ -90,6 +92,8 @@ std::shared_ptr<Writer> get_output_file(const char* name, const char* use_compre
 #endif
   return std::make_shared<T>(n);
 }
+
+} // namespace
 
 int main(int argc, char** argv) {
   gengetopt_args_info ai;
