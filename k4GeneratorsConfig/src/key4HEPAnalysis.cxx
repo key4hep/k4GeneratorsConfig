@@ -15,7 +15,9 @@
 
 #include "edm4hep/utils/kinematics.h"
 
+namespace {
 std::string translatePDG2Name(int);
+} // namespace
 
 //
 int main(int argc, char** argv) {
@@ -225,6 +227,8 @@ int main(int argc, char** argv) {
   outputFilePtr->Write();
   outputFilePtr->Close();
 }
+namespace {
+
 std::string translatePDG2Name(int pdg) {
 
   if (pdg == 1)
@@ -291,3 +295,5 @@ std::string translatePDG2Name(int pdg) {
   // if it's not that:
   return "unknown";
 }
+
+} // namespace
