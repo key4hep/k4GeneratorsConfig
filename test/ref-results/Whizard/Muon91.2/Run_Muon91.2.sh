@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard Muon91.2.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc Muon91.2.edm4hep
+mv proc.hepmc Muon91.2.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep Muon91.2.hepmc Muon91.2.edm4hep
 
 key4HEPAnalysis -i Muon91.2.edm4hep -o Muon91.2.root -p 13,-13

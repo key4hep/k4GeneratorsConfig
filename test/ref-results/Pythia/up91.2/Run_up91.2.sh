@@ -4,6 +4,6 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 pythiaRunner -f up91.2.dat
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep up91.2.hepmc3 up91.2.edm4hep
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep up91.2.hepmc up91.2.edm4hep
 
 key4HEPAnalysis -i up91.2.edm4hep -o up91.2.root -p 2,-2

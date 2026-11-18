@@ -1,4 +1,4 @@
-# generl settings:
+# general settings:
 set(TEST_ENVIRONMENT "PATH=${PROJECT_BINARY_DIR}/bin:$ENV{PATH}")
 set(TEST_TIMEOUT 3500)
 

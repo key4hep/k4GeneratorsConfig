@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard MuonColliderZH.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc MuonColliderZH.edm4hep
+mv proc.hepmc MuonColliderZH.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep MuonColliderZH.hepmc MuonColliderZH.edm4hep
 
 key4HEPAnalysis -i MuonColliderZH.edm4hep -o MuonColliderZH.root -p 23,25

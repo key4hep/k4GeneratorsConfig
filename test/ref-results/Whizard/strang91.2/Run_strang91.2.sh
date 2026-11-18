@@ -4,6 +4,7 @@ if [ -z "${KEY4HEP_STACK}" ]; then
 fi
 
 whizard strang91.2.sin
-convertHepMC2EDM4HEP -i hepmc3 -o edm4hep proc.hepmc strang91.2.edm4hep
+whizard proc.hepmc strang91.2.hepmc
+convertHepMC2EDM4HEP -i hepmc3 -o edm4hep strang91.2.hepmc strang91.2.edm4hep
 
 key4HEPAnalysis -i strang91.2.edm4hep -o strang91.2.root -p 3,-3
